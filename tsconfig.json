@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules",
+        "options": {
+          "customMatcher": "\\.(c|le|sa|sc)ss$",
+          "camelCase": false
+        }
+      }
+    ],
+    "outDir": "./dist/",
+    "baseUrl": "./src",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "ES6",
+    "moduleResolution": "node",
+    "target": "es2017",
+    "jsx": "react",
+    "allowJs": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "allowUnreachableCode": false,
+    "declaration": false,
+    "alwaysStrict": true,
+    "downlevelIteration": false,
+    "noFallthroughCasesInSwitch": true,
+    "strict": true,
+    "checkJs": false,
+    "allowSyntheticDefaultImports": true,
+    "strictBindCallApply": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "lib": ["es2017", "es2018", "dom"]
+  },
+  "exclude": ["node_modules", "dist", ".test", ".coverage", "config"]
+}
