@@ -1,6 +1,8 @@
 const path = require("path");
+const fs = require("fs-extra");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin");
 
 const { terserPlugin } = require("./terserPlugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
@@ -89,6 +91,7 @@ module.exports = {
       filename: `index.html`,
       cache: true,
       favicon: "src/static/favicon.ico",
+      inlineSource: ".(js|css)$",
       inject: "body",
       minify: {
         caseSensitive: false,
@@ -121,10 +124,18 @@ module.exports = {
         useShortDoctype: true
       }
     }),
+    new HtmlWebpackInlineSourcePlugin(),
     new MiniCssExtractPlugin({
       filename: "[name].[contenthash].css",
       chunkFilename: "[name].[id].[contenthash].css"
-    })
+    }),
+    {
+      apply: compiler => {
+        compiler.hooks.afterEmit.tap("AfterEmitPlugin", compilation => {
+          fs.copySync("src/static", "./docs");
+        });
+      }
+    }
   ],
   resolve: {
     cacheWithContext: true,

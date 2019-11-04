@@ -14,7 +14,7 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "module": "ES6",
+    "module": "esNext",
     "moduleResolution": "node",
     "target": "es2017",
     "jsx": "react",

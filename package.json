@@ -6,13 +6,15 @@
   "author": "Artemiy Dudko <thepioh@zoho.com>",
   "license": "MIT",
   "scripts": {
-    "prod": "rm -rf docs && NODE_ENV=production yarn webpack && google-chrome docs/index.html",
-    "build": "yarn webpack && google-chrome docs/index.html"
+    "prod": "rm -rf docs && NODE_ENV=production yarn webpack",
+    "start": "yarn webpack"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^5.2.1",
     "css-loader": "^3.2.0",
     "cssnano": "^4.1.10",
+    "fs-extra": "^8.1.0",
+    "html-webpack-inline-source-plugin": "^0.0.10",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.8.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
@@ -20,6 +22,7 @@
     "sass": "^1.23.3",
     "sass-loader": "^8.0.0",
     "source-map-loader": "^0.2.4",
+    "svg-url-loader": "^3.0.2",
     "terser-webpack-plugin": "^2.2.1",
     "tslint": "5",
     "tslint-config-prettier": "^1.18.0",

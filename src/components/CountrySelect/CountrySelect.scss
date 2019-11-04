@@ -1,0 +1,108 @@
+.root {
+  width: 360px;
+  position: relative;
+  > label {
+    display: none;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 0 4px;
+    background: #fff;
+    position: absolute;
+    color: #666666;
+    left: 12px;
+    top: 0;
+    margin-top: -5px;
+  }
+}
+.root.withLabel > label {
+  display: block;
+}
+.root.open > label {
+  color: #4ea4f6;
+}
+.input {
+  width: 100%;
+  border: 1px solid #dadce0;
+  border-radius: 10px;
+  padding: 0 16px;
+  height: 54px;
+  outline: none;
+}
+.open .input {
+  border-width: 2px;
+  padding: 0 15px;
+  border-color: #4ea4f6;
+}
+.root > i {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 50%;
+  margin-top: -8px;
+  right: 17px;
+  background-image: url("~static/down.svg");
+}
+.root.open > i {
+  transform: rotate(180);
+}
+ul.list > li {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  height: 56px;
+  padding: 0 16px;
+  padding-right: 12px;
+  > img {
+    margin-right: 33px;
+    width: 23px;
+    height: auto;
+  }
+}
+
+.input,
+ul.list > li {
+  font-size: 16px;
+  line-height: 21px;
+  outline: none;
+  > span {
+    margin-left: auto;
+    color: #707579;
+  }
+}
+
+ul.list {
+  position: absolute;
+  top: 100%;
+  margin-top: 8px;
+  width: 100%;
+  max-height: 376px;
+  padding: 10px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  overflow-y: scroll;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25), 0px 0px 4px rgba(0, 0, 0, 0.08);
+}
+
+ul.list > li:hover {
+  background: #f4f4f5;
+}
+
+ul.list {
+  &::-webkit-scrollbar {
+    width: 4px;
+    opacity: 0;
+  }
+
+  &:hover::-webkit-scrollbar {
+    background: transparent;
+    opacity: 0.99;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: rgba(3, 46, 79, 0.22);
+    border: 10px solid rgba(0, 0, 0, 0); /* Transparent border together with `background-clip: padding-box` does the trick */
+    background-clip: padding-box;
+    --webkit-border-radius: 20px;
+    height: 50px;
+  }
+}
