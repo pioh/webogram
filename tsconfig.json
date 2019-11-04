@@ -9,7 +9,7 @@
         }
       }
     ],
-    "outDir": "./docs/",
+    "outDir": "./dist/",
     "baseUrl": "./src",
     "sourceMap": true,
     "experimentalDecorators": true,
@@ -39,5 +39,5 @@
     "skipLibCheck": true,
     "lib": ["es2017", "es2018", "dom"]
   },
-  "exclude": ["node_modules", "docs", ".test", ".coverage", "config"]
+  "exclude": ["node_modules", "dist", ".test", ".coverage", "config"]
 }

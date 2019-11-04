@@ -8,10 +8,10 @@
     "severity": "error"
   },
   "linterOptions": {
-    "exclude": ["node_modules", "docs"]
+    "exclude": ["node_modules", "dist"]
   },
   "rulesDirectory": [
-    "node_modules/tslint-eslint-rules/docs/rules",
+    "node_modules/tslint-eslint-rules/dist/rules",
     "node_modules/tslint-microsoft-contrib"
   ],
   "rules": {

@@ -132,7 +132,7 @@ module.exports = {
     {
       apply: compiler => {
         compiler.hooks.afterEmit.tap("AfterEmitPlugin", compilation => {
-          fs.copySync("src/static", "./docs");
+          fs.copySync("src/static", "./dist");
         });
       }
     }
@@ -193,7 +193,7 @@ module.exports = {
   output: {
     filename: "[name].[contenthash].js",
     hashDigestLength: 4,
-    path: path.resolve(__dirname, "docs"),
+    path: path.resolve(__dirname, "dist"),
     publicPath: "",
     pathinfo: false
   },
