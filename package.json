@@ -6,7 +6,7 @@
   "author": "Artemiy Dudko <thepioh@zoho.com>",
   "license": "MIT",
   "scripts": {
-    "gh-pages": "yarn prod && \\cp -r ./dist/* ./",
+    "gh-pages": "rm -rf docs && yarn prod && mv ./dist/ ./docs",
     "prod": "rm -rf dist && NODE_ENV=production yarn webpack",
     "start": "yarn webpack"
   },
