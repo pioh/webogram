@@ -182,7 +182,7 @@ module.exports = {
   output: {
     filename: "[name].[contenthash].js",
     hashDigestLength: 4,
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "docs"),
     publicPath: "",
     pathinfo: false
   },

@@ -1,0 +1,11 @@
+!function(t){function o(e){if(n[e])return n[e].exports;var r=n[e]={i:e,l:!1,exports:{}};return t[e].call(r.exports,r,r.exports,o),r.l=!0,r.exports}var n={};o.m=t,o.c=n,o.d=function(t,n,e){o.o(t,n)||Object.defineProperty(t,n,{enumerable:!0,get:e})},o.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},o.t=function(t,n){if(1&n&&(t=o(t)),8&n)return t;if(4&n&&"object"==typeof t&&t&&t.__esModule)return t;var e=Object.create(null);if(o.r(e),Object.defineProperty(e,"default",{enumerable:!0,value:t}),2&n&&"string"!=typeof t)for(var r in t)o.d(e,r,function(o){return t[o]}.bind(null,r));return e},o.n=function(t){var n=t&&t.__esModule?function(){return t.default}:function(){return t};return o.d(n,"a",n),n},o.o=function(t,o){return Object.prototype.hasOwnProperty.call(t,o)},o.p="",o(o.s=2)}([function(t){t.exports={root:"kfXA",input:"_6J4F"}},function(t){t.exports={root:"_1d6U",logo:"_1ttR"}},function(t,o,n){"use strict";function e(t,...o){let n=document.createElement("template");return n.innerHTML=t.reduce((t,n,e)=>t+n+o[e],"").trim(),n.content.firstChild}n.r(o);var r=n(0);class u{constructor(){this.domRoot=null,this.domInput=null}mount(){return this.domRoot=e`
+      <div class="${r.root}"><input class="${r.input}" /></div>
+    `,this.domInput=this.domRoot.querySelector(`.${r.input}`),this.domRoot}unmount(){this.domRoot&&(this.domRoot.remove(),this.domRoot=null)}}var i=n(1);class s{constructor(){this.rootNode=null,this.phone=new u}mount(){return this.rootNode=e`
+      <div class=${i.root}>
+        <div class=${i.logo}></div>
+        <h1>Sign in to Telegram</h1>
+        <h4>Please confirm your country and</h4>
+        <b>enter your phone number</b>
+      </div>
+    `,this.rootNode.appendChild(this.phone.mount()),this.rootNode}}const l=new class{constructor(){this.signIn=new s}mount(){return this.signIn.mount()}};document.body.appendChild(l.mount())}]);
+//# sourceMappingURL=main.353e.js.map

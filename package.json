@@ -5,6 +5,10 @@
   "repository": "git@github.com:pioh/webogram.git",
   "author": "Artemiy Dudko <thepioh@zoho.com>",
   "license": "MIT",
+  "scripts": {
+    "prod": "rm -rf docs && NODE_ENV=production yarn webpack && google-chrome docs/index.html",
+    "build": "yarn webpack && google-chrome docs/index.html"
+  },
   "devDependencies": {
     "awesome-typescript-loader": "^5.2.1",
     "css-loader": "^3.2.0",
