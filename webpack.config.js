@@ -63,10 +63,59 @@ module.exports = {
         ]
       },
       {
+        test: /\.woff(\?.*)?$/,
+        loader: "url-loader",
+        options: {
+          prefix: "fonts/",
+          name: "[path][name].[ext]",
+          limit: 1,
+          mimetype: "application/font-woff"
+        }
+      },
+      {
+        test: /\.woff2(\?.*)?$/,
+        loader: "url-loader",
+        options: {
+          prefix: "fonts/",
+          name: "[path][name].[ext]",
+          limit: 1,
+          mimetype: "application/font-woff2"
+        }
+      },
+      {
+        test: /\.otf(\?.*)?$/,
+        loader: "file-loader",
+        options: {
+          prefix: "fonts/",
+          name: "[path][name].[ext]",
+          limit: 1,
+          mimetype: "font/opentype"
+        }
+      },
+      {
+        test: /\.ttf(\?.*)?$/,
+        loader: "url-loader",
+        options: {
+          prefix: "fonts/",
+          name: "[path][name].[ext]",
+          limit: 1,
+          mimetype: "application/octet-stream"
+        }
+      },
+      {
+        test: /\.eot(\?.*)?$/,
+        loader: "file-loader",
+        options: {
+          prefix: "fonts/",
+          name: "[path][name].[ext]",
+          limit: 1
+        }
+      },
+      {
         test: /\.svg(\?.*)?$/,
         loader: "svg-url-loader",
         options: {
-          name: "img/[name].[ext]?[hash:3]",
+          name: "img/[name].[ext]",
           limit: 1024,
           stripdeclarations: true,
           noquotes: true
@@ -75,7 +124,7 @@ module.exports = {
       {
         test: /\.(png|jpg)$/,
         loader: "url-loader",
-        options: { name: "img/[name].[ext]?[hash:3]", limit: 1024 }
+        options: { name: "img/[name].[ext]", limit: 1024 }
       },
       {
         test: /\.(js|tsx|jsx|ts|scss|sass|less)$/,

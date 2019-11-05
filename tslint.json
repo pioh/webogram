@@ -26,7 +26,7 @@
         "grouped-imports": true,
         "groups": [
           {
-            "match": "^(components|const|store|lib|static|styles)",
+            "match": "^(components|const|store|lib|static|styles|dictionary)",
             "order": 20
           },
           {
@@ -55,7 +55,16 @@
     "no-default-export": true,
     "no-implicit-dependencies": [
       true,
-      ["components", "theme", "const", "store", "lib", "static", "styles"]
+      [
+        "components",
+        "theme",
+        "const",
+        "store",
+        "lib",
+        "static",
+        "styles",
+        "dictionary"
+      ]
     ],
     "no-submodule-imports": false,
     "no-relative-imports": [true, "allow-siblings"],

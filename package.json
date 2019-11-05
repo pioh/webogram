@@ -8,7 +8,7 @@
   "scripts": {
     "gh-pages": "yarn prod && \\cp -r ./dist/* ./",
     "prod": "rm -rf dist && NODE_ENV=production yarn webpack",
-    "start": "yarn webpack"
+    "start": "yarn webpack --watch"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^5.2.1",
