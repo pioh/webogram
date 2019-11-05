@@ -1,5 +1,6 @@
 .root {
-  width: 360px;
+  max-width: 360px;
+  width: 100%;
   position: relative;
   > label {
     display: none;
@@ -52,11 +53,15 @@ ul.list > li {
   height: 56px;
   padding: 0 16px;
   padding-right: 12px;
-  > img {
+  > i {
     margin-right: 33px;
     width: 23px;
-    height: auto;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
   }
+  display: flex;
+  flex-shrink: 0;
 }
 
 .input,
@@ -73,7 +78,8 @@ ul.list > li {
 ul.list {
   position: absolute;
   top: 100%;
-  margin-top: 8px;
+  margin: 8px 0;
+  background: #fff;
   width: 100%;
   max-height: 376px;
   padding: 10px 0;
@@ -81,6 +87,15 @@ ul.list {
   overflow: hidden;
   overflow-y: scroll;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25), 0px 0px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.upperSelect ul.list {
+  max-height: 445px !important;
+  bottom: 100%;
+  top: auto;
+  flex-direction: column-reverse;
 }
 
 ul.list > li:hover {
@@ -104,5 +119,10 @@ ul.list {
     background-clip: padding-box;
     --webkit-border-radius: 20px;
     height: 50px;
+  }
+  > div {
+    width: 100%;
+    display: flex;
+    flex-shrink: 0;
   }
 }

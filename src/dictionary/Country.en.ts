@@ -1,4 +1,4 @@
-export const Country = [
+export const Country: Array<[string, string, string, string?, string?]> = [
   ["+7 840", "Abkhazia", "AB"],
   ["+7 940", "Abkhazia", "AB"],
   ["+995 44", "Abkhazia", "AB"],
