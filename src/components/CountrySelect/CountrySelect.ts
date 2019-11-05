@@ -1,4 +1,5 @@
 import { html } from "lib/html";
+import { throttle } from "lib/throttle";
 
 import * as s from "./CountrySelect.scss";
 
@@ -44,10 +45,12 @@ export class CountrySelect {
     this.domInput = this.domRoot.querySelector<HTMLInputElement>(
       `.${s.input}`
     )!;
-    this.domInput.addEventListener("focus", this.onFocus);
-    this.domInput.addEventListener("click", this.onFocus);
-    this.domInput.addEventListener("input", this.onInput);
-    this.domInput.addEventListener("blur", this.onBlur);
+    this.domInput.addEventListener("click", this.onInputClick, {
+      passive: true
+    });
+    this.domInput.addEventListener("focus", this.onFocus, { passive: true });
+    this.domInput.addEventListener("input", this.onInput, { passive: true });
+    this.domInput.addEventListener("blur", this.onBlur, { passive: true });
 
     return this.domRoot;
   }
@@ -64,6 +67,9 @@ export class CountrySelect {
   loadCountry() {
     Country = import("dictionary/Country.en");
   }
+  onInputClick = () => {
+    this.mountSelect();
+  };
   onFocus = () => {
     this.mountSelect();
   };
@@ -98,7 +104,11 @@ export class CountrySelect {
     this.domUL.remove();
     this.domUL = null;
     this.class.delete(s.open);
+    this.class.delete(s.upperSelect);
     this.domRoot.setAttribute("class", [...this.class].join(" "));
+    if (this.domInput) {
+      this.domInput.value = this.value;
+    }
   };
   setValue(value: string, code: string) {
     this.value = value;
@@ -136,11 +146,11 @@ export class CountrySelect {
     let r = 1333;
     if (o0 === 0) r -= 200;
     else if (o0 > 0) r -= 100;
-    if (o1 === 0) r -= 20;
-    else if (o1 > 0) r -= 10;
-    if (o2 === 0) r -= 2;
-    else if (o2 > 0) r -= 1;
-    let rate = `${r}${o[1]}`;
+    if (o1 === 0) r -= 2;
+    else if (o1 > 0) r -= 1;
+    if (o2 === 0) r -= 20;
+    else if (o2 > 0) r -= 10;
+    let rate = `${r}${o[0]}`;
     return rate;
   }
   strip(val: string) {
@@ -159,15 +169,15 @@ export class CountrySelect {
     this.domUL = html<HTMLUListElement>`
       <ul class=${s.list}></ul>
     `;
-    this.domUL.addEventListener("scroll", this.onScroll);
+    this.domUL.addEventListener("scroll", this.onScroll, { passive: true });
     this.matchUpOrDown();
-    window.addEventListener("resize", this.onResize);
+    window.addEventListener("resize", this.onResize, { passive: true });
     this.renderOptions();
 
     this.domRoot.appendChild(this.domUL);
     this.class.add(s.open);
     this.domRoot.setAttribute("class", [...this.class].join(" "));
-    window.addEventListener("click", this.onClickOutside);
+    window.addEventListener("click", this.onClickOutside, { passive: true });
     if (this.domUL.style.maxHeight === `${MIN_SELECT_HEIGHT}px`) {
       this.domInput.scrollIntoView();
     }
@@ -175,7 +185,7 @@ export class CountrySelect {
   onScroll = () => {
     this.rerenderListItems();
   };
-  rerenderListItems = () => {
+  rerenderListItems = throttle(10, () => {
     if (!this.domUL) return;
     let offset = this.offset;
     let itemsCount = this.itemsCount;
@@ -195,21 +205,28 @@ export class CountrySelect {
     ] as HTMLDivElement[];
     let lis = Array.prototype.slice.call(this.domUL.querySelectorAll("li"));
     if (this.offset > offset) {
-      lis.splice(0, this.offset - offset).forEach(n => n.remove());
-      itemsCount -= this.offset - offset;
+      let count = this.offset - offset;
+      if (count > itemsCount) count = itemsCount;
+      lis.splice(0, count).forEach(n => n.remove());
+      itemsCount -= count;
       offset = this.offset;
     }
     if (this.itemsCount + this.offset < offset + itemsCount) {
       let diff = offset + itemsCount - this.itemsCount - this.offset;
+      if (diff > itemsCount) diff = itemsCount;
       let removed = lis.splice(itemsCount - diff, diff);
       removed.forEach(n => n.remove());
       itemsCount -= diff;
     }
+    let push: Node[] = [];
+    let unshift: Node[] = [];
+
     if (this.offset < offset) {
-      for (let i = offset - 1; i >= this.offset; i--) {
-        divs[0].after(this.renderLi(i));
+      let count = Math.min(offset - this.offset, this.itemsCount - itemsCount);
+      for (let i = this.offset; i < this.offset + count; i++) {
+        unshift.push(this.renderLi(i));
       }
-      itemsCount += offset - this.offset;
+      itemsCount += count;
       offset = this.offset;
     }
     if (this.itemsCount > itemsCount) {
@@ -218,10 +235,12 @@ export class CountrySelect {
         i < this.itemsCount + this.offset;
         i++
       ) {
-        divs[1].before(this.renderLi(i));
+        push.push(this.renderLi(i));
       }
       itemsCount = this.itemsCount;
     }
+    divs[0].after(...unshift);
+    divs[1].before(...push);
 
     divs[0].style.height = `${this.offset * LI_HEIGHT}px`;
     divs[1].style.height = `${(this.options.length -
@@ -234,10 +253,14 @@ export class CountrySelect {
       this.domUL.scrollTop =
         -this.scroll + this.domUL.scrollHeight - this.domUL.clientHeight;
     }
-  };
+  });
 
   matchListPaddings() {
-    this.itemsCount = Math.ceil(window.innerHeight / LI_HEIGHT);
+    if (!this.domUL) return;
+    let H = this.domUL.clientHeight;
+    if (H < MIN_SELECT_HEIGHT) H = window.innerHeight;
+    else H += LI_HEIGHT * 2;
+    this.itemsCount = Math.ceil(H / LI_HEIGHT);
     this.offset = Math.floor(this.scroll / LI_HEIGHT) - 1;
     if (this.offset >= this.options.length) {
       this.offset = this.options.length - 1;
@@ -250,8 +273,8 @@ export class CountrySelect {
   renderOptions() {
     if (!this.domUL) return;
     this.domUL.innerHTML = "";
-    this.matchListPaddings();
     this.scroll = 0;
+    this.matchListPaddings();
     this.domUL.append(
       html`
         <div style="height: ${this.offset * LI_HEIGHT}px;"></div>
@@ -281,11 +304,15 @@ export class CountrySelect {
         <span>${c[0]}</div>
       </li>
     `;
-    li.addEventListener("click", () => {
-      if (!this.domInput) return;
-      this.setValue(c[1], c[0]);
-      this.close();
-    });
+    li.addEventListener(
+      "click",
+      () => {
+        if (!this.domInput) return;
+        this.setValue(c[1], c[0]);
+        this.close();
+      },
+      { passive: true, once: true }
+    );
     return li;
   }
 }
