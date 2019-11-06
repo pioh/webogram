@@ -10,6 +10,8 @@ html {
     Noto Sans Hebrew, Noto Sans Kannada, Noto Sans Khmer, Noto Sans Lao,
     Noto Sans Osmanya, Noto Sans Tamil, Noto Sans Telugu, Noto Sans Thai,
     sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {

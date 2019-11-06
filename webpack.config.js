@@ -12,7 +12,7 @@ const __PROD__ = process.env.NODE_ENV === "production";
 module.exports = {
   entry: "./src/main.ts",
   target: "web",
-  context: path.resolve(__dirname),
+  context: __dirname,
   cache: true,
   parallelism: 12,
   devtool: "source-map",
@@ -28,7 +28,7 @@ module.exports = {
             usePrecompiledFiles: true,
             logLevel: "info",
             useCache: true,
-            cacheDirectory: path.join(__dirname, "node_modules/.cache/awcache"),
+            cacheDirectory: "node_modules/.cache/awcache",
             forceIsolatedModules: true,
             reportFiles: ["src/**/*.{ts,tsx}", "types/global.d.ts"]
           }
@@ -190,10 +190,7 @@ module.exports = {
     cacheWithContext: true,
     mainFields: ["module", "browser", "main"],
     extensions: [".tsx", ".ts", ".css"],
-    modules: [
-      path.resolve(__dirname, "./src"),
-      path.resolve(__dirname, "./node_modules")
-    ]
+    modules: ["./src", "./node_modules"]
   },
   optimization: __PROD__
     ? {
@@ -242,7 +239,7 @@ module.exports = {
   output: {
     filename: "[name].[contenthash].js",
     hashDigestLength: 4,
-    path: path.resolve(__dirname, "dist"),
+    path: path.join(__dirname, "dist"),
     publicPath: "",
     pathinfo: false
   },
