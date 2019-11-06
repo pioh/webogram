@@ -7,6 +7,10 @@ let Country: Promise<
   typeof import("/home/tema/webogram/src/dictionary/Country.en")
 > | null = null;
 
+let Emoji: Promise<
+  typeof import("/home/tema/webogram/src/dictionary/Emoji")
+> | null = null;
+
 const MIN_SELECT_HEIGHT = 220;
 const LI_HEIGHT = 56;
 
@@ -18,6 +22,8 @@ export class CountrySelect {
   class = new Set([s.root]);
   scroll = 0;
   offset = 0;
+  emoji: Map<string, string> = new Map();
+  country: Array<[string, string, string, string?, string?]> = [];
   itemsCount = 0;
   code = "";
   value = "";
@@ -64,8 +70,19 @@ export class CountrySelect {
     window.removeEventListener("click", this.onClickOutside);
     window.removeEventListener("resize", this.onResize);
   }
-  loadCountry() {
-    Country = import("dictionary/Country.en");
+  async loadCountry() {
+    if (!Country) {
+      Country = new Promise(r =>
+        requestAnimationFrame(() => import("dictionary/Country.en").then(r))
+      );
+    }
+    if (!Emoji) {
+      Emoji = new Promise(r =>
+        requestAnimationFrame(() => import("dictionary/Emoji").then(r))
+      );
+    }
+    this.country = (await Country).Country;
+    this.emoji = (await Emoji).Emoji;
   }
   onInputClick = () => {
     this.mountSelect();
@@ -76,16 +93,16 @@ export class CountrySelect {
   onBlur = () => {};
   onInput = async () => {
     if (!this.domInput) return;
-    let country = await Country;
-    if (!country) return;
+    await Country;
     let val = this.domInput.value;
-    this.options = country.Country.map(
-      o =>
-        [this.rate(val, o), o] as [
-          string,
-          [string, string, string, string?, string?]
-        ]
-    )
+    this.options = this.country
+      .map(
+        o =>
+          [this.rate(val, o), o] as [
+            string,
+            [string, string, string, string?, string?]
+          ]
+      )
       .filter(o => !!o[0])
       .sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
       .map(o => o[1]);
@@ -122,13 +139,17 @@ export class CountrySelect {
   onResize = () => {
     this.matchUpOrDown();
     this.rerenderListItems();
+    if (this.domInput) {
+      this.domInput.scrollIntoView();
+    }
   };
   matchUpOrDown = () => {
     if (!this.domUL || !this.domInput || !this.domRoot) return;
     let inputRect = this.domInput.getBoundingClientRect();
     let maxHeight = window.innerHeight - inputRect.height - inputRect.top - 16;
+    let maxHeightUp = inputRect.top - 16;
     if (maxHeight < MIN_SELECT_HEIGHT) {
-      maxHeight = MIN_SELECT_HEIGHT;
+      maxHeight = Math.max(MIN_SELECT_HEIGHT, maxHeightUp);
       this.class.add(s.upperSelect);
       this.domRoot.setAttribute("class", [...this.class].join(" "));
     } else {
@@ -160,12 +181,12 @@ export class CountrySelect {
       .replace(/[^\w\d]/g, "");
   }
   async mountSelect() {
-    let country = await Country;
-    if (!country) return;
+    await Country;
+    await Emoji;
     if (!this.domInput) return;
     if (!this.domRoot) return;
     if (this.domUL) return;
-    this.options = country.Country;
+    this.options = this.country;
     this.domUL = html<HTMLUListElement>`
       <ul class=${s.list}></ul>
     `;
@@ -178,14 +199,14 @@ export class CountrySelect {
     this.class.add(s.open);
     this.domRoot.setAttribute("class", [...this.class].join(" "));
     window.addEventListener("click", this.onClickOutside, { passive: true });
-    if (this.domUL.style.maxHeight === `${MIN_SELECT_HEIGHT}px`) {
-      this.domInput.scrollIntoView();
-    }
+    // if (this.domUL.style.maxHeight === `${MIN_SELECT_HEIGHT}px`) {
+    this.domInput.scrollIntoView();
+    // }
   }
   onScroll = () => {
     this.rerenderListItems();
   };
-  rerenderListItems = throttle(10, () => {
+  rerenderListItems = throttle(10, async () => {
     if (!this.domUL) return;
     let offset = this.offset;
     let itemsCount = this.itemsCount;
@@ -297,9 +318,14 @@ export class CountrySelect {
   }
   renderLi(index: number) {
     let c = this.options[index];
+    let emoji = this.emoji.get(`:flag_${c[2].toLowerCase()}:`);
+    if (!emoji) console.log(...c);
+    let icon = emoji
+      ? `<i>${emoji}</i>`
+      : `<i style="background-image: url('flags/${c[2].toLowerCase()}.png');"></i>`;
     let li = html<HTMLLIElement>`
       <li role="group" tabindex="-1">
-        <i style="background-image: url('flags/${c[2].toLowerCase()}.png');"></i>
+        ${icon}
         <div>${c[1]}</div>
         <span>${c[0]}</div>
       </li>

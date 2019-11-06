@@ -64,6 +64,8 @@ ul.list > li {
     height: 100%;
     background-repeat: no-repeat;
     background-position: center;
+    display: flex;
+    align-items: center;
   }
   display: flex;
   flex-shrink: 0;
@@ -97,7 +99,6 @@ ul.list {
 }
 
 .upperSelect ul.list {
-  max-height: 445px !important;
   bottom: 100%;
   top: auto;
   flex-direction: column-reverse;

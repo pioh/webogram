@@ -26,7 +26,7 @@
         "grouped-imports": true,
         "groups": [
           {
-            "match": "^(components|const|store|lib|static|styles|dictionary)",
+            "match": "^(components|const|store|lib|static|styles|dictionary|api)",
             "order": 20
           },
           {
@@ -63,7 +63,8 @@
         "lib",
         "static",
         "styles",
-        "dictionary"
+        "dictionary",
+        "api"
       ]
     ],
     "no-submodule-imports": false,
