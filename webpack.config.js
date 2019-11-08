@@ -19,7 +19,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.(?:t|j)sx?$/,
         use: {
           loader: "awesome-typescript-loader",
           options: {
@@ -32,8 +32,8 @@ module.exports = {
             forceIsolatedModules: true,
             reportFiles: ["src/**/*.{ts,tsx}", "types/global.d.ts"]
           }
-        },
-        exclude: /node_modules/
+        }
+        // exclude: /node_modules/
       },
       {
         test: /\.(sa|sc|c)ss$/,

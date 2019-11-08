@@ -16,9 +16,9 @@
     "emitDecoratorMetadata": true,
     "module": "esNext",
     "moduleResolution": "node",
-    "target": "es2017",
+    "target": "esnext",
     "jsx": "react",
-    "allowJs": false,
+    "allowJs": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,
     "allowUnreachableCode": false,
@@ -37,7 +37,7 @@
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
-    "lib": ["es2017", "es2018", "dom"]
+    "lib": ["es2017", "es2018", "dom", "esnext"]
   },
-  "exclude": ["node_modules", "dist", ".test", ".coverage", "config"]
+  "exclude": ["dist", ".test", ".coverage", "config"]
 }

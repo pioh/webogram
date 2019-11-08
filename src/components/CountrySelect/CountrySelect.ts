@@ -1,4 +1,4 @@
-import { html } from "lib/html";
+import * as h from "lib/html";
 import { throttle } from "lib/throttle";
 
 import * as s from "./CountrySelect.scss";
@@ -31,32 +31,28 @@ export class CountrySelect {
   constructor() {
     this.loadCountry();
   }
-
+  get className() {
+    return [...this.class].join(" ");
+  }
   mount(): HTMLElement {
-    this.domRoot = html<HTMLDivElement>`
-      <div class="${[...this.class].join(" ")}">
-        <label for="country-input">Country</label>
-        <input
-          id="country-input"
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="off"
-          spellcheck="false"
-          class="${s.input}"
-          placeholder="Country"
-        />
-        <i></i>
-      </div>
-    `;
-    this.domInput = this.domRoot.querySelector<HTMLInputElement>(
-      `.${s.input}`
-    )!;
-    this.domInput.addEventListener("click", this.onInputClick, {
-      passive: true
-    });
-    this.domInput.addEventListener("focus", this.onFocus, { passive: true });
-    this.domInput.addEventListener("input", this.onInput, { passive: true });
-    this.domInput.addEventListener("blur", this.onBlur, { passive: true });
+    this.domRoot = h.div(
+      h.className(this.className),
+      h.label(h.htmlFor("country-input"), "Country"),
+      h.input(
+        h.id("country-input"),
+        h.className(s.input),
+        h.autocapitalizeOff,
+        h.autocompleteOff,
+        h.autocorrectOff,
+        h.spellcheckOff,
+        h.cb(i => (this.domInput = i)),
+        h.onClick(this.onInputClick, { passive: true }),
+        h.onFocus(this.onFocus, { passive: true }),
+        h.onInput(this.onInput, { passive: true }),
+        h.onBlur(this.onBlur, { passive: true })
+      ),
+      h.i()
+    );
 
     return this.domRoot;
   }
@@ -187,10 +183,10 @@ export class CountrySelect {
     if (!this.domRoot) return;
     if (this.domUL) return;
     this.options = this.country;
-    this.domUL = html<HTMLUListElement>`
-      <ul class=${s.list}></ul>
-    `;
-    this.domUL.addEventListener("scroll", this.onScroll, { passive: true });
+    this.domUL = h.ul(
+      h.className(s.list),
+      h.onScroll(this.onScroll, { passive: true })
+    );
     this.matchUpOrDown();
     window.addEventListener("resize", this.onResize, { passive: true });
     this.renderOptions();
@@ -296,24 +292,19 @@ export class CountrySelect {
     this.domUL.innerHTML = "";
     this.scroll = 0;
     this.matchListPaddings();
-    this.domUL.append(
-      html`
-        <div style="height: ${this.offset * LI_HEIGHT}px;"></div>
-      `
-    );
+    this.domUL.append(h.div(h.style(`height: ${this.offset * LI_HEIGHT}px;`)));
+
     for (let i = 0; i < this.itemsCount; i++) {
       if (i + this.offset >= this.options.length) break;
       this.domUL.appendChild(this.renderLi(i));
     }
     this.domUL.append(
-      html`
-        <div
-          style="height: ${(this.options.length -
-            this.offset -
-            this.itemsCount) *
-            LI_HEIGHT}px;"
-        ></div>
-      `
+      h.div(
+        h.style(
+          `height: ${(this.options.length - this.offset - this.itemsCount) *
+            LI_HEIGHT}px;`
+        )
+      )
     );
   }
   renderLi(index: number) {
@@ -321,24 +312,26 @@ export class CountrySelect {
     let emoji = this.emoji.get(`:flag_${c[2].toLowerCase()}:`);
     if (!emoji) console.log(...c);
     let icon = emoji
-      ? `<i>${emoji}</i>`
-      : `<i style="background-image: url('flags/${c[2].toLowerCase()}.png');"></i>`;
-    let li = html<HTMLLIElement>`
-      <li role="group" tabindex="-1">
-        ${icon}
-        <div>${c[1]}</div>
-        <span>${c[0]}</div>
-      </li>
-    `;
-    li.addEventListener(
-      "click",
-      () => {
-        if (!this.domInput) return;
-        this.setValue(c[1], c[0]);
-        this.close();
-      },
-      { passive: true, once: true }
+      ? h.i(emoji)
+      : h.i(
+          h.style(`background-image: url('flags/${c[2].toLowerCase()}.png');`)
+        );
+    let li = h.li(
+      h.role("group"),
+      h.tabindex("-1"),
+      icon,
+      h.div(c[1]),
+      h.span(c[0]),
+      h.onClick(
+        () => {
+          if (!this.domInput) return;
+          this.setValue(c[1], c[0]);
+          this.close();
+        },
+        { passive: true, once: true }
+      )
     );
+
     return li;
   }
 }
