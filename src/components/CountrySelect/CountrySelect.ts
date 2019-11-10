@@ -66,7 +66,7 @@ export class CountrySelect {
     window.removeEventListener("click", this.onClickOutside);
     window.removeEventListener("resize", this.onResize);
   }
-  async loadCountry() {
+  loadCountry() {
     if (!Country) {
       Country = new Promise(r =>
         requestAnimationFrame(() => import("dictionary/Country.en").then(r))
@@ -77,8 +77,8 @@ export class CountrySelect {
         requestAnimationFrame(() => import("dictionary/Emoji").then(r))
       );
     }
-    this.country = (await Country).Country;
-    this.emoji = (await Emoji).Emoji;
+    Country.then(c => (this.country = c.Country));
+    Emoji.then(e => (this.emoji = e.Emoji));
   }
   onInputClick = () => {
     this.mountSelect();

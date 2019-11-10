@@ -1,4 +1,5 @@
-import { ILong, Long } from "./Long";
+import { ILong } from "./ILong";
+import { Long } from "./Long";
 import { nextRandomInt } from "./nextRandomInt";
 
 export function pqPrimeLong(pq: ILong): [ILong, ILong] {

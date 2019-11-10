@@ -1,4 +1,4 @@
-export type ILong = [number, number]; // [low, high]
+import { ILong } from "./ILong";
 
 export const ILongFromBigEndian = (v: Uint8Array): ILong =>
   [

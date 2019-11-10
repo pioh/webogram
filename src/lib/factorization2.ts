@@ -1,5 +1,7 @@
 import { BigInteger } from "jsbn";
 
+import { GetRandomValues } from "./GetRandomValues";
+
 const MAX_UINT32 = new BigInteger([1]).pow(32).subtract(BigInteger.ONE); // 1 << 32;
 const MAX_UINT32p1 = new BigInteger([1]).pow(32); // 1 << 32;
 
@@ -34,10 +36,10 @@ const buf2 = new Uint8Array(8);
 
 function rand(n: BigInteger) {
   if (n <= MAX_UINT32) {
-    crypto.getRandomValues(buf1);
+    GetRandomValues(buf1);
     return new BigInteger([...buf1]).mod(n).abs();
   }
-  crypto.getRandomValues(buf2);
+  GetRandomValues(buf2);
   return new BigInteger([...buf1]).mod(n).abs();
 }
 

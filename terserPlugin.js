@@ -5,7 +5,7 @@ module.exports.terserPlugin = new TerserPlugin({
 
   parallel: true,
   cache: true,
-  sourceMap: true,
+  sourceMap: false,
   terserOptions: {
     warnings: false,
     // ecma: 5,
@@ -24,7 +24,7 @@ module.exports.terserPlugin = new TerserPlugin({
       // },
     },
     output: {
-      ecma: 5
+      ecma: 6
     },
     compress: {
       drop_console: true,
@@ -48,7 +48,7 @@ module.exports.terserPlugin = new TerserPlugin({
       // toplevel: true,
     },
     comments: false,
-    sourceMap: true,
+    sourceMap: false,
     toplevel: true
   }
 });

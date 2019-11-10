@@ -3,36 +3,38 @@ const fs = require("fs-extra");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin");
+const WorkerPlugin = require("worker-plugin");
+const ClosurePlugin = require("closure-webpack-plugin");
 
 const { terserPlugin } = require("./terserPlugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 const __PROD__ = process.env.NODE_ENV === "production";
-
+const tsLoader = {
+  loader: "awesome-typescript-loader",
+  options: {
+    extensions: [".ts"],
+    configFileName: "tsconfig.json",
+    usePrecompiledFiles: true,
+    logLevel: "info",
+    useCache: true,
+    cacheDirectory: "node_modules/.cache/awcache",
+    forceIsolatedModules: true,
+    reportFiles: ["src/**/*.{ts,tsx}", "types/global.d.ts"]
+  }
+};
 module.exports = {
   entry: "./src/main.ts",
   target: "web",
   context: __dirname,
   cache: true,
   parallelism: 12,
-  devtool: "source-map",
+  devtool: void 0, //"source-map",
   module: {
     rules: [
       {
-        test: /\.(?:t|j)sx?$/,
-        use: {
-          loader: "awesome-typescript-loader",
-          options: {
-            extensions: [".ts"],
-            configFileName: "tsconfig.json",
-            usePrecompiledFiles: true,
-            logLevel: "info",
-            useCache: true,
-            cacheDirectory: "node_modules/.cache/awcache",
-            forceIsolatedModules: true,
-            reportFiles: ["src/**/*.{ts,tsx}", "types/global.d.ts"]
-          }
-        }
+        test: /(?!:worker)\.(?:t|j)sx?$/,
+        use: tsLoader
         // exclude: /node_modules/
       },
       {
@@ -57,7 +59,7 @@ module.exports = {
               sassOptions: {
                 includePaths: ["src/styles", "node_modules"]
               },
-              sourceMap: true
+              sourceMap: false
             }
           }
         ]
@@ -122,15 +124,19 @@ module.exports = {
         }
       },
       {
+        test: /crypto.worker\.(?:ts|js)$/,
+        use: [{ loader: "worker-loader", options: { inline: false } }, tsLoader]
+      },
+      {
         test: /\.(png|jpg)$/,
         loader: "url-loader",
         options: { name: "img/[name].[ext]", limit: 1024 }
-      },
-      {
-        test: /\.(js|tsx|jsx|ts|scss|sass|less)$/,
-        use: ["source-map-loader"],
-        enforce: "pre"
       }
+      // {
+      //   test: /\.(js|tsx|jsx|ts|scss|sass|less)$/,
+      //   use: ["source-map-loader"],
+      //   enforce: "pre"
+      // }
     ]
   },
   plugins: [
@@ -196,7 +202,6 @@ module.exports = {
     ? {
         minimize: true,
         minimizer: [
-          terserPlugin,
           new OptimizeCSSAssetsPlugin({
             assetNameRegExp: /\.css$/g,
             cssProcessor: require("cssnano"),
@@ -220,7 +225,8 @@ module.exports = {
               ]
             },
             canPrint: true
-          })
+          }),
+          terserPlugin
         ],
         namedModules: false, // NamedModulesPlugin()
         removeAvailableModules: true,
@@ -241,7 +247,8 @@ module.exports = {
     hashDigestLength: 4,
     path: path.join(__dirname, "dist"),
     publicPath: "",
-    pathinfo: false
+    pathinfo: false,
+    globalObject: "window"
   },
   mode: __PROD__ ? "production" : "development"
 };

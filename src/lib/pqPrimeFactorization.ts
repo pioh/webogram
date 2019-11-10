@@ -21,8 +21,11 @@ import { nextRandomInt } from "./nextRandomInt";
 export const mask = 32767;
 
 export function pqPrimeFactorization(pq: Uint8Array) {
+  // console.time("pqPrimeFactorization");
   let s = bytesToHex(pq);
-  return pqPrimeLeemon(str2bigInt(s, 16, Math.ceil(64 / bpe) + 1));
+  let p_q = pqPrimeLeemon(str2bigInt(s, 16, Math.ceil(64 / bpe) + 1));
+  // console.timeEnd("pqPrimeFactorization");
+  return p_q;
 }
 
 function pqPrimeLeemon(what: number[]) {
@@ -40,14 +43,16 @@ function pqPrimeLeemon(what: number[]) {
   let z = new Array(minLen);
   let x = new Array(minLen);
   let y = new Array(minLen);
+  let i = 0;
+  let j = 0;
 
-  for (let i = 0; i < 3; i++) {
+  for (i = 0; i < 3; i++) {
     let q = (nextRandomInt(128) & 15) + 17;
     copyInt_(x, nextRandomInt(1000000000) + 1);
     copy_(y, x);
     let lim = 1 << (i + 18);
 
-    for (let j = 1; j < lim; j++) {
+    for (j = 1; j < lim; j++) {
       copy_(a, x);
       copy_(b, x);
       copyInt_(c, q);
@@ -88,7 +93,6 @@ function pqPrimeLeemon(what: number[]) {
   }
 
   divide_(what, g, x, y);
-
   let P;
   if (greater(g, x)) {
     P = x;

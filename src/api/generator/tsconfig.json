@@ -9,14 +9,14 @@
         }
       }
     ],
-    "outDir": "./dist/",
-    "baseUrl": "./src",
+    "outDir": "./",
+    "baseUrl": "./",
     "sourceMap": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "module": "esnext",
+    "module": "none",
     "moduleResolution": "node",
-    "target": "es2016",
+    "target": "esnext",
     "jsx": "react",
     "allowJs": true,
     "noUnusedLocals": true,
@@ -37,7 +37,9 @@
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
-    "lib": ["es2017", "es2018", "dom", "esnext"]
+    "lib": ["es2017", "es2018", "esnext"]
   },
+  "files": ["./generator.ts"],
+  "include": ["./generator.ts"],
   "exclude": ["dist", ".test", ".coverage", "config"]
 }

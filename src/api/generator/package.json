@@ -1,0 +1,18 @@
+{
+  "name": "generator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/camelcase": "^5.2.0",
+    "camelcase": "^5.3.1",
+    "tslint-eslint-rules": "^5.4.0"
+  },
+  "scripts": {
+    "start": "tsc && node generator.js && rm -rf ./*.js && yarn tslint --force --fix -q *.gen.ts 2>/dev/null 1>/dev/null && prettier --write *.gen.ts "
+  },
+  "dependencies": {
+    "tslint": "^5.20.1",
+    "tslint-microsoft-contrib": "^6.2.0"
+  }
+}
