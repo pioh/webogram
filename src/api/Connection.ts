@@ -6,46 +6,54 @@ import { bytesXor } from "lib/bytesXor";
 import { GetRandomValues } from "lib/GetRandomValues";
 import { ILong } from "lib/ILong";
 import { nextRandomInt } from "lib/nextRandomInt";
+import { ungzip } from "lib/pako.js";
 import { Sha1 } from "lib/Sha1";
 import { WorkerClient } from "lib/WorkerClient";
 
 import { ByteBuffer } from "./ByteBuffer";
-import { TMxInvokeWithLayer } from "./generator/ApiShema.gen";
 import {
-  TMessage,
-  TRpcResult,
-  XMsgsTAck,
-  XMsgTContainer,
-  XNewTSessionTCreated,
-  XRpcTResult
+  HelpGetConfigM,
+  InitConnectionM,
+  InvokeWithLayerM
+} from "./generator/ApiShema.gen";
+import {
+  BadServerSaltS,
+  GzipPackedS,
+  HttpWaitM,
+  MessageT,
+  MsgContainerS,
+  MsgDetailedInfoS,
+  MsgNewDetailedInfoS,
+  MsgsAckS,
+  NewSessionCreatedS,
+  RpcErrorS,
+  RpcResultS
 } from "./generator/MTprotoShema.gen";
 import { NewNonce } from "./nonce";
 import {
-  BadServerSalt,
-  IMethod,
-  ITypeStruct,
   MethodReqDHParams,
   MethodReqPq,
   MethodSetClientDHParams,
-  RpcError,
-  RpcResult,
   TypeClientDHInnerData,
   TypeDHGenOk,
-  TypeInitLayer,
-  TypeMsgContainer,
-  TypeNewSession,
   TypePQInnerData,
   TypeResDHParamsFail,
   TypeResDHParamsInner,
   TypeResDHParamsOk,
   TypeResPQ
 } from "./schema";
-import { IStruct, OneOf } from "./SchemaHelpers";
+import { IStruct, OneOf, TMethod } from "./SchemaHelpers";
 import { TimeStore } from "./TimeStore";
 
 export interface IConnectionProps {
   timeStore: TimeStore;
 }
+
+const ID = (id: ILong) =>
+  id[0]
+    .toString(16)
+    .toUpperCase()
+    .slice(-6, -2);
 
 export class Connection {
   private props: IConnectionProps;
@@ -78,17 +86,16 @@ export class Connection {
   private initing = false;
   private seq_no = 0;
   connectionInited = false;
-
-  private requests = new Map<
-    string,
-    { method: IMethod; params: any[]; next: (...data: any[]) => void }
-  >();
+  isDebug = true;
+  acks: ILong[] = [];
+  sentAcks = new Set<string>();
 
   private sending = new Map<
     string,
     {
-      responseReader: (instance: IStruct | null, buf: ByteBuffer) => void;
+      responseReader: (instance: IStruct) => void;
       request: IStruct;
+      name: string;
     }
   >();
 
@@ -133,48 +140,58 @@ export class Connection {
     let msg_len = responseBuffer.readInt();
 
     this.props.timeStore.syncWithServer(clientMsgID, serverMsgID, ping);
-    console.log(JSON.stringify({ auth_key_id, msg_id: serverMsgID, msg_len }));
 
     return responseBuffer;
   }
 
-  // async sendInitConnection() {
-  //   await this.sendRequest()
-  //   requestBuf.writeStruct(TypeInitLayer, [105]);
-  //   requestBuf.writeStruct(TypeInitConnection, [
-  //     0,
-  //     25282,
-  //     navigator.userAgent || "Unknown UserAgent",
-  //     navigator.platform || "Unknown Platform",
-  //     "1.0.0",
-  //     navigator.language || "en",
-  //     "",
-  //     navigator.language || "en"
-  //   ]);
-  //   this.connectionInited = true;
-  // }
   async send(
-    request: IStruct,
-    responseReader: (instance: IStruct | null, buf: ByteBuffer) => void
+    name: string,
+    request: TMethod,
+    responseReader?: (instance: IStruct) => void
   ) {
-    let m = this.nextMsg().set_body(new OneOf().set(request));
-    let waiter = { request, responseReader };
-    this.sending.set(m.get_msg_id().join(), waiter);
+    if (!this.connectionInited) {
+      if (this.isDebug) console.log("send initConnection");
+      request = new InvokeWithLayerM().set_layer(105).set_query(
+        new InitConnectionM()
+          .set_api_id(25282)
+          .set_app_version("1.0.0")
+          .set_device_model(navigator.userAgent || "Unknown UserAgent")
+          .set_system_version(navigator.platform || "Unknown Platform")
+          .set_lang_code(navigator.language || "en")
+          .set_system_lang_code(navigator.language || "en")
+          .set_query(request)
+      );
+    }
+    let messages = [this.nextMsg(name).set_body(request)];
+    if (responseReader) {
+      let waiter = { request, responseReader, name };
+      this.sending.set(messages[0].get_msg_id().join(), waiter);
+    }
+    if (this.acks.length) {
+      messages.push(
+        this.nextMsg("acks", false).set_body(
+          new MsgsAckS().set_msg_ids(this.acks)
+        )
+      );
+      console.log("SEND acks", this.acks);
+      this.acks = [];
+    }
+    let message =
+      messages.length === 1
+        ? messages[0]
+        : this.nextMsg("container", false).set_body(
+            new MsgContainerS().set_messages(messages)
+          );
 
+    if (this.isDebug) console.log("send " + name);
+    await this.sendMessage(name, message);
+  }
+  async sendMessage(name: string, m: MessageT) {
     let req = new ByteBuffer();
     req.writeU8A(this.serverSalt);
     req.writeU8A(this.session);
-
-    this.nextMsg(false)
-      .set_body(
-        new OneOf(
-          new TMxInvokeWithLayer()
-            .set_layer(105)
-            .set_query(new OneOf(new XMsgTContainer().set_messages([m])))
-        )
-      )
-      ._write(req, true);
-
+    m._write(req, true);
+    // console.log(m);
     let padding = 16 - ((req.size * 4) % 16) + 16 * (1 + nextRandomInt(5));
     req.writeU8A(GetRandomValues(new Uint8Array(padding)));
     let msgKey = await this.getMsgKey(req.getBuffer8(), true);
@@ -185,29 +202,32 @@ export class Connection {
       aesKey,
       aesIv
     );
-
     let reqWrap = new ByteBuffer();
-
     reqWrap.writeU8A(this.authKeyID);
     reqWrap.writeU8A(msgKey);
     reqWrap.writeU8A(encrypted);
-
-    fetch(GetDcHref(2, true), {
+    let response = await fetch(GetDcHref(2, true), {
       method: "POST",
       body: reqWrap.getBuffer32(),
       mode: "cors"
-    }).then(response => this.sendOnResponse(response));
+    });
+    if (this.isDebug) console.log("sent " + name);
+    this.connectionInited = true;
+    await this.sendOnResponse(response);
   }
-  nextMsg(main = true): TMessage {
-    let m = new TMessage();
+  nextMsg(name: string, main = true): MessageT {
+    let m = new MessageT();
     this.seq_no++;
-    if ((this.seq_no % 2 && main) || (!(this.seq_no % 2) && !main)) {
+    if ((this.seq_no % 2 && !main) || (!(this.seq_no % 2) && main)) {
       this.seq_no++;
     }
     m.set_msg_id(this.props.timeStore.generateMessageID());
     m.set_seqno(this.seq_no);
+    if (this.isDebug)
+      console.log(`msg id for ${name} ${ID(m.get_msg_id())} ${m.get_msg_id()}`);
     return m;
   }
+
   async sendOnResponse(response: Response) {
     let responseBuffer = new ByteBuffer(
       new Uint32Array(await response.arrayBuffer())
@@ -225,182 +245,114 @@ export class Connection {
     assertEquals(msgKey, serverMsgKey);
 
     let decryptedBuffer = new ByteBuffer(decrypted);
-    // res.requests = this.requests;
     decryptedBuffer.readU8A(2); // salt
     let session = decryptedBuffer.readU8A(2);
     assertEquals(this.session, session);
-    let res = new TMessage()._read(decryptedBuffer, true);
-    console.log(res);
-
-    console.log(res.get_msg_id(), res.get_bytes());
-    this.processMessage(res);
+    let res = new MessageT()._read(decryptedBuffer, true);
+    await this.processMessage(res);
   }
-  processMessage(m: TMessage) {
-    let body = m.get_body().unwrap();
-    if (body instanceof XRpcTResult) {
-      this.processRpcResult(m, body);
-    } else if (body instanceof XMsgTContainer) {
-      for (let msg of body.get_messages()) this.processMessage(msg);
-    } else if (body instanceof XNewTSessionTCreated) {
+  async processMessage(m: MessageT | IStruct) {
+    let body = m;
+    if (m instanceof MessageT) {
+      body = m.get_body();
+      this.acks.push(m.get_msg_id());
+    }
+
+    if (body instanceof OneOf) body = body.unwrap();
+    switch (Object.getPrototypeOf(body).constructor) {
+      case MsgDetailedInfoS:
+      case MsgNewDetailedInfoS:
+        return;
+    }
+
+    if (body instanceof RpcResultS) {
+      this.processRpcResult(body);
+    } else if (body instanceof MsgContainerS) {
+      for (let msg of body.get_messages()) {
+        await this.processMessage(msg);
+      }
+    } else if (body instanceof GzipPackedS) {
+      let data = body.get_packed_data();
+      let buf = new ByteBuffer(ungzip(data));
+      let next = new OneOf()._read(buf);
+      await this.processMessage(next);
+    } else if (body instanceof NewSessionCreatedS) {
+      if (this.isDebug) console.log("XNewTSessionTCreated");
       this.serverSalt = new Uint8Array(
         new Uint32Array(body.get_server_salt()).buffer
       );
-    } else if (body instanceof XMsgsTAck) {
+    } else if (body instanceof BadServerSaltS) {
+      this.serverSalt = new Uint8Array(
+        new Uint32Array(body.get_new_server_salt()).buffer
+      );
+    } else if (body instanceof MsgsAckS) {
+      body.get_msg_ids().forEach(id => this.sentAcks.delete(id.join()));
     } else {
-      console.error("unexpected msg", m);
+      if ("get_msg_id" in body) {
+        let id = (body as any).get_msg_id() as ILong;
+        if (Array.isArray(id) && this.sending.has(id.join())) {
+          let w = this.sending.get(id.join())!;
+          this.sending.delete(id.join());
+          if (this.isDebug)
+            console.log(
+              "receive " + w.name,
+              Object.getPrototypeOf(body).constructor.name,
+              body
+            );
+          w.responseReader(body);
+          return;
+        }
+      }
+      console.error(
+        "unexpected msg",
+        Object.getPrototypeOf(body).constructor.name,
+        body
+      );
     }
   }
-  processRpcResult(m: TMessage, r: XRpcTResult) {
+  processRpcResult(r: RpcResultS) {
     let id = r.get_req_msg_id();
+    let instance = r.get_result();
+    if (instance instanceof GzipPackedS) {
+      let data = instance.get_packed_data();
+      let buf = new ByteBuffer(ungzip(data));
+      instance = new OneOf()._read(buf);
+    }
+    if (instance instanceof OneOf) instance = instance.unwrap();
     if (this.sending.has(id.join())) {
       let w = this.sending.get(id.join())!;
       this.sending.delete(id.join());
-      let instance = m.get_body().unwrap();
-      w.responseReader(instance, new ByteBuffer(m.buf.slice(8)));
-      // w.responseReader(m);
+      if (this.isDebug)
+        console.log(
+          "receive " + w.name,
+          Object.getPrototypeOf(instance).constructor.name,
+          instance
+        );
+      if (instance instanceof RpcErrorS) {
+        if (this.isDebug)
+          console.error(
+            "rpc error for " + w.name,
+            instance.get_error_code(),
+            instance.get_error_message()
+          );
+      }
+      w.responseReader(instance);
       return;
     }
-    console.error("unexpected rpc result", r);
-  }
-
-  async sendRequest(method: IMethod, params: any[]) {
-    let requestBuf = new ByteBuffer();
-    requestBuf.writeStruct(TypeInitLayer, [105]);
-    requestBuf.writeStruct(method, params);
-
-    let clientMsgID = this.props.timeStore.generateMessageID();
-    let waiter = { method, params, next: (...data: any[]) => {} };
-    let promise = new Promise<any[]>(r => (waiter.next = r));
-    this.requests.set(clientMsgID.join(), waiter);
-
-    let req = new ByteBuffer();
-
-    req.writeU8A(this.serverSalt);
-    req.writeU8A(this.session);
-
-    req.writeLong(clientMsgID);
-    req.writeInt(this.seq_no++);
-    req.writeInt(requestBuf.size * 4);
-    req.append(requestBuf);
-
-    let padding = 16 - ((req.size * 4) % 16) + 16 * (1 + nextRandomInt(5));
-    req.writeU8A(GetRandomValues(new Uint8Array(padding)));
-    let msgKey = await this.getMsgKey(req.getBuffer8(), true);
-    let [aesKey, aesIv] = await this.getMsgAesKeyIv(msgKey, true);
-
-    let encrypted = await this.worker.aesEncrypt(
-      req.getBuffer8(),
-      aesKey,
-      aesIv
-    );
-
-    let reqWrap = new ByteBuffer();
-
-    reqWrap.writeU8A(this.authKeyID);
-    reqWrap.writeU8A(msgKey);
-    reqWrap.writeU8A(encrypted);
-
-    fetch(GetDcHref(2, true), {
-      method: "POST",
-      body: reqWrap.getBuffer32(),
-      mode: "cors"
-    }).then(response => this.sendRequestOnResponse(response));
-
-    return promise;
-  }
-  async sendRequestOnResponse(response: Response) {
-    let responseBuffer = new ByteBuffer(
-      new Uint32Array(await response.arrayBuffer())
-    );
-
-    let authKeyID = responseBuffer.readU8A(2);
-    assertEquals(authKeyID, this.authKeyID);
-    let serverMsgKey = responseBuffer.readU8A(4);
-    let encrypted = responseBuffer.readU8A(
-      responseBuffer.size - responseBuffer.offset
-    );
-    let [aesKey, aesIv] = await this.getMsgAesKeyIv(serverMsgKey, false);
-    let decrypted = await this.worker.aesDecrypt(encrypted, aesKey, aesIv);
-    let msgKey = await this.getMsgKey(decrypted, false);
-    assertEquals(msgKey, serverMsgKey);
-
-    let res = new ByteBuffer(decrypted);
-    res.requests = this.requests;
-    res.readU8A(2); // salt
-    let session = res.readU8A(2);
-    let msgId = res.readLong();
-    assertEquals(this.session, session);
-    let seqNo = res.readInt();
-    let msgLen = res.readInt();
-    console.log(JSON.stringify({ msgId, seqNo, msgLen }));
-    if (msgLen % 4 || msgLen / 4 > res.size - res.offset) {
-      throw new Error("bad len");
+    if (instance instanceof RpcErrorS) {
+      if (this.isDebug)
+        console.error(
+          "rpc error for " + ID(id),
+          instance.get_error_code(),
+          instance.get_error_message()
+        );
+      return;
     }
-    res.size = res.offset + msgLen / 4;
-
-    // this.props.timeStore.syncWithServer(clientMsgID, serverMsgID, ping);
-    // console.log(JSON.stringify({ auth_key_id, msg_id: serverMsgID, msg_len }));
-    // let [t, [...messages]] = res.readStruct();
-    // if (t !== TypeMsgContainer) throw new Error("not msg container");
-
-    return this.processMessages(res.readStruct());
-  }
-
-  processMessages(m: any): [ITypeStruct, ...any[]] {
-    let messages = m[1];
-    if (m[0] !== TypeMsgContainer) messages = [[, , , m]];
-
-    return messages
-      .map(([id, , , msg]: any) => [id, msg])
-      .filter(([id, m]: [ILong, [ITypeStruct, ...any[]]]) => {
-        // if (this.requests.has(id.join())) {
-        //   let waiter = this.requests.get(id.join())!;
-        //   this.requests.delete(id.join());
-        //   waiter.next(m);
-        //   return false;
-        // }
-        if (this.requests.has(m[1].join())) {
-          let waiter = this.requests.get(m[1].join())!;
-          if (
-            m[0] === RpcError ||
-            waiter.method.slice(2).find(t => m[0] === t)
-          ) {
-            this.requests.delete(m[1].join());
-            waiter.next(m);
-            return false;
-          }
-        }
-        let serverSalt;
-        switch (m[0]) {
-          case BadServerSalt:
-            [, , , , serverSalt] = m;
-            this.serverSalt = serverSalt.slice();
-            return false;
-          case TypeNewSession:
-            [, , , serverSalt] = m;
-            this.serverSalt = serverSalt.slice();
-            return false;
-          case RpcResult:
-            if (this.requests.has(m[1].join())) {
-              let waiter = this.requests.get(m[1].join())!;
-              if (
-                m[2][0] === RpcError ||
-                waiter.method.slice(2).find(t => m[2][0] === t)
-              ) {
-                this.requests.delete(m[1].join());
-                waiter.next(m[2]);
-                return false;
-              }
-            }
-            return true;
-          default:
-            return true;
-        }
-      })
-      .map(([id, m]: [ILong, [ITypeStruct, ...any[]]]) => {
-        console.error("unexpected message", id.join(), m);
-        return m;
-      });
+    console.error(
+      "unexpected rpc result for " + ID(id),
+      Object.getPrototypeOf(instance).constructor.name,
+      instance
+    );
   }
 
   async getMsgKey(req: Uint8Array, isOut: boolean) {
@@ -452,6 +404,8 @@ export class Connection {
         await this.fetchPQ();
         await this.fetchDHParams();
         await this.mtpSendSetClientDhParams();
+        await this.send("start get config", new HelpGetConfigM(), () => {});
+        this.longPool();
         this.inited = true;
 
         while (this.callbacks.length) {
@@ -465,7 +419,22 @@ export class Connection {
       }
     }
   }
+  // longPoolID = "";
+  private async longPool() {
+    // if (!force && this.longPoolID) return;
+    // let m =
+    this.send(
+      "http_wait",
+      new HttpWaitM()
+        .set_max_delay(500)
+        .set_max_wait(25000)
+        .set_wait_after(150)
+    ).then(() => this.longPool());
+    // this.longPoolID = m.get_msg_id().join();
+    // this.sendMessage("long pool", m)
+  }
   private async fetchPQ() {
+    if (this.isDebug) console.log("fetch pq");
     let req = new ByteBuffer();
     this.writeTempHeader(req);
     req.writeStruct(MethodReqPq, [this.nonce]);
@@ -483,6 +452,7 @@ export class Connection {
   }
 
   private async fetchDHParams() {
+    if (this.isDebug) console.log("fetchDHParams");
     let dataWithHash = new ByteBuffer();
     dataWithHash.padding(5); // for sha1
     dataWithHash.writeStruct(TypePQInnerData, [
@@ -534,6 +504,7 @@ export class Connection {
   }
 
   private async decryptServerDHData(encryptedData: Uint8Array) {
+    if (this.isDebug) console.log("decryptServerDHData");
     let [
       shaServerNewNonce,
       shaNewNewNonce,
@@ -578,6 +549,7 @@ export class Connection {
   }
 
   private async mtpSendSetClientDhParams() {
+    if (this.isDebug) console.log("mtpSendSetClientDhParams");
     let b = GetRandomValues(new Uint8Array(2048 / 8));
     let gb = await this.worker.modPow(
       bytesFromHex(this.g.toString(16)),

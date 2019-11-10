@@ -1,18 +1,26 @@
 import { ApiInvoker } from "../ApiInvoker";
 import { ByteBuffer } from "../ByteBuffer";
-import { AllStructs, IStruct, OneOf, panic, ProtoLong } from "../SchemaHelpers";
+import {
+  AllStructs,
+  IStruct,
+  OneOf,
+  panic,
+  ProtoLong,
+  TMethod
+} from "../SchemaHelpers";
 
 /**
  * vector:Vector t
  * #1cb5c415:481674261:481674261
  *
  */
-export class XVector {
+export class VectorS {
   static _id = 0x1cb5c415;
+
   _values = [] as any[];
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XVector._id);
+    if (!noId) buf.writeInt(VectorS._id);
 
     buf.writeInt(this._values.length);
     for (let i = 0; i < this._values.length; i++) {
@@ -24,19 +32,19 @@ export class XVector {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XVector._id) panic(id.toString(16));
+      if (id !== VectorS._id) panic(id.toString(16));
     }
 
     let len = buf.readInt();
     for (let i = 0; i < len; i++) {
-      let item = new OneOf()._read(buf).unwrap();
+      let item = new OneOf()._read(buf);
       this._values.push(item);
     }
 
     return this;
   }
 }
-AllStructs.set(XVector._id, XVector);
+AllStructs.set(VectorS._id, VectorS);
 
 /**
  * resPQ:ResPQ
@@ -46,8 +54,9 @@ AllStructs.set(XVector._id, XVector);
  * pq:bytes
  * server_public_key_fingerprints:Vector<long>
  */
-export class XResPq {
+export class ResPqS {
   static _id = 0x5162463;
+
   _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array(), []] as [
     Uint8Array,
     Uint8Array,
@@ -92,7 +101,7 @@ export class XResPq {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XResPq._id);
+    if (!noId) buf.writeInt(ResPqS._id);
 
     let values = this._values;
 
@@ -128,7 +137,7 @@ export class XResPq {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XResPq._id) panic(id.toString(16));
+      if (id !== ResPqS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -169,7 +178,7 @@ export class XResPq {
     return this;
   }
 }
-AllStructs.set(XResPq._id, XResPq);
+AllStructs.set(ResPqS._id, ResPqS);
 
 /**
  * p_q_inner_data:P_Q_inner_data
@@ -181,8 +190,9 @@ AllStructs.set(XResPq._id, XResPq);
  * server_nonce:int128
  * new_nonce:int256
  */
-export class XPTQTInnerTData {
+export class PQInnerDataS {
   static _id = 0x83c95aec;
+
   _values = [
     new Uint8Array(),
     new Uint8Array(),
@@ -247,7 +257,7 @@ export class XPTQTInnerTData {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XPTQTInnerTData._id);
+    if (!noId) buf.writeInt(PQInnerDataS._id);
 
     let values = this._values;
 
@@ -286,7 +296,7 @@ export class XPTQTInnerTData {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XPTQTInnerTData._id) panic(id.toString(16));
+      if (id !== PQInnerDataS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -329,7 +339,7 @@ export class XPTQTInnerTData {
     return this;
   }
 }
-AllStructs.set(XPTQTInnerTData._id, XPTQTInnerTData);
+AllStructs.set(PQInnerDataS._id, PQInnerDataS);
 
 /**
  * p_q_inner_data_temp:P_Q_inner_data
@@ -342,8 +352,9 @@ AllStructs.set(XPTQTInnerTData._id, XPTQTInnerTData);
  * new_nonce:int256
  * expires_in:int
  */
-export class XPTQTInnerTDataTTemp {
+export class PQInnerDataTempS {
   static _id = 0x3c6a84d4;
+
   _values = [
     new Uint8Array(),
     new Uint8Array(),
@@ -426,7 +437,7 @@ export class XPTQTInnerTDataTTemp {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XPTQTInnerTDataTTemp._id);
+    if (!noId) buf.writeInt(PQInnerDataTempS._id);
 
     let values = this._values;
 
@@ -470,7 +481,7 @@ export class XPTQTInnerTDataTTemp {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XPTQTInnerTDataTTemp._id) panic(id.toString(16));
+      if (id !== PQInnerDataTempS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -519,7 +530,7 @@ export class XPTQTInnerTDataTTemp {
     return this;
   }
 }
-AllStructs.set(XPTQTInnerTDataTTemp._id, XPTQTInnerTDataTTemp);
+AllStructs.set(PQInnerDataTempS._id, PQInnerDataTempS);
 
 /**
  * server_DH_params_fail:Server_DH_Params
@@ -528,8 +539,9 @@ AllStructs.set(XPTQTInnerTDataTTemp._id, XPTQTInnerTDataTTemp);
  * server_nonce:int128
  * new_nonce_hash:int128
  */
-export class XServerXDhTParamsTFail {
+export class ServerDhParamsFailS {
   static _id = 0x79cb045d;
+
   _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array(16)] as [
     Uint8Array,
     Uint8Array,
@@ -564,7 +576,7 @@ export class XServerXDhTParamsTFail {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XServerXDhTParamsTFail._id);
+    if (!noId) buf.writeInt(ServerDhParamsFailS._id);
 
     let values = this._values;
 
@@ -588,7 +600,7 @@ export class XServerXDhTParamsTFail {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XServerXDhTParamsTFail._id) panic(id.toString(16));
+      if (id !== ServerDhParamsFailS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -613,7 +625,7 @@ export class XServerXDhTParamsTFail {
     return this;
   }
 }
-AllStructs.set(XServerXDhTParamsTFail._id, XServerXDhTParamsTFail);
+AllStructs.set(ServerDhParamsFailS._id, ServerDhParamsFailS);
 
 /**
  * server_DH_params_ok:Server_DH_Params
@@ -622,8 +634,9 @@ AllStructs.set(XServerXDhTParamsTFail._id, XServerXDhTParamsTFail);
  * server_nonce:int128
  * encrypted_answer:bytes
  */
-export class XServerXDhTParamsTOk {
+export class ServerDhParamsOkS {
   static _id = 0xd0e8075c;
+
   _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array()] as [
     Uint8Array,
     Uint8Array,
@@ -658,7 +671,7 @@ export class XServerXDhTParamsTOk {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XServerXDhTParamsTOk._id);
+    if (!noId) buf.writeInt(ServerDhParamsOkS._id);
 
     let values = this._values;
 
@@ -682,7 +695,7 @@ export class XServerXDhTParamsTOk {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XServerXDhTParamsTOk._id) panic(id.toString(16));
+      if (id !== ServerDhParamsOkS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -707,7 +720,7 @@ export class XServerXDhTParamsTOk {
     return this;
   }
 }
-AllStructs.set(XServerXDhTParamsTOk._id, XServerXDhTParamsTOk);
+AllStructs.set(ServerDhParamsOkS._id, ServerDhParamsOkS);
 
 /**
  * server_DH_inner_data:Server_DH_inner_data
@@ -719,8 +732,9 @@ AllStructs.set(XServerXDhTParamsTOk._id, XServerXDhTParamsTOk);
  * g_a:bytes
  * server_time:int
  */
-export class XServerXDhTInnerTData {
+export class ServerDhInnerDataS {
   static _id = 0xb5890dba;
+
   _values = [
     new Uint8Array(16),
     new Uint8Array(16),
@@ -785,7 +799,7 @@ export class XServerXDhTInnerTData {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XServerXDhTInnerTData._id);
+    if (!noId) buf.writeInt(ServerDhInnerDataS._id);
 
     let values = this._values;
 
@@ -824,7 +838,7 @@ export class XServerXDhTInnerTData {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XServerXDhTInnerTData._id) panic(id.toString(16));
+      if (id !== ServerDhInnerDataS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -867,7 +881,7 @@ export class XServerXDhTInnerTData {
     return this;
   }
 }
-AllStructs.set(XServerXDhTInnerTData._id, XServerXDhTInnerTData);
+AllStructs.set(ServerDhInnerDataS._id, ServerDhInnerDataS);
 
 /**
  * client_DH_inner_data:Client_DH_Inner_Data
@@ -877,8 +891,9 @@ AllStructs.set(XServerXDhTInnerTData._id, XServerXDhTInnerTData);
  * retry_id:long
  * g_b:bytes
  */
-export class XClientXDhTInnerTData {
+export class ClientDhInnerDataS {
   static _id = 0x6643b654;
+
   _values = [
     new Uint8Array(16),
     new Uint8Array(16),
@@ -923,7 +938,7 @@ export class XClientXDhTInnerTData {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XClientXDhTInnerTData._id);
+    if (!noId) buf.writeInt(ClientDhInnerDataS._id);
 
     let values = this._values;
 
@@ -952,7 +967,7 @@ export class XClientXDhTInnerTData {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XClientXDhTInnerTData._id) panic(id.toString(16));
+      if (id !== ClientDhInnerDataS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -983,7 +998,7 @@ export class XClientXDhTInnerTData {
     return this;
   }
 }
-AllStructs.set(XClientXDhTInnerTData._id, XClientXDhTInnerTData);
+AllStructs.set(ClientDhInnerDataS._id, ClientDhInnerDataS);
 
 /**
  * dh_gen_ok:Set_client_DH_params_answer
@@ -992,8 +1007,9 @@ AllStructs.set(XClientXDhTInnerTData._id, XClientXDhTInnerTData);
  * server_nonce:int128
  * new_nonce_hash1:int128
  */
-export class XDhTGenTOk {
+export class DhGenOkS {
   static _id = 0x3bcbf734;
+
   _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array(16)] as [
     Uint8Array,
     Uint8Array,
@@ -1028,7 +1044,7 @@ export class XDhTGenTOk {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XDhTGenTOk._id);
+    if (!noId) buf.writeInt(DhGenOkS._id);
 
     let values = this._values;
 
@@ -1052,7 +1068,7 @@ export class XDhTGenTOk {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XDhTGenTOk._id) panic(id.toString(16));
+      if (id !== DhGenOkS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1077,7 +1093,7 @@ export class XDhTGenTOk {
     return this;
   }
 }
-AllStructs.set(XDhTGenTOk._id, XDhTGenTOk);
+AllStructs.set(DhGenOkS._id, DhGenOkS);
 
 /**
  * dh_gen_retry:Set_client_DH_params_answer
@@ -1086,8 +1102,9 @@ AllStructs.set(XDhTGenTOk._id, XDhTGenTOk);
  * server_nonce:int128
  * new_nonce_hash2:int128
  */
-export class XDhTGenTRetry {
+export class DhGenRetryS {
   static _id = 0x46dc1fb9;
+
   _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array(16)] as [
     Uint8Array,
     Uint8Array,
@@ -1122,7 +1139,7 @@ export class XDhTGenTRetry {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XDhTGenTRetry._id);
+    if (!noId) buf.writeInt(DhGenRetryS._id);
 
     let values = this._values;
 
@@ -1146,7 +1163,7 @@ export class XDhTGenTRetry {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XDhTGenTRetry._id) panic(id.toString(16));
+      if (id !== DhGenRetryS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1171,7 +1188,7 @@ export class XDhTGenTRetry {
     return this;
   }
 }
-AllStructs.set(XDhTGenTRetry._id, XDhTGenTRetry);
+AllStructs.set(DhGenRetryS._id, DhGenRetryS);
 
 /**
  * dh_gen_fail:Set_client_DH_params_answer
@@ -1180,8 +1197,9 @@ AllStructs.set(XDhTGenTRetry._id, XDhTGenTRetry);
  * server_nonce:int128
  * new_nonce_hash3:int128
  */
-export class XDhTGenTFail {
+export class DhGenFailS {
   static _id = 0xa69dae02;
+
   _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array(16)] as [
     Uint8Array,
     Uint8Array,
@@ -1216,7 +1234,7 @@ export class XDhTGenTFail {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XDhTGenTFail._id);
+    if (!noId) buf.writeInt(DhGenFailS._id);
 
     let values = this._values;
 
@@ -1240,7 +1258,7 @@ export class XDhTGenTFail {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XDhTGenTFail._id) panic(id.toString(16));
+      if (id !== DhGenFailS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1265,7 +1283,7 @@ export class XDhTGenTFail {
     return this;
   }
 }
-AllStructs.set(XDhTGenTFail._id, XDhTGenTFail);
+AllStructs.set(DhGenFailS._id, DhGenFailS);
 
 /**
  * rpc_result:RpcResult
@@ -1273,9 +1291,10 @@ AllStructs.set(XDhTGenTFail._id, XDhTGenTFail);
  * req_msg_id:long
  * result:Object
  */
-export class XRpcTResult {
+export class RpcResultS {
   static _id = 0xf35c6d01;
-  _values = [[0, 0], new OneOf()] as [ProtoLong, OneOf];
+
+  _values = [[0, 0], new OneOf()] as [ProtoLong, OneOf | IStruct];
 
   get_req_msg_id(): ProtoLong {
     return this._values[0];
@@ -1286,17 +1305,17 @@ export class XRpcTResult {
     return this;
   }
 
-  get_result(): OneOf {
+  get_result(): OneOf | IStruct {
     return this._values[1];
   }
-  set_result(val: OneOf): this {
+  set_result(val: OneOf | IStruct): this {
     this._values[1] = val;
 
     return this;
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XRpcTResult._id);
+    if (!noId) buf.writeInt(RpcResultS._id);
 
     let values = this._values;
 
@@ -1306,7 +1325,7 @@ export class XRpcTResult {
     }
 
     {
-      let val = values[1] as OneOf;
+      let val = values[1] as OneOf | IStruct;
       val._write(buf);
     }
 
@@ -1315,7 +1334,7 @@ export class XRpcTResult {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XRpcTResult._id) panic(id.toString(16));
+      if (id !== RpcResultS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1326,15 +1345,17 @@ export class XRpcTResult {
     }
 
     {
-      let val = values[1] as OneOf;
+      let val = values[1] as OneOf | IStruct;
+
       val = val._read(buf);
+      if (val instanceof OneOf) val = val.unwrap();
       values[1] = val;
     }
 
     return this;
   }
 }
-AllStructs.set(XRpcTResult._id, XRpcTResult);
+AllStructs.set(RpcResultS._id, RpcResultS);
 
 /**
  * rpc_error:RpcError
@@ -1342,8 +1363,9 @@ AllStructs.set(XRpcTResult._id, XRpcTResult);
  * error_code:int
  * error_message:string
  */
-export class XRpcTError {
+export class RpcErrorS {
   static _id = 0x2144ca19;
+
   _values = [0, ""] as [number, string];
 
   get_error_code(): number {
@@ -1365,7 +1387,7 @@ export class XRpcTError {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XRpcTError._id);
+    if (!noId) buf.writeInt(RpcErrorS._id);
 
     let values = this._values;
 
@@ -1384,7 +1406,7 @@ export class XRpcTError {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XRpcTError._id) panic(id.toString(16));
+      if (id !== RpcErrorS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1403,57 +1425,59 @@ export class XRpcTError {
     return this;
   }
 }
-AllStructs.set(XRpcTError._id, XRpcTError);
+AllStructs.set(RpcErrorS._id, RpcErrorS);
 
 /**
  * rpc_answer_unknown:RpcDropAnswer
  * #5e2ad36e:1579864942:1579864942
  *
  */
-export class XRpcTAnswerTUnknown {
+export class RpcAnswerUnknownS {
   static _id = 0x5e2ad36e;
+
   _values = [] as [];
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XRpcTAnswerTUnknown._id);
+    if (!noId) buf.writeInt(RpcAnswerUnknownS._id);
 
     return this;
   }
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XRpcTAnswerTUnknown._id) panic(id.toString(16));
+      if (id !== RpcAnswerUnknownS._id) panic(id.toString(16));
     }
 
     return this;
   }
 }
-AllStructs.set(XRpcTAnswerTUnknown._id, XRpcTAnswerTUnknown);
+AllStructs.set(RpcAnswerUnknownS._id, RpcAnswerUnknownS);
 
 /**
  * rpc_answer_dropped_running:RpcDropAnswer
  * #cd78e586:3447252358:-847714938
  *
  */
-export class XRpcTAnswerTDroppedTRunning {
+export class RpcAnswerDroppedRunningS {
   static _id = 0xcd78e586;
+
   _values = [] as [];
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XRpcTAnswerTDroppedTRunning._id);
+    if (!noId) buf.writeInt(RpcAnswerDroppedRunningS._id);
 
     return this;
   }
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XRpcTAnswerTDroppedTRunning._id) panic(id.toString(16));
+      if (id !== RpcAnswerDroppedRunningS._id) panic(id.toString(16));
     }
 
     return this;
   }
 }
-AllStructs.set(XRpcTAnswerTDroppedTRunning._id, XRpcTAnswerTDroppedTRunning);
+AllStructs.set(RpcAnswerDroppedRunningS._id, RpcAnswerDroppedRunningS);
 
 /**
  * rpc_answer_dropped:RpcDropAnswer
@@ -1462,8 +1486,9 @@ AllStructs.set(XRpcTAnswerTDroppedTRunning._id, XRpcTAnswerTDroppedTRunning);
  * seq_no:int
  * bytes:int
  */
-export class XRpcTAnswerTDropped {
+export class RpcAnswerDroppedS {
   static _id = 0xa43ad8b7;
+
   _values = [[0, 0], 0, 0] as [ProtoLong, number, number];
 
   get_msg_id(): ProtoLong {
@@ -1494,7 +1519,7 @@ export class XRpcTAnswerTDropped {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XRpcTAnswerTDropped._id);
+    if (!noId) buf.writeInt(RpcAnswerDroppedS._id);
 
     let values = this._values;
 
@@ -1518,7 +1543,7 @@ export class XRpcTAnswerTDropped {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XRpcTAnswerTDropped._id) panic(id.toString(16));
+      if (id !== RpcAnswerDroppedS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1543,7 +1568,7 @@ export class XRpcTAnswerTDropped {
     return this;
   }
 }
-AllStructs.set(XRpcTAnswerTDropped._id, XRpcTAnswerTDropped);
+AllStructs.set(RpcAnswerDroppedS._id, RpcAnswerDroppedS);
 
 /**
  * future_salt:FutureSalt
@@ -1552,8 +1577,9 @@ AllStructs.set(XRpcTAnswerTDropped._id, XRpcTAnswerTDropped);
  * valid_until:int
  * salt:long
  */
-export class XFutureTSalt {
+export class FutureSaltS {
   static _id = 0x949d9dc;
+
   _values = [0, 0, [0, 0]] as [number, number, ProtoLong];
 
   get_valid_since(): number {
@@ -1584,7 +1610,7 @@ export class XFutureTSalt {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XFutureTSalt._id);
+    if (!noId) buf.writeInt(FutureSaltS._id);
 
     let values = this._values;
 
@@ -1608,7 +1634,7 @@ export class XFutureTSalt {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XFutureTSalt._id) panic(id.toString(16));
+      if (id !== FutureSaltS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1633,7 +1659,7 @@ export class XFutureTSalt {
     return this;
   }
 }
-AllStructs.set(XFutureTSalt._id, XFutureTSalt);
+AllStructs.set(FutureSaltS._id, FutureSaltS);
 
 /**
  * future_salts:FutureSalts
@@ -1642,9 +1668,10 @@ AllStructs.set(XFutureTSalt._id, XFutureTSalt);
  * now:int
  * salts:vector<future_salt>
  */
-export class XFutureTSalts {
+export class FutureSaltsS {
   static _id = 0xae500895;
-  _values = [[0, 0], 0, []] as [ProtoLong, number, XFutureTSalt[]];
+
+  _values = [[0, 0], 0, []] as [ProtoLong, number, FutureSaltT[]];
 
   get_req_msg_id(): ProtoLong {
     return this._values[0];
@@ -1664,17 +1691,17 @@ export class XFutureTSalts {
     return this;
   }
 
-  get_salts(): XFutureTSalt[] {
+  get_salts(): FutureSaltT[] {
     return this._values[2];
   }
-  set_salts(val: XFutureTSalt[]): this {
+  set_salts(val: FutureSaltT[]): this {
     this._values[2] = val;
 
     return this;
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XFutureTSalts._id);
+    if (!noId) buf.writeInt(FutureSaltsS._id);
 
     let values = this._values;
 
@@ -1689,7 +1716,7 @@ export class XFutureTSalts {
     }
 
     {
-      let val = values[2] as XFutureTSalt[];
+      let val = values[2] as FutureSaltT[];
 
       buf.writeInt(val.length);
       let vector = val;
@@ -1704,7 +1731,7 @@ export class XFutureTSalts {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XFutureTSalts._id) panic(id.toString(16));
+      if (id !== FutureSaltsS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1721,14 +1748,16 @@ export class XFutureTSalts {
     }
 
     {
-      let val = values[2] as XFutureTSalt[];
+      let val = values[2] as FutureSaltT[];
 
       let len = buf.readInt();
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: XFutureTSalt = new XFutureTSalt();
+        let val: FutureSaltT = new FutureSaltT();
+
         val = val._read(buf);
+        if (val instanceof OneOf) val = val.unwrap();
         vector.push(val);
       }
       values[2] = val;
@@ -1737,7 +1766,7 @@ export class XFutureTSalts {
     return this;
   }
 }
-AllStructs.set(XFutureTSalts._id, XFutureTSalts);
+AllStructs.set(FutureSaltsS._id, FutureSaltsS);
 
 /**
  * pong:Pong
@@ -1745,8 +1774,9 @@ AllStructs.set(XFutureTSalts._id, XFutureTSalts);
  * msg_id:long
  * ping_id:long
  */
-export class XPong {
+export class PongS {
   static _id = 0x347773c5;
+
   _values = [[0, 0], [0, 0]] as [ProtoLong, ProtoLong];
 
   get_msg_id(): ProtoLong {
@@ -1768,7 +1798,7 @@ export class XPong {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XPong._id);
+    if (!noId) buf.writeInt(PongS._id);
 
     let values = this._values;
 
@@ -1787,7 +1817,7 @@ export class XPong {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XPong._id) panic(id.toString(16));
+      if (id !== PongS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1806,15 +1836,16 @@ export class XPong {
     return this;
   }
 }
-AllStructs.set(XPong._id, XPong);
+AllStructs.set(PongS._id, PongS);
 
 /**
  * destroy_session_ok:DestroySessionRes
  * #e22045fc:3793765884:-501201412
  * session_id:long
  */
-export class XDestroyTSessionTOk {
+export class DestroySessionOkS {
   static _id = 0xe22045fc;
+
   _values = [[0, 0]] as [ProtoLong];
 
   get_session_id(): ProtoLong {
@@ -1827,7 +1858,7 @@ export class XDestroyTSessionTOk {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XDestroyTSessionTOk._id);
+    if (!noId) buf.writeInt(DestroySessionOkS._id);
 
     let values = this._values;
 
@@ -1841,7 +1872,7 @@ export class XDestroyTSessionTOk {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XDestroyTSessionTOk._id) panic(id.toString(16));
+      if (id !== DestroySessionOkS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1854,15 +1885,16 @@ export class XDestroyTSessionTOk {
     return this;
   }
 }
-AllStructs.set(XDestroyTSessionTOk._id, XDestroyTSessionTOk);
+AllStructs.set(DestroySessionOkS._id, DestroySessionOkS);
 
 /**
  * destroy_session_none:DestroySessionRes
  * #62d350c9:1658015945:1658015945
  * session_id:long
  */
-export class XDestroyTSessionTNone {
+export class DestroySessionNoneS {
   static _id = 0x62d350c9;
+
   _values = [[0, 0]] as [ProtoLong];
 
   get_session_id(): ProtoLong {
@@ -1875,7 +1907,7 @@ export class XDestroyTSessionTNone {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XDestroyTSessionTNone._id);
+    if (!noId) buf.writeInt(DestroySessionNoneS._id);
 
     let values = this._values;
 
@@ -1889,7 +1921,7 @@ export class XDestroyTSessionTNone {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XDestroyTSessionTNone._id) panic(id.toString(16));
+      if (id !== DestroySessionNoneS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1902,7 +1934,7 @@ export class XDestroyTSessionTNone {
     return this;
   }
 }
-AllStructs.set(XDestroyTSessionTNone._id, XDestroyTSessionTNone);
+AllStructs.set(DestroySessionNoneS._id, DestroySessionNoneS);
 
 /**
  * new_session_created:NewSession
@@ -1911,8 +1943,9 @@ AllStructs.set(XDestroyTSessionTNone._id, XDestroyTSessionTNone);
  * unique_id:long
  * server_salt:long
  */
-export class XNewTSessionTCreated {
+export class NewSessionCreatedS {
   static _id = 0x9ec20908;
+
   _values = [[0, 0], [0, 0], [0, 0]] as [ProtoLong, ProtoLong, ProtoLong];
 
   get_first_msg_id(): ProtoLong {
@@ -1943,7 +1976,7 @@ export class XNewTSessionTCreated {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XNewTSessionTCreated._id);
+    if (!noId) buf.writeInt(NewSessionCreatedS._id);
 
     let values = this._values;
 
@@ -1967,7 +2000,7 @@ export class XNewTSessionTCreated {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XNewTSessionTCreated._id) panic(id.toString(16));
+      if (id !== NewSessionCreatedS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -1992,33 +2025,34 @@ export class XNewTSessionTCreated {
     return this;
   }
 }
-AllStructs.set(XNewTSessionTCreated._id, XNewTSessionTCreated);
+AllStructs.set(NewSessionCreatedS._id, NewSessionCreatedS);
 
 /**
  * msg_container:MessageContainer
  * #73f1f8dc:1945237724:1945237724
  * messages:vector<%Message>
  */
-export class XMsgTContainer {
+export class MsgContainerS {
   static _id = 0x73f1f8dc;
-  _values = [[]] as [TMessage[]];
 
-  get_messages(): TMessage[] {
+  _values = [[]] as [MessageS[]];
+
+  get_messages(): MessageS[] {
     return this._values[0];
   }
-  set_messages(val: TMessage[]): this {
+  set_messages(val: MessageS[]): this {
     this._values[0] = val;
 
     return this;
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XMsgTContainer._id);
+    if (!noId) buf.writeInt(MsgContainerS._id);
 
     let values = this._values;
 
     {
-      let val = values[0] as TMessage[];
+      let val = values[0] as MessageS[];
 
       buf.writeInt(val.length);
       let vector = val;
@@ -2033,19 +2067,20 @@ export class XMsgTContainer {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XMsgTContainer._id) panic(id.toString(16));
+      if (id !== MsgContainerS._id) panic(id.toString(16));
     }
     let values = this._values;
 
     {
-      let val = values[0] as TMessage[];
+      let val = values[0] as MessageS[];
 
       let len = buf.readInt();
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: TMessage = new TMessage();
+        let val: MessageS = new MessageS();
         val = val._read(buf, true);
+        if (val instanceof OneOf) val = val.unwrap();
         vector.push(val);
       }
       values[0] = val;
@@ -2054,7 +2089,7 @@ export class XMsgTContainer {
     return this;
   }
 }
-AllStructs.set(XMsgTContainer._id, XMsgTContainer);
+AllStructs.set(MsgContainerS._id, MsgContainerS);
 
 /**
  * message:Message
@@ -2064,9 +2099,15 @@ AllStructs.set(XMsgTContainer._id, XMsgTContainer);
  * bytes:int
  * body:Object
  */
-export class XMessage {
+export class MessageS {
   static _id = 0x5bb8e511;
-  _values = [[0, 0], 0, 0, new OneOf()] as [ProtoLong, number, number, OneOf];
+
+  _values = [[0, 0], 0, 0, new OneOf()] as [
+    ProtoLong,
+    number,
+    number,
+    OneOf | IStruct
+  ];
 
   buf = new Uint8Array();
 
@@ -2097,17 +2138,17 @@ export class XMessage {
     return this;
   }
 
-  get_body(): OneOf {
+  get_body(): OneOf | IStruct {
     return this._values[3];
   }
-  set_body(val: OneOf): this {
+  set_body(val: OneOf | IStruct): this {
     this._values[3] = val;
 
     return this;
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XMessage._id);
+    if (!noId) buf.writeInt(MessageS._id);
     let size = buf.size;
     let values = this._values;
 
@@ -2127,7 +2168,7 @@ export class XMessage {
     }
 
     {
-      let val = values[3] as OneOf;
+      let val = values[3] as OneOf | IStruct;
       val._write(buf);
     }
 
@@ -2138,7 +2179,7 @@ export class XMessage {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XMessage._id) panic(id.toString(16));
+      if (id !== MessageS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -2167,11 +2208,12 @@ export class XMessage {
     );
     {
       let offset = buf.offset;
-      let val = values[3] as OneOf;
+      let val = values[3] as OneOf | IStruct;
       try {
         val = val._read(buf);
+        if (val instanceof OneOf) val = val.unwrap();
       } catch (e) {
-        console.error("skip", e.message);
+        console.error("skip", e.stack);
       }
       buf.offset = offset + Math.ceil(this.get_bytes() / 4);
       values[3] = val;
@@ -2180,33 +2222,34 @@ export class XMessage {
     return this;
   }
 }
-AllStructs.set(XMessage._id, XMessage);
+AllStructs.set(MessageS._id, MessageS);
 
 /**
  * msg_copy:MessageCopy
  * #e06046b2:3764405938:-530561358
  * orig_message:Message
  */
-export class XMsgTCopy {
+export class MsgCopyS {
   static _id = 0xe06046b2;
-  _values = [new TMessage()] as [TMessage];
 
-  get_orig_message(): TMessage {
+  _values = [new MessageT()] as [MessageT];
+
+  get_orig_message(): MessageT {
     return this._values[0];
   }
-  set_orig_message(val: TMessage): this {
+  set_orig_message(val: MessageT): this {
     this._values[0] = val;
 
     return this;
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XMsgTCopy._id);
+    if (!noId) buf.writeInt(MsgCopyS._id);
 
     let values = this._values;
 
     {
-      let val = values[0] as TMessage;
+      let val = values[0] as MessageT;
       val._write(buf);
     }
 
@@ -2215,28 +2258,31 @@ export class XMsgTCopy {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XMsgTCopy._id) panic(id.toString(16));
+      if (id !== MsgCopyS._id) panic(id.toString(16));
     }
     let values = this._values;
 
     {
-      let val = values[0] as TMessage;
+      let val = values[0] as MessageT;
+
       val = val._read(buf);
+      if (val instanceof OneOf) val = val.unwrap();
       values[0] = val;
     }
 
     return this;
   }
 }
-AllStructs.set(XMsgTCopy._id, XMsgTCopy);
+AllStructs.set(MsgCopyS._id, MsgCopyS);
 
 /**
  * gzip_packed:Object
  * #3072cfa1:812830625:812830625
  * packed_data:bytes
  */
-export class XGzipTPacked {
+export class GzipPackedS {
   static _id = 0x3072cfa1;
+
   _values = [new Uint8Array()] as [Uint8Array];
 
   get_packed_data(): Uint8Array {
@@ -2249,7 +2295,7 @@ export class XGzipTPacked {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XGzipTPacked._id);
+    if (!noId) buf.writeInt(GzipPackedS._id);
 
     let values = this._values;
 
@@ -2263,7 +2309,7 @@ export class XGzipTPacked {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XGzipTPacked._id) panic(id.toString(16));
+      if (id !== GzipPackedS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -2276,15 +2322,16 @@ export class XGzipTPacked {
     return this;
   }
 }
-AllStructs.set(XGzipTPacked._id, XGzipTPacked);
+AllStructs.set(GzipPackedS._id, GzipPackedS);
 
 /**
  * msgs_ack:MsgsAck
  * #62d6b459:1658238041:1658238041
  * msg_ids:Vector<long>
  */
-export class XMsgsTAck {
+export class MsgsAckS {
   static _id = 0x62d6b459;
+
   _values = [[]] as [ProtoLong[]];
 
   get_msg_ids(): ProtoLong[] {
@@ -2297,7 +2344,7 @@ export class XMsgsTAck {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XMsgsTAck._id);
+    if (!noId) buf.writeInt(MsgsAckS._id);
 
     let values = this._values;
 
@@ -2318,7 +2365,7 @@ export class XMsgsTAck {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XMsgsTAck._id) panic(id.toString(16));
+      if (id !== MsgsAckS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -2341,7 +2388,7 @@ export class XMsgsTAck {
     return this;
   }
 }
-AllStructs.set(XMsgsTAck._id, XMsgsTAck);
+AllStructs.set(MsgsAckS._id, MsgsAckS);
 
 /**
  * bad_msg_notification:BadMsgNotification
@@ -2350,8 +2397,9 @@ AllStructs.set(XMsgsTAck._id, XMsgsTAck);
  * bad_msg_seqno:int
  * error_code:int
  */
-export class XBadTMsgTNotification {
+export class BadMsgNotificationS {
   static _id = 0xa7eff811;
+
   _values = [[0, 0], 0, 0] as [ProtoLong, number, number];
 
   get_bad_msg_id(): ProtoLong {
@@ -2382,7 +2430,7 @@ export class XBadTMsgTNotification {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XBadTMsgTNotification._id);
+    if (!noId) buf.writeInt(BadMsgNotificationS._id);
 
     let values = this._values;
 
@@ -2406,7 +2454,7 @@ export class XBadTMsgTNotification {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XBadTMsgTNotification._id) panic(id.toString(16));
+      if (id !== BadMsgNotificationS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -2431,7 +2479,7 @@ export class XBadTMsgTNotification {
     return this;
   }
 }
-AllStructs.set(XBadTMsgTNotification._id, XBadTMsgTNotification);
+AllStructs.set(BadMsgNotificationS._id, BadMsgNotificationS);
 
 /**
  * bad_server_salt:BadMsgNotification
@@ -2441,8 +2489,9 @@ AllStructs.set(XBadTMsgTNotification._id, XBadTMsgTNotification);
  * error_code:int
  * new_server_salt:long
  */
-export class XBadTServerTSalt {
+export class BadServerSaltS {
   static _id = 0xedab447b;
+
   _values = [[0, 0], 0, 0, [0, 0]] as [ProtoLong, number, number, ProtoLong];
 
   get_bad_msg_id(): ProtoLong {
@@ -2482,7 +2531,7 @@ export class XBadTServerTSalt {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XBadTServerTSalt._id);
+    if (!noId) buf.writeInt(BadServerSaltS._id);
 
     let values = this._values;
 
@@ -2511,7 +2560,7 @@ export class XBadTServerTSalt {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XBadTServerTSalt._id) panic(id.toString(16));
+      if (id !== BadServerSaltS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -2542,15 +2591,16 @@ export class XBadTServerTSalt {
     return this;
   }
 }
-AllStructs.set(XBadTServerTSalt._id, XBadTServerTSalt);
+AllStructs.set(BadServerSaltS._id, BadServerSaltS);
 
 /**
  * msg_resend_req:MsgResendReq
  * #7d861a08:2105940488:2105940488
  * msg_ids:Vector<long>
  */
-export class XMsgTResendTReq {
+export class MsgResendReqS {
   static _id = 0x7d861a08;
+
   _values = [[]] as [ProtoLong[]];
 
   get_msg_ids(): ProtoLong[] {
@@ -2563,7 +2613,7 @@ export class XMsgTResendTReq {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XMsgTResendTReq._id);
+    if (!noId) buf.writeInt(MsgResendReqS._id);
 
     let values = this._values;
 
@@ -2584,7 +2634,7 @@ export class XMsgTResendTReq {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XMsgTResendTReq._id) panic(id.toString(16));
+      if (id !== MsgResendReqS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -2607,15 +2657,16 @@ export class XMsgTResendTReq {
     return this;
   }
 }
-AllStructs.set(XMsgTResendTReq._id, XMsgTResendTReq);
+AllStructs.set(MsgResendReqS._id, MsgResendReqS);
 
 /**
  * msgs_state_req:MsgsStateReq
  * #da69fb52:3664378706:-630588590
  * msg_ids:Vector<long>
  */
-export class XMsgsTStateTReq {
+export class MsgsStateReqS {
   static _id = 0xda69fb52;
+
   _values = [[]] as [ProtoLong[]];
 
   get_msg_ids(): ProtoLong[] {
@@ -2628,7 +2679,7 @@ export class XMsgsTStateTReq {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XMsgsTStateTReq._id);
+    if (!noId) buf.writeInt(MsgsStateReqS._id);
 
     let values = this._values;
 
@@ -2649,7 +2700,7 @@ export class XMsgsTStateTReq {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XMsgsTStateTReq._id) panic(id.toString(16));
+      if (id !== MsgsStateReqS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -2672,7 +2723,7 @@ export class XMsgsTStateTReq {
     return this;
   }
 }
-AllStructs.set(XMsgsTStateTReq._id, XMsgsTStateTReq);
+AllStructs.set(MsgsStateReqS._id, MsgsStateReqS);
 
 /**
  * msgs_state_info:MsgsStateInfo
@@ -2680,8 +2731,9 @@ AllStructs.set(XMsgsTStateTReq._id, XMsgsTStateTReq);
  * req_msg_id:long
  * info:bytes
  */
-export class XMsgsTStateTInfo {
+export class MsgsStateInfoS {
   static _id = 0x4deb57d;
+
   _values = [[0, 0], new Uint8Array()] as [ProtoLong, Uint8Array];
 
   get_req_msg_id(): ProtoLong {
@@ -2703,7 +2755,7 @@ export class XMsgsTStateTInfo {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XMsgsTStateTInfo._id);
+    if (!noId) buf.writeInt(MsgsStateInfoS._id);
 
     let values = this._values;
 
@@ -2722,7 +2774,7 @@ export class XMsgsTStateTInfo {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XMsgsTStateTInfo._id) panic(id.toString(16));
+      if (id !== MsgsStateInfoS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -2741,7 +2793,7 @@ export class XMsgsTStateTInfo {
     return this;
   }
 }
-AllStructs.set(XMsgsTStateTInfo._id, XMsgsTStateTInfo);
+AllStructs.set(MsgsStateInfoS._id, MsgsStateInfoS);
 
 /**
  * msgs_all_info:MsgsAllInfo
@@ -2749,8 +2801,9 @@ AllStructs.set(XMsgsTStateTInfo._id, XMsgsTStateTInfo);
  * msg_ids:Vector<long>
  * info:bytes
  */
-export class XMsgsTAllTInfo {
+export class MsgsAllInfoS {
   static _id = 0x8cc0d131;
+
   _values = [[], new Uint8Array()] as [ProtoLong[], Uint8Array];
 
   get_msg_ids(): ProtoLong[] {
@@ -2772,7 +2825,7 @@ export class XMsgsTAllTInfo {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XMsgsTAllTInfo._id);
+    if (!noId) buf.writeInt(MsgsAllInfoS._id);
 
     let values = this._values;
 
@@ -2798,7 +2851,7 @@ export class XMsgsTAllTInfo {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XMsgsTAllTInfo._id) panic(id.toString(16));
+      if (id !== MsgsAllInfoS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -2827,7 +2880,7 @@ export class XMsgsTAllTInfo {
     return this;
   }
 }
-AllStructs.set(XMsgsTAllTInfo._id, XMsgsTAllTInfo);
+AllStructs.set(MsgsAllInfoS._id, MsgsAllInfoS);
 
 /**
  * msg_detailed_info:MsgDetailedInfo
@@ -2837,8 +2890,9 @@ AllStructs.set(XMsgsTAllTInfo._id, XMsgsTAllTInfo);
  * bytes:int
  * status:int
  */
-export class XMsgTDetailedTInfo {
+export class MsgDetailedInfoS {
   static _id = 0x276d3ec6;
+
   _values = [[0, 0], [0, 0], 0, 0] as [ProtoLong, ProtoLong, number, number];
 
   get_msg_id(): ProtoLong {
@@ -2878,7 +2932,7 @@ export class XMsgTDetailedTInfo {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XMsgTDetailedTInfo._id);
+    if (!noId) buf.writeInt(MsgDetailedInfoS._id);
 
     let values = this._values;
 
@@ -2907,7 +2961,7 @@ export class XMsgTDetailedTInfo {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XMsgTDetailedTInfo._id) panic(id.toString(16));
+      if (id !== MsgDetailedInfoS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -2938,7 +2992,7 @@ export class XMsgTDetailedTInfo {
     return this;
   }
 }
-AllStructs.set(XMsgTDetailedTInfo._id, XMsgTDetailedTInfo);
+AllStructs.set(MsgDetailedInfoS._id, MsgDetailedInfoS);
 
 /**
  * msg_new_detailed_info:MsgDetailedInfo
@@ -2947,8 +3001,9 @@ AllStructs.set(XMsgTDetailedTInfo._id, XMsgTDetailedTInfo);
  * bytes:int
  * status:int
  */
-export class XMsgTNewTDetailedTInfo {
+export class MsgNewDetailedInfoS {
   static _id = 0x809db6df;
+
   _values = [[0, 0], 0, 0] as [ProtoLong, number, number];
 
   get_answer_msg_id(): ProtoLong {
@@ -2979,7 +3034,7 @@ export class XMsgTNewTDetailedTInfo {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XMsgTNewTDetailedTInfo._id);
+    if (!noId) buf.writeInt(MsgNewDetailedInfoS._id);
 
     let values = this._values;
 
@@ -3003,7 +3058,7 @@ export class XMsgTNewTDetailedTInfo {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XMsgTNewTDetailedTInfo._id) panic(id.toString(16));
+      if (id !== MsgNewDetailedInfoS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -3028,7 +3083,7 @@ export class XMsgTNewTDetailedTInfo {
     return this;
   }
 }
-AllStructs.set(XMsgTNewTDetailedTInfo._id, XMsgTNewTDetailedTInfo);
+AllStructs.set(MsgNewDetailedInfoS._id, MsgNewDetailedInfoS);
 
 /**
  * bind_auth_key_inner:BindAuthKeyInner
@@ -3039,8 +3094,9 @@ AllStructs.set(XMsgTNewTDetailedTInfo._id, XMsgTNewTDetailedTInfo);
  * temp_session_id:long
  * expires_at:int
  */
-export class XBindTAuthTKeyTInner {
+export class BindAuthKeyInnerS {
   static _id = 0x75a3f765;
+
   _values = [[0, 0], [0, 0], [0, 0], [0, 0], 0] as [
     ProtoLong,
     ProtoLong,
@@ -3095,7 +3151,7 @@ export class XBindTAuthTKeyTInner {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(XBindTAuthTKeyTInner._id);
+    if (!noId) buf.writeInt(BindAuthKeyInnerS._id);
 
     let values = this._values;
 
@@ -3129,7 +3185,7 @@ export class XBindTAuthTKeyTInner {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== XBindTAuthTKeyTInner._id) panic(id.toString(16));
+      if (id !== BindAuthKeyInnerS._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -3166,15 +3222,111 @@ export class XBindTAuthTKeyTInner {
     return this;
   }
 }
-AllStructs.set(XBindTAuthTKeyTInner._id, XBindTAuthTKeyTInner);
+AllStructs.set(BindAuthKeyInnerS._id, BindAuthKeyInnerS);
+
+export const VectorTT = VectorS;
+export type VectorTT = VectorS;
+
+export type PQInnerDataT =
+  | PQInnerDataS
+  | PQInnerDataTempS
+  | OneOf<
+      typeof PQInnerDataS | typeof PQInnerDataTempS,
+      PQInnerDataS | PQInnerDataTempS
+    >;
+
+export const PQInnerDataT = OneOf;
+
+export type ServerDhParamsT =
+  | ServerDhParamsFailS
+  | ServerDhParamsOkS
+  | OneOf<
+      typeof ServerDhParamsFailS | typeof ServerDhParamsOkS,
+      ServerDhParamsFailS | ServerDhParamsOkS
+    >;
+
+export const ServerDhParamsT = OneOf;
+
+export type SetClientDhParamsAnswerT =
+  | DhGenOkS
+  | DhGenRetryS
+  | DhGenFailS
+  | OneOf<
+      typeof DhGenOkS | typeof DhGenRetryS | typeof DhGenFailS,
+      DhGenOkS | DhGenRetryS | DhGenFailS
+    >;
+
+export const SetClientDhParamsAnswerT = OneOf;
+
+export type RpcDropAnswerT =
+  | RpcAnswerUnknownS
+  | RpcAnswerDroppedRunningS
+  | RpcAnswerDroppedS
+  | OneOf<
+      | typeof RpcAnswerUnknownS
+      | typeof RpcAnswerDroppedRunningS
+      | typeof RpcAnswerDroppedS,
+      RpcAnswerUnknownS | RpcAnswerDroppedRunningS | RpcAnswerDroppedS
+    >;
+
+export const RpcDropAnswerT = OneOf;
+
+export const FutureSaltT = FutureSaltS;
+export type FutureSaltT = FutureSaltS;
+
+export type DestroySessionResT =
+  | DestroySessionOkS
+  | DestroySessionNoneS
+  | OneOf<
+      typeof DestroySessionOkS | typeof DestroySessionNoneS,
+      DestroySessionOkS | DestroySessionNoneS
+    >;
+
+export const DestroySessionResT = OneOf;
+
+export const NewSessionT = NewSessionCreatedS;
+export type NewSessionT = NewSessionCreatedS;
+
+export const MessageContainerT = MsgContainerS;
+export type MessageContainerT = MsgContainerS;
+
+export const MessageT = MessageS;
+export type MessageT = MessageS;
+
+export const MessageCopyT = MsgCopyS;
+export type MessageCopyT = MsgCopyS;
+
+export const ObjectT = GzipPackedS;
+export type ObjectT = GzipPackedS;
+
+export type BadMsgNotificationT =
+  | BadMsgNotificationS
+  | BadServerSaltS
+  | OneOf<
+      typeof BadMsgNotificationS | typeof BadServerSaltS,
+      BadMsgNotificationS | BadServerSaltS
+    >;
+
+export const BadMsgNotificationT = OneOf;
+
+export type MsgDetailedInfoT =
+  | MsgDetailedInfoS
+  | MsgNewDetailedInfoS
+  | OneOf<
+      typeof MsgDetailedInfoS | typeof MsgNewDetailedInfoS,
+      MsgDetailedInfoS | MsgNewDetailedInfoS
+    >;
+
+export const MsgDetailedInfoT = OneOf;
 
 /**
- * MXReqTPq:MXReqTPq
+ * req_pq:req_pq ResPQ
  * #60469778:1615239032:1615239032
  * nonce:int128
  */
-export class TMxReqTPq {
+export class ReqPqM {
   static _id = 0x60469778;
+  _method() {}
   _values = [new Uint8Array(16)] as [Uint8Array];
 
   get_nonce(): Uint8Array {
@@ -3187,7 +3339,7 @@ export class TMxReqTPq {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(TMxReqTPq._id);
+    if (!noId) buf.writeInt(ReqPqM._id);
 
     let values = this._values;
 
@@ -3201,7 +3353,7 @@ export class TMxReqTPq {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== TMxReqTPq._id) panic(id.toString(16));
+      if (id !== ReqPqM._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -3214,29 +3366,10 @@ export class TMxReqTPq {
     return this;
   }
 }
-AllStructs.set(TMxReqTPq._id, TMxReqTPq);
+AllStructs.set(ReqPqM._id, ReqPqM);
 
 /**
- * req_pq:ResPQ
- * #60469778:1615239032:1615239032
- * nonce:int128
- */
-export function CallTMxReqTPq(
-  invoker: ApiInvoker,
-  req: TMxReqTPq
-): Promise<TResPq> {
-  return invoker.call(
-    req,
-    (buf: ByteBuffer): TResPq => {
-      let val: TResPq = new TResPq();
-      val = val._read(buf);
-      return val;
-    }
-  );
-}
-
-/**
- * MXReqXDhTParams:MXReqXDhTParams
+ * req_DH_params:req_DH_params Server_DH_Params
  * #d712e4be:3608339646:-686627650
  * nonce:int128
  * server_nonce:int128
@@ -3245,8 +3378,9 @@ export function CallTMxReqTPq(
  * public_key_fingerprint:long
  * encrypted_data:bytes
  */
-export class TMxReqXDhTParams {
+export class ReqDhParamsM {
   static _id = 0xd712e4be;
+  _method() {}
   _values = [
     new Uint8Array(16),
     new Uint8Array(16),
@@ -3311,7 +3445,7 @@ export class TMxReqXDhTParams {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(TMxReqXDhTParams._id);
+    if (!noId) buf.writeInt(ReqDhParamsM._id);
 
     let values = this._values;
 
@@ -3350,7 +3484,7 @@ export class TMxReqXDhTParams {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== TMxReqXDhTParams._id) panic(id.toString(16));
+      if (id !== ReqDhParamsM._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -3393,41 +3527,18 @@ export class TMxReqXDhTParams {
     return this;
   }
 }
-AllStructs.set(TMxReqXDhTParams._id, TMxReqXDhTParams);
+AllStructs.set(ReqDhParamsM._id, ReqDhParamsM);
 
 /**
- * req_DH_params:Server_DH_Params
- * #d712e4be:3608339646:-686627650
- * nonce:int128
- * server_nonce:int128
- * p:bytes
- * q:bytes
- * public_key_fingerprint:long
- * encrypted_data:bytes
- */
-export function CallTMxReqXDhTParams(
-  invoker: ApiInvoker,
-  req: TMxReqXDhTParams
-): Promise<TServerXDhXParams> {
-  return invoker.call(
-    req,
-    (buf: ByteBuffer): TServerXDhXParams => {
-      let val: TServerXDhXParams = new TServerXDhXParams();
-      val = val._read(buf);
-      return val;
-    }
-  );
-}
-
-/**
- * MXSetTClientXDhTParams:MXSetTClientXDhTParams
+ * set_client_DH_params:set_client_DH_params Set_client_DH_params_answer
  * #f5045f1f:4110704415:-184262881
  * nonce:int128
  * server_nonce:int128
  * encrypted_data:bytes
  */
-export class TMxSetTClientXDhTParams {
+export class SetClientDhParamsM {
   static _id = 0xf5045f1f;
+  _method() {}
   _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array()] as [
     Uint8Array,
     Uint8Array,
@@ -3462,7 +3573,7 @@ export class TMxSetTClientXDhTParams {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(TMxSetTClientXDhTParams._id);
+    if (!noId) buf.writeInt(SetClientDhParamsM._id);
 
     let values = this._values;
 
@@ -3486,7 +3597,7 @@ export class TMxSetTClientXDhTParams {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== TMxSetTClientXDhTParams._id) panic(id.toString(16));
+      if (id !== SetClientDhParamsM._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -3511,36 +3622,16 @@ export class TMxSetTClientXDhTParams {
     return this;
   }
 }
-AllStructs.set(TMxSetTClientXDhTParams._id, TMxSetTClientXDhTParams);
+AllStructs.set(SetClientDhParamsM._id, SetClientDhParamsM);
 
 /**
- * set_client_DH_params:Set_client_DH_params_answer
- * #f5045f1f:4110704415:-184262881
- * nonce:int128
- * server_nonce:int128
- * encrypted_data:bytes
- */
-export function CallTMxSetTClientXDhTParams(
-  invoker: ApiInvoker,
-  req: TMxSetTClientXDhTParams
-): Promise<TSetTClientXDhTParamsTAnswer> {
-  return invoker.call(
-    req,
-    (buf: ByteBuffer): TSetTClientXDhTParamsTAnswer => {
-      let val: TSetTClientXDhTParamsTAnswer = new TSetTClientXDhTParamsTAnswer();
-      val = val._read(buf);
-      return val;
-    }
-  );
-}
-
-/**
- * MXRpcTDropTAnswer:MXRpcTDropTAnswer
+ * rpc_drop_answer:rpc_drop_answer RpcDropAnswer
  * #58e4a740:1491380032:1491380032
  * req_msg_id:long
  */
-export class TMxRpcTDropTAnswer {
+export class RpcDropAnswerM {
   static _id = 0x58e4a740;
+  _method() {}
   _values = [[0, 0]] as [ProtoLong];
 
   get_req_msg_id(): ProtoLong {
@@ -3553,7 +3644,7 @@ export class TMxRpcTDropTAnswer {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(TMxRpcTDropTAnswer._id);
+    if (!noId) buf.writeInt(RpcDropAnswerM._id);
 
     let values = this._values;
 
@@ -3567,7 +3658,7 @@ export class TMxRpcTDropTAnswer {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== TMxRpcTDropTAnswer._id) panic(id.toString(16));
+      if (id !== RpcDropAnswerM._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -3580,34 +3671,16 @@ export class TMxRpcTDropTAnswer {
     return this;
   }
 }
-AllStructs.set(TMxRpcTDropTAnswer._id, TMxRpcTDropTAnswer);
+AllStructs.set(RpcDropAnswerM._id, RpcDropAnswerM);
 
 /**
- * rpc_drop_answer:RpcDropAnswer
- * #58e4a740:1491380032:1491380032
- * req_msg_id:long
- */
-export function CallTMxRpcTDropTAnswer(
-  invoker: ApiInvoker,
-  req: TMxRpcTDropTAnswer
-): Promise<TRpcDropAnswer> {
-  return invoker.call(
-    req,
-    (buf: ByteBuffer): TRpcDropAnswer => {
-      let val: TRpcDropAnswer = new TRpcDropAnswer();
-      val = val._read(buf);
-      return val;
-    }
-  );
-}
-
-/**
- * MXGetTFutureTSalts:MXGetTFutureTSalts
+ * get_future_salts:get_future_salts FutureSalts
  * #b921bd04:3105996036:-1188971260
  * num:int
  */
-export class TMxGetTFutureTSalts {
+export class GetFutureSaltsM {
   static _id = 0xb921bd04;
+  _method() {}
   _values = [0] as [number];
 
   get_num(): number {
@@ -3620,7 +3693,7 @@ export class TMxGetTFutureTSalts {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(TMxGetTFutureTSalts._id);
+    if (!noId) buf.writeInt(GetFutureSaltsM._id);
 
     let values = this._values;
 
@@ -3634,7 +3707,7 @@ export class TMxGetTFutureTSalts {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== TMxGetTFutureTSalts._id) panic(id.toString(16));
+      if (id !== GetFutureSaltsM._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -3647,34 +3720,16 @@ export class TMxGetTFutureTSalts {
     return this;
   }
 }
-AllStructs.set(TMxGetTFutureTSalts._id, TMxGetTFutureTSalts);
+AllStructs.set(GetFutureSaltsM._id, GetFutureSaltsM);
 
 /**
- * get_future_salts:FutureSalts
- * #b921bd04:3105996036:-1188971260
- * num:int
- */
-export function CallTMxGetTFutureTSalts(
-  invoker: ApiInvoker,
-  req: TMxGetTFutureTSalts
-): Promise<TFutureSalts> {
-  return invoker.call(
-    req,
-    (buf: ByteBuffer): TFutureSalts => {
-      let val: TFutureSalts = new TFutureSalts();
-      val = val._read(buf);
-      return val;
-    }
-  );
-}
-
-/**
- * MXPing:MXPing
+ * ping:ping Pong
  * #7abe77ec:2059302892:2059302892
  * ping_id:long
  */
-export class TMxPing {
+export class PingM {
   static _id = 0x7abe77ec;
+  _method() {}
   _values = [[0, 0]] as [ProtoLong];
 
   get_ping_id(): ProtoLong {
@@ -3687,7 +3742,7 @@ export class TMxPing {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(TMxPing._id);
+    if (!noId) buf.writeInt(PingM._id);
 
     let values = this._values;
 
@@ -3701,7 +3756,7 @@ export class TMxPing {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== TMxPing._id) panic(id.toString(16));
+      if (id !== PingM._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -3714,32 +3769,17 @@ export class TMxPing {
     return this;
   }
 }
-AllStructs.set(TMxPing._id, TMxPing);
+AllStructs.set(PingM._id, PingM);
 
 /**
- * ping:Pong
- * #7abe77ec:2059302892:2059302892
- * ping_id:long
- */
-export function CallTMxPing(invoker: ApiInvoker, req: TMxPing): Promise<TPong> {
-  return invoker.call(
-    req,
-    (buf: ByteBuffer): TPong => {
-      let val: TPong = new TPong();
-      val = val._read(buf);
-      return val;
-    }
-  );
-}
-
-/**
- * MXPingTDelayTDisconnect:MXPingTDelayTDisconnect
+ * ping_delay_disconnect:ping_delay_disconnect Pong
  * #f3427b8c:4081220492:-213746804
  * ping_id:long
  * disconnect_delay:int
  */
-export class TMxPingTDelayTDisconnect {
+export class PingDelayDisconnectM {
   static _id = 0xf3427b8c;
+  _method() {}
   _values = [[0, 0], 0] as [ProtoLong, number];
 
   get_ping_id(): ProtoLong {
@@ -3761,7 +3801,7 @@ export class TMxPingTDelayTDisconnect {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(TMxPingTDelayTDisconnect._id);
+    if (!noId) buf.writeInt(PingDelayDisconnectM._id);
 
     let values = this._values;
 
@@ -3780,7 +3820,7 @@ export class TMxPingTDelayTDisconnect {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== TMxPingTDelayTDisconnect._id) panic(id.toString(16));
+      if (id !== PingDelayDisconnectM._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -3799,35 +3839,16 @@ export class TMxPingTDelayTDisconnect {
     return this;
   }
 }
-AllStructs.set(TMxPingTDelayTDisconnect._id, TMxPingTDelayTDisconnect);
+AllStructs.set(PingDelayDisconnectM._id, PingDelayDisconnectM);
 
 /**
- * ping_delay_disconnect:Pong
- * #f3427b8c:4081220492:-213746804
- * ping_id:long
- * disconnect_delay:int
- */
-export function CallTMxPingTDelayTDisconnect(
-  invoker: ApiInvoker,
-  req: TMxPingTDelayTDisconnect
-): Promise<TPong> {
-  return invoker.call(
-    req,
-    (buf: ByteBuffer): TPong => {
-      let val: TPong = new TPong();
-      val = val._read(buf);
-      return val;
-    }
-  );
-}
-
-/**
- * MXDestroyTSession:MXDestroyTSession
+ * destroy_session:destroy_session DestroySessionRes
  * #e7512126:3880853798:-414113498
  * session_id:long
  */
-export class TMxDestroyTSession {
+export class DestroySessionM {
   static _id = 0xe7512126;
+  _method() {}
   _values = [[0, 0]] as [ProtoLong];
 
   get_session_id(): ProtoLong {
@@ -3840,7 +3861,7 @@ export class TMxDestroyTSession {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(TMxDestroyTSession._id);
+    if (!noId) buf.writeInt(DestroySessionM._id);
 
     let values = this._values;
 
@@ -3854,7 +3875,7 @@ export class TMxDestroyTSession {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== TMxDestroyTSession._id) panic(id.toString(16));
+      if (id !== DestroySessionM._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -3867,36 +3888,18 @@ export class TMxDestroyTSession {
     return this;
   }
 }
-AllStructs.set(TMxDestroyTSession._id, TMxDestroyTSession);
+AllStructs.set(DestroySessionM._id, DestroySessionM);
 
 /**
- * destroy_session:DestroySessionRes
- * #e7512126:3880853798:-414113498
- * session_id:long
- */
-export function CallTMxDestroyTSession(
-  invoker: ApiInvoker,
-  req: TMxDestroyTSession
-): Promise<TDestroySessionRes> {
-  return invoker.call(
-    req,
-    (buf: ByteBuffer): TDestroySessionRes => {
-      let val: TDestroySessionRes = new TDestroySessionRes();
-      val = val._read(buf);
-      return val;
-    }
-  );
-}
-
-/**
- * MXHttpTWait:MXHttpTWait
+ * http_wait:http_wait HttpWait
  * #9299359f:2459514271:-1835453025
  * max_delay:int
  * wait_after:int
  * max_wait:int
  */
-export class TMxHttpTWait {
+export class HttpWaitM {
   static _id = 0x9299359f;
+  _method() {}
   _values = [0, 0, 0] as [number, number, number];
 
   get_max_delay(): number {
@@ -3927,7 +3930,7 @@ export class TMxHttpTWait {
   }
 
   _write(buf: ByteBuffer, noId = false): this {
-    if (!noId) buf.writeInt(TMxHttpTWait._id);
+    if (!noId) buf.writeInt(HttpWaitM._id);
 
     let values = this._values;
 
@@ -3951,7 +3954,7 @@ export class TMxHttpTWait {
   _read(buf: ByteBuffer, noId = false): this {
     if (!noId) {
       let id = buf.readUInt();
-      if (id !== TMxHttpTWait._id) panic(id.toString(16));
+      if (id !== HttpWaitM._id) panic(id.toString(16));
     }
     let values = this._values;
 
@@ -3976,7 +3979,111 @@ export class TMxHttpTWait {
     return this;
   }
 }
-AllStructs.set(TMxHttpTWait._id, TMxHttpTWait);
+AllStructs.set(HttpWaitM._id, HttpWaitM);
+
+/**
+ * req_pq:ResPQ
+ * #60469778:1615239032:1615239032
+ * nonce:int128
+ */
+export function CallReqPqM(
+  invoker: ApiInvoker,
+  req: ReqPqM
+): Promise<ResPqS | RpcErrorS> {
+  return invoker.call(req);
+}
+
+/**
+ * req_DH_params:Server_DH_Params
+ * #d712e4be:3608339646:-686627650
+ * nonce:int128
+ * server_nonce:int128
+ * p:bytes
+ * q:bytes
+ * public_key_fingerprint:long
+ * encrypted_data:bytes
+ */
+export function CallReqDhParamsM(
+  invoker: ApiInvoker,
+  req: ReqDhParamsM
+): Promise<ServerDhParamsT | RpcErrorS> {
+  return invoker.call(req);
+}
+
+/**
+ * set_client_DH_params:Set_client_DH_params_answer
+ * #f5045f1f:4110704415:-184262881
+ * nonce:int128
+ * server_nonce:int128
+ * encrypted_data:bytes
+ */
+export function CallSetClientDhParamsM(
+  invoker: ApiInvoker,
+  req: SetClientDhParamsM
+): Promise<SetClientDhParamsAnswerT | RpcErrorS> {
+  return invoker.call(req);
+}
+
+/**
+ * rpc_drop_answer:RpcDropAnswer
+ * #58e4a740:1491380032:1491380032
+ * req_msg_id:long
+ */
+export function CallRpcDropAnswerM(
+  invoker: ApiInvoker,
+  req: RpcDropAnswerM
+): Promise<RpcDropAnswerT | RpcErrorS> {
+  return invoker.call(req);
+}
+
+/**
+ * get_future_salts:FutureSalts
+ * #b921bd04:3105996036:-1188971260
+ * num:int
+ */
+export function CallGetFutureSaltsM(
+  invoker: ApiInvoker,
+  req: GetFutureSaltsM
+): Promise<FutureSaltsS | RpcErrorS> {
+  return invoker.call(req);
+}
+
+/**
+ * ping:Pong
+ * #7abe77ec:2059302892:2059302892
+ * ping_id:long
+ */
+export function CallPingM(
+  invoker: ApiInvoker,
+  req: PingM
+): Promise<PongS | RpcErrorS> {
+  return invoker.call(req);
+}
+
+/**
+ * ping_delay_disconnect:Pong
+ * #f3427b8c:4081220492:-213746804
+ * ping_id:long
+ * disconnect_delay:int
+ */
+export function CallPingDelayDisconnectM(
+  invoker: ApiInvoker,
+  req: PingDelayDisconnectM
+): Promise<PongS | RpcErrorS> {
+  return invoker.call(req);
+}
+
+/**
+ * destroy_session:DestroySessionRes
+ * #e7512126:3880853798:-414113498
+ * session_id:long
+ */
+export function CallDestroySessionM(
+  invoker: ApiInvoker,
+  req: DestroySessionM
+): Promise<DestroySessionResT | RpcErrorS> {
+  return invoker.call(req);
+}
 
 /**
  * http_wait:HttpWait
@@ -3985,125 +4092,9 @@ AllStructs.set(TMxHttpTWait._id, TMxHttpTWait);
  * wait_after:int
  * max_wait:int
  */
-export function CallTMxHttpTWait(
+export function CallHttpWaitM(
   invoker: ApiInvoker,
-  req: TMxHttpTWait
-): Promise<OneOf> {
-  return invoker.call(
-    req,
-    (buf: ByteBuffer): OneOf => {
-      let val: OneOf = new OneOf();
-      val = val._read(buf);
-      return val;
-    }
-  );
+  req: HttpWaitM
+): Promise<OneOf | IStruct | RpcErrorS> {
+  return invoker.call(req);
 }
-
-export class TVectorTT extends XVector {}
-export class TResPq extends XResPq {}
-
-const TPXQTInnerTDataOneOfTypes: Array<
-  typeof XPTQTInnerTData | typeof XPTQTInnerTDataTTemp
-> = [XPTQTInnerTData, XPTQTInnerTDataTTemp];
-export class TPXQTInnerTData extends OneOf<
-  typeof XPTQTInnerTData | typeof XPTQTInnerTDataTTemp,
-  XPTQTInnerTData | XPTQTInnerTDataTTemp
-> {
-  getTypes() {
-    return TPXQTInnerTDataOneOfTypes;
-  }
-}
-
-const TServerXDhXParamsOneOfTypes: Array<
-  typeof XServerXDhTParamsTFail | typeof XServerXDhTParamsTOk
-> = [XServerXDhTParamsTFail, XServerXDhTParamsTOk];
-export class TServerXDhXParams extends OneOf<
-  typeof XServerXDhTParamsTFail | typeof XServerXDhTParamsTOk,
-  XServerXDhTParamsTFail | XServerXDhTParamsTOk
-> {
-  getTypes() {
-    return TServerXDhXParamsOneOfTypes;
-  }
-}
-export class TServerXDhTInnerTData extends XServerXDhTInnerTData {}
-export class TClientXDhXInnerXData extends XClientXDhTInnerTData {}
-
-const TSetTClientXDhTParamsTAnswerOneOfTypes: Array<
-  typeof XDhTGenTOk | typeof XDhTGenTRetry | typeof XDhTGenTFail
-> = [XDhTGenTOk, XDhTGenTRetry, XDhTGenTFail];
-export class TSetTClientXDhTParamsTAnswer extends OneOf<
-  typeof XDhTGenTOk | typeof XDhTGenTRetry | typeof XDhTGenTFail,
-  XDhTGenTOk | XDhTGenTRetry | XDhTGenTFail
-> {
-  getTypes() {
-    return TSetTClientXDhTParamsTAnswerOneOfTypes;
-  }
-}
-export class TRpcResult extends XRpcTResult {}
-export class TRpcError extends XRpcTError {}
-
-const TRpcDropAnswerOneOfTypes: Array<
-  | typeof XRpcTAnswerTUnknown
-  | typeof XRpcTAnswerTDroppedTRunning
-  | typeof XRpcTAnswerTDropped
-> = [XRpcTAnswerTUnknown, XRpcTAnswerTDroppedTRunning, XRpcTAnswerTDropped];
-export class TRpcDropAnswer extends OneOf<
-  | typeof XRpcTAnswerTUnknown
-  | typeof XRpcTAnswerTDroppedTRunning
-  | typeof XRpcTAnswerTDropped,
-  XRpcTAnswerTUnknown | XRpcTAnswerTDroppedTRunning | XRpcTAnswerTDropped
-> {
-  getTypes() {
-    return TRpcDropAnswerOneOfTypes;
-  }
-}
-export class TFutureSalt extends XFutureTSalt {}
-export class TFutureSalts extends XFutureTSalts {}
-export class TPong extends XPong {}
-
-const TDestroySessionResOneOfTypes: Array<
-  typeof XDestroyTSessionTOk | typeof XDestroyTSessionTNone
-> = [XDestroyTSessionTOk, XDestroyTSessionTNone];
-export class TDestroySessionRes extends OneOf<
-  typeof XDestroyTSessionTOk | typeof XDestroyTSessionTNone,
-  XDestroyTSessionTOk | XDestroyTSessionTNone
-> {
-  getTypes() {
-    return TDestroySessionResOneOfTypes;
-  }
-}
-export class TNewSession extends XNewTSessionTCreated {}
-export class TMessageContainer extends XMsgTContainer {}
-export class TMessage extends XMessage {}
-export class TMessageCopy extends XMsgTCopy {}
-export class TObject extends XGzipTPacked {}
-export class TMsgsAck extends XMsgsTAck {}
-
-const TBadMsgNotificationOneOfTypes: Array<
-  typeof XBadTMsgTNotification | typeof XBadTServerTSalt
-> = [XBadTMsgTNotification, XBadTServerTSalt];
-export class TBadMsgNotification extends OneOf<
-  typeof XBadTMsgTNotification | typeof XBadTServerTSalt,
-  XBadTMsgTNotification | XBadTServerTSalt
-> {
-  getTypes() {
-    return TBadMsgNotificationOneOfTypes;
-  }
-}
-export class TMsgResendReq extends XMsgTResendTReq {}
-export class TMsgsStateReq extends XMsgsTStateTReq {}
-export class TMsgsStateInfo extends XMsgsTStateTInfo {}
-export class TMsgsAllInfo extends XMsgsTAllTInfo {}
-
-const TMsgDetailedInfoOneOfTypes: Array<
-  typeof XMsgTDetailedTInfo | typeof XMsgTNewTDetailedTInfo
-> = [XMsgTDetailedTInfo, XMsgTNewTDetailedTInfo];
-export class TMsgDetailedInfo extends OneOf<
-  typeof XMsgTDetailedTInfo | typeof XMsgTNewTDetailedTInfo,
-  XMsgTDetailedTInfo | XMsgTNewTDetailedTInfo
-> {
-  getTypes() {
-    return TMsgDetailedInfoOneOfTypes;
-  }
-}
-export class TBindAuthKeyInner extends XBindTAuthTKeyTInner {}

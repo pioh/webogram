@@ -34,3 +34,8 @@ const __webpack_public_path__: any;
 declare module "lib/aes.js" {
   export const CryptoJS: any;
 }
+
+// import * as pako from "pako";
+declare module "lib/pako.js" {
+  export const ungzip: any;
+}

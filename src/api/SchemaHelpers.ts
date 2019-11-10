@@ -17,30 +17,31 @@ export abstract class IStruct {
 export class OneOf<
   T extends typeof IStruct = typeof IStruct,
   K extends IStruct = IStruct
-> {
+> implements IStruct {
+  _method() {}
   instance: K | null = null;
   constructor(instance?: K) {
     if (instance) this.instance = instance;
   }
-  getTypes(): T[] {
-    return [];
-  }
+  // getTypes(): T[] {
+  //   return [];
+  // }
   _write(buf: ByteBuffer, noId = false): this {
     if (!this.instance) panic("nothing to write", this);
     this.instance!._write(buf, noId);
     return this;
   }
-  _read(buf: ByteBuffer): this {
+  _read(buf: ByteBuffer): K {
     let id = buf.readUInt();
-    let types = this.getTypes();
-    let ctor = types.find(c => c._id === id);
-    if (types.length !== 0) console.error("got unexpected struct");
-    ctor = AllStructs.get(id) as T | undefined;
+    // let types = this.getTypes();
+    // let ctor = types.find(c => c._id === id);
+    // if (types.length !== 0) console.error("got unexpected struct");
+    let ctor = AllStructs.get(id) as T | undefined;
     if (!ctor) panic("unknown ctor id " + id, this);
     buf.offset--;
     this.instance = new (ctor as any)();
     this.instance!._read(buf);
-    return this;
+    return this.instance!;
   }
   unwrap(): K {
     return this.instance!;
@@ -49,4 +50,10 @@ export class OneOf<
     this.instance = instance;
     return this;
   }
+}
+
+export interface TMethod extends IStruct {
+  _method(): void;
+  _read(buf: ByteBuffer, noId?: boolean): TMethod;
+  _write(buf: ByteBuffer, noId?: boolean): TMethod;
 }

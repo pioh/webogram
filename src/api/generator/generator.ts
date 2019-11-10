@@ -6,29 +6,37 @@ import { jsonApi } from "./schemaJson";
 
 let out: string[][] = [];
 let l = (...args: any[]) => out.push(args);
-function WriteHeader() {
+function WriteHeader(file: string) {
   l(`
   import {ByteBuffer} from "../ByteBuffer"
   import {ApiInvoker} from "../ApiInvoker"
-  import {panic, AllStructs, ProtoLong, IStruct, OneOf} from "../SchemaHelpers"
+  import {panic, AllStructs, ProtoLong, IStruct, OneOf, TMethod} from "../SchemaHelpers"
   `);
+  if (file !== "./MTprotoShema.gen.ts") {
+    l(`import { RpcErrorS } from "./MTprotoShema.gen";`);
+  }
 }
-let types = new Map<string, string[]>();
+let types = new Map<string, [string[], boolean]>();
 
-const addType = (t: string, p: string) => {
-  if (!types.get(t)) types.set(t, []);
-  types.get(t)!.push(p);
+const addType = (t: string, p: string, isMethod: boolean) => {
+  if (!types.get(t)) types.set(t, [[], isMethod]);
+  types.get(t)![0].push(p);
 };
 
-const toName = (n: string, prefix = "") => {
+let usedTypes = new Set<string>();
+let methodGeneration = false;
+const toName = (n: string, postfix = "S", prefix = "") => {
   // if (n.match("^(input|vector)")) prefix = "TT";
   n = n
     .replace(/\.| /g, "_")
     .split("_")
     .map((v, i) => {
+      // if (v.substr(0, 1).toUpperCase() !== v.substr(0, 1))
+      //   return (i > 0 ? "T_" : "X_") + v;
+      // else return (i > 0 ? "X_" : "T_") + v;
       if (v.substr(0, 1).toUpperCase() !== v.substr(0, 1))
-        return (i > 0 ? "T_" : "X_") + v;
-      else return (i > 0 ? "X_" : "T_") + v;
+        return (i > 0 ? "_" : "_") + v;
+      else return (i > 0 ? "_" : "_") + v;
     })
     .join("_");
 
@@ -36,7 +44,11 @@ const toName = (n: string, prefix = "") => {
     prefix +
     camelCase(n, {
       pascalCase: true
-    });
+    }) +
+    postfix;
+
+  if (methodGeneration && !usedTypes.has(name)) name = name.replace(/T$/, "S");
+
   return name;
 };
 
@@ -52,7 +64,7 @@ interface TypeDesc {
   // index: number;
 }
 
-function mapType(type: string): TypeDesc {
+function mapType(type: string, isType = false): TypeDesc {
   switch (type) {
     case "true":
       return {
@@ -119,27 +131,42 @@ function mapType(type: string): TypeDesc {
         write: "buf.writeU8A(val)"
       };
     case "X":
-    case "!X":
     case "Object":
     case "HttpWait":
       return {
         value: `new OneOf()`,
-        type: `OneOf`,
-        read: "val = val._read(buf)",
+        type: `OneOf|IStruct`,
+        read: `
+        val = val._read(buf)
+        if (val instanceof OneOf) val = val.unwrap();
+        `,
+        write: "val._write(buf)"
+      };
+    case "!X":
+      return {
+        value: `new OneOf()`,
+        type: `TMethod`,
+        read: `
+          val = val._read(buf)
+          if (val instanceof OneOf) val = val.unwrap();
+          `,
         write: "val._write(buf)"
       };
     case "%Message":
       return {
         value: `new ${toName("Message")}()`,
         type: `${toName("Message")}`,
-        read: "val = val._read(buf, true)",
+        read: `val = val._read(buf, true)
+        if (val instanceof OneOf) val = val.unwrap();
+        `,
         write: "val._write(buf, true)"
       };
   }
 
   let flag = type.match(/(\w+)\.(\d+)\?(\S+)/);
   if (flag) {
-    let t = mapType(flag[3]);
+    let t = mapType(flag[3], true);
+    usedTypes.add(t.type);
     return {
       ...t,
       optionalIndex: Number(flag[2]),
@@ -150,7 +177,8 @@ function mapType(type: string): TypeDesc {
   let Vector = type.match(/^Vector<(.+)>$/i);
   if (Vector) {
     let readId = type.charAt(0) === "V";
-    let t = mapType(Vector[1]);
+    let t = mapType(Vector[1], true);
+    usedTypes.add(t.type);
     return {
       value: `[]`,
       type: `Array<${t.type}>`,
@@ -183,11 +211,15 @@ function mapType(type: string): TypeDesc {
     };
   }
   if (!type.match(/\w+/)) console.error("unknown type " + type);
-
+  let t = toName(type, isType ? "T" : "T");
+  usedTypes.add(t);
   return {
-    value: `new ${toName(type)}()`,
-    type: `${toName(type)}`,
-    read: "val = val._read(buf)",
+    value: `new ${t}()`,
+    type: `${t}`,
+    read: `
+    val = val._read(buf);
+    if (val instanceof OneOf) val = val.unwrap();
+    `,
     write: "val._write(buf)"
   };
 }
@@ -199,52 +231,102 @@ async function main() {
 async function processFile(json: typeof jsonApi, output: string) {
   out = [];
   types.clear();
-  WriteHeader();
+  usedTypes.clear();
+  WriteHeader(output);
   for (let c of json.constructors) {
-    AddConstructor(c);
-  }
-  for (let m of json.methods) {
-    let o = {
-      type: toName(m.method, "M"),
-      predicate: toName(m.method, "M"),
-      params: m.params,
-      id: m.id
-    };
-    AddConstructor(o);
-    AddMethod(m);
+    AddConstructor(c, false);
   }
 
-  for (let [t, p] of types) {
-    p = p.filter(v => v !== t);
+  let used = new Set([...usedTypes]);
+  let tts: typeof types = new Map(
+    [...types].map(([t, [p, isMethod]]) => [t, [[...p], isMethod]])
+  );
+  for (let [t, [p, isMethod]] of tts) {
+    t = toName(t, "T");
+    // p = p.filter(v => v !== t);
+    p = p.map(s => toName(s, isMethod ? "M" : "S"));
     if (p.length > 1) {
       // l(`type I${t} = IOneOf<${p.join(" | ")}>`);
+      // const ${t}OneOfTypes: Array<${p
+      //   .map(v => `typeof ${v}`)
+      //   .join(" | ")}> = [${p.join(", ")}];
+      used.add(t);
+      usedTypes.add(t);
       l(`
-      const ${t}OneOfTypes: Array<${p
+      export type ${t} = ${p.map(v => `${v}`).join(" | ")} | OneOf<${p
         .map(v => `typeof ${v}`)
-        .join(" | ")}> = [${p.join(", ")}];
-      export class ${t} extends OneOf<${p
-        .map(v => `typeof ${v}`)
-        .join(" | ")}, ${p.map(v => `${v}`).join(" | ")}> {
-        getTypes() {
-          return ${t}OneOfTypes;
-        }
-      }`);
-    } else if (p.length === 1) {
-      l(`export class ${t} extends ${p} {
-      }`);
+        .join(" | ")}, ${p.map(v => `${v}`).join(" | ")}>;
+
+      export const ${t} = OneOf;
+      `);
+    } else if (
+      p.length === 1 &&
+      (used.has(t) || t.slice(0, -1) !== p[0].slice(0, -1))
+    ) {
+      used.add(t);
+      usedTypes.add(t);
+      l(`
+      export const ${t} = ${p[0]};
+      export type ${t} = ${p[0]};
+      `);
     }
   }
+  types.clear();
+  tts.clear();
+  methodGeneration = true;
+  for (let m of json.methods) {
+    let o = {
+      type: m.method,
+      predicate: m.method,
+      params: m.params,
+      id: m.id,
+      returnType: m.type
+    };
+    AddConstructor(o, true);
+  }
+  tts = new Map(
+    [...types].map(([t, [p, isMethod]]) => [t, [[...p], isMethod]])
+  );
+  for (let [t, [p, isMethod]] of tts) {
+    t = toName(t, "T");
+    // p = p.filter(v => v !== t);
+    p = p.map(s => toName(s, isMethod ? "M" : "S"));
+    if (p.length > 1) {
+      // l(`type I${t} = IOneOf<${p.join(" | ")}>`);
+      // const ${t}OneOfTypes: Array<${p
+      //   .map(v => `typeof ${v}`)
+      //   .join(" | ")}> = [${p.join(", ")}];
+      used.add(t);
+      usedTypes.add(t);
+      l(`
+      export type ${t} = ${p.map(v => `${v}`).join(" | ")} | OneOf<${p
+        .map(v => `typeof ${v}`)
+        .join(" | ")}, ${p.map(v => `${v}`).join(" | ")}>;
 
+      export const ${t} = OneOf;
+      `);
+    } else if (p.length === 1 && t.slice(0, -1) !== p[0].slice(0, -1)) {
+      l(`
+      export const ${t} = ${p[0]};
+      export type ${t} = ${p[0]};
+      `);
+    }
+  }
+  for (let m of json.methods) {
+    AddMethod(m, used);
+  }
+  methodGeneration = false;
   return new Promise(r =>
     fs.writeFile(output, out.map(v => v.join(" ")).join("\n"), r)
   );
 }
 
-function AddMethod(m: typeof jsonApi.methods[0]) {
+function AddMethod(m: typeof jsonApi.methods[0], used: Set<string>) {
   // let M = toName(m.method, "M");
-  let name = toName(toName(m.method, "M"));
+  let name = toName(m.method, "M");
   // let t = m.type;
-  let W = mapType(m.type);
+  let W = mapType(m.type, true);
+  if (!used.has(W.type)) W.type = W.type.replace(/T$/, "S");
   // let repeated = false;
   // let vector = t.match(/^Vector<(.*)>$/i);
   // if (vector) {
@@ -261,31 +343,31 @@ function AddMethod(m: typeof jsonApi.methods[0]) {
    */
   export function Call${name} (invoker: ApiInvoker, req: ${name}): Promise<${
     W.type
-  }> {
-    return invoker.call(req, (buf: ByteBuffer): ${W.type} => {
-      let val: ${W.type} = ${W.value};
-      ${W.read};
-      return val;
-    });
+  }|${toName("RpcError")}> {
+    return invoker.call(req);
   }
   `);
 }
-function AddConstructor(c: typeof jsonApi.constructors[0]) {
-  let P = toName(c.predicate);
-  let t = toName(c.type);
-  addType(t, P);
+function AddConstructor(
+  c: typeof jsonApi.constructors[0] & { returnType?: string },
+  isMethod: boolean
+) {
+  let P = toName(c.predicate, isMethod ? "M" : "S");
+  addType(c.type, c.predicate, isMethod);
+
   let id = Number(c.id);
   if (id < 0) id += Math.pow(2, 32);
   let isMessage = 0x5bb8e511 === id;
   let isVector = 0x1cb5c415 === id;
   l(`
       /**
-       * ${c.predicate}:${c.type}
+       * ${c.predicate}:${c.type} ${c.returnType || ""}
        * #${id.toString(16)}:${id}:${c.id}
        * ${c.params.map(p => `${p.name}:${p.type}`).join("\n* ")}
        */
       export class ${P} {
         static _id = 0x${id.toString(16)}
+        ${c.returnType ? `_method() {}` : ""}
         _values = [${c.params
           .map(pr => mapType(pr.type).value)
           .join(", ")}] as ${
@@ -337,14 +419,15 @@ function AddConstructor(c: typeof jsonApi.constructors[0]) {
             ${isMessage ? `let size = buf.size;` : ""}
             ${c.params.length ? "let values = this._values;" : ""}
             ${c.params
-              .map(
-                (p, i) => `
-                {
-                  let val = values[${i}] as ${mapType(p.type).type};
-                  ${mapType(p.type).write};
+              .map((p, i) => {
+                let t = mapType(p.type);
+                return `
+                ${t.optionalName ? `if (this.has_${p.name}())` : ""} {
+                  let val = values[${i}] as ${t.type};
+                  ${t.write};
                 }
-              `
-              )
+              `;
+              })
               .join("")}
               ${
                 isVector
@@ -375,7 +458,11 @@ function AddConstructor(c: typeof jsonApi.constructors[0]) {
               .slice(0, c.params.length - (isMessage ? 1 : 0))
               .map(
                 (p, i) => `
-                {
+                ${
+                  mapType(p.type).optionalName
+                    ? `if (this.has_${p.name}())`
+                    : ""
+                }{
                   let val = values[${i}] as ${mapType(p.type).type};
                   ${mapType(p.type).read};
                   values[${i}] = val;
@@ -393,7 +480,7 @@ function AddConstructor(c: typeof jsonApi.constructors[0]) {
                 try {
                   ${mapType(c.params[3].type).read};
                 } catch (e) {
-                  console.error("skip", e.message)
+                  console.error("skip", e.stack)
                 }
                 buf.offset = offset + Math.ceil(this.get_bytes() / 4)
                 values[${3}] = val;
@@ -406,7 +493,7 @@ function AddConstructor(c: typeof jsonApi.constructors[0]) {
                 ? `
             let len = buf.readInt();
             for (let i = 0; i < len; i++) {
-              let item = new OneOf()._read(buf).unwrap();
+              let item = new OneOf()._read(buf);
               this._values.push(item);
             }
             `

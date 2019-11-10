@@ -9,7 +9,7 @@
     "tslint-eslint-rules": "^5.4.0"
   },
   "scripts": {
-    "start": "tsc && node generator.js && rm -rf ./*.js && yarn tslint --force --fix -q *.gen.ts 2>/dev/null 1>/dev/null && prettier --write *.gen.ts "
+    "start": "tsc && node generator.js && rm -rf ./*.js && prettier --write *.gen.ts  &&  yarn tslint --force --fix -q *.gen.ts 2>/dev/null 1>/dev/null"
   },
   "dependencies": {
     "tslint": "^5.20.1",
