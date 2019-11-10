@@ -6,51 +6,13 @@ import { jsonApi } from "./schemaJson";
 
 let out: string[][] = [];
 let l = (...args: any[]) => out.push(args);
-l(`import {ByteBuffer} from "../ByteBuffer"`);
-l(`import {ApiInvoker} from "../ApiInvoker"`);
-l(`function panic(...args: any[]) {
-  throw new Error("serialization fail\\n" + JSON.stringify(args, void 0, 2));
-}`);
-l(`
-export const AllStructs = new Map<number, typeof IStruct>();
-`);
-l(`export interface Type<T> extends Function { new (...args: any[]): T; }`);
-l("export type ProtoLong = [number, number]");
-l(`
-export abstract class IStruct {
-  static _id: number;
-  abstract _read(buf: ByteBuffer): IStruct;
-  abstract _write(buf: ByteBuffer): IStruct;
+function WriteHeader() {
+  l(`
+  import {ByteBuffer} from "../ByteBuffer"
+  import {ApiInvoker} from "../ApiInvoker"
+  import {panic, AllStructs, ProtoLong, IStruct, OneOf} from "../SchemaHelpers"
+  `);
 }
-`);
-
-l(`
-export class OneOf<T extends typeof IStruct = any, K extends IStruct = any> {
-  getTypes(): T[] {return []}
-  instance: K | null = null;
-  _write(buf: ByteBuffer): this {
-    if (!this.instance) panic("nothing to write", this);
-    return this;
-  }
-  _read(buf: ByteBuffer): this {
-    let id = buf.readUInt();
-    let types = this.getTypes();
-    let ctor = types.find(c => c._id === id);
-    if (types.length !== 0) console.error("got unexpected struct");
-    ctor = AllStructs.get(id)  as T|undefined;
-    if (!ctor) panic("unknown ctor id " + id, this);
-    buf.offset--;
-    this.instance = new (ctor as any)();
-    this.instance!._read(buf);
-    return this;
-  }
-  unwrap(): K {
-    return this.instance!;
-  }
-  set(instance: K) {
-    this.instance = instance;
-  }
-}`);
 let types = new Map<string, string[]>();
 
 const addType = (t: string, p: string) => {
@@ -159,11 +121,19 @@ function mapType(type: string): TypeDesc {
     case "X":
     case "!X":
     case "Object":
+    case "HttpWait":
       return {
         value: `new OneOf()`,
         type: `OneOf`,
         read: "val = val._read(buf)",
         write: "val._write(buf)"
+      };
+    case "%Message":
+      return {
+        value: `new ${toName("Message")}()`,
+        type: `${toName("Message")}`,
+        read: "val = val._read(buf, true)",
+        write: "val._write(buf, true)"
       };
   }
 
@@ -177,13 +147,21 @@ function mapType(type: string): TypeDesc {
     };
   }
 
-  let Vector = type.match(/^Vector<(.+)>$/);
+  let Vector = type.match(/^Vector<(.+)>$/i);
   if (Vector) {
+    let readId = type.charAt(0) === "V";
     let t = mapType(Vector[1]);
     return {
       value: `[]`,
       type: `Array<${t.type}>`,
       read: `
+        ${
+          readId
+            ? `
+        if (buf.readUInt() !== 481674261) panic("not vector")
+        `
+            : ""
+        }
         let len = buf.readInt();
         val.splice(0);
         let vector = val;
@@ -194,6 +172,7 @@ function mapType(type: string): TypeDesc {
         }
         `,
       write: `
+        ${readId ? `buf.writeInt(481674261);` : ""}
         buf.writeInt(val.length);
         let vector = val;
         for (let i = 0; i < vector.length; i++) {
@@ -219,6 +198,8 @@ async function main() {
 }
 async function processFile(json: typeof jsonApi, output: string) {
   out = [];
+  types.clear();
+  WriteHeader();
   for (let c of json.constructors) {
     AddConstructor(c);
   }
@@ -271,7 +252,7 @@ function AddMethod(m: typeof jsonApi.methods[0]) {
   //   repeated = true;
   // }
   let id = Number(m.id);
-  if (id < 0) id += Math.pow(2, 31);
+  if (id < 0) id += Math.pow(2, 32);
   l(`
   /**
    * ${m.method}:${m.type}
@@ -294,7 +275,9 @@ function AddConstructor(c: typeof jsonApi.constructors[0]) {
   let t = toName(c.type);
   addType(t, P);
   let id = Number(c.id);
-  if (id < 0) id += Math.pow(2, 31);
+  if (id < 0) id += Math.pow(2, 32);
+  let isMessage = 0x5bb8e511 === id;
+  let isVector = 0x1cb5c415 === id;
   l(`
       /**
        * ${c.predicate}:${c.type}
@@ -305,9 +288,16 @@ function AddConstructor(c: typeof jsonApi.constructors[0]) {
         static _id = 0x${id.toString(16)}
         _values = [${c.params
           .map(pr => mapType(pr.type).value)
-          .join(", ")}] as [${c.params
-    .map(pr => mapType(pr.type).type)
-    .join(", ")}];
+          .join(", ")}] as ${
+    isVector && !c.params.length ? "any" : ""
+  }[${c.params.map(pr => mapType(pr.type).type).join(", ")}];
+        ${
+          isMessage
+            ? `
+        buf = new Uint8Array();
+        `
+            : ""
+        }
 
         ${c.params
           .map((p, i) => {
@@ -342,8 +332,9 @@ function AddConstructor(c: typeof jsonApi.constructors[0]) {
         `;
           })
           .join("")}
-          _write(buf: ByteBuffer): this {
-            buf.writeInt(${P}._id);
+          _write(buf: ByteBuffer, noId = false): this {
+            if (!noId) buf.writeInt(${P}._id);
+            ${isMessage ? `let size = buf.size;` : ""}
             ${c.params.length ? "let values = this._values;" : ""}
             ${c.params
               .map(
@@ -355,13 +346,33 @@ function AddConstructor(c: typeof jsonApi.constructors[0]) {
               `
               )
               .join("")}
+              ${
+                isVector
+                  ? `
+            buf.writeInt(this._values.length);
+            for (let i = 0; i < this._values.length; i++) {
+              this._values[i]._write(buf);
+            }
+            `
+                  : ""
+              }
+            ${
+              isMessage
+                ? `
+                buf.writeIntAt((buf.size - size - 4) * 4, size + 3);
+                `
+                : ""
+            }
             return this;
           }
-          _read(buf: ByteBuffer): this {
-            let id = buf.readUInt();
-            if (id !== ${P}._id) panic(id.toString(16));
+          _read(buf: ByteBuffer, noId = false): this {
+            if (!noId) {
+              let id = buf.readUInt();
+              if (id !== ${P}._id) panic(id.toString(16));
+            }
             ${c.params.length ? "let values = this._values;" : ""}
             ${c.params
+              .slice(0, c.params.length - (isMessage ? 1 : 0))
               .map(
                 (p, i) => `
                 {
@@ -372,6 +383,36 @@ function AddConstructor(c: typeof jsonApi.constructors[0]) {
               `
               )
               .join("")}
+            ${
+              isMessage
+                ? `
+              this.buf = new Uint8Array(buf.getBuffer8().buffer, buf.offset * 4, this.get_bytes());
+              {
+                let offset = buf.offset;
+                let val = values[${3}] as ${mapType(c.params[3].type).type};
+                try {
+                  ${mapType(c.params[3].type).read};
+                } catch (e) {
+                  console.error("skip", e.message)
+                }
+                buf.offset = offset + Math.ceil(this.get_bytes() / 4)
+                values[${3}] = val;
+              }
+            `
+                : ""
+            }
+            ${
+              isVector
+                ? `
+            let len = buf.readInt();
+            for (let i = 0; i < len; i++) {
+              let item = new OneOf()._read(buf).unwrap();
+              this._values.push(item);
+            }
+            `
+                : ""
+            }
+
             return this;
           }
       }

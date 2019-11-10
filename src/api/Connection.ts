@@ -10,6 +10,15 @@ import { Sha1 } from "lib/Sha1";
 import { WorkerClient } from "lib/WorkerClient";
 
 import { ByteBuffer } from "./ByteBuffer";
+import { TMxInvokeWithLayer } from "./generator/ApiShema.gen";
+import {
+  TMessage,
+  TRpcResult,
+  XMsgsTAck,
+  XMsgTContainer,
+  XNewTSessionTCreated,
+  XRpcTResult
+} from "./generator/MTprotoShema.gen";
 import { NewNonce } from "./nonce";
 import {
   BadServerSalt,
@@ -31,6 +40,7 @@ import {
   TypeResDHParamsOk,
   TypeResPQ
 } from "./schema";
+import { IStruct, OneOf } from "./SchemaHelpers";
 import { TimeStore } from "./TimeStore";
 
 export interface IConnectionProps {
@@ -72,6 +82,14 @@ export class Connection {
   private requests = new Map<
     string,
     { method: IMethod; params: any[]; next: (...data: any[]) => void }
+  >();
+
+  private sending = new Map<
+    string,
+    {
+      responseReader: (instance: IStruct | null, buf: ByteBuffer) => void;
+      request: IStruct;
+    }
   >();
 
   constructor(props: IConnectionProps) {
@@ -135,6 +153,115 @@ export class Connection {
   //   ]);
   //   this.connectionInited = true;
   // }
+  async send(
+    request: IStruct,
+    responseReader: (instance: IStruct | null, buf: ByteBuffer) => void
+  ) {
+    let m = this.nextMsg().set_body(new OneOf().set(request));
+    let waiter = { request, responseReader };
+    this.sending.set(m.get_msg_id().join(), waiter);
+
+    let req = new ByteBuffer();
+    req.writeU8A(this.serverSalt);
+    req.writeU8A(this.session);
+
+    this.nextMsg(false)
+      .set_body(
+        new OneOf(
+          new TMxInvokeWithLayer()
+            .set_layer(105)
+            .set_query(new OneOf(new XMsgTContainer().set_messages([m])))
+        )
+      )
+      ._write(req, true);
+
+    let padding = 16 - ((req.size * 4) % 16) + 16 * (1 + nextRandomInt(5));
+    req.writeU8A(GetRandomValues(new Uint8Array(padding)));
+    let msgKey = await this.getMsgKey(req.getBuffer8(), true);
+    let [aesKey, aesIv] = await this.getMsgAesKeyIv(msgKey, true);
+
+    let encrypted = await this.worker.aesEncrypt(
+      req.getBuffer8(),
+      aesKey,
+      aesIv
+    );
+
+    let reqWrap = new ByteBuffer();
+
+    reqWrap.writeU8A(this.authKeyID);
+    reqWrap.writeU8A(msgKey);
+    reqWrap.writeU8A(encrypted);
+
+    fetch(GetDcHref(2, true), {
+      method: "POST",
+      body: reqWrap.getBuffer32(),
+      mode: "cors"
+    }).then(response => this.sendOnResponse(response));
+  }
+  nextMsg(main = true): TMessage {
+    let m = new TMessage();
+    this.seq_no++;
+    if ((this.seq_no % 2 && main) || (!(this.seq_no % 2) && !main)) {
+      this.seq_no++;
+    }
+    m.set_msg_id(this.props.timeStore.generateMessageID());
+    m.set_seqno(this.seq_no);
+    return m;
+  }
+  async sendOnResponse(response: Response) {
+    let responseBuffer = new ByteBuffer(
+      new Uint32Array(await response.arrayBuffer())
+    );
+
+    let authKeyID = responseBuffer.readU8A(2);
+    assertEquals(authKeyID, this.authKeyID);
+    let serverMsgKey = responseBuffer.readU8A(4);
+    let encrypted = responseBuffer.readU8A(
+      responseBuffer.size - responseBuffer.offset
+    );
+    let [aesKey, aesIv] = await this.getMsgAesKeyIv(serverMsgKey, false);
+    let decrypted = await this.worker.aesDecrypt(encrypted, aesKey, aesIv);
+    let msgKey = await this.getMsgKey(decrypted, false);
+    assertEquals(msgKey, serverMsgKey);
+
+    let decryptedBuffer = new ByteBuffer(decrypted);
+    // res.requests = this.requests;
+    decryptedBuffer.readU8A(2); // salt
+    let session = decryptedBuffer.readU8A(2);
+    assertEquals(this.session, session);
+    let res = new TMessage()._read(decryptedBuffer, true);
+    console.log(res);
+
+    console.log(res.get_msg_id(), res.get_bytes());
+    this.processMessage(res);
+  }
+  processMessage(m: TMessage) {
+    let body = m.get_body().unwrap();
+    if (body instanceof XRpcTResult) {
+      this.processRpcResult(m, body);
+    } else if (body instanceof XMsgTContainer) {
+      for (let msg of body.get_messages()) this.processMessage(msg);
+    } else if (body instanceof XNewTSessionTCreated) {
+      this.serverSalt = new Uint8Array(
+        new Uint32Array(body.get_server_salt()).buffer
+      );
+    } else if (body instanceof XMsgsTAck) {
+    } else {
+      console.error("unexpected msg", m);
+    }
+  }
+  processRpcResult(m: TMessage, r: XRpcTResult) {
+    let id = r.get_req_msg_id();
+    if (this.sending.has(id.join())) {
+      let w = this.sending.get(id.join())!;
+      this.sending.delete(id.join());
+      let instance = m.get_body().unwrap();
+      w.responseReader(instance, new ByteBuffer(m.buf.slice(8)));
+      // w.responseReader(m);
+      return;
+    }
+    console.error("unexpected rpc result", r);
+  }
 
   async sendRequest(method: IMethod, params: any[]) {
     let requestBuf = new ByteBuffer();

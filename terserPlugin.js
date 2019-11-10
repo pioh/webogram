@@ -24,7 +24,7 @@ module.exports.terserPlugin = new TerserPlugin({
       // },
     },
     output: {
-      ecma: 6
+      ecma: 7
     },
     compress: {
       drop_console: true,

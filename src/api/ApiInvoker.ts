@@ -1,7 +1,13 @@
 import { ByteBuffer } from "./ByteBuffer";
 import { Connection } from "./Connection";
-import { IStruct, OneOf } from "./generator/Generated";
-import { IMethod, MethodAuthSendCode, MethodPing } from "./schema";
+import {
+  CallTMxAuthTSendCode,
+  TCodeSettings,
+  TMxAuthTSendCode
+} from "./generator/ApiShema.gen";
+import { CallTMxPing, TMxPing } from "./generator/MTprotoShema.gen";
+import { IMethod, MethodAuthSendCode } from "./schema";
+import { IStruct } from "./SchemaHelpers";
 import { TimeStore } from "./TimeStore";
 
 interface IApiInvokerProps {
@@ -19,8 +25,10 @@ export class ApiInvoker {
 
   async init() {
     await this.connection.init();
-    await this.ping();
-    await this.authSendCode();
+    this.ping();
+    setTimeout(() => {
+      this.authSendCode();
+    }, 10000);
   }
 
   async invoke(method: IMethod, params: any[]) {
@@ -38,23 +46,37 @@ export class ApiInvoker {
     // return found;
   }
   async ping() {
-    let res = await this.invoke(MethodPing, [[123, 321]]);
-    console.log("pong", res);
+    let pong = await CallTMxPing(this, new TMxPing().set_ping_id([321, 123]));
+    console.log(pong);
   }
   async authSendCode() {
-    let res = await this.invoke(MethodAuthSendCode, [
-      "9996628789",
-      // "9267952303",
-      25282,
-      "b334f72ad1a3d4e3324894ccde2d2dab",
-      [0]
-    ]);
+    let res = await CallTMxAuthTSendCode(
+      this,
+      new TMxAuthTSendCode()
+        .set_api_hash("b334f72ad1a3d4e3324894ccde2d2dab")
+        .set_api_id(25282)
+        .set_phone_number("9996628789")
+    );
+    // let res = await this.invoke(MethodAuthSendCode, [
+    //   "9996628789",
+    //   // "9267952303",
+    //   25282,
+    //   ,
+    //   [0]
+    // ]);
     console.log("code", res);
   }
   async call(
     req: IStruct,
     responeReader: (buf: ByteBuffer) => any
   ): Promise<any> {
-    return responeReader(new ByteBuffer());
+    return new Promise(r =>
+      this.connection.send(req, (instance, buf) => {
+        if (!instance) {
+          instance = responeReader(buf);
+        }
+        r(instance);
+      })
+    );
   }
 }
