@@ -1,3 +1,4 @@
+import { config } from "const/config";
 import { GetDcHref } from "const/dc";
 import { GetKeyByFingerPrints, GetPublicKeyByDc } from "const/PublicKyes";
 import { assertEquals } from "lib/assertEquals";
@@ -61,7 +62,7 @@ export class Connection {
 
   private callbacks: Array<() => Promise<void> | void> = [];
 
-  private dc = 2;
+  private dc = config.dc;
   private publicKey = GetPublicKeyByDc(this.dc);
   private retry = 0;
   private nonce = NewNonce();
@@ -151,11 +152,11 @@ export class Connection {
   ) {
     if (!this.connectionInited) {
       if (this.isDebug) console.log("send initConnection");
-      request = new InvokeWithLayerM().set_layer(105).set_query(
+      request = new InvokeWithLayerM().set_layer(config.apiLayer).set_query(
         new InitConnectionM()
-          // .set_api_id(25282)
-          .set_api_id(2496)
-          .set_app_version("1.0.0")
+          .set_api_id(config.apiID)
+          // .set_api_id(2496)
+          .set_app_version(config.version)
           .set_device_model(navigator.userAgent || "Unknown UserAgent")
           .set_system_version(navigator.platform || "Unknown Platform")
           .set_lang_code(navigator.language || "en")

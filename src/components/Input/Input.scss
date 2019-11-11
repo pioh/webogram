@@ -1,0 +1,42 @@
+.root {
+  max-width: 360px;
+  width: 100%;
+  position: relative;
+  > label {
+    display: none;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 0 4px;
+    background: #fff;
+    position: absolute;
+    color: #666666;
+    left: 12px;
+    top: 0;
+    margin-top: -5px;
+  }
+}
+.root.withLabel > label {
+  display: block;
+}
+.root.focus > label {
+  color: #4ea4f6;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #dadce0;
+  border-radius: 10px;
+  padding: 0 16px;
+  height: 54px;
+  outline: none;
+
+  font-size: 16px;
+  line-height: 21px;
+  outline: none;
+}
+
+.focus {
+  border-width: 2px;
+  padding: 0 15px;
+  border-color: #4ea4f6;
+}

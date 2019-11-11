@@ -1,8 +1,11 @@
+import { config } from "const/config";
+
 import { Connection } from "./Connection";
 import {
   AuthSendCodeM,
   CallAuthSendCodeM,
-  CodeSettingsS
+  CodeSettingsS,
+  AuthSentCodeS
 } from "./generator/ApiShema.gen";
 import { CallPingM, PingM } from "./generator/MTprotoShema.gen";
 import { TMethod } from "./SchemaHelpers";
@@ -23,12 +26,15 @@ export class ApiInvoker {
 
   async init() {
     await this.connection.init();
-    await this.ping();
+    // await this.ping();
     // let config = await CallTMxHelpTGetConfig(this, new TMxHelpTGetConfig());
     // console.log({ config });
     // await this.ping();
     await this.authSendCode();
-    setInterval(() => this.ping(), 2000);
+    setInterval(
+      () => CallPingM(this, new PingM().set_ping_id([321, 123])),
+      10000
+    );
     // setTimeout(() => {
     // await this.authSendCode();
     // }, 10000);
@@ -48,19 +54,17 @@ export class ApiInvoker {
   //   // }
   //   // return found;
   // }
-  async ping() {
-    let pong = await CallPingM(this, new PingM().set_ping_id([321, 123]));
-
-    console.log(pong);
-  }
+  // async ping() {
+  // console.log(pong);
+  // }
   async authSendCode() {
     let res = await CallAuthSendCodeM(
       this,
       new AuthSendCodeM()
-        // .set_api_hash("b334f72ad1a3d4e3324894ccde2d2dab")
-        // .set_api_id(25282)
-        .set_api_hash("8da85b0d5bfe62527e5b244c209159c3")
-        .set_api_id(2496)
+        .set_api_hash(config.apiHash)
+        .set_api_id(config.apiID)
+        // .set_api_hash("8da85b0d5bfe62527e5b244c209159c3")
+        // .set_api_id(2496)
         .set_phone_number("+9996628384")
       // .set_phone_number("+79267952303")
       // .set_settings(new CodeSettingsS().set_allow_app_hash(true).set)
