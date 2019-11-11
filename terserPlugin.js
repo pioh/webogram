@@ -5,7 +5,7 @@ module.exports.terserPlugin = new TerserPlugin({
 
   parallel: true,
   cache: true,
-  sourceMap: true,
+  sourceMap: false,
   terserOptions: {
     warnings: false,
     // ecma: 5,
@@ -24,19 +24,20 @@ module.exports.terserPlugin = new TerserPlugin({
       // },
     },
     output: {
-      ecma: 5
+      ecma: 7
     },
     compress: {
       drop_console: true,
       hoist_funs: true,
+      hoist_props: true,
       toplevel: true,
-      passes: 3,
-      keep_fargs: false
+      passes: 4,
+      keep_fargs: false,
       // ecma: 5,
       // keep_classnames: true,
       // keep_fnames: true,
       // keep_infinity : true,
-      // unsafe: false,
+      unsafe: true
       // unsafe_arrows  : true,
       // unsafe_comps   : false,
       // unsafe_Func    : false,
@@ -47,7 +48,7 @@ module.exports.terserPlugin = new TerserPlugin({
       // toplevel: true,
     },
     comments: false,
-    sourceMap: true,
+    sourceMap: false,
     toplevel: true
   }
 });

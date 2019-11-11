@@ -1,24 +1,33 @@
-import { ILong } from "lib/long";
+import { ILong } from "lib/ILong";
 
 export class TimeStore {
-  offset = 0;
-  lastMessageIDTime = 0;
+  perfomaceTimeOffset = Date.now() / 1000 - performance.now() / 1000;
+  serverOffset = 0.0; // sec
+  lastNow = 0.0; // sec
 
   now() {
-    return Date.now() + this.offset;
+    let time =
+      performance.now() / 1000 + this.serverOffset + this.perfomaceTimeOffset;
+    if (this.lastNow >= time) time += 0.0001;
+    this.lastNow = time;
+    return time;
+  }
+  syncWithServer(clientTime: ILong, serverTime: ILong, ping: number) {
+    if (this.serverOffset !== 0.0) return;
+    let ct = this.longToTime(clientTime);
+    let st = this.longToTime(serverTime);
+    this.serverOffset = st - ping / 3 - ct;
+    this.lastNow = 0.0;
+  }
+  longToTime(long: ILong) {
+    return long[0] / Math.pow(2, 32) + long[1];
+  }
+  timeToLong(time: number): ILong {
+    let high = Math.floor(time);
+    let low = Math.ceil((time - high) * Math.pow(2, 30)) * 4;
+    return [low, high];
   }
   generateMessageID(): ILong {
-    let time = this.now();
-    if (this.lastMessageIDTime >= time) time = this.lastMessageIDTime + 1;
-    this.lastMessageIDTime = time;
-
-    let random = crypto.getRandomValues(new Uint16Array(1));
-
-    let messageID: ILong = [
-      (time % 1000 << 21) | (random[0] << 3) | 4,
-      Math.floor(time / 1000)
-    ];
-
-    return messageID;
+    return this.timeToLong(this.now());
   }
 }

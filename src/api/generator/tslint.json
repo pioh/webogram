@@ -1,0 +1,215 @@
+{
+  "extends": ["tslint:latest", "tslint-eslint-rules", "tslint-config-prettier"],
+  "project": "tsconfig.json",
+  "allowJs": true,
+  "typeCheck": true,
+  "extensions": [".ts"],
+  "defaults": {
+    "severity": "error"
+  },
+  "linterOptions": {
+    "exclude": ["node_modules", "dist"]
+  },
+  "rulesDirectory": [
+    "node_modules/tslint-eslint-rules/dist/rules",
+    "node_modules/tslint-microsoft-contrib"
+  ],
+  "rules": {
+    "prefer-for-of": false,
+    "ban": [true, "name"],
+    "no-object-literal-type-assertion": [false],
+    "ordered-imports": [
+      true,
+      {
+        "import-sources-order": "case-insensitive",
+        "named-imports-order": "case-insensitive",
+        "grouped-imports": true,
+        "groups": [
+          {
+            "match": "^(components|const|store|lib|static|styles|dictionary|api)",
+            "order": 20
+          },
+          {
+            "name": "parent_dir",
+            "match": "^[.][.]",
+            "order": 30
+          },
+          {
+            "name": "current dir",
+            "match": ".(less|scss)$",
+            "order": 41
+          },
+          {
+            "name": "current dir",
+            "match": "^[.]",
+            "order": 40
+          },
+          {
+            "match": ".*",
+            "order": 11
+          }
+        ]
+      }
+    ],
+    "class-name": false,
+    "no-default-export": true,
+    "no-implicit-dependencies": [false],
+    "no-submodule-imports": false,
+    "no-relative-imports": [false, "allow-siblings"],
+    "comment-format": [true, "check-space"],
+    "no-bitwise": false,
+    "indent": [true, "spaces", 2],
+    "no-this-assignment": false,
+    "jsdoc-format": true,
+    "no-debugger": true,
+    "no-conditional-assignment": false,
+    "no-duplicate-variable": true,
+    "no-empty-interface": false,
+    "no-eval": false,
+    "no-empty": false,
+    "no-internal-module": true,
+    "no-trailing-whitespace": true,
+    "no-shadowed-variable": false,
+    "no-switch-case-fall-through": false,
+    "no-unused-expression": true,
+    "no-var-keyword": true,
+    "prefer-object-spread": false,
+    "typedef-whitespace": [
+      true,
+      {
+        "call-signature": "nospace",
+        "index-signature": "nospace",
+        "parameter": "nospace",
+        "property-declaration": "nospace",
+        "variable-declaration": "nospace"
+      }
+    ],
+    "variable-name": [true, "ban-keywords"],
+    "no-implicit-coercion": [1],
+    "prefer-const": false,
+    "max-len": [1, 150, 2],
+    "max-line-length": [false, 150],
+    "camelcase": [1],
+    "no-lonely-if": [1],
+    "max-classes-per-file": false,
+    "no-global-assign": ["error"],
+    "no-shadow": [
+      "error",
+      {
+        "builtinGlobals": false,
+        "hoist": "all",
+        "allow": []
+      }
+    ],
+    "no-shadow-restricted-names": [2],
+    "no-native-reassign": [2],
+    "no-inner-declarations": [1],
+    "no-param-reassign": [0],
+    "no-var-requires": false,
+    "no-undefined": [0],
+    "consistent-return": [1],
+    "generator-star-spacing": [1],
+    "no-console": [false],
+    "jsx-quotes": [2, "prefer-single"],
+    "object-literal-key-quotes": false,
+    "quote-props": [1, "as-needed"],
+    "comma-dangle": ["error", "always-multiline"],
+    "no-mixed-operators": [
+      1,
+      {
+        "groups": [["&", "|", "^", "~", "<<", ">>", ">>>"]]
+      }
+    ],
+    "no-extra-parens": [
+      1,
+      "all",
+      {
+        "nestedBinaryExpressions": false,
+        "ignoreJSX": "multi-line"
+      }
+    ],
+    "key-spacing": [
+      "error",
+      {
+        "align": {
+          "beforeColon": true,
+          "afterColon": true,
+          "on": "colon"
+        }
+      }
+    ],
+    "react/no-unused-prop-types": [0],
+    "no-multi-spaces": [
+      0,
+      {
+        "exceptions": {
+          "Property": true,
+          "VariableDeclarator": true,
+          "ImportDeclaration": true,
+          "AssignmentExpression": true,
+          "ObjectExpression": true
+        }
+      }
+    ],
+    "keyword-spacing": [
+      "error",
+      {
+        "after": true,
+        "before": true
+      }
+    ],
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 2,
+        "maxEOF": 1
+      }
+    ],
+    "no-invalid-this": [false],
+    "only-arrow-functions": [false],
+    "forin": false,
+    "new-cap": [
+      1,
+      {
+        "capIsNew": false
+      }
+    ],
+    "react/jsx-no-bind": [0],
+    "object-curly-spacing": ["error", "never"],
+    "array-bracket-spacing": ["error", "never"],
+    "import/no-unresolved": [
+      2,
+      {
+        "commonjs": true,
+        "amd": true
+      }
+    ],
+    "brace-style": [
+      "error",
+      "1tbs",
+      {
+        "allowSingleLine": false
+      }
+    ],
+    "align": [true, "parameters", "statements", "members"],
+    "member-ordering": false,
+    "member-access": [false],
+    "object-literal-sort-keys": false,
+    "no-consecutive-blank-lines": [true, 2],
+    "interface-name": false,
+    "no-namespace": [true, "allow-declarations"],
+    "quotemark": false,
+    "semicolon": false,
+    "curly": false,
+    "space-before-function-paren": false,
+    "trailing-comma": false,
+    "object-literal-shorthand": false,
+    "no-use-before-declare": false,
+    "triple-equals": false,
+    "one-line": false,
+    "whitespace": false,
+    "arrow-parens": false,
+    "prefer-conditional-expression": false,
+    "ter-indent": false
+  }
+}

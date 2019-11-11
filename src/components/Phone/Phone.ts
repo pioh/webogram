@@ -1,4 +1,4 @@
-import { html } from "lib/html";
+import * as h from "lib/html";
 
 import * as s from "./Phone.scss";
 
@@ -7,11 +7,10 @@ export class Phone {
   domInput: HTMLInputElement | null = null;
 
   mount(): HTMLElement {
-    this.domRoot = html<HTMLDivElement>`
-      <div class="${s.root}"><input class="${s.input}" /></div>
-    `;
-    this.domInput = this.domRoot.querySelector<HTMLInputElement>(`.${s.input}`);
-
+    this.domRoot = h.div(
+      h.className(s.root),
+      h.input(h.className(s.input), h.cb(el => (this.domInput = el)))
+    );
     return this.domRoot;
   }
   unmount() {

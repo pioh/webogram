@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules",
+        "options": {
+          "customMatcher": "\\.(c|le|sa|sc)ss$",
+          "camelCase": false
+        }
+      }
+    ],
+    "outDir": "./",
+    "baseUrl": "./",
+    "sourceMap": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "none",
+    "moduleResolution": "node",
+    "target": "esnext",
+    "jsx": "react",
+    "allowJs": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "allowUnreachableCode": false,
+    "declaration": false,
+    "alwaysStrict": true,
+    "downlevelIteration": false,
+    "noFallthroughCasesInSwitch": true,
+    "strict": true,
+    "checkJs": false,
+    "allowSyntheticDefaultImports": true,
+    "strictBindCallApply": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "lib": ["es2017", "es2018", "esnext"]
+  },
+  "files": ["./generator.ts"],
+  "include": ["./generator.ts"],
+  "exclude": ["dist", ".test", ".coverage", "config"]
+}

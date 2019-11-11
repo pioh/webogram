@@ -53,20 +53,7 @@
     ],
     "class-name": true,
     "no-default-export": true,
-    "no-implicit-dependencies": [
-      true,
-      [
-        "components",
-        "theme",
-        "const",
-        "store",
-        "lib",
-        "static",
-        "styles",
-        "dictionary",
-        "api"
-      ]
-    ],
+    "no-implicit-dependencies": [false],
     "no-submodule-imports": false,
     "no-relative-imports": [true, "allow-siblings"],
     "comment-format": [true, "check-space"],
