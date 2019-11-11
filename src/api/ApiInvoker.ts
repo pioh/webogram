@@ -1,5 +1,9 @@
 import { Connection } from "./Connection";
-import { AuthSendCodeM, CallAuthSendCodeM } from "./generator/ApiShema.gen";
+import {
+  AuthSendCodeM,
+  CallAuthSendCodeM,
+  CodeSettingsS
+} from "./generator/ApiShema.gen";
 import { CallPingM, PingM } from "./generator/MTprotoShema.gen";
 import { TMethod } from "./SchemaHelpers";
 import { TimeStore } from "./TimeStore";
@@ -53,9 +57,13 @@ export class ApiInvoker {
     let res = await CallAuthSendCodeM(
       this,
       new AuthSendCodeM()
-        .set_api_hash("b334f72ad1a3d4e3324894ccde2d2dab")
-        .set_api_id(25282)
-        .set_phone_number("9996628383")
+        // .set_api_hash("b334f72ad1a3d4e3324894ccde2d2dab")
+        // .set_api_id(25282)
+        .set_api_hash("8da85b0d5bfe62527e5b244c209159c3")
+        .set_api_id(2496)
+        .set_phone_number("+9996628384")
+      // .set_phone_number("+79267952303")
+      // .set_settings(new CodeSettingsS().set_allow_app_hash(true).set)
     );
     // let res = await this.invoke(MethodAuthSendCode, [
     //   "9996628789",

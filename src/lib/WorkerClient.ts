@@ -25,7 +25,7 @@ export class WorkerClient {
   constructor() {
     while (workers.length < 4) {
       let worker = new CryptoWorker();
-      worker.addEventListener("message", msg => {
+      worker.addEventListener("message", (msg: any) => {
         let resolve = resolvers.get(msg.data.id);
         resolvers.delete(msg.data.id);
         if (resolve) resolve(msg.data);

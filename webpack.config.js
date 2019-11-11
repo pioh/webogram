@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin");
 const WorkerPlugin = require("worker-plugin");
 const ClosurePlugin = require("closure-webpack-plugin");
+const webpack = require("webpack");
 
 const { terserPlugin } = require("./terserPlugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
@@ -23,6 +24,16 @@ const tsLoader = {
     reportFiles: ["src/**/*.{ts,tsx}", "types/global.d.ts"]
   }
 };
+// const tsLoader = {
+//   loader: "tsickle-loader",
+//   options: {
+//     // the tsconfig file to use during compilation
+//     tsconfig: path.resolve(__dirname, "tsconfig.json"),
+//     // this is the directory where externs will be saved. You
+//     // will probably want to delete these between builds
+//     externDir: "./dist/externs"
+//   }
+// };
 module.exports = {
   entry: "./src/main.ts",
   target: "web",
@@ -140,6 +151,7 @@ module.exports = {
     ]
   },
   plugins: [
+    // new webpack.optimize.ModuleConcatenationPlugin(),
     new HtmlWebpackPlugin({
       template: `src/index.html`,
       hash: false,
@@ -226,6 +238,17 @@ module.exports = {
             },
             canPrint: true
           }),
+          // new ClosurePlugin(
+          //   {
+          //     mode: "STANDARD", // a little misleading -- the actual compilation level is below
+          //     childCompilations: true
+          //   },
+          //   {
+          //     // externs: [path.resolve(__dirname, "dist", "externs.js")],
+          //     languageOut: "ECMASCRIPT_NEXT",
+          //     compilation_level: "ADVANCED"
+          //   }
+          // ),
           terserPlugin
         ],
         namedModules: false, // NamedModulesPlugin()
@@ -244,6 +267,7 @@ module.exports = {
     : {},
   output: {
     filename: "[name].[contenthash].js",
+    // filename: "[name].js",
     hashDigestLength: 4,
     path: path.join(__dirname, "dist"),
     publicPath: "",

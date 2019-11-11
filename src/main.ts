@@ -1,6 +1,6 @@
-import { ApiInvoker } from "api/ApiInvoker";
-import { TimeStore } from "api/TimeStore";
-import { Layout } from "components/Layout/Layout";
+import { ApiInvoker } from "./api/ApiInvoker";
+import { TimeStore } from "./api/TimeStore";
+import { Layout } from "./components/Layout/Layout";
 
 import "./static/font.css";
 

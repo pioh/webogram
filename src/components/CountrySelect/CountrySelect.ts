@@ -1,3 +1,4 @@
+import { emojiSupport } from "lib/emojiSupport";
 import * as h from "lib/html";
 import { throttle } from "lib/throttle";
 
@@ -69,16 +70,17 @@ export class CountrySelect {
   loadCountry() {
     if (!Country) {
       Country = new Promise(r =>
-        requestAnimationFrame(() => import("dictionary/Country.en").then(r))
+        requestAnimationFrame(() =>
+          import("../../dictionary/Country.en").then(r)
+        )
       );
     }
-    if (!Emoji) {
+    if (!Emoji && emojiSupport()) {
       Emoji = new Promise(r =>
-        requestAnimationFrame(() => import("dictionary/Emoji").then(r))
-      );
+        requestAnimationFrame(() => import("../../dictionary/Emoji").then(r))
+      ).then((e: any) => (this.emoji = e.Emoji));
     }
     Country.then(c => (this.country = c.Country));
-    Emoji.then(e => (this.emoji = e.Emoji));
   }
   onInputClick = () => {
     this.mountSelect();
@@ -178,7 +180,6 @@ export class CountrySelect {
   }
   async mountSelect() {
     await Country;
-    await Emoji;
     if (!this.domInput) return;
     if (!this.domRoot) return;
     if (this.domUL) return;
@@ -310,7 +311,7 @@ export class CountrySelect {
   renderLi(index: number) {
     let c = this.options[index];
     let emoji = this.emoji.get(`:flag_${c[2].toLowerCase()}:`);
-    if (!emoji) console.log(...c);
+
     let icon = emoji
       ? h.i(emoji)
       : h.i(

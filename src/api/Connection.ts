@@ -125,7 +125,7 @@ export class Connection {
     requestBuf.writeIntAt((requestBuf.size - 5) * 4, 4);
 
     let ping = performance.now() / 1000;
-    let response = await fetch(GetDcHref(2, true), {
+    let response = await fetch(GetDcHref(2), {
       method: "POST",
       body: requestBuf.getBuffer32(),
       mode: "cors"
@@ -153,7 +153,8 @@ export class Connection {
       if (this.isDebug) console.log("send initConnection");
       request = new InvokeWithLayerM().set_layer(105).set_query(
         new InitConnectionM()
-          .set_api_id(25282)
+          // .set_api_id(25282)
+          .set_api_id(2496)
           .set_app_version("1.0.0")
           .set_device_model(navigator.userAgent || "Unknown UserAgent")
           .set_system_version(navigator.platform || "Unknown Platform")
@@ -206,7 +207,7 @@ export class Connection {
     reqWrap.writeU8A(this.authKeyID);
     reqWrap.writeU8A(msgKey);
     reqWrap.writeU8A(encrypted);
-    let response = await fetch(GetDcHref(2, true), {
+    let response = await fetch(GetDcHref(2), {
       method: "POST",
       body: reqWrap.getBuffer32(),
       mode: "cors"

@@ -1,10 +1,9 @@
-import { PublicKeys } from "const/PublicKyes";
-import { AesDecrypt, AesEncrypt, sha256Hash } from "lib/crypto";
-import { bytesModPow } from "lib/modPow";
-import { RsaEncrypt } from "lib/RsaEncrypt";
-import { verifyDhParams } from "lib/verifyDhParams";
-
+import { PublicKeys } from "./const/PublicKyes";
+import { AesDecrypt, AesEncrypt, sha256Hash } from "./lib/crypto";
+import { bytesModPow } from "./lib/modPow";
 import { pqPrimeFactorization } from "./lib/pqPrimeFactorization";
+import { RsaEncrypt } from "./lib/RsaEncrypt";
+import { verifyDhParams } from "./lib/verifyDhParams";
 import { WorkerMethod } from "./lib/WorkerClient";
 
 const ctx: Worker = self as any;
