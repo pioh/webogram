@@ -15,14 +15,29 @@ export type TagProp<T extends HTMLElement> =
   | Tag<any>
   | Listener<any, T>;
 
-export function HtmlTag<T extends HTMLElement>(name: string) {
-  return (...props: Array<TagProp<T>>): Tag<T> => {
-    let el = document.createElement(name)!;
+export function HtmlTag<K extends keyof HTMLElementTagNameMap>(name: K) {
+  return (
+    ..._props: Array<
+      | TagProp<HTMLElementTagNameMap[K]>
+      | Array<TagProp<HTMLElementTagNameMap[K]>>
+      | undefined
+      | null
+    >
+  ): Tag<HTMLElementTagNameMap[K]> => {
+    let el = document.createElement<K>(name)!;
+    let props: Array<TagProp<HTMLElementTagNameMap[K]>> = _props
+      .reduce((a: any, b: any) => [...a, ...(Array.isArray(b) ? b : [b])], [])
+      .filter(v => v);
 
     let children = [];
     for (let i = 0; i < props.length; i++) {
       let p = props[i];
       if (p instanceof Attribute) {
+        let v = p.v;
+        if (p.n === "class")
+          v = [...(p.n || "").split(" "), v].filter(v => v).join(" ");
+        if (p.n === "style")
+          v = [...(p.n || "").split(";"), v].filter(v => v).join(";");
         el.setAttribute(p.n, String(p.v));
       } else if (p instanceof Callback) {
       } else if (p instanceof Listener) {
@@ -31,7 +46,9 @@ export function HtmlTag<T extends HTMLElement>(name: string) {
         children.push(p);
       }
     }
-    let tag = new Tag<T>({ tag: el as T });
+    let tag = new Tag<HTMLElementTagNameMap[K]>({
+      tag: el as HTMLElementTagNameMap[K]
+    });
     tag.append(...children);
 
     for (let i = 0; i < props.length; i++) {
@@ -72,6 +89,7 @@ export class Listener<K extends keyof HTMLElementEventMap, E> {
   ) {
     this.n = n;
     this.c = c;
+    if (typeof o === "object" && o.passive === void 0) o.passive = true;
     this.o = o;
   }
 }
@@ -81,7 +99,7 @@ function NewEvenListener<K extends keyof HTMLElementEventMap>(n: K) {
     c: (this: E, ev: HTMLElementEventMap[K]) => any,
     o?: AddEventListenerOptions
   ) {
-    return new Listener(n, c, o);
+    return new Listener<K, E>(n, c, o);
   };
 }
 
@@ -93,18 +111,19 @@ export function cb<T>(cb: (el: T) => void) {
   return new Callback<T>(cb);
 }
 
-export const input = HtmlTag<HTMLInputElement>("input");
-export const div = HtmlTag<HTMLDivElement>("div");
-export const a = HtmlTag<HTMLLinkElement>("a");
-export const i = HtmlTag<HTMLDivElement>("i");
-export const img = HtmlTag<HTMLImageElement>("img");
-export const span = HtmlTag<HTMLSpanElement>("span");
-export const ul = HtmlTag<HTMLUListElement>("ul");
-export const li = HtmlTag<HTMLLIElement>("li");
-export const h1 = HtmlTag<HTMLDivElement>("h1");
-export const p = HtmlTag<HTMLDivElement>("p");
-export const br = HtmlTag<HTMLBRElement>("br");
-export const label = HtmlTag<HTMLLabelElement>("label");
+export const input = HtmlTag("input");
+export const div = HtmlTag("div");
+export const a = HtmlTag("a");
+export const i = HtmlTag("i");
+export const img = HtmlTag("img");
+export const span = HtmlTag("span");
+export const ul = HtmlTag("ul");
+export const li = HtmlTag("li");
+export const h1 = HtmlTag("h1");
+export const p = HtmlTag("p");
+export const br = HtmlTag("br");
+export const label = HtmlTag("label");
+export const button = HtmlTag("button");
 
 export const id = Attr("id");
 export const className = Attr("class");
@@ -114,6 +133,7 @@ export const value = Attr("value");
 export const htmlFor = Attr("for");
 export const role = Attr("role");
 export const tabindex = Attr("tabindex");
+export const type = Attr("type");
 
 export const autocomplete = Attr("autocomplete");
 export const autocorrect = Attr("autocorrect");

@@ -24,7 +24,6 @@ export function GetDcHref(dcID: number) {
   if (!dc) throw new Error(`unknown dc with id ${dcID} isTest:${config.test}`);
 
   return (
-    `https://${dc.domain}-1.web.telegram.org/apiw1` +
-    (config.test ? "_test" : "")
+    `https://${dc.domain}.web.telegram.org/apiw1` + (config.test ? "_test" : "")
   );
 }

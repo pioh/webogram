@@ -1,0 +1,19 @@
+.root {
+  height: 54px;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 37px/2px;
+  margin-bottom: 24px;
+  outline: none;
+}
+
+.primary {
+  background: #4ea4f6;
+  color: #fff;
+}

@@ -1,17 +1,11 @@
+import { Input } from "components/Input/Input";
 import { ITagProps, Tag } from "components/Tag/Tag";
+import { GetCountry, GetEmoji, ICountry } from "dictionary";
 import { emojiSupport } from "lib/emojiSupport";
 import * as h from "lib/html";
 import { throttle } from "lib/throttle";
 
 import * as s from "./CountrySelect.scss";
-
-let Country: Promise<
-  typeof import("/home/tema/webogram/src/dictionary/Country.en")
-> | null = null;
-
-let Emoji: Promise<
-  typeof import("/home/tema/webogram/src/dictionary/Emoji")
-> | null = null;
 
 const MIN_SELECT_HEIGHT = 220;
 const LI_HEIGHT = 56;
@@ -19,14 +13,16 @@ const LI_HEIGHT = 56;
 interface ICountrySelectProps extends ITagProps<HTMLDivElement> {}
 
 export class CountrySelect extends Tag<HTMLDivElement> {
-  input: Tag<HTMLInputElement>;
+  input: Input;
   ul: Tag<HTMLUListElement> | null = null;
 
-  options: Array<[string, string, string, string?, string?]> = [];
+  _onChange: Array<(code: string, country: string) => void> = [];
+
+  options: ICountry[] = [];
   scroll = 0;
   offset = 0;
-  emoji: Map<string, string> = new Map();
-  country: Array<[string, string, string, string?, string?]> = [];
+  emoji = new Map<string, string>();
+  country = GetCountry();
   itemsCount = 0;
   code = "";
   value = "";
@@ -34,114 +30,80 @@ export class CountrySelect extends Tag<HTMLDivElement> {
   constructor(props: ICountrySelectProps) {
     super({
       ...props,
-      tag: h.div(
-        h.className(s.root),
-        h.label(h.htmlFor("country-input"), "Country").tag
-      ).tag
+      tag: h.div(h.className(s.root)).tag
     });
 
-    this.input = h.input(
-      h.id("country-input"),
-      h.className(s.input),
-      h.autocapitalizeOff,
-      h.autocompleteOff,
-      h.autocorrectOff,
-      h.spellcheckOff,
-      h.onClick(this.onInputClick, { passive: true }),
-      h.onFocus(this.onFocus, { passive: true }),
-      h.onInput(this.onInput, { passive: true }),
-      h.onBlur(this.onBlur, { passive: true })
-    );
-    this.append(this.input.tag, h.i().tag);
-
-    this.loadCountry();
+    this.input = new Input({
+      forInput: [h.onFocus(this.mountSelect), h.onClick(this.mountSelect)],
+      forLabel: ["Country"],
+      iconRight: h.i(h.className(s.icon))
+    });
+    this.input.onChange(this.onInputChange);
+    this.append(this.input.tag);
+    GetEmoji().then(e => (this.emoji = e));
+    this.autoSetCountry();
   }
-  mount() {
-    return this.tag;
+  onChange(cb: (code: string, country: string) => void) {
+    this._onChange.push(cb);
   }
   remove() {
     super.remove();
-    if (this.ul) this.close();
+    this.close();
   }
 
-  loadCountry() {
-    if (!Country) {
-      Country = new Promise(r =>
-        requestAnimationFrame(() =>
-          import("../../dictionary/Country.en").then(r)
-        )
-      );
-    }
-    if (!Emoji && emojiSupport()) {
-      Emoji = new Promise(r =>
-        requestAnimationFrame(() => import("../../dictionary/Emoji").then(r))
-      ).then((e: any) => (this.emoji = e.Emoji));
-    }
-    Country.then(c => {
-      this.country = c.Country;
-      if (this.code || this.class.has(s.open)) return;
-      let code = (navigator.language || "").toLowerCase().split("-");
-      let found = this.country.filter(v => {
-        if (v[2].toLowerCase() === code[1]) return true;
-        if (v.slice(3).find(c => c && c.toLowerCase() === code[1])) return true;
-        return false;
-      });
-      if (found.length === 1) {
-        this.setValue(found[0][1], found[0][0]);
-      }
+  async autoSetCountry() {
+    let country = await this.country;
+    if (this.code || this.class.has(s.open)) return;
+    let code = (navigator.language || "").toLowerCase().split("-");
+    let found = country.filter(v => {
+      if (v[2].toLowerCase() === code[1]) return true;
+      if (v.slice(3).find(c => c && c.toLowerCase() === code[1])) return true;
+      return false;
     });
+    if (found.length === 1) {
+      this.setValue(found[0][1], found[0][0]);
+    }
   }
-  onInputClick = () => {
-    this.mountSelect();
-  };
-  onFocus = () => {
-    this.mountSelect();
-  };
-  onBlur = () => {};
-  onInput = async () => {
-    await Country;
-    let val = this.input.tag.value;
-    this.options = this.country
+
+  onInputChange = async (value: string | number | null) => {
+    let country = await this.country;
+    this.options = country
       .map(
-        o =>
-          [this.rate(val, o), o] as [
-            string,
-            [string, string, string, string?, string?]
-          ]
+        o => [this.rate(value ? String(value) : "", o), o] as [string, ICountry]
       )
       .filter(o => !!o[0])
       .sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
       .map(o => o[1]);
     this.renderOptions();
   };
-
-  onClickOutside = (e: MouseEvent) => {
-    this.close(e);
-  };
   close = (e?: MouseEvent) => {
     if (e && this.tag.contains(e.target as Node)) return;
-    window.removeEventListener("click", this.onClickOutside);
-    window.removeEventListener("resize", this.onResize);
+    window.removeEventListener("click", this.close);
+    window.removeEventListener("resize", this.onWindowResize);
     if (!this.ul) return;
     this.ul.remove();
     this.ul = null;
     this.removeClass(s.open, s.upperSelect);
-    this.input.tag.value = this.value;
+    this.input.removeForceFocus();
+    this.input.value = this.value;
   };
   setValue(value: string, code: string) {
+    if (this.input.value !== value) {
+      this.input.value = value;
+    }
+    if (value === this.value && code === this.code) return;
     this.value = value;
     this.code = code;
-    this.input.tag.value = this.value;
-    this.addClass(s.withLabel);
+    this._onChange.map(cb => cb(code, value));
   }
-  onResize = () => {
+  onWindowResize = () => {
     this.matchUpOrDown();
     this.rerenderListItems();
     this.input.tag.scrollIntoView();
   };
   matchUpOrDown = () => {
     if (!this.ul) return;
-    let inputRect = this.input.tag.getBoundingClientRect();
+    let inputRect = this.input.getBoundingClientRect();
     let maxHeight = window.innerHeight - inputRect.height - inputRect.top - 16;
     let maxHeightUp = inputRect.top - 16;
     if (maxHeight < MIN_SELECT_HEIGHT) {
@@ -152,7 +114,7 @@ export class CountrySelect extends Tag<HTMLDivElement> {
     }
     this.ul.tag.style.maxHeight = `${maxHeight}px`;
   };
-  rate(val: string, o: [string, string, string, string?, string?]): string {
+  rate(val: string, o: ICountry): string {
     val = this.strip(val);
     let o0 = this.strip(o[0]).indexOf(val);
     let o1 = this.strip(o[1]).indexOf(val);
@@ -174,10 +136,10 @@ export class CountrySelect extends Tag<HTMLDivElement> {
       .trim()
       .replace(/[^\w\d]/g, "");
   }
-  async mountSelect() {
-    await Country;
+  mountSelect = async () => {
+    let country = await this.country;
     if (this.ul) return;
-    this.options = this.country;
+    this.options = country;
     this.ul = h.ul(
       h.className(s.list),
       h.onScroll(this.onScroll, { passive: true })
@@ -187,10 +149,11 @@ export class CountrySelect extends Tag<HTMLDivElement> {
 
     this.append(this.ul.tag);
     this.addClass(s.open);
-    window.addEventListener("resize", this.onResize, { passive: true });
-    window.addEventListener("click", this.onClickOutside, { passive: true });
-    this.input.tag.scrollIntoView();
-  }
+    this.input.addForceFocus();
+    window.addEventListener("resize", this.onWindowResize, { passive: true });
+    window.addEventListener("click", this.close, { passive: true });
+    this.input.scrollIntoView();
+  };
   onScroll = () => {
     this.rerenderListItems();
   };
@@ -285,7 +248,8 @@ export class CountrySelect extends Tag<HTMLDivElement> {
     this.scroll = 0;
     this.matchListPaddings();
     this.ul.append(h.div(h.style(`height: ${this.offset * LI_HEIGHT}px;`)).tag);
-
+    if (this.itemsCount === 0) this.addClass(s.noItems);
+    else this.removeClass(s.noItems);
     for (let i = 0; i < this.itemsCount; i++) {
       if (i + this.offset >= this.options.length) break;
       this.ul.append(this.renderLi(i).tag);

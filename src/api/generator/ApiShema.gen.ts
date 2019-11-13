@@ -19,7 +19,7 @@ import { RpcErrorS } from "./MTprotoShema.gen";
 export class BoolFalseS {
   static _id = 0xbc799737;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(BoolFalseS._id);
@@ -45,7 +45,7 @@ AllStructs.set(BoolFalseS._id, BoolFalseS);
 export class BoolTrueS {
   static _id = 0x997275b5;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(BoolTrueS._id);
@@ -71,7 +71,7 @@ AllStructs.set(BoolTrueS._id, BoolTrueS);
 export class TrueS {
   static _id = 0x3fedd339;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(TrueS._id);
@@ -97,7 +97,7 @@ AllStructs.set(TrueS._id, TrueS);
 export class VectorS {
   static _id = 0x1cb5c415;
 
-  _values = [] as any[];
+  _values = ([] as unknown) as any[];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(VectorS._id);
@@ -135,7 +135,7 @@ AllStructs.set(VectorS._id, VectorS);
 export class ErrorS {
   static _id = 0xc4b9f9bb;
 
-  _values = [0, ""] as [number, string];
+  _values = ([0, ""] as unknown) as [number, string];
 
   get_code(): number {
     return this._values[0];
@@ -204,7 +204,7 @@ AllStructs.set(ErrorS._id, ErrorS);
 export class NullS {
   static _id = 0x56730bcc;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(NullS._id);
@@ -230,7 +230,7 @@ AllStructs.set(NullS._id, NullS);
 export class InputPeerEmptyS {
   static _id = 0x7f3b18ea;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPeerEmptyS._id);
@@ -256,7 +256,7 @@ AllStructs.set(InputPeerEmptyS._id, InputPeerEmptyS);
 export class InputPeerSelfS {
   static _id = 0x7da07ec9;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPeerSelfS._id);
@@ -282,7 +282,7 @@ AllStructs.set(InputPeerSelfS._id, InputPeerSelfS);
 export class InputPeerChatS {
   static _id = 0x179be863;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_chat_id(): number {
     return this._values[0];
@@ -331,7 +331,7 @@ AllStructs.set(InputPeerChatS._id, InputPeerChatS);
 export class InputUserEmptyS {
   static _id = 0xb98886cf;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputUserEmptyS._id);
@@ -357,7 +357,7 @@ AllStructs.set(InputUserEmptyS._id, InputUserEmptyS);
 export class InputUserSelfS {
   static _id = 0xf7c1b13f;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputUserSelfS._id);
@@ -386,7 +386,12 @@ AllStructs.set(InputUserSelfS._id, InputUserSelfS);
 export class InputPhoneContactS {
   static _id = 0xf392b7f4;
 
-  _values = [[0, 0], "", "", ""] as [ProtoLong, string, string, string];
+  _values = ([[0, 0], "", "", ""] as unknown) as [
+    ProtoLong,
+    string,
+    string,
+    string
+  ];
 
   get_client_id(): ProtoLong {
     return this._values[0];
@@ -498,7 +503,12 @@ AllStructs.set(InputPhoneContactS._id, InputPhoneContactS);
 export class InputFileS {
   static _id = 0xf52ff27f;
 
-  _values = [[0, 0], 0, "", ""] as [ProtoLong, number, string, string];
+  _values = ([[0, 0], 0, "", ""] as unknown) as [
+    ProtoLong,
+    number,
+    string,
+    string
+  ];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -607,7 +617,7 @@ AllStructs.set(InputFileS._id, InputFileS);
 export class InputMediaEmptyS {
   static _id = 0x9664f57f;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMediaEmptyS._id);
@@ -636,12 +646,12 @@ AllStructs.set(InputMediaEmptyS._id, InputMediaEmptyS);
 export class InputMediaUploadedPhotoS {
   static _id = 0x1e287d04;
 
-  _values = [0, new InputFileT(), [], 0] as [
-    number,
-    InputFileT,
-    InputDocumentT[],
-    number
-  ];
+  _values = ([
+    0,
+    (new InputFileT() as unknown) as InputFileT,
+    [],
+    0
+  ] as unknown) as [number, InputFileT, InputDocumentT[], number];
 
   get_flags(): number {
     return this._values[0];
@@ -755,7 +765,7 @@ export class InputMediaUploadedPhotoS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputDocumentT = new InputDocumentT();
+        let val: InputDocumentT = (new InputDocumentT() as unknown) as InputDocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -785,7 +795,11 @@ AllStructs.set(InputMediaUploadedPhotoS._id, InputMediaUploadedPhotoS);
 export class InputMediaPhotoS {
   static _id = 0xb3ba0635;
 
-  _values = [0, new InputPhotoT(), 0] as [number, InputPhotoT, number];
+  _values = ([
+    0,
+    (new InputPhotoT() as unknown) as InputPhotoT,
+    0
+  ] as unknown) as [number, InputPhotoT, number];
 
   get_flags(): number {
     return this._values[0];
@@ -882,7 +896,9 @@ AllStructs.set(InputMediaPhotoS._id, InputMediaPhotoS);
 export class InputMediaGeoPointS {
   static _id = 0xf9c44144;
 
-  _values = [new InputGeoPointT()] as [InputGeoPointT];
+  _values = ([
+    (new InputGeoPointT() as unknown) as InputGeoPointT
+  ] as unknown) as [InputGeoPointT];
 
   get_geo_point(): InputGeoPointT {
     return this._values[0];
@@ -936,7 +952,7 @@ AllStructs.set(InputMediaGeoPointS._id, InputMediaGeoPointS);
 export class InputMediaContactS {
   static _id = 0xf8ab7dfb;
 
-  _values = ["", "", "", ""] as [string, string, string, string];
+  _values = (["", "", "", ""] as unknown) as [string, string, string, string];
 
   get_phone_number(): string {
     return this._values[0];
@@ -1045,7 +1061,7 @@ AllStructs.set(InputMediaContactS._id, InputMediaContactS);
 export class InputChatPhotoEmptyS {
   static _id = 0x1ca48f57;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputChatPhotoEmptyS._id);
@@ -1071,7 +1087,9 @@ AllStructs.set(InputChatPhotoEmptyS._id, InputChatPhotoEmptyS);
 export class InputChatUploadedPhotoS {
   static _id = 0x927c55b4;
 
-  _values = [new InputFileT()] as [InputFileT];
+  _values = ([(new InputFileT() as unknown) as InputFileT] as unknown) as [
+    InputFileT
+  ];
 
   get_file(): InputFileT {
     return this._values[0];
@@ -1122,7 +1140,9 @@ AllStructs.set(InputChatUploadedPhotoS._id, InputChatUploadedPhotoS);
 export class InputChatPhotoS {
   static _id = 0x8953ad37;
 
-  _values = [new InputPhotoT()] as [InputPhotoT];
+  _values = ([(new InputPhotoT() as unknown) as InputPhotoT] as unknown) as [
+    InputPhotoT
+  ];
 
   get_id(): InputPhotoT {
     return this._values[0];
@@ -1173,7 +1193,7 @@ AllStructs.set(InputChatPhotoS._id, InputChatPhotoS);
 export class InputGeoPointEmptyS {
   static _id = 0xe4c123d6;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputGeoPointEmptyS._id);
@@ -1200,7 +1220,7 @@ AllStructs.set(InputGeoPointEmptyS._id, InputGeoPointEmptyS);
 export class InputGeoPointS {
   static _id = 0xf3b7acc9;
 
-  _values = [0.0, 0.0] as [number, number];
+  _values = ([0.0, 0.0] as unknown) as [number, number];
 
   get_lat(): number {
     return this._values[0];
@@ -1269,7 +1289,7 @@ AllStructs.set(InputGeoPointS._id, InputGeoPointS);
 export class InputPhotoEmptyS {
   static _id = 0x1cd7bf0d;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPhotoEmptyS._id);
@@ -1297,7 +1317,7 @@ AllStructs.set(InputPhotoEmptyS._id, InputPhotoEmptyS);
 export class InputPhotoS {
   static _id = 0x3bb3b94a;
 
-  _values = [[0, 0], [0, 0], new Uint8Array()] as [
+  _values = ([[0, 0], [0, 0], new Uint8Array()] as unknown) as [
     ProtoLong,
     ProtoLong,
     Uint8Array
@@ -1393,7 +1413,7 @@ AllStructs.set(InputPhotoS._id, InputPhotoS);
 export class InputFileLocationS {
   static _id = 0xdfdaabe1;
 
-  _values = [[0, 0], 0, [0, 0], new Uint8Array()] as [
+  _values = ([[0, 0], 0, [0, 0], new Uint8Array()] as unknown) as [
     ProtoLong,
     number,
     ProtoLong,
@@ -1507,7 +1527,7 @@ AllStructs.set(InputFileLocationS._id, InputFileLocationS);
 export class PeerUserS {
   static _id = 0x9db1bc6d;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_user_id(): number {
     return this._values[0];
@@ -1556,7 +1576,7 @@ AllStructs.set(PeerUserS._id, PeerUserS);
 export class PeerChatS {
   static _id = 0xbad0e5bb;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_chat_id(): number {
     return this._values[0];
@@ -1605,7 +1625,7 @@ AllStructs.set(PeerChatS._id, PeerChatS);
 export class StorageFileUnknownS {
   static _id = 0xaa963b05;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(StorageFileUnknownS._id);
@@ -1631,7 +1651,7 @@ AllStructs.set(StorageFileUnknownS._id, StorageFileUnknownS);
 export class StorageFilePartialS {
   static _id = 0x40bc6f52;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(StorageFilePartialS._id);
@@ -1657,7 +1677,7 @@ AllStructs.set(StorageFilePartialS._id, StorageFilePartialS);
 export class StorageFileJpegS {
   static _id = 0x7efe0e;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(StorageFileJpegS._id);
@@ -1683,7 +1703,7 @@ AllStructs.set(StorageFileJpegS._id, StorageFileJpegS);
 export class StorageFileGifS {
   static _id = 0xcae1aadf;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(StorageFileGifS._id);
@@ -1709,7 +1729,7 @@ AllStructs.set(StorageFileGifS._id, StorageFileGifS);
 export class StorageFilePngS {
   static _id = 0xa4f63c0;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(StorageFilePngS._id);
@@ -1735,7 +1755,7 @@ AllStructs.set(StorageFilePngS._id, StorageFilePngS);
 export class StorageFilePdfS {
   static _id = 0xae1e508d;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(StorageFilePdfS._id);
@@ -1761,7 +1781,7 @@ AllStructs.set(StorageFilePdfS._id, StorageFilePdfS);
 export class StorageFileMp3S {
   static _id = 0x528a0677;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(StorageFileMp3S._id);
@@ -1787,7 +1807,7 @@ AllStructs.set(StorageFileMp3S._id, StorageFileMp3S);
 export class StorageFileMovS {
   static _id = 0x4b09ebbc;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(StorageFileMovS._id);
@@ -1813,7 +1833,7 @@ AllStructs.set(StorageFileMovS._id, StorageFileMovS);
 export class StorageFileMp4S {
   static _id = 0xb3cea0e4;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(StorageFileMp4S._id);
@@ -1839,7 +1859,7 @@ AllStructs.set(StorageFileMp4S._id, StorageFileMp4S);
 export class StorageFileWebpS {
   static _id = 0x1081464c;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(StorageFileWebpS._id);
@@ -1865,7 +1885,7 @@ AllStructs.set(StorageFileWebpS._id, StorageFileWebpS);
 export class UserEmptyS {
   static _id = 0x200250ba;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_id(): number {
     return this._values[0];
@@ -1914,7 +1934,7 @@ AllStructs.set(UserEmptyS._id, UserEmptyS);
 export class UserProfilePhotoEmptyS {
   static _id = 0x4f11bae1;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UserProfilePhotoEmptyS._id);
@@ -1943,12 +1963,12 @@ AllStructs.set(UserProfilePhotoEmptyS._id, UserProfilePhotoEmptyS);
 export class UserProfilePhotoS {
   static _id = 0xecd75d8c;
 
-  _values = [[0, 0], new FileLocationT(), new FileLocationT(), 0] as [
-    ProtoLong,
-    FileLocationT,
-    FileLocationT,
-    number
-  ];
+  _values = ([
+    [0, 0],
+    (new FileLocationT() as unknown) as FileLocationT,
+    (new FileLocationT() as unknown) as FileLocationT,
+    0
+  ] as unknown) as [ProtoLong, FileLocationT, FileLocationT, number];
 
   get_photo_id(): ProtoLong {
     return this._values[0];
@@ -2061,7 +2081,7 @@ AllStructs.set(UserProfilePhotoS._id, UserProfilePhotoS);
 export class UserStatusEmptyS {
   static _id = 0x9d05049;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UserStatusEmptyS._id);
@@ -2087,7 +2107,7 @@ AllStructs.set(UserStatusEmptyS._id, UserStatusEmptyS);
 export class UserStatusOnlineS {
   static _id = 0xedb93949;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_expires(): number {
     return this._values[0];
@@ -2136,7 +2156,7 @@ AllStructs.set(UserStatusOnlineS._id, UserStatusOnlineS);
 export class UserStatusOfflineS {
   static _id = 0x8c703f;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_was_online(): number {
     return this._values[0];
@@ -2185,7 +2205,7 @@ AllStructs.set(UserStatusOfflineS._id, UserStatusOfflineS);
 export class ChatEmptyS {
   static _id = 0x9ba2d800;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_id(): number {
     return this._values[0];
@@ -2247,7 +2267,7 @@ AllStructs.set(ChatEmptyS._id, ChatEmptyS);
 export class ChatS {
   static _id = 0x3bda1bde;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -2255,14 +2275,14 @@ export class ChatS {
     true,
     0,
     "",
-    new ChatPhotoT(),
+    (new ChatPhotoT() as unknown) as ChatPhotoT,
     0,
     0,
     0,
-    new InputChannelT(),
-    new ChatAdminRightsT(),
-    new ChatBannedRightsT()
-  ] as [
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new ChatAdminRightsT() as unknown) as ChatAdminRightsT,
+    (new ChatBannedRightsT() as unknown) as ChatBannedRightsT
+  ] as unknown) as [
     number,
     true,
     true,
@@ -2633,7 +2653,7 @@ AllStructs.set(ChatS._id, ChatS);
 export class ChatForbiddenS {
   static _id = 0x7328bdb;
 
-  _values = [0, ""] as [number, string];
+  _values = ([0, ""] as unknown) as [number, string];
 
   get_id(): number {
     return this._values[0];
@@ -2713,20 +2733,20 @@ AllStructs.set(ChatForbiddenS._id, ChatForbiddenS);
 export class ChatFullS {
   static _id = 0x1b7c9db3;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
     0,
     "",
-    new ChatParticipantsT(),
-    new PhotoT(),
-    new PeerNotifySettingsT(),
-    new ExportedChatInviteT(),
+    (new ChatParticipantsT() as unknown) as ChatParticipantsT,
+    (new PhotoT() as unknown) as PhotoT,
+    (new PeerNotifySettingsT() as unknown) as PeerNotifySettingsT,
+    (new ExportedChatInviteT() as unknown) as ExportedChatInviteT,
     [],
     0,
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -3035,7 +3055,7 @@ export class ChatFullS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: BotInfoT = new BotInfoT();
+        let val: BotInfoT = (new BotInfoT() as unknown) as BotInfoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -3071,7 +3091,7 @@ AllStructs.set(ChatFullS._id, ChatFullS);
 export class ChatParticipantS {
   static _id = 0xc8d7493e;
 
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_user_id(): number {
     return this._values[0];
@@ -3162,11 +3182,11 @@ AllStructs.set(ChatParticipantS._id, ChatParticipantS);
 export class ChatParticipantsForbiddenS {
   static _id = 0xfc900c2b;
 
-  _values = [0, 0, new ChatParticipantT()] as [
-    number,
-    number,
-    ChatParticipantT
-  ];
+  _values = ([
+    0,
+    0,
+    (new ChatParticipantT() as unknown) as ChatParticipantT
+  ] as unknown) as [number, number, ChatParticipantT];
 
   get_flags(): number {
     return this._values[0];
@@ -3265,7 +3285,11 @@ AllStructs.set(ChatParticipantsForbiddenS._id, ChatParticipantsForbiddenS);
 export class ChatParticipantsS {
   static _id = 0x3f460fed;
 
-  _values = [0, [], 0] as [number, ChatParticipantT[], number];
+  _values = ([0, [], 0] as unknown) as [
+    number,
+    ChatParticipantT[],
+    number
+  ];
 
   get_chat_id(): number {
     return this._values[0];
@@ -3345,7 +3369,7 @@ export class ChatParticipantsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatParticipantT = new ChatParticipantT();
+        let val: ChatParticipantT = (new ChatParticipantT() as unknown) as ChatParticipantT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -3373,7 +3397,7 @@ AllStructs.set(ChatParticipantsS._id, ChatParticipantsS);
 export class ChatPhotoEmptyS {
   static _id = 0x37c1011c;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ChatPhotoEmptyS._id);
@@ -3401,11 +3425,11 @@ AllStructs.set(ChatPhotoEmptyS._id, ChatPhotoEmptyS);
 export class ChatPhotoS {
   static _id = 0x475cdbd5;
 
-  _values = [new FileLocationT(), new FileLocationT(), 0] as [
-    FileLocationT,
-    FileLocationT,
-    number
-  ];
+  _values = ([
+    (new FileLocationT() as unknown) as FileLocationT,
+    (new FileLocationT() as unknown) as FileLocationT,
+    0
+  ] as unknown) as [FileLocationT, FileLocationT, number];
 
   get_photo_small(): FileLocationT {
     return this._values[0];
@@ -3498,7 +3522,7 @@ AllStructs.set(ChatPhotoS._id, ChatPhotoS);
 export class MessageEmptyS {
   static _id = 0x83e5de54;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_id(): number {
     return this._values[0];
@@ -3571,7 +3595,7 @@ AllStructs.set(MessageEmptyS._id, MessageEmptyS);
 export class MessageS {
   static _id = 0x452c0e65;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -3583,21 +3607,21 @@ export class MessageS {
     true,
     0,
     0,
-    new PeerT(),
-    new MessageFwdHeaderT(),
+    (new PeerT() as unknown) as PeerT,
+    (new MessageFwdHeaderT() as unknown) as MessageFwdHeaderT,
     0,
     0,
     0,
     "",
-    new MessageMediaT(),
-    new ReplyMarkupT(),
+    (new MessageMediaT() as unknown) as MessageMediaT,
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT,
     [],
     0,
     0,
     "",
     [0, 0],
     []
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -4246,7 +4270,7 @@ export class MessageS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -4288,7 +4312,7 @@ export class MessageS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: RestrictionReasonT = new RestrictionReasonT();
+        let val: RestrictionReasonT = (new RestrictionReasonT() as unknown) as RestrictionReasonT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -4322,7 +4346,7 @@ AllStructs.set(MessageS._id, MessageS);
 export class MessageServiceS {
   static _id = 0x9e19a1f6;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -4332,11 +4356,11 @@ export class MessageServiceS {
     true,
     0,
     0,
-    new PeerT(),
+    (new PeerT() as unknown) as PeerT,
     0,
     0,
-    new MessageActionT()
-  ] as [
+    (new MessageActionT() as unknown) as MessageActionT
+  ] as unknown) as [
     number,
     true,
     true,
@@ -4685,7 +4709,7 @@ AllStructs.set(MessageServiceS._id, MessageServiceS);
 export class MessageMediaEmptyS {
   static _id = 0x3ded6320;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessageMediaEmptyS._id);
@@ -4713,7 +4737,11 @@ AllStructs.set(MessageMediaEmptyS._id, MessageMediaEmptyS);
 export class MessageMediaPhotoS {
   static _id = 0x695150d7;
 
-  _values = [0, new PhotoT(), 0] as [number, PhotoT, number];
+  _values = ([0, (new PhotoT() as unknown) as PhotoT, 0] as unknown) as [
+    number,
+    PhotoT,
+    number
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -4816,7 +4844,9 @@ AllStructs.set(MessageMediaPhotoS._id, MessageMediaPhotoS);
 export class MessageMediaGeoS {
   static _id = 0x56e0d474;
 
-  _values = [new GeoPointT()] as [GeoPointT];
+  _values = ([(new GeoPointT() as unknown) as GeoPointT] as unknown) as [
+    GeoPointT
+  ];
 
   get_geo(): GeoPointT {
     return this._values[0];
@@ -4871,7 +4901,13 @@ AllStructs.set(MessageMediaGeoS._id, MessageMediaGeoS);
 export class MessageMediaContactS {
   static _id = 0xcbf24940;
 
-  _values = ["", "", "", "", 0] as [string, string, string, string, number];
+  _values = (["", "", "", "", 0] as unknown) as [
+    string,
+    string,
+    string,
+    string,
+    number
+  ];
 
   get_phone_number(): string {
     return this._values[0];
@@ -5000,7 +5036,7 @@ AllStructs.set(MessageMediaContactS._id, MessageMediaContactS);
 export class MessageMediaUnsupportedS {
   static _id = 0x9f84f49e;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessageMediaUnsupportedS._id);
@@ -5026,7 +5062,7 @@ AllStructs.set(MessageMediaUnsupportedS._id, MessageMediaUnsupportedS);
 export class MessageActionEmptyS {
   static _id = 0xb6aef7b0;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessageActionEmptyS._id);
@@ -5053,7 +5089,7 @@ AllStructs.set(MessageActionEmptyS._id, MessageActionEmptyS);
 export class MessageActionChatCreateS {
   static _id = 0xa6638b9a;
 
-  _values = ["", []] as [string, number[]];
+  _values = (["", []] as unknown) as [string, number[]];
 
   get_title(): string {
     return this._values[0];
@@ -5139,7 +5175,7 @@ AllStructs.set(MessageActionChatCreateS._id, MessageActionChatCreateS);
 export class MessageActionChatEditTitleS {
   static _id = 0xb5a1ce5a;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_title(): string {
     return this._values[0];
@@ -5188,7 +5224,7 @@ AllStructs.set(MessageActionChatEditTitleS._id, MessageActionChatEditTitleS);
 export class MessageActionChatEditPhotoS {
   static _id = 0x7fcb13a8;
 
-  _values = [new PhotoT()] as [PhotoT];
+  _values = ([(new PhotoT() as unknown) as PhotoT] as unknown) as [PhotoT];
 
   get_photo(): PhotoT {
     return this._values[0];
@@ -5239,7 +5275,7 @@ AllStructs.set(MessageActionChatEditPhotoS._id, MessageActionChatEditPhotoS);
 export class MessageActionChatDeletePhotoS {
   static _id = 0x95e3fbef;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessageActionChatDeletePhotoS._id);
@@ -5268,7 +5304,7 @@ AllStructs.set(
 export class MessageActionChatAddUserS {
   static _id = 0x488a7337;
 
-  _values = [[]] as [number[]];
+  _values = ([[]] as unknown) as [number[]];
 
   get_users(): number[] {
     return this._values[0];
@@ -5334,7 +5370,7 @@ AllStructs.set(MessageActionChatAddUserS._id, MessageActionChatAddUserS);
 export class MessageActionChatDeleteUserS {
   static _id = 0xb2ae9b0c;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_user_id(): number {
     return this._values[0];
@@ -5395,21 +5431,21 @@ AllStructs.set(MessageActionChatDeleteUserS._id, MessageActionChatDeleteUserS);
 export class DialogS {
   static _id = 0x2c171f72;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
-    new PeerT(),
+    (new PeerT() as unknown) as PeerT,
     0,
     0,
     0,
     0,
     0,
-    new PeerNotifySettingsT(),
+    (new PeerNotifySettingsT() as unknown) as PeerNotifySettingsT,
     0,
-    new DraftMessageT(),
+    (new DraftMessageT() as unknown) as DraftMessageT,
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -5746,7 +5782,7 @@ AllStructs.set(DialogS._id, DialogS);
 export class PhotoEmptyS {
   static _id = 0x2331b22d;
 
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -5802,7 +5838,16 @@ AllStructs.set(PhotoEmptyS._id, PhotoEmptyS);
 export class PhotoS {
   static _id = 0xd07504a5;
 
-  _values = [0, true, [0, 0], [0, 0], new Uint8Array(), 0, [], 0] as [
+  _values = ([
+    0,
+    true,
+    [0, 0],
+    [0, 0],
+    new Uint8Array(),
+    0,
+    [],
+    0
+  ] as unknown) as [
     number,
     true,
     ProtoLong,
@@ -5996,7 +6041,7 @@ export class PhotoS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PhotoSizeT = new PhotoSizeT();
+        let val: PhotoSizeT = (new PhotoSizeT() as unknown) as PhotoSizeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -6024,7 +6069,7 @@ AllStructs.set(PhotoS._id, PhotoS);
 export class PhotoSizeEmptyS {
   static _id = 0xe17e23c;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_type(): string {
     return this._values[0];
@@ -6077,13 +6122,13 @@ AllStructs.set(PhotoSizeEmptyS._id, PhotoSizeEmptyS);
 export class PhotoSizeS {
   static _id = 0x77bfb61b;
 
-  _values = ["", new FileLocationT(), 0, 0, 0] as [
-    string,
-    FileLocationT,
-    number,
-    number,
-    number
-  ];
+  _values = ([
+    "",
+    (new FileLocationT() as unknown) as FileLocationT,
+    0,
+    0,
+    0
+  ] as unknown) as [string, FileLocationT, number, number, number];
 
   get_type(): string {
     return this._values[0];
@@ -6218,13 +6263,13 @@ AllStructs.set(PhotoSizeS._id, PhotoSizeS);
 export class PhotoCachedSizeS {
   static _id = 0xe9a734fa;
 
-  _values = ["", new FileLocationT(), 0, 0, new Uint8Array()] as [
-    string,
-    FileLocationT,
-    number,
-    number,
-    Uint8Array
-  ];
+  _values = ([
+    "",
+    (new FileLocationT() as unknown) as FileLocationT,
+    0,
+    0,
+    new Uint8Array()
+  ] as unknown) as [string, FileLocationT, number, number, Uint8Array];
 
   get_type(): string {
     return this._values[0];
@@ -6355,7 +6400,7 @@ AllStructs.set(PhotoCachedSizeS._id, PhotoCachedSizeS);
 export class GeoPointEmptyS {
   static _id = 0x1117dd5f;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(GeoPointEmptyS._id);
@@ -6383,7 +6428,7 @@ AllStructs.set(GeoPointEmptyS._id, GeoPointEmptyS);
 export class GeoPointS {
   static _id = 0x296f104;
 
-  _values = [0.0, 0.0, [0, 0]] as [number, number, ProtoLong];
+  _values = ([0.0, 0.0, [0, 0]] as unknown) as [number, number, ProtoLong];
 
   get_long(): number {
     return this._values[0];
@@ -6476,13 +6521,13 @@ AllStructs.set(GeoPointS._id, GeoPointS);
 export class AuthSentCodeS {
   static _id = 0x5e002502;
 
-  _values = [0, new AuthSentCodeTypeT(), "", new AuthCodeTypeT(), 0] as [
-    number,
-    AuthSentCodeTypeT,
-    string,
-    AuthCodeTypeT,
-    number
-  ];
+  _values = ([
+    0,
+    (new AuthSentCodeTypeT() as unknown) as AuthSentCodeTypeT,
+    "",
+    (new AuthCodeTypeT() as unknown) as AuthCodeTypeT,
+    0
+  ] as unknown) as [number, AuthSentCodeTypeT, string, AuthCodeTypeT, number];
 
   get_flags(): number {
     return this._values[0];
@@ -6629,7 +6674,11 @@ AllStructs.set(AuthSentCodeS._id, AuthSentCodeS);
 export class AuthAuthorizationS {
   static _id = 0xcd050916;
 
-  _values = [0, 0, new UserT()] as [number, number, UserT];
+  _values = ([0, 0, (new UserT() as unknown) as UserT] as unknown) as [
+    number,
+    number,
+    UserT
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -6727,7 +6776,7 @@ AllStructs.set(AuthAuthorizationS._id, AuthAuthorizationS);
 export class AuthExportedAuthorizationS {
   static _id = 0xdf969c2d;
 
-  _values = [0, new Uint8Array()] as [number, Uint8Array];
+  _values = ([0, new Uint8Array()] as unknown) as [number, Uint8Array];
 
   get_id(): number {
     return this._values[0];
@@ -6796,7 +6845,9 @@ AllStructs.set(AuthExportedAuthorizationS._id, AuthExportedAuthorizationS);
 export class InputNotifyPeerS {
   static _id = 0xb8bc5b0c;
 
-  _values = [new InputPeerT()] as [InputPeerT];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT] as unknown) as [
+    InputPeerT
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -6847,7 +6898,7 @@ AllStructs.set(InputNotifyPeerS._id, InputNotifyPeerS);
 export class InputNotifyUsersS {
   static _id = 0x193b4417;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputNotifyUsersS._id);
@@ -6873,7 +6924,7 @@ AllStructs.set(InputNotifyUsersS._id, InputNotifyUsersS);
 export class InputNotifyChatsS {
   static _id = 0x4a95e84e;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputNotifyChatsS._id);
@@ -6903,13 +6954,13 @@ AllStructs.set(InputNotifyChatsS._id, InputNotifyChatsS);
 export class InputPeerNotifySettingsS {
   static _id = 0x9c3d198e;
 
-  _values = [0, new BoolT(), new BoolT(), 0, ""] as [
-    number,
-    BoolT,
-    BoolT,
-    number,
-    string
-  ];
+  _values = ([
+    0,
+    (new BoolT() as unknown) as BoolT,
+    (new BoolT() as unknown) as BoolT,
+    0,
+    ""
+  ] as unknown) as [number, BoolT, BoolT, number, string];
 
   get_flags(): number {
     return this._values[0];
@@ -7070,13 +7121,13 @@ AllStructs.set(InputPeerNotifySettingsS._id, InputPeerNotifySettingsS);
 export class PeerNotifySettingsS {
   static _id = 0xaf509d20;
 
-  _values = [0, new BoolT(), new BoolT(), 0, ""] as [
-    number,
-    BoolT,
-    BoolT,
-    number,
-    string
-  ];
+  _values = ([
+    0,
+    (new BoolT() as unknown) as BoolT,
+    (new BoolT() as unknown) as BoolT,
+    0,
+    ""
+  ] as unknown) as [number, BoolT, BoolT, number, string];
 
   get_flags(): number {
     return this._values[0];
@@ -7239,7 +7290,7 @@ AllStructs.set(PeerNotifySettingsS._id, PeerNotifySettingsS);
 export class PeerSettingsS {
   static _id = 0x818426cd;
 
-  _values = [0, true, true, true, true, true, true] as [
+  _values = ([0, true, true, true, true, true, true] as unknown) as [
     number,
     true,
     true,
@@ -7455,7 +7506,7 @@ AllStructs.set(PeerSettingsS._id, PeerSettingsS);
 export class WallPaperS {
   static _id = 0xa437c3ed;
 
-  _values = [
+  _values = ([
     [0, 0],
     0,
     true,
@@ -7464,9 +7515,9 @@ export class WallPaperS {
     true,
     [0, 0],
     "",
-    new DocumentT(),
-    new WallPaperSettingsT()
-  ] as [
+    (new DocumentT() as unknown) as DocumentT,
+    (new WallPaperSettingsT() as unknown) as WallPaperSettingsT
+  ] as unknown) as [
     ProtoLong,
     number,
     true,
@@ -7736,7 +7787,7 @@ AllStructs.set(WallPaperS._id, WallPaperS);
 export class InputReportReasonSpamS {
   static _id = 0x58dbcab8;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputReportReasonSpamS._id);
@@ -7762,7 +7813,7 @@ AllStructs.set(InputReportReasonSpamS._id, InputReportReasonSpamS);
 export class InputReportReasonViolenceS {
   static _id = 0x1e22c78d;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputReportReasonViolenceS._id);
@@ -7788,7 +7839,7 @@ AllStructs.set(InputReportReasonViolenceS._id, InputReportReasonViolenceS);
 export class InputReportReasonPornographyS {
   static _id = 0x2e59d922;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputReportReasonPornographyS._id);
@@ -7817,7 +7868,7 @@ AllStructs.set(
 export class InputReportReasonChildAbuseS {
   static _id = 0xadf44ee3;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputReportReasonChildAbuseS._id);
@@ -7843,7 +7894,7 @@ AllStructs.set(InputReportReasonChildAbuseS._id, InputReportReasonChildAbuseS);
 export class InputReportReasonOtherS {
   static _id = 0xe1746d0a;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_text(): string {
     return this._values[0];
@@ -7906,23 +7957,23 @@ AllStructs.set(InputReportReasonOtherS._id, InputReportReasonOtherS);
 export class UserFullS {
   static _id = 0xedf17c12;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
     true,
     true,
     true,
-    new UserT(),
+    (new UserT() as unknown) as UserT,
     "",
-    new PeerSettingsT(),
-    new PhotoT(),
-    new PeerNotifySettingsT(),
-    new BotInfoT(),
+    (new PeerSettingsT() as unknown) as PeerSettingsT,
+    (new PhotoT() as unknown) as PhotoT,
+    (new PeerNotifySettingsT() as unknown) as PeerNotifySettingsT,
+    (new BotInfoT() as unknown) as BotInfoT,
     0,
     0,
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -8333,7 +8384,10 @@ AllStructs.set(UserFullS._id, UserFullS);
 export class ContactS {
   static _id = 0xf911c994;
 
-  _values = [0, new BoolT()] as [number, BoolT];
+  _values = ([0, (new BoolT() as unknown) as BoolT] as unknown) as [
+    number,
+    BoolT
+  ];
 
   get_user_id(): number {
     return this._values[0];
@@ -8405,7 +8459,7 @@ AllStructs.set(ContactS._id, ContactS);
 export class ImportedContactS {
   static _id = 0xd0028438;
 
-  _values = [0, [0, 0]] as [number, ProtoLong];
+  _values = ([0, [0, 0]] as unknown) as [number, ProtoLong];
 
   get_user_id(): number {
     return this._values[0];
@@ -8475,7 +8529,7 @@ AllStructs.set(ImportedContactS._id, ImportedContactS);
 export class ContactBlockedS {
   static _id = 0x561bc879;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_user_id(): number {
     return this._values[0];
@@ -8545,7 +8599,10 @@ AllStructs.set(ContactBlockedS._id, ContactBlockedS);
 export class ContactStatusS {
   static _id = 0xd3680c61;
 
-  _values = [0, new UserStatusT()] as [number, UserStatusT];
+  _values = ([0, (new UserStatusT() as unknown) as UserStatusT] as unknown) as [
+    number,
+    UserStatusT
+  ];
 
   get_user_id(): number {
     return this._values[0];
@@ -8616,7 +8673,7 @@ AllStructs.set(ContactStatusS._id, ContactStatusS);
 export class ContactsContactsNotModifiedS {
   static _id = 0xb74ba9d2;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ContactsContactsNotModifiedS._id);
@@ -8644,7 +8701,7 @@ AllStructs.set(ContactsContactsNotModifiedS._id, ContactsContactsNotModifiedS);
 export class ContactsContactsS {
   static _id = 0xeae87e42;
 
-  _values = [[], 0, []] as [ContactT[], number, UserT[]];
+  _values = ([[], 0, []] as unknown) as [ContactT[], number, UserT[]];
 
   get_contacts(): ContactT[] {
     return this._values[0];
@@ -8725,7 +8782,7 @@ export class ContactsContactsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ContactT = new ContactT();
+        let val: ContactT = (new ContactT() as unknown) as ContactT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -8749,7 +8806,7 @@ export class ContactsContactsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -8774,7 +8831,7 @@ AllStructs.set(ContactsContactsS._id, ContactsContactsS);
 export class ContactsImportedContactsS {
   static _id = 0x77d01c3b;
 
-  _values = [[], [], [], []] as [
+  _values = ([[], [], [], []] as unknown) as [
     ImportedContactT[],
     PopularContactT[],
     ProtoLong[],
@@ -8888,7 +8945,7 @@ export class ContactsImportedContactsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ImportedContactT = new ImportedContactT();
+        let val: ImportedContactT = (new ImportedContactT() as unknown) as ImportedContactT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -8906,7 +8963,7 @@ export class ContactsImportedContactsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PopularContactT = new PopularContactT();
+        let val: PopularContactT = (new PopularContactT() as unknown) as PopularContactT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -8940,7 +8997,7 @@ export class ContactsImportedContactsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -8963,7 +9020,7 @@ AllStructs.set(ContactsImportedContactsS._id, ContactsImportedContactsS);
 export class ContactsBlockedS {
   static _id = 0x1c138d15;
 
-  _values = [[], []] as [ContactBlockedT[], UserT[]];
+  _values = ([[], []] as unknown) as [ContactBlockedT[], UserT[]];
 
   get_blocked(): ContactBlockedT[] {
     return this._values[0];
@@ -9030,7 +9087,7 @@ export class ContactsBlockedS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ContactBlockedT = new ContactBlockedT();
+        let val: ContactBlockedT = (new ContactBlockedT() as unknown) as ContactBlockedT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9048,7 +9105,7 @@ export class ContactsBlockedS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9072,7 +9129,11 @@ AllStructs.set(ContactsBlockedS._id, ContactsBlockedS);
 export class ContactsBlockedSliceS {
   static _id = 0x900802a1;
 
-  _values = [0, [], []] as [number, ContactBlockedT[], UserT[]];
+  _values = ([0, [], []] as unknown) as [
+    number,
+    ContactBlockedT[],
+    UserT[]
+  ];
 
   get_count(): number {
     return this._values[0];
@@ -9159,7 +9220,7 @@ export class ContactsBlockedSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ContactBlockedT = new ContactBlockedT();
+        let val: ContactBlockedT = (new ContactBlockedT() as unknown) as ContactBlockedT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9177,7 +9238,7 @@ export class ContactsBlockedSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9202,7 +9263,7 @@ AllStructs.set(ContactsBlockedSliceS._id, ContactsBlockedSliceS);
 export class MessagesDialogsS {
   static _id = 0x15ba6c40;
 
-  _values = [[], [], [], []] as [
+  _values = ([[], [], [], []] as unknown) as [
     DialogT[],
     MessageT[],
     ChatT[],
@@ -9316,7 +9377,7 @@ export class MessagesDialogsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DialogT = new DialogT();
+        let val: DialogT = (new DialogT() as unknown) as DialogT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9334,7 +9395,7 @@ export class MessagesDialogsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageT = new MessageT();
+        let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9352,7 +9413,7 @@ export class MessagesDialogsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9370,7 +9431,7 @@ export class MessagesDialogsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9396,7 +9457,7 @@ AllStructs.set(MessagesDialogsS._id, MessagesDialogsS);
 export class MessagesDialogsSliceS {
   static _id = 0x71e094f3;
 
-  _values = [0, [], [], [], []] as [
+  _values = ([0, [], [], [], []] as unknown) as [
     number,
     DialogT[],
     MessageT[],
@@ -9531,7 +9592,7 @@ export class MessagesDialogsSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DialogT = new DialogT();
+        let val: DialogT = (new DialogT() as unknown) as DialogT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9549,7 +9610,7 @@ export class MessagesDialogsSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageT = new MessageT();
+        let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9567,7 +9628,7 @@ export class MessagesDialogsSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9585,7 +9646,7 @@ export class MessagesDialogsSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9609,7 +9670,11 @@ AllStructs.set(MessagesDialogsSliceS._id, MessagesDialogsSliceS);
 export class MessagesMessagesS {
   static _id = 0x8c718e87;
 
-  _values = [[], [], []] as [MessageT[], ChatT[], UserT[]];
+  _values = ([[], [], []] as unknown) as [
+    MessageT[],
+    ChatT[],
+    UserT[]
+  ];
 
   get_messages(): MessageT[] {
     return this._values[0];
@@ -9697,7 +9762,7 @@ export class MessagesMessagesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageT = new MessageT();
+        let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9715,7 +9780,7 @@ export class MessagesMessagesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9733,7 +9798,7 @@ export class MessagesMessagesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9761,7 +9826,7 @@ AllStructs.set(MessagesMessagesS._id, MessagesMessagesS);
 export class MessagesMessagesSliceS {
   static _id = 0xc8edce1e;
 
-  _values = [0, true, 0, 0, [], [], []] as [
+  _values = ([0, true, 0, 0, [], [], []] as unknown) as [
     number,
     true,
     number,
@@ -9948,7 +10013,7 @@ export class MessagesMessagesSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageT = new MessageT();
+        let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9966,7 +10031,7 @@ export class MessagesMessagesSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -9984,7 +10049,7 @@ export class MessagesMessagesSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -10006,7 +10071,7 @@ AllStructs.set(MessagesMessagesSliceS._id, MessagesMessagesSliceS);
 export class MessagesChatsS {
   static _id = 0x64ff9fd5;
 
-  _values = [[]] as [ChatT[]];
+  _values = ([[]] as unknown) as [ChatT[]];
 
   get_chats(): ChatT[] {
     return this._values[0];
@@ -10052,7 +10117,7 @@ export class MessagesChatsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -10076,11 +10141,11 @@ AllStructs.set(MessagesChatsS._id, MessagesChatsS);
 export class MessagesChatFullS {
   static _id = 0xe5d7d19c;
 
-  _values = [new ChatFullT(), [], []] as [
-    ChatFullT,
-    ChatT[],
-    UserT[]
-  ];
+  _values = ([
+    (new ChatFullT() as unknown) as ChatFullT,
+    [],
+    []
+  ] as unknown) as [ChatFullT, ChatT[], UserT[]];
 
   get_full_chat(): ChatFullT {
     return this._values[0];
@@ -10169,7 +10234,7 @@ export class MessagesChatFullS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -10187,7 +10252,7 @@ export class MessagesChatFullS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -10211,7 +10276,7 @@ AllStructs.set(MessagesChatFullS._id, MessagesChatFullS);
 export class MessagesAffectedHistoryS {
   static _id = 0xb45c69d1;
 
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_pts(): number {
     return this._values[0];
@@ -10300,7 +10365,7 @@ AllStructs.set(MessagesAffectedHistoryS._id, MessagesAffectedHistoryS);
 export class InputMessagesFilterEmptyS {
   static _id = 0x57e2f66c;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterEmptyS._id);
@@ -10326,7 +10391,7 @@ AllStructs.set(InputMessagesFilterEmptyS._id, InputMessagesFilterEmptyS);
 export class InputMessagesFilterPhotosS {
   static _id = 0x9609a51c;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterPhotosS._id);
@@ -10352,7 +10417,7 @@ AllStructs.set(InputMessagesFilterPhotosS._id, InputMessagesFilterPhotosS);
 export class InputMessagesFilterVideoS {
   static _id = 0x9fc00e65;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterVideoS._id);
@@ -10378,7 +10443,7 @@ AllStructs.set(InputMessagesFilterVideoS._id, InputMessagesFilterVideoS);
 export class InputMessagesFilterPhotoVideoS {
   static _id = 0x56e9f0e4;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterPhotoVideoS._id);
@@ -10407,7 +10472,7 @@ AllStructs.set(
 export class InputMessagesFilterDocumentS {
   static _id = 0x9eddf188;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterDocumentS._id);
@@ -10433,7 +10498,7 @@ AllStructs.set(InputMessagesFilterDocumentS._id, InputMessagesFilterDocumentS);
 export class InputMessagesFilterUrlS {
   static _id = 0x7ef0dd87;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterUrlS._id);
@@ -10459,7 +10524,7 @@ AllStructs.set(InputMessagesFilterUrlS._id, InputMessagesFilterUrlS);
 export class InputMessagesFilterGifS {
   static _id = 0xffc86587;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterGifS._id);
@@ -10487,7 +10552,11 @@ AllStructs.set(InputMessagesFilterGifS._id, InputMessagesFilterGifS);
 export class UpdateNewMessageS {
   static _id = 0x1f2b0afd;
 
-  _values = [new MessageT(), 0, 0] as [MessageT, number, number];
+  _values = ([(new MessageT() as unknown) as MessageT, 0, 0] as unknown) as [
+    MessageT,
+    number,
+    number
+  ];
 
   get_message(): MessageT {
     return this._values[0];
@@ -10579,7 +10648,7 @@ AllStructs.set(UpdateNewMessageS._id, UpdateNewMessageS);
 export class UpdateMessageIdS {
   static _id = 0x4e90bfd6;
 
-  _values = [0, [0, 0]] as [number, ProtoLong];
+  _values = ([0, [0, 0]] as unknown) as [number, ProtoLong];
 
   get_id(): number {
     return this._values[0];
@@ -10650,7 +10719,7 @@ AllStructs.set(UpdateMessageIdS._id, UpdateMessageIdS);
 export class UpdateDeleteMessagesS {
   static _id = 0xa20db0e5;
 
-  _values = [[], 0, 0] as [number[], number, number];
+  _values = ([[], 0, 0] as unknown) as [number[], number, number];
 
   get_messages(): number[] {
     return this._values[0];
@@ -10757,7 +10826,10 @@ AllStructs.set(UpdateDeleteMessagesS._id, UpdateDeleteMessagesS);
 export class UpdateUserTypingS {
   static _id = 0x5c486927;
 
-  _values = [0, new SendMessageActionT()] as [number, SendMessageActionT];
+  _values = ([
+    0,
+    (new SendMessageActionT() as unknown) as SendMessageActionT
+  ] as unknown) as [number, SendMessageActionT];
 
   get_user_id(): number {
     return this._values[0];
@@ -10830,11 +10902,11 @@ AllStructs.set(UpdateUserTypingS._id, UpdateUserTypingS);
 export class UpdateChatUserTypingS {
   static _id = 0x9a65ea1f;
 
-  _values = [0, 0, new SendMessageActionT()] as [
-    number,
-    number,
-    SendMessageActionT
-  ];
+  _values = ([
+    0,
+    0,
+    (new SendMessageActionT() as unknown) as SendMessageActionT
+  ] as unknown) as [number, number, SendMessageActionT];
 
   get_chat_id(): number {
     return this._values[0];
@@ -10925,7 +10997,9 @@ AllStructs.set(UpdateChatUserTypingS._id, UpdateChatUserTypingS);
 export class UpdateChatParticipantsS {
   static _id = 0x7761198;
 
-  _values = [new ChatParticipantsT()] as [ChatParticipantsT];
+  _values = ([
+    (new ChatParticipantsT() as unknown) as ChatParticipantsT
+  ] as unknown) as [ChatParticipantsT];
 
   get_participants(): ChatParticipantsT {
     return this._values[0];
@@ -10977,7 +11051,10 @@ AllStructs.set(UpdateChatParticipantsS._id, UpdateChatParticipantsS);
 export class UpdateUserStatusS {
   static _id = 0x1bfbd823;
 
-  _values = [0, new UserStatusT()] as [number, UserStatusT];
+  _values = ([0, (new UserStatusT() as unknown) as UserStatusT] as unknown) as [
+    number,
+    UserStatusT
+  ];
 
   get_user_id(): number {
     return this._values[0];
@@ -11051,7 +11128,7 @@ AllStructs.set(UpdateUserStatusS._id, UpdateUserStatusS);
 export class UpdateUserNameS {
   static _id = 0xa7332b73;
 
-  _values = [0, "", "", ""] as [number, string, string, string];
+  _values = ([0, "", "", ""] as unknown) as [number, string, string, string];
 
   get_user_id(): number {
     return this._values[0];
@@ -11163,12 +11240,12 @@ AllStructs.set(UpdateUserNameS._id, UpdateUserNameS);
 export class UpdateUserPhotoS {
   static _id = 0x95313b0c;
 
-  _values = [0, 0, new UserProfilePhotoT(), new BoolT()] as [
-    number,
-    number,
-    UserProfilePhotoT,
-    BoolT
-  ];
+  _values = ([
+    0,
+    0,
+    (new UserProfilePhotoT() as unknown) as UserProfilePhotoT,
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [number, number, UserProfilePhotoT, BoolT];
 
   get_user_id(): number {
     return this._values[0];
@@ -11285,7 +11362,13 @@ AllStructs.set(UpdateUserPhotoS._id, UpdateUserPhotoS);
 export class UpdatesStateS {
   static _id = 0xa56c2a3e;
 
-  _values = [0, 0, 0, 0, 0] as [number, number, number, number, number];
+  _values = ([0, 0, 0, 0, 0] as unknown) as [
+    number,
+    number,
+    number,
+    number,
+    number
+  ];
 
   get_pts(): number {
     return this._values[0];
@@ -11415,7 +11498,7 @@ AllStructs.set(UpdatesStateS._id, UpdatesStateS);
 export class UpdatesDifferenceEmptyS {
   static _id = 0x5d75a138;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_date(): number {
     return this._values[0];
@@ -11489,7 +11572,14 @@ AllStructs.set(UpdatesDifferenceEmptyS._id, UpdatesDifferenceEmptyS);
 export class UpdatesDifferenceS {
   static _id = 0xf49ca0;
 
-  _values = [[], [], [], [], [], new UpdatesStateT()] as [
+  _values = ([
+    [],
+    [],
+    [],
+    [],
+    [],
+    (new UpdatesStateT() as unknown) as UpdatesStateT
+  ] as unknown) as [
     MessageT[],
     EncryptedMessageT[],
     UpdateT[],
@@ -11640,7 +11730,7 @@ export class UpdatesDifferenceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageT = new MessageT();
+        let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -11658,7 +11748,7 @@ export class UpdatesDifferenceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: EncryptedMessageT = new EncryptedMessageT();
+        let val: EncryptedMessageT = (new EncryptedMessageT() as unknown) as EncryptedMessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -11676,7 +11766,7 @@ export class UpdatesDifferenceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UpdateT = new UpdateT();
+        let val: UpdateT = (new UpdateT() as unknown) as UpdateT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -11694,7 +11784,7 @@ export class UpdatesDifferenceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -11712,7 +11802,7 @@ export class UpdatesDifferenceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -11747,7 +11837,14 @@ AllStructs.set(UpdatesDifferenceS._id, UpdatesDifferenceS);
 export class UpdatesDifferenceSliceS {
   static _id = 0xa8fb1981;
 
-  _values = [[], [], [], [], [], new UpdatesStateT()] as [
+  _values = ([
+    [],
+    [],
+    [],
+    [],
+    [],
+    (new UpdatesStateT() as unknown) as UpdatesStateT
+  ] as unknown) as [
     MessageT[],
     EncryptedMessageT[],
     UpdateT[],
@@ -11898,7 +11995,7 @@ export class UpdatesDifferenceSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageT = new MessageT();
+        let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -11916,7 +12013,7 @@ export class UpdatesDifferenceSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: EncryptedMessageT = new EncryptedMessageT();
+        let val: EncryptedMessageT = (new EncryptedMessageT() as unknown) as EncryptedMessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -11934,7 +12031,7 @@ export class UpdatesDifferenceSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UpdateT = new UpdateT();
+        let val: UpdateT = (new UpdateT() as unknown) as UpdateT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -11952,7 +12049,7 @@ export class UpdatesDifferenceSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -11970,7 +12067,7 @@ export class UpdatesDifferenceSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -12000,7 +12097,7 @@ AllStructs.set(UpdatesDifferenceSliceS._id, UpdatesDifferenceSliceS);
 export class UpdatesTooLongS {
   static _id = 0xe317af7e;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UpdatesTooLongS._id);
@@ -12040,7 +12137,7 @@ AllStructs.set(UpdatesTooLongS._id, UpdatesTooLongS);
 export class UpdateShortMessageS {
   static _id = 0x914fbf11;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -12052,11 +12149,11 @@ export class UpdateShortMessageS {
     0,
     0,
     0,
-    new MessageFwdHeaderT(),
+    (new MessageFwdHeaderT() as unknown) as MessageFwdHeaderT,
     0,
     0,
     []
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -12444,7 +12541,7 @@ export class UpdateShortMessageS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -12481,7 +12578,7 @@ AllStructs.set(UpdateShortMessageS._id, UpdateShortMessageS);
 export class UpdateShortChatMessageS {
   static _id = 0x16812688;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -12494,11 +12591,11 @@ export class UpdateShortChatMessageS {
     0,
     0,
     0,
-    new MessageFwdHeaderT(),
+    (new MessageFwdHeaderT() as unknown) as MessageFwdHeaderT,
     0,
     0,
     []
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -12907,7 +13004,7 @@ export class UpdateShortChatMessageS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -12930,7 +13027,10 @@ AllStructs.set(UpdateShortChatMessageS._id, UpdateShortChatMessageS);
 export class UpdateShortS {
   static _id = 0x78d4dec1;
 
-  _values = [new UpdateT(), 0] as [UpdateT, number];
+  _values = ([(new UpdateT() as unknown) as UpdateT, 0] as unknown) as [
+    UpdateT,
+    number
+  ];
 
   get_update(): UpdateT {
     return this._values[0];
@@ -13006,7 +13106,7 @@ AllStructs.set(UpdateShortS._id, UpdateShortS);
 export class UpdatesCombinedS {
   static _id = 0x725b04c3;
 
-  _values = [[], [], [], 0, 0, 0] as [
+  _values = ([[], [], [], 0, 0, 0] as unknown) as [
     UpdateT[],
     UserT[],
     ChatT[],
@@ -13143,7 +13243,7 @@ export class UpdatesCombinedS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UpdateT = new UpdateT();
+        let val: UpdateT = (new UpdateT() as unknown) as UpdateT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -13161,7 +13261,7 @@ export class UpdatesCombinedS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -13179,7 +13279,7 @@ export class UpdatesCombinedS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -13223,7 +13323,7 @@ AllStructs.set(UpdatesCombinedS._id, UpdatesCombinedS);
 export class UpdatesS {
   static _id = 0x74ae4240;
 
-  _values = [[], [], [], 0, 0] as [
+  _values = ([[], [], [], 0, 0] as unknown) as [
     UpdateT[],
     UserT[],
     ChatT[],
@@ -13345,7 +13445,7 @@ export class UpdatesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UpdateT = new UpdateT();
+        let val: UpdateT = (new UpdateT() as unknown) as UpdateT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -13363,7 +13463,7 @@ export class UpdatesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -13381,7 +13481,7 @@ export class UpdatesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -13416,7 +13516,7 @@ AllStructs.set(UpdatesS._id, UpdatesS);
 export class PhotosPhotosS {
   static _id = 0x8dca6aa5;
 
-  _values = [[], []] as [PhotoT[], UserT[]];
+  _values = ([[], []] as unknown) as [PhotoT[], UserT[]];
 
   get_photos(): PhotoT[] {
     return this._values[0];
@@ -13483,7 +13583,7 @@ export class PhotosPhotosS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PhotoT = new PhotoT();
+        let val: PhotoT = (new PhotoT() as unknown) as PhotoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -13501,7 +13601,7 @@ export class PhotosPhotosS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -13525,7 +13625,7 @@ AllStructs.set(PhotosPhotosS._id, PhotosPhotosS);
 export class PhotosPhotosSliceS {
   static _id = 0x15051f54;
 
-  _values = [0, [], []] as [number, PhotoT[], UserT[]];
+  _values = ([0, [], []] as unknown) as [number, PhotoT[], UserT[]];
 
   get_count(): number {
     return this._values[0];
@@ -13612,7 +13712,7 @@ export class PhotosPhotosSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PhotoT = new PhotoT();
+        let val: PhotoT = (new PhotoT() as unknown) as PhotoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -13630,7 +13730,7 @@ export class PhotosPhotosSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -13653,7 +13753,10 @@ AllStructs.set(PhotosPhotosSliceS._id, PhotosPhotosSliceS);
 export class PhotosPhotoS {
   static _id = 0x20212ca8;
 
-  _values = [new PhotoT(), []] as [PhotoT, UserT[]];
+  _values = ([(new PhotoT() as unknown) as PhotoT, []] as unknown) as [
+    PhotoT,
+    UserT[]
+  ];
 
   get_photo(): PhotoT {
     return this._values[0];
@@ -13721,7 +13824,7 @@ export class PhotosPhotoS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -13745,11 +13848,11 @@ AllStructs.set(PhotosPhotoS._id, PhotosPhotoS);
 export class UploadFileS {
   static _id = 0x96a18d5;
 
-  _values = [new StorageFileTypeT(), 0, new Uint8Array()] as [
-    StorageFileTypeT,
-    number,
-    Uint8Array
-  ];
+  _values = ([
+    (new StorageFileTypeT() as unknown) as StorageFileTypeT,
+    0,
+    new Uint8Array()
+  ] as unknown) as [StorageFileTypeT, number, Uint8Array];
 
   get_type(): StorageFileTypeT {
     return this._values[0];
@@ -13849,7 +13952,18 @@ AllStructs.set(UploadFileS._id, UploadFileS);
 export class DcOptionS {
   static _id = 0x18b7a10d;
 
-  _values = [0, true, true, true, true, true, 0, "", 0, new Uint8Array()] as [
+  _values = ([
+    0,
+    true,
+    true,
+    true,
+    true,
+    true,
+    0,
+    "",
+    0,
+    new Uint8Array()
+  ] as unknown) as [
     number,
     true,
     true,
@@ -14171,7 +14285,7 @@ AllStructs.set(DcOptionS._id, DcOptionS);
 export class ConfigS {
   static _id = 0x330b4067;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -14182,7 +14296,7 @@ export class ConfigS {
     true,
     0,
     0,
-    new BoolT(),
+    (new BoolT() as unknown) as BoolT,
     0,
     [],
     "",
@@ -14224,7 +14338,7 @@ export class ConfigS {
     "",
     0,
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -15200,7 +15314,7 @@ export class ConfigS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DcOptionT = new DcOptionT();
+        let val: DcOptionT = (new DcOptionT() as unknown) as DcOptionT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -15458,7 +15572,7 @@ AllStructs.set(ConfigS._id, ConfigS);
 export class NearestDcS {
   static _id = 0x8e1a1775;
 
-  _values = ["", 0, 0] as [string, number, number];
+  _values = (["", 0, 0] as unknown) as [string, number, number];
 
   get_country(): string {
     return this._values[0];
@@ -15554,7 +15668,16 @@ AllStructs.set(NearestDcS._id, NearestDcS);
 export class HelpAppUpdateS {
   static _id = 0x1da7158f;
 
-  _values = [0, true, 0, "", "", [], new DocumentT(), ""] as [
+  _values = ([
+    0,
+    true,
+    0,
+    "",
+    "",
+    [],
+    (new DocumentT() as unknown) as DocumentT,
+    ""
+  ] as unknown) as [
     number,
     true,
     number,
@@ -15754,7 +15877,7 @@ export class HelpAppUpdateS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -15790,7 +15913,7 @@ AllStructs.set(HelpAppUpdateS._id, HelpAppUpdateS);
 export class HelpNoAppUpdateS {
   static _id = 0xc45a6536;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpNoAppUpdateS._id);
@@ -15816,7 +15939,7 @@ AllStructs.set(HelpNoAppUpdateS._id, HelpNoAppUpdateS);
 export class HelpInviteTextS {
   static _id = 0x18cb9f78;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_message(): string {
     return this._values[0];
@@ -15866,7 +15989,10 @@ AllStructs.set(HelpInviteTextS._id, HelpInviteTextS);
 export class UpdateNewEncryptedMessageS {
   static _id = 0x12bcbd9a;
 
-  _values = [new EncryptedMessageT(), 0] as [EncryptedMessageT, number];
+  _values = ([
+    (new EncryptedMessageT() as unknown) as EncryptedMessageT,
+    0
+  ] as unknown) as [EncryptedMessageT, number];
 
   get_message(): EncryptedMessageT {
     return this._values[0];
@@ -15937,7 +16063,7 @@ AllStructs.set(UpdateNewEncryptedMessageS._id, UpdateNewEncryptedMessageS);
 export class UpdateEncryptedChatTypingS {
   static _id = 0x1710f156;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_chat_id(): number {
     return this._values[0];
@@ -15987,7 +16113,10 @@ AllStructs.set(UpdateEncryptedChatTypingS._id, UpdateEncryptedChatTypingS);
 export class UpdateEncryptionS {
   static _id = 0xb4a2e88d;
 
-  _values = [new EncryptedChatT(), 0] as [EncryptedChatT, number];
+  _values = ([
+    (new EncryptedChatT() as unknown) as EncryptedChatT,
+    0
+  ] as unknown) as [EncryptedChatT, number];
 
   get_chat(): EncryptedChatT {
     return this._values[0];
@@ -16060,7 +16189,7 @@ AllStructs.set(UpdateEncryptionS._id, UpdateEncryptionS);
 export class UpdateEncryptedMessagesReadS {
   static _id = 0x38fe25b7;
 
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_chat_id(): number {
     return this._values[0];
@@ -16149,7 +16278,7 @@ AllStructs.set(UpdateEncryptedMessagesReadS._id, UpdateEncryptedMessagesReadS);
 export class EncryptedChatEmptyS {
   static _id = 0xab7ec0a0;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_id(): number {
     return this._values[0];
@@ -16202,7 +16331,13 @@ AllStructs.set(EncryptedChatEmptyS._id, EncryptedChatEmptyS);
 export class EncryptedChatWaitingS {
   static _id = 0x3bf703dc;
 
-  _values = [0, [0, 0], 0, 0, 0] as [number, ProtoLong, number, number, number];
+  _values = ([0, [0, 0], 0, 0, 0] as unknown) as [
+    number,
+    ProtoLong,
+    number,
+    number,
+    number
+  ];
 
   get_id(): number {
     return this._values[0];
@@ -16336,7 +16471,7 @@ AllStructs.set(EncryptedChatWaitingS._id, EncryptedChatWaitingS);
 export class EncryptedChatRequestedS {
   static _id = 0xc878527e;
 
-  _values = [0, [0, 0], 0, 0, 0, new Uint8Array()] as [
+  _values = ([0, [0, 0], 0, 0, 0, new Uint8Array()] as unknown) as [
     number,
     ProtoLong,
     number,
@@ -16498,7 +16633,7 @@ AllStructs.set(EncryptedChatRequestedS._id, EncryptedChatRequestedS);
 export class EncryptedChatS {
   static _id = 0xfa56ce36;
 
-  _values = [0, [0, 0], 0, 0, 0, new Uint8Array(), [0, 0]] as [
+  _values = ([0, [0, 0], 0, 0, 0, new Uint8Array(), [0, 0]] as unknown) as [
     number,
     ProtoLong,
     number,
@@ -16675,7 +16810,7 @@ AllStructs.set(EncryptedChatS._id, EncryptedChatS);
 export class EncryptedChatDiscardedS {
   static _id = 0x13d6dd27;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_id(): number {
     return this._values[0];
@@ -16725,7 +16860,7 @@ AllStructs.set(EncryptedChatDiscardedS._id, EncryptedChatDiscardedS);
 export class InputEncryptedChatS {
   static _id = 0xf141b5e1;
 
-  _values = [0, [0, 0]] as [number, ProtoLong];
+  _values = ([0, [0, 0]] as unknown) as [number, ProtoLong];
 
   get_chat_id(): number {
     return this._values[0];
@@ -16794,7 +16929,7 @@ AllStructs.set(InputEncryptedChatS._id, InputEncryptedChatS);
 export class EncryptedFileEmptyS {
   static _id = 0xc21f497e;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(EncryptedFileEmptyS._id);
@@ -16824,7 +16959,7 @@ AllStructs.set(EncryptedFileEmptyS._id, EncryptedFileEmptyS);
 export class EncryptedFileS {
   static _id = 0x4a70994c;
 
-  _values = [[0, 0], [0, 0], 0, 0, 0] as [
+  _values = ([[0, 0], [0, 0], 0, 0, 0] as unknown) as [
     ProtoLong,
     ProtoLong,
     number,
@@ -16959,7 +17094,7 @@ AllStructs.set(EncryptedFileS._id, EncryptedFileS);
 export class InputEncryptedFileEmptyS {
   static _id = 0x1837c364;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputEncryptedFileEmptyS._id);
@@ -16988,7 +17123,12 @@ AllStructs.set(InputEncryptedFileEmptyS._id, InputEncryptedFileEmptyS);
 export class InputEncryptedFileUploadedS {
   static _id = 0x64bd0306;
 
-  _values = [[0, 0], 0, "", 0] as [ProtoLong, number, string, number];
+  _values = ([[0, 0], 0, "", 0] as unknown) as [
+    ProtoLong,
+    number,
+    string,
+    number
+  ];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -17098,7 +17238,7 @@ AllStructs.set(InputEncryptedFileUploadedS._id, InputEncryptedFileUploadedS);
 export class InputEncryptedFileS {
   static _id = 0x5a17b5e5;
 
-  _values = [[0, 0], [0, 0]] as [ProtoLong, ProtoLong];
+  _values = ([[0, 0], [0, 0]] as unknown) as [ProtoLong, ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -17168,7 +17308,7 @@ AllStructs.set(InputEncryptedFileS._id, InputEncryptedFileS);
 export class InputEncryptedFileLocationS {
   static _id = 0xf5235d55;
 
-  _values = [[0, 0], [0, 0]] as [ProtoLong, ProtoLong];
+  _values = ([[0, 0], [0, 0]] as unknown) as [ProtoLong, ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -17241,13 +17381,13 @@ AllStructs.set(InputEncryptedFileLocationS._id, InputEncryptedFileLocationS);
 export class EncryptedMessageS {
   static _id = 0xed18c118;
 
-  _values = [[0, 0], 0, 0, new Uint8Array(), new EncryptedFileT()] as [
-    ProtoLong,
-    number,
-    number,
-    Uint8Array,
-    EncryptedFileT
-  ];
+  _values = ([
+    [0, 0],
+    0,
+    0,
+    new Uint8Array(),
+    (new EncryptedFileT() as unknown) as EncryptedFileT
+  ] as unknown) as [ProtoLong, number, number, Uint8Array, EncryptedFileT];
 
   get_random_id(): ProtoLong {
     return this._values[0];
@@ -17381,7 +17521,7 @@ AllStructs.set(EncryptedMessageS._id, EncryptedMessageS);
 export class EncryptedMessageServiceS {
   static _id = 0x23734b06;
 
-  _values = [[0, 0], 0, 0, new Uint8Array()] as [
+  _values = ([[0, 0], 0, 0, new Uint8Array()] as unknown) as [
     ProtoLong,
     number,
     number,
@@ -17495,7 +17635,7 @@ AllStructs.set(EncryptedMessageServiceS._id, EncryptedMessageServiceS);
 export class MessagesDhConfigNotModifiedS {
   static _id = 0xc0e24635;
 
-  _values = [new Uint8Array()] as [Uint8Array];
+  _values = ([new Uint8Array()] as unknown) as [Uint8Array];
 
   get_random(): Uint8Array {
     return this._values[0];
@@ -17547,7 +17687,7 @@ AllStructs.set(MessagesDhConfigNotModifiedS._id, MessagesDhConfigNotModifiedS);
 export class MessagesDhConfigS {
   static _id = 0x2c221edd;
 
-  _values = [0, new Uint8Array(), 0, new Uint8Array()] as [
+  _values = ([0, new Uint8Array(), 0, new Uint8Array()] as unknown) as [
     number,
     Uint8Array,
     number,
@@ -17661,7 +17801,7 @@ AllStructs.set(MessagesDhConfigS._id, MessagesDhConfigS);
 export class MessagesSentEncryptedMessageS {
   static _id = 0x560f8935;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_date(): number {
     return this._values[0];
@@ -17714,7 +17854,10 @@ AllStructs.set(
 export class MessagesSentEncryptedFileS {
   static _id = 0x9493ff32;
 
-  _values = [0, new EncryptedFileT()] as [number, EncryptedFileT];
+  _values = ([
+    0,
+    (new EncryptedFileT() as unknown) as EncryptedFileT
+  ] as unknown) as [number, EncryptedFileT];
 
   get_date(): number {
     return this._values[0];
@@ -17787,7 +17930,7 @@ AllStructs.set(MessagesSentEncryptedFileS._id, MessagesSentEncryptedFileS);
 export class InputFileBigS {
   static _id = 0xfa4f0bb5;
 
-  _values = [[0, 0], 0, ""] as [ProtoLong, number, string];
+  _values = ([[0, 0], 0, ""] as unknown) as [ProtoLong, number, string];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -17878,7 +18021,7 @@ AllStructs.set(InputFileBigS._id, InputFileBigS);
 export class InputEncryptedFileBigUploadedS {
   static _id = 0x2dc173c8;
 
-  _values = [[0, 0], 0, 0] as [ProtoLong, number, number];
+  _values = ([[0, 0], 0, 0] as unknown) as [ProtoLong, number, number];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -17974,7 +18117,13 @@ AllStructs.set(
 export class UpdateChatParticipantAddS {
   static _id = 0xea4b0e5c;
 
-  _values = [0, 0, 0, 0, 0] as [number, number, number, number, number];
+  _values = ([0, 0, 0, 0, 0] as unknown) as [
+    number,
+    number,
+    number,
+    number,
+    number
+  ];
 
   get_chat_id(): number {
     return this._values[0];
@@ -18105,7 +18254,7 @@ AllStructs.set(UpdateChatParticipantAddS._id, UpdateChatParticipantAddS);
 export class UpdateChatParticipantDeleteS {
   static _id = 0x6e5f8c22;
 
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_chat_id(): number {
     return this._values[0];
@@ -18194,7 +18343,7 @@ AllStructs.set(UpdateChatParticipantDeleteS._id, UpdateChatParticipantDeleteS);
 export class UpdateDcOptionsS {
   static _id = 0x8e5e9873;
 
-  _values = [[]] as [DcOptionT[]];
+  _values = ([[]] as unknown) as [DcOptionT[]];
 
   get_dc_options(): DcOptionT[] {
     return this._values[0];
@@ -18240,7 +18389,7 @@ export class UpdateDcOptionsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DcOptionT = new DcOptionT();
+        let val: DcOptionT = (new DcOptionT() as unknown) as DcOptionT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -18269,7 +18418,16 @@ AllStructs.set(UpdateDcOptionsS._id, UpdateDcOptionsS);
 export class InputMediaUploadedDocumentS {
   static _id = 0x5b38c6c1;
 
-  _values = [0, true, new InputFileT(), new InputFileT(), "", [], [], 0] as [
+  _values = ([
+    0,
+    true,
+    (new InputFileT() as unknown) as InputFileT,
+    (new InputFileT() as unknown) as InputFileT,
+    "",
+    [],
+    [],
+    0
+  ] as unknown) as [
     number,
     true,
     InputFileT,
@@ -18486,7 +18644,7 @@ export class InputMediaUploadedDocumentS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentAttributeT = new DocumentAttributeT();
+        let val: DocumentAttributeT = (new DocumentAttributeT() as unknown) as DocumentAttributeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -18504,7 +18662,7 @@ export class InputMediaUploadedDocumentS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputDocumentT = new InputDocumentT();
+        let val: InputDocumentT = (new InputDocumentT() as unknown) as InputDocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -18534,7 +18692,11 @@ AllStructs.set(InputMediaUploadedDocumentS._id, InputMediaUploadedDocumentS);
 export class InputMediaDocumentS {
   static _id = 0x23ab23d2;
 
-  _values = [0, new InputDocumentT(), 0] as [number, InputDocumentT, number];
+  _values = ([
+    0,
+    (new InputDocumentT() as unknown) as InputDocumentT,
+    0
+  ] as unknown) as [number, InputDocumentT, number];
 
   get_flags(): number {
     return this._values[0];
@@ -18633,7 +18795,11 @@ AllStructs.set(InputMediaDocumentS._id, InputMediaDocumentS);
 export class MessageMediaDocumentS {
   static _id = 0x9cb070d7;
 
-  _values = [0, new DocumentT(), 0] as [number, DocumentT, number];
+  _values = ([0, (new DocumentT() as unknown) as DocumentT, 0] as unknown) as [
+    number,
+    DocumentT,
+    number
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -18736,7 +18902,7 @@ AllStructs.set(MessageMediaDocumentS._id, MessageMediaDocumentS);
 export class InputDocumentEmptyS {
   static _id = 0x72f0eaae;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputDocumentEmptyS._id);
@@ -18764,7 +18930,7 @@ AllStructs.set(InputDocumentEmptyS._id, InputDocumentEmptyS);
 export class InputDocumentS {
   static _id = 0x1abfb575;
 
-  _values = [[0, 0], [0, 0], new Uint8Array()] as [
+  _values = ([[0, 0], [0, 0], new Uint8Array()] as unknown) as [
     ProtoLong,
     ProtoLong,
     Uint8Array
@@ -18860,7 +19026,7 @@ AllStructs.set(InputDocumentS._id, InputDocumentS);
 export class InputDocumentFileLocationS {
   static _id = 0xbad07584;
 
-  _values = [[0, 0], [0, 0], new Uint8Array(), ""] as [
+  _values = ([[0, 0], [0, 0], new Uint8Array(), ""] as unknown) as [
     ProtoLong,
     ProtoLong,
     Uint8Array,
@@ -18974,7 +19140,7 @@ AllStructs.set(InputDocumentFileLocationS._id, InputDocumentFileLocationS);
 export class DocumentEmptyS {
   static _id = 0x36f8c871;
 
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -19032,7 +19198,18 @@ AllStructs.set(DocumentEmptyS._id, DocumentEmptyS);
 export class DocumentS {
   static _id = 0x9ba29cc1;
 
-  _values = [0, [0, 0], [0, 0], new Uint8Array(), 0, "", 0, [], 0, []] as [
+  _values = ([
+    0,
+    [0, 0],
+    [0, 0],
+    new Uint8Array(),
+    0,
+    "",
+    0,
+    [],
+    0,
+    []
+  ] as unknown) as [
     number,
     ProtoLong,
     ProtoLong,
@@ -19270,7 +19447,7 @@ export class DocumentS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PhotoSizeT = new PhotoSizeT();
+        let val: PhotoSizeT = (new PhotoSizeT() as unknown) as PhotoSizeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -19294,7 +19471,7 @@ export class DocumentS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentAttributeT = new DocumentAttributeT();
+        let val: DocumentAttributeT = (new DocumentAttributeT() as unknown) as DocumentAttributeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -19317,7 +19494,10 @@ AllStructs.set(DocumentS._id, DocumentS);
 export class HelpSupportS {
   static _id = 0x17c6b5f6;
 
-  _values = ["", new UserT()] as [string, UserT];
+  _values = (["", (new UserT() as unknown) as UserT] as unknown) as [
+    string,
+    UserT
+  ];
 
   get_phone_number(): string {
     return this._values[0];
@@ -19388,7 +19568,7 @@ AllStructs.set(HelpSupportS._id, HelpSupportS);
 export class NotifyPeerS {
   static _id = 0x9fd40bd8;
 
-  _values = [new PeerT()] as [PeerT];
+  _values = ([(new PeerT() as unknown) as PeerT] as unknown) as [PeerT];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -19439,7 +19619,7 @@ AllStructs.set(NotifyPeerS._id, NotifyPeerS);
 export class NotifyUsersS {
   static _id = 0xb4c83b4c;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(NotifyUsersS._id);
@@ -19465,7 +19645,7 @@ AllStructs.set(NotifyUsersS._id, NotifyUsersS);
 export class NotifyChatsS {
   static _id = 0xc007cec3;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(NotifyChatsS._id);
@@ -19492,7 +19672,10 @@ AllStructs.set(NotifyChatsS._id, NotifyChatsS);
 export class UpdateUserBlockedS {
   static _id = 0x80ece81a;
 
-  _values = [0, new BoolT()] as [number, BoolT];
+  _values = ([0, (new BoolT() as unknown) as BoolT] as unknown) as [
+    number,
+    BoolT
+  ];
 
   get_user_id(): number {
     return this._values[0];
@@ -19564,10 +19747,10 @@ AllStructs.set(UpdateUserBlockedS._id, UpdateUserBlockedS);
 export class UpdateNotifySettingsS {
   static _id = 0xbec268ef;
 
-  _values = [new NotifyPeerT(), new PeerNotifySettingsT()] as [
-    NotifyPeerT,
-    PeerNotifySettingsT
-  ];
+  _values = ([
+    (new NotifyPeerT() as unknown) as NotifyPeerT,
+    (new PeerNotifySettingsT() as unknown) as PeerNotifySettingsT
+  ] as unknown) as [NotifyPeerT, PeerNotifySettingsT];
 
   get_peer(): NotifyPeerT {
     return this._values[0];
@@ -19640,7 +19823,7 @@ AllStructs.set(UpdateNotifySettingsS._id, UpdateNotifySettingsS);
 export class SendMessageTypingActionS {
   static _id = 0x16bf744e;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SendMessageTypingActionS._id);
@@ -19666,7 +19849,7 @@ AllStructs.set(SendMessageTypingActionS._id, SendMessageTypingActionS);
 export class SendMessageCancelActionS {
   static _id = 0xfd5ec8f5;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SendMessageCancelActionS._id);
@@ -19692,7 +19875,7 @@ AllStructs.set(SendMessageCancelActionS._id, SendMessageCancelActionS);
 export class SendMessageRecordVideoActionS {
   static _id = 0xa187d66f;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SendMessageRecordVideoActionS._id);
@@ -19721,7 +19904,7 @@ AllStructs.set(
 export class SendMessageUploadVideoActionS {
   static _id = 0xe9763aec;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_progress(): number {
     return this._values[0];
@@ -19773,7 +19956,7 @@ AllStructs.set(
 export class SendMessageRecordAudioActionS {
   static _id = 0xd52f73f7;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SendMessageRecordAudioActionS._id);
@@ -19802,7 +19985,7 @@ AllStructs.set(
 export class SendMessageUploadAudioActionS {
   static _id = 0xf351d7ab;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_progress(): number {
     return this._values[0];
@@ -19854,7 +20037,7 @@ AllStructs.set(
 export class SendMessageUploadPhotoActionS {
   static _id = 0xd1d34a26;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_progress(): number {
     return this._values[0];
@@ -19906,7 +20089,7 @@ AllStructs.set(
 export class SendMessageUploadDocumentActionS {
   static _id = 0xaa0cd9e4;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_progress(): number {
     return this._values[0];
@@ -19958,7 +20141,7 @@ AllStructs.set(
 export class SendMessageGeoLocationActionS {
   static _id = 0x176f8ba1;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SendMessageGeoLocationActionS._id);
@@ -19987,7 +20170,7 @@ AllStructs.set(
 export class SendMessageChooseContactActionS {
   static _id = 0x628cbc6f;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SendMessageChooseContactActionS._id);
@@ -20019,7 +20202,7 @@ AllStructs.set(
 export class ContactsFoundS {
   static _id = 0xb3134d9d;
 
-  _values = [[], [], [], []] as [
+  _values = ([[], [], [], []] as unknown) as [
     PeerT[],
     PeerT[],
     ChatT[],
@@ -20133,7 +20316,7 @@ export class ContactsFoundS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PeerT = new PeerT();
+        let val: PeerT = (new PeerT() as unknown) as PeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -20151,7 +20334,7 @@ export class ContactsFoundS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PeerT = new PeerT();
+        let val: PeerT = (new PeerT() as unknown) as PeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -20169,7 +20352,7 @@ export class ContactsFoundS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -20187,7 +20370,7 @@ export class ContactsFoundS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -20215,7 +20398,15 @@ AllStructs.set(ContactsFoundS._id, ContactsFoundS);
 export class UpdateServiceNotificationS {
   static _id = 0xebe46819;
 
-  _values = [0, true, 0, "", "", new MessageMediaT(), []] as [
+  _values = ([
+    0,
+    true,
+    0,
+    "",
+    "",
+    (new MessageMediaT() as unknown) as MessageMediaT,
+    []
+  ] as unknown) as [
     number,
     true,
     number,
@@ -20402,7 +20593,7 @@ export class UpdateServiceNotificationS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -20424,7 +20615,7 @@ AllStructs.set(UpdateServiceNotificationS._id, UpdateServiceNotificationS);
 export class UserStatusRecentlyS {
   static _id = 0xe26f42f1;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UserStatusRecentlyS._id);
@@ -20450,7 +20641,7 @@ AllStructs.set(UserStatusRecentlyS._id, UserStatusRecentlyS);
 export class UserStatusLastWeekS {
   static _id = 0x7bf09fc;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UserStatusLastWeekS._id);
@@ -20476,7 +20667,7 @@ AllStructs.set(UserStatusLastWeekS._id, UserStatusLastWeekS);
 export class UserStatusLastMonthS {
   static _id = 0x77ebc742;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UserStatusLastMonthS._id);
@@ -20503,7 +20694,10 @@ AllStructs.set(UserStatusLastMonthS._id, UserStatusLastMonthS);
 export class UpdatePrivacyS {
   static _id = 0xee3b272a;
 
-  _values = [new PrivacyKeyT(), []] as [PrivacyKeyT, PrivacyRuleT[]];
+  _values = ([
+    (new PrivacyKeyT() as unknown) as PrivacyKeyT,
+    []
+  ] as unknown) as [PrivacyKeyT, PrivacyRuleT[]];
 
   get_key(): PrivacyKeyT {
     return this._values[0];
@@ -20571,7 +20765,7 @@ export class UpdatePrivacyS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PrivacyRuleT = new PrivacyRuleT();
+        let val: PrivacyRuleT = (new PrivacyRuleT() as unknown) as PrivacyRuleT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -20593,7 +20787,7 @@ AllStructs.set(UpdatePrivacyS._id, UpdatePrivacyS);
 export class InputPrivacyKeyStatusTimestampS {
   static _id = 0x4f96cb18;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyKeyStatusTimestampS._id);
@@ -20622,7 +20816,7 @@ AllStructs.set(
 export class PrivacyKeyStatusTimestampS {
   static _id = 0xbc2eab30;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyKeyStatusTimestampS._id);
@@ -20648,7 +20842,7 @@ AllStructs.set(PrivacyKeyStatusTimestampS._id, PrivacyKeyStatusTimestampS);
 export class InputPrivacyValueAllowContactsS {
   static _id = 0xd09e07b;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyValueAllowContactsS._id);
@@ -20677,7 +20871,7 @@ AllStructs.set(
 export class InputPrivacyValueAllowAllS {
   static _id = 0x184b35ce;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyValueAllowAllS._id);
@@ -20703,7 +20897,7 @@ AllStructs.set(InputPrivacyValueAllowAllS._id, InputPrivacyValueAllowAllS);
 export class InputPrivacyValueAllowUsersS {
   static _id = 0x131cc67f;
 
-  _values = [[]] as [InputUserT[]];
+  _values = ([[]] as unknown) as [InputUserT[]];
 
   get_users(): InputUserT[] {
     return this._values[0];
@@ -20749,7 +20943,7 @@ export class InputPrivacyValueAllowUsersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputUserT = new InputUserT();
+        let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -20771,7 +20965,7 @@ AllStructs.set(InputPrivacyValueAllowUsersS._id, InputPrivacyValueAllowUsersS);
 export class InputPrivacyValueDisallowContactsS {
   static _id = 0xba52007;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyValueDisallowContactsS._id);
@@ -20800,7 +20994,7 @@ AllStructs.set(
 export class InputPrivacyValueDisallowAllS {
   static _id = 0xd66b66c9;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyValueDisallowAllS._id);
@@ -20829,7 +21023,7 @@ AllStructs.set(
 export class InputPrivacyValueDisallowUsersS {
   static _id = 0x90110467;
 
-  _values = [[]] as [InputUserT[]];
+  _values = ([[]] as unknown) as [InputUserT[]];
 
   get_users(): InputUserT[] {
     return this._values[0];
@@ -20875,7 +21069,7 @@ export class InputPrivacyValueDisallowUsersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputUserT = new InputUserT();
+        let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -20900,7 +21094,7 @@ AllStructs.set(
 export class PrivacyValueAllowContactsS {
   static _id = 0xfffe1bac;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyValueAllowContactsS._id);
@@ -20926,7 +21120,7 @@ AllStructs.set(PrivacyValueAllowContactsS._id, PrivacyValueAllowContactsS);
 export class PrivacyValueAllowAllS {
   static _id = 0x65427b82;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyValueAllowAllS._id);
@@ -20952,7 +21146,7 @@ AllStructs.set(PrivacyValueAllowAllS._id, PrivacyValueAllowAllS);
 export class PrivacyValueAllowUsersS {
   static _id = 0x4d5bbe0c;
 
-  _values = [[]] as [number[]];
+  _values = ([[]] as unknown) as [number[]];
 
   get_users(): number[] {
     return this._values[0];
@@ -21018,7 +21212,7 @@ AllStructs.set(PrivacyValueAllowUsersS._id, PrivacyValueAllowUsersS);
 export class PrivacyValueDisallowContactsS {
   static _id = 0xf888fa1a;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyValueDisallowContactsS._id);
@@ -21047,7 +21241,7 @@ AllStructs.set(
 export class PrivacyValueDisallowAllS {
   static _id = 0x8b73e763;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyValueDisallowAllS._id);
@@ -21073,7 +21267,7 @@ AllStructs.set(PrivacyValueDisallowAllS._id, PrivacyValueDisallowAllS);
 export class PrivacyValueDisallowUsersS {
   static _id = 0xc7f49b7;
 
-  _values = [[]] as [number[]];
+  _values = ([[]] as unknown) as [number[]];
 
   get_users(): number[] {
     return this._values[0];
@@ -21141,7 +21335,11 @@ AllStructs.set(PrivacyValueDisallowUsersS._id, PrivacyValueDisallowUsersS);
 export class AccountPrivacyRulesS {
   static _id = 0x50a04e45;
 
-  _values = [[], [], []] as [PrivacyRuleT[], ChatT[], UserT[]];
+  _values = ([[], [], []] as unknown) as [
+    PrivacyRuleT[],
+    ChatT[],
+    UserT[]
+  ];
 
   get_rules(): PrivacyRuleT[] {
     return this._values[0];
@@ -21229,7 +21427,7 @@ export class AccountPrivacyRulesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PrivacyRuleT = new PrivacyRuleT();
+        let val: PrivacyRuleT = (new PrivacyRuleT() as unknown) as PrivacyRuleT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -21247,7 +21445,7 @@ export class AccountPrivacyRulesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -21265,7 +21463,7 @@ export class AccountPrivacyRulesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -21287,7 +21485,7 @@ AllStructs.set(AccountPrivacyRulesS._id, AccountPrivacyRulesS);
 export class AccountDaysTtlS {
   static _id = 0xb8d0afdf;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_days(): number {
     return this._values[0];
@@ -21337,7 +21535,7 @@ AllStructs.set(AccountDaysTtlS._id, AccountDaysTtlS);
 export class UpdateUserPhoneS {
   static _id = 0x12b9417b;
 
-  _values = [0, ""] as [number, string];
+  _values = ([0, ""] as unknown) as [number, string];
 
   get_user_id(): number {
     return this._values[0];
@@ -21407,7 +21605,7 @@ AllStructs.set(UpdateUserPhoneS._id, UpdateUserPhoneS);
 export class DocumentAttributeImageSizeS {
   static _id = 0x6c37c15c;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_w(): number {
     return this._values[0];
@@ -21476,7 +21674,7 @@ AllStructs.set(DocumentAttributeImageSizeS._id, DocumentAttributeImageSizeS);
 export class DocumentAttributeAnimatedS {
   static _id = 0x11b58939;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(DocumentAttributeAnimatedS._id);
@@ -21506,13 +21704,13 @@ AllStructs.set(DocumentAttributeAnimatedS._id, DocumentAttributeAnimatedS);
 export class DocumentAttributeStickerS {
   static _id = 0x6319d612;
 
-  _values = [0, true, "", new InputStickerSetT(), new MaskCoordsT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    string,
-    InputStickerSetT,
-    MaskCoordsT
-  ];
+    "",
+    (new InputStickerSetT() as unknown) as InputStickerSetT,
+    (new MaskCoordsT() as unknown) as MaskCoordsT
+  ] as unknown) as [number, true, string, InputStickerSetT, MaskCoordsT];
 
   get_flags(): number {
     return this._values[0];
@@ -21661,7 +21859,7 @@ AllStructs.set(DocumentAttributeStickerS._id, DocumentAttributeStickerS);
 export class DocumentAttributeVideoS {
   static _id = 0xef02ce6;
 
-  _values = [0, true, true, 0, 0, 0] as [
+  _values = ([0, true, true, 0, 0, 0] as unknown) as [
     number,
     true,
     true,
@@ -21832,7 +22030,7 @@ AllStructs.set(DocumentAttributeVideoS._id, DocumentAttributeVideoS);
 export class DocumentAttributeAudioS {
   static _id = 0x9852f9c6;
 
-  _values = [0, true, 0, "", "", new Uint8Array()] as [
+  _values = ([0, true, 0, "", "", new Uint8Array()] as unknown) as [
     number,
     true,
     number,
@@ -22011,7 +22209,7 @@ AllStructs.set(DocumentAttributeAudioS._id, DocumentAttributeAudioS);
 export class DocumentAttributeFilenameS {
   static _id = 0x15590068;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_file_name(): string {
     return this._values[0];
@@ -22060,7 +22258,7 @@ AllStructs.set(DocumentAttributeFilenameS._id, DocumentAttributeFilenameS);
 export class MessagesStickersNotModifiedS {
   static _id = 0xf1749a22;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesStickersNotModifiedS._id);
@@ -22087,7 +22285,7 @@ AllStructs.set(MessagesStickersNotModifiedS._id, MessagesStickersNotModifiedS);
 export class MessagesStickersS {
   static _id = 0xe4599bbd;
 
-  _values = [0, []] as [number, DocumentT[]];
+  _values = ([0, []] as unknown) as [number, DocumentT[]];
 
   get_hash(): number {
     return this._values[0];
@@ -22153,7 +22351,7 @@ export class MessagesStickersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentT = new DocumentT();
+        let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -22176,7 +22374,7 @@ AllStructs.set(MessagesStickersS._id, MessagesStickersS);
 export class StickerPackS {
   static _id = 0x12b299d4;
 
-  _values = ["", []] as [string, ProtoLong[]];
+  _values = (["", []] as unknown) as [string, ProtoLong[]];
 
   get_emoticon(): string {
     return this._values[0];
@@ -22262,7 +22460,7 @@ AllStructs.set(StickerPackS._id, StickerPackS);
 export class MessagesAllStickersNotModifiedS {
   static _id = 0xe86602c3;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesAllStickersNotModifiedS._id);
@@ -22292,7 +22490,7 @@ AllStructs.set(
 export class MessagesAllStickersS {
   static _id = 0xedfd405f;
 
-  _values = [0, []] as [number, StickerSetT[]];
+  _values = ([0, []] as unknown) as [number, StickerSetT[]];
 
   get_hash(): number {
     return this._values[0];
@@ -22358,7 +22556,7 @@ export class MessagesAllStickersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: StickerSetT = new StickerSetT();
+        let val: StickerSetT = (new StickerSetT() as unknown) as StickerSetT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -22386,15 +22584,15 @@ AllStructs.set(MessagesAllStickersS._id, MessagesAllStickersS);
 export class UpdateReadHistoryInboxS {
   static _id = 0x9c974fdf;
 
-  _values = [0, 0, new PeerT(), 0, 0, 0, 0] as [
-    number,
-    number,
-    PeerT,
-    number,
-    number,
-    number,
-    number
-  ];
+  _values = ([
+    0,
+    0,
+    (new PeerT() as unknown) as PeerT,
+    0,
+    0,
+    0,
+    0
+  ] as unknown) as [number, number, PeerT, number, number, number, number];
 
   get_flags(): number {
     return this._values[0];
@@ -22574,7 +22772,12 @@ AllStructs.set(UpdateReadHistoryInboxS._id, UpdateReadHistoryInboxS);
 export class UpdateReadHistoryOutboxS {
   static _id = 0x2f2f21bf;
 
-  _values = [new PeerT(), 0, 0, 0] as [PeerT, number, number, number];
+  _values = ([(new PeerT() as unknown) as PeerT, 0, 0, 0] as unknown) as [
+    PeerT,
+    number,
+    number,
+    number
+  ];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -22686,7 +22889,7 @@ AllStructs.set(UpdateReadHistoryOutboxS._id, UpdateReadHistoryOutboxS);
 export class MessagesAffectedMessagesS {
   static _id = 0x84d19185;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_pts(): number {
     return this._values[0];
@@ -22757,7 +22960,11 @@ AllStructs.set(MessagesAffectedMessagesS._id, MessagesAffectedMessagesS);
 export class UpdateWebPageS {
   static _id = 0x7f891213;
 
-  _values = [new WebPageT(), 0, 0] as [WebPageT, number, number];
+  _values = ([(new WebPageT() as unknown) as WebPageT, 0, 0] as unknown) as [
+    WebPageT,
+    number,
+    number
+  ];
 
   get_webpage(): WebPageT {
     return this._values[0];
@@ -22848,7 +23055,7 @@ AllStructs.set(UpdateWebPageS._id, UpdateWebPageS);
 export class WebPageEmptyS {
   static _id = 0xeb1477e8;
 
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -22898,7 +23105,7 @@ AllStructs.set(WebPageEmptyS._id, WebPageEmptyS);
 export class WebPagePendingS {
   static _id = 0xc586da1c;
 
-  _values = [[0, 0], 0] as [ProtoLong, number];
+  _values = ([[0, 0], 0] as unknown) as [ProtoLong, number];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -22985,7 +23192,7 @@ AllStructs.set(WebPagePendingS._id, WebPagePendingS);
 export class WebPageS {
   static _id = 0xfa64e172;
 
-  _values = [
+  _values = ([
     0,
     [0, 0],
     "",
@@ -22995,17 +23202,17 @@ export class WebPageS {
     "",
     "",
     "",
-    new PhotoT(),
+    (new PhotoT() as unknown) as PhotoT,
     "",
     "",
     0,
     0,
     0,
     "",
-    new DocumentT(),
+    (new DocumentT() as unknown) as DocumentT,
     [],
-    new PageT()
-  ] as [
+    (new PageT() as unknown) as PageT
+  ] as unknown) as [
     number,
     ProtoLong,
     string,
@@ -23513,7 +23720,7 @@ export class WebPageS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentT = new DocumentT();
+        let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -23543,7 +23750,9 @@ AllStructs.set(WebPageS._id, WebPageS);
 export class MessageMediaWebPageS {
   static _id = 0xa32dd600;
 
-  _values = [new WebPageT()] as [WebPageT];
+  _values = ([(new WebPageT() as unknown) as WebPageT] as unknown) as [
+    WebPageT
+  ];
 
   get_webpage(): WebPageT {
     return this._values[0];
@@ -23609,7 +23818,7 @@ AllStructs.set(MessageMediaWebPageS._id, MessageMediaWebPageS);
 export class AuthorizationS {
   static _id = 0xad01d61d;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -23626,7 +23835,7 @@ export class AuthorizationS {
     "",
     "",
     ""
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -24007,7 +24216,7 @@ AllStructs.set(AuthorizationS._id, AuthorizationS);
 export class AccountAuthorizationsS {
   static _id = 0x1250abde;
 
-  _values = [[]] as [AuthorizationT[]];
+  _values = ([[]] as unknown) as [AuthorizationT[]];
 
   get_authorizations(): AuthorizationT[] {
     return this._values[0];
@@ -24053,7 +24262,7 @@ export class AccountAuthorizationsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: AuthorizationT = new AuthorizationT();
+        let val: AuthorizationT = (new AuthorizationT() as unknown) as AuthorizationT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -24086,20 +24295,20 @@ AllStructs.set(AccountAuthorizationsS._id, AccountAuthorizationsS);
 export class AccountPasswordS {
   static _id = 0xad2641f8;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
     true,
-    new PasswordKdfAlgoT(),
+    (new PasswordKdfAlgoT() as unknown) as PasswordKdfAlgoT,
     new Uint8Array(),
     [0, 0],
     "",
     "",
-    new PasswordKdfAlgoT(),
-    new SecurePasswordKdfAlgoT(),
+    (new PasswordKdfAlgoT() as unknown) as PasswordKdfAlgoT,
+    (new SecurePasswordKdfAlgoT() as unknown) as SecurePasswordKdfAlgoT,
     new Uint8Array()
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -24434,11 +24643,11 @@ AllStructs.set(AccountPasswordS._id, AccountPasswordS);
 export class AccountPasswordSettingsS {
   static _id = 0x9a5c33e5;
 
-  _values = [0, "", new SecureSecretSettingsT()] as [
-    number,
-    string,
-    SecureSecretSettingsT
-  ];
+  _values = ([
+    0,
+    "",
+    (new SecureSecretSettingsT() as unknown) as SecureSecretSettingsT
+  ] as unknown) as [number, string, SecureSecretSettingsT];
 
   get_flags(): number {
     return this._values[0];
@@ -24546,14 +24755,14 @@ AllStructs.set(AccountPasswordSettingsS._id, AccountPasswordSettingsS);
 export class AccountPasswordInputSettingsS {
   static _id = 0xc23727c9;
 
-  _values = [
+  _values = ([
     0,
-    new PasswordKdfAlgoT(),
+    (new PasswordKdfAlgoT() as unknown) as PasswordKdfAlgoT,
     new Uint8Array(),
     "",
     "",
-    new SecureSecretSettingsT()
-  ] as [
+    (new SecureSecretSettingsT() as unknown) as SecureSecretSettingsT
+  ] as unknown) as [
     number,
     PasswordKdfAlgoT,
     Uint8Array,
@@ -24746,7 +24955,7 @@ AllStructs.set(
 export class AuthPasswordRecoveryS {
   static _id = 0x137948a5;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_email_pattern(): string {
     return this._values[0];
@@ -24800,14 +25009,14 @@ AllStructs.set(AuthPasswordRecoveryS._id, AuthPasswordRecoveryS);
 export class InputMediaVenueS {
   static _id = 0xc13d1c11;
 
-  _values = [new InputGeoPointT(), "", "", "", "", ""] as [
-    InputGeoPointT,
-    string,
-    string,
-    string,
-    string,
-    string
-  ];
+  _values = ([
+    (new InputGeoPointT() as unknown) as InputGeoPointT,
+    "",
+    "",
+    "",
+    "",
+    ""
+  ] as unknown) as [InputGeoPointT, string, string, string, string, string];
 
   get_geo_point(): InputGeoPointT {
     return this._values[0];
@@ -24963,14 +25172,14 @@ AllStructs.set(InputMediaVenueS._id, InputMediaVenueS);
 export class MessageMediaVenueS {
   static _id = 0x2ec0533f;
 
-  _values = [new GeoPointT(), "", "", "", "", ""] as [
-    GeoPointT,
-    string,
-    string,
-    string,
-    string,
-    string
-  ];
+  _values = ([
+    (new GeoPointT() as unknown) as GeoPointT,
+    "",
+    "",
+    "",
+    "",
+    ""
+  ] as unknown) as [GeoPointT, string, string, string, string, string];
 
   get_geo(): GeoPointT {
     return this._values[0];
@@ -25122,7 +25331,7 @@ AllStructs.set(MessageMediaVenueS._id, MessageMediaVenueS);
 export class ReceivedNotifyMessageS {
   static _id = 0xa384b779;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_id(): number {
     return this._values[0];
@@ -25191,7 +25400,7 @@ AllStructs.set(ReceivedNotifyMessageS._id, ReceivedNotifyMessageS);
 export class ChatInviteEmptyS {
   static _id = 0x69df3769;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ChatInviteEmptyS._id);
@@ -25217,7 +25426,7 @@ AllStructs.set(ChatInviteEmptyS._id, ChatInviteEmptyS);
 export class ChatInviteExportedS {
   static _id = 0xfc2e05bc;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_link(): string {
     return this._values[0];
@@ -25266,7 +25475,7 @@ AllStructs.set(ChatInviteExportedS._id, ChatInviteExportedS);
 export class ChatInviteAlreadyS {
   static _id = 0x5a686d7c;
 
-  _values = [new ChatT()] as [ChatT];
+  _values = ([(new ChatT() as unknown) as ChatT] as unknown) as [ChatT];
 
   get_chat(): ChatT {
     return this._values[0];
@@ -25325,7 +25534,17 @@ AllStructs.set(ChatInviteAlreadyS._id, ChatInviteAlreadyS);
 export class ChatInviteS {
   static _id = 0xdfc2f58e;
 
-  _values = [0, true, true, true, true, "", new PhotoT(), 0, []] as [
+  _values = ([
+    0,
+    true,
+    true,
+    true,
+    true,
+    "",
+    (new PhotoT() as unknown) as PhotoT,
+    0,
+    []
+  ] as unknown) as [
     number,
     true,
     true,
@@ -25569,7 +25788,7 @@ export class ChatInviteS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -25591,7 +25810,7 @@ AllStructs.set(ChatInviteS._id, ChatInviteS);
 export class MessageActionChatJoinedByLinkS {
   static _id = 0xf89cf5e8;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_inviter_id(): number {
     return this._values[0];
@@ -25645,7 +25864,7 @@ AllStructs.set(
 export class UpdateReadMessagesContentsS {
   static _id = 0x68c13933;
 
-  _values = [[], 0, 0] as [number[], number, number];
+  _values = ([[], 0, 0] as unknown) as [number[], number, number];
 
   get_messages(): number[] {
     return this._values[0];
@@ -25751,7 +25970,7 @@ AllStructs.set(UpdateReadMessagesContentsS._id, UpdateReadMessagesContentsS);
 export class InputStickerSetEmptyS {
   static _id = 0xffb62b95;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputStickerSetEmptyS._id);
@@ -25778,7 +25997,7 @@ AllStructs.set(InputStickerSetEmptyS._id, InputStickerSetEmptyS);
 export class InputStickerSetIdS {
   static _id = 0x9de7a269;
 
-  _values = [[0, 0], [0, 0]] as [ProtoLong, ProtoLong];
+  _values = ([[0, 0], [0, 0]] as unknown) as [ProtoLong, ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -25847,7 +26066,7 @@ AllStructs.set(InputStickerSetIdS._id, InputStickerSetIdS);
 export class InputStickerSetShortNameS {
   static _id = 0x861cc8a0;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_short_name(): string {
     return this._values[0];
@@ -25909,7 +26128,7 @@ AllStructs.set(InputStickerSetShortNameS._id, InputStickerSetShortNameS);
 export class StickerSetS {
   static _id = 0xeeb46f27;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -25920,11 +26139,11 @@ export class StickerSetS {
     [0, 0],
     "",
     "",
-    new PhotoSizeT(),
+    (new PhotoSizeT() as unknown) as PhotoSizeT,
     0,
     0,
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -26290,11 +26509,11 @@ AllStructs.set(StickerSetS._id, StickerSetS);
 export class MessagesStickerSetS {
   static _id = 0xb60a24a6;
 
-  _values = [new StickerSetT(), [], []] as [
-    StickerSetT,
-    StickerPackT[],
-    DocumentT[]
-  ];
+  _values = ([
+    (new StickerSetT() as unknown) as StickerSetT,
+    [],
+    []
+  ] as unknown) as [StickerSetT, StickerPackT[], DocumentT[]];
 
   get_set(): StickerSetT {
     return this._values[0];
@@ -26383,7 +26602,7 @@ export class MessagesStickerSetS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: StickerPackT = new StickerPackT();
+        let val: StickerPackT = (new StickerPackT() as unknown) as StickerPackT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -26401,7 +26620,7 @@ export class MessagesStickerSetS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentT = new DocumentT();
+        let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -26448,7 +26667,7 @@ AllStructs.set(MessagesStickerSetS._id, MessagesStickerSetS);
 export class UserS {
   static _id = 0x938458c1;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -26469,13 +26688,13 @@ export class UserS {
     "",
     "",
     "",
-    new UserProfilePhotoT(),
-    new UserStatusT(),
+    (new UserProfilePhotoT() as unknown) as UserProfilePhotoT,
+    (new UserStatusT() as unknown) as UserStatusT,
     0,
     [],
     "",
     ""
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -27171,7 +27390,7 @@ export class UserS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: RestrictionReasonT = new RestrictionReasonT();
+        let val: RestrictionReasonT = (new RestrictionReasonT() as unknown) as RestrictionReasonT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -27206,7 +27425,7 @@ AllStructs.set(UserS._id, UserS);
 export class BotCommandS {
   static _id = 0xc27ac8c7;
 
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_command(): string {
     return this._values[0];
@@ -27277,7 +27496,7 @@ AllStructs.set(BotCommandS._id, BotCommandS);
 export class BotInfoS {
   static _id = 0x98e81d3a;
 
-  _values = [0, "", []] as [number, string, BotCommandT[]];
+  _values = ([0, "", []] as unknown) as [number, string, BotCommandT[]];
 
   get_user_id(): number {
     return this._values[0];
@@ -27363,7 +27582,7 @@ export class BotInfoS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: BotCommandT = new BotCommandT();
+        let val: BotCommandT = (new BotCommandT() as unknown) as BotCommandT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -27385,7 +27604,7 @@ AllStructs.set(BotInfoS._id, BotInfoS);
 export class KeyboardButtonS {
   static _id = 0xa2fa4880;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_text(): string {
     return this._values[0];
@@ -27434,7 +27653,7 @@ AllStructs.set(KeyboardButtonS._id, KeyboardButtonS);
 export class KeyboardButtonRowS {
   static _id = 0x77608b83;
 
-  _values = [[]] as [KeyboardButtonT[]];
+  _values = ([[]] as unknown) as [KeyboardButtonT[]];
 
   get_buttons(): KeyboardButtonT[] {
     return this._values[0];
@@ -27480,7 +27699,7 @@ export class KeyboardButtonRowS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: KeyboardButtonT = new KeyboardButtonT();
+        let val: KeyboardButtonT = (new KeyboardButtonT() as unknown) as KeyboardButtonT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -27503,7 +27722,7 @@ AllStructs.set(KeyboardButtonRowS._id, KeyboardButtonRowS);
 export class ReplyKeyboardHideS {
   static _id = 0xa03e5b85;
 
-  _values = [0, true] as [number, true];
+  _values = ([0, true] as unknown) as [number, true];
 
   get_flags(): number {
     return this._values[0];
@@ -27579,7 +27798,7 @@ AllStructs.set(ReplyKeyboardHideS._id, ReplyKeyboardHideS);
 export class ReplyKeyboardForceReplyS {
   static _id = 0xf4108aa0;
 
-  _values = [0, true, true] as [number, true, true];
+  _values = ([0, true, true] as unknown) as [number, true, true];
 
   get_flags(): number {
     return this._values[0];
@@ -27682,7 +27901,7 @@ AllStructs.set(ReplyKeyboardForceReplyS._id, ReplyKeyboardForceReplyS);
 export class ReplyKeyboardMarkupS {
   static _id = 0x3502758c;
 
-  _values = [0, true, true, true, []] as [
+  _values = ([0, true, true, true, []] as unknown) as [
     number,
     true,
     true,
@@ -27829,7 +28048,7 @@ export class ReplyKeyboardMarkupS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: KeyboardButtonRowT = new KeyboardButtonRowT();
+        let val: KeyboardButtonRowT = (new KeyboardButtonRowT() as unknown) as KeyboardButtonRowT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -27852,7 +28071,7 @@ AllStructs.set(ReplyKeyboardMarkupS._id, ReplyKeyboardMarkupS);
 export class InputPeerUserS {
   static _id = 0x7b8e7de6;
 
-  _values = [0, [0, 0]] as [number, ProtoLong];
+  _values = ([0, [0, 0]] as unknown) as [number, ProtoLong];
 
   get_user_id(): number {
     return this._values[0];
@@ -27922,7 +28141,7 @@ AllStructs.set(InputPeerUserS._id, InputPeerUserS);
 export class InputUserS {
   static _id = 0xd8292816;
 
-  _values = [0, [0, 0]] as [number, ProtoLong];
+  _values = ([0, [0, 0]] as unknown) as [number, ProtoLong];
 
   get_user_id(): number {
     return this._values[0];
@@ -27992,7 +28211,7 @@ AllStructs.set(InputUserS._id, InputUserS);
 export class MessageEntityUnknownS {
   static _id = 0xbb92ba95;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -28062,7 +28281,7 @@ AllStructs.set(MessageEntityUnknownS._id, MessageEntityUnknownS);
 export class MessageEntityMentionS {
   static _id = 0xfa04579d;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -28132,7 +28351,7 @@ AllStructs.set(MessageEntityMentionS._id, MessageEntityMentionS);
 export class MessageEntityHashtagS {
   static _id = 0x6f635b0d;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -28202,7 +28421,7 @@ AllStructs.set(MessageEntityHashtagS._id, MessageEntityHashtagS);
 export class MessageEntityBotCommandS {
   static _id = 0x6cef8ac7;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -28272,7 +28491,7 @@ AllStructs.set(MessageEntityBotCommandS._id, MessageEntityBotCommandS);
 export class MessageEntityUrlS {
   static _id = 0x6ed02538;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -28342,7 +28561,7 @@ AllStructs.set(MessageEntityUrlS._id, MessageEntityUrlS);
 export class MessageEntityEmailS {
   static _id = 0x64e475c2;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -28412,7 +28631,7 @@ AllStructs.set(MessageEntityEmailS._id, MessageEntityEmailS);
 export class MessageEntityBoldS {
   static _id = 0xbd610bc9;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -28482,7 +28701,7 @@ AllStructs.set(MessageEntityBoldS._id, MessageEntityBoldS);
 export class MessageEntityItalicS {
   static _id = 0x826f8b60;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -28552,7 +28771,7 @@ AllStructs.set(MessageEntityItalicS._id, MessageEntityItalicS);
 export class MessageEntityCodeS {
   static _id = 0x28a20571;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -28623,7 +28842,7 @@ AllStructs.set(MessageEntityCodeS._id, MessageEntityCodeS);
 export class MessageEntityPreS {
   static _id = 0x73924be0;
 
-  _values = [0, 0, ""] as [number, number, string];
+  _values = ([0, 0, ""] as unknown) as [number, number, string];
 
   get_offset(): number {
     return this._values[0];
@@ -28714,7 +28933,7 @@ AllStructs.set(MessageEntityPreS._id, MessageEntityPreS);
 export class MessageEntityTextUrlS {
   static _id = 0x76a6d327;
 
-  _values = [0, 0, ""] as [number, number, string];
+  _values = ([0, 0, ""] as unknown) as [number, number, string];
 
   get_offset(): number {
     return this._values[0];
@@ -28810,7 +29029,16 @@ AllStructs.set(MessageEntityTextUrlS._id, MessageEntityTextUrlS);
 export class UpdateShortSentMessageS {
   static _id = 0x11f1331c;
 
-  _values = [0, true, 0, 0, 0, 0, new MessageMediaT(), []] as [
+  _values = ([
+    0,
+    true,
+    0,
+    0,
+    0,
+    0,
+    (new MessageMediaT() as unknown) as MessageMediaT,
+    []
+  ] as unknown) as [
     number,
     true,
     number,
@@ -29024,7 +29252,7 @@ export class UpdateShortSentMessageS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -29046,7 +29274,7 @@ AllStructs.set(UpdateShortSentMessageS._id, UpdateShortSentMessageS);
 export class InputChannelEmptyS {
   static _id = 0xee8c1e86;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputChannelEmptyS._id);
@@ -29073,7 +29301,7 @@ AllStructs.set(InputChannelEmptyS._id, InputChannelEmptyS);
 export class InputChannelS {
   static _id = 0xafeb712e;
 
-  _values = [0, [0, 0]] as [number, ProtoLong];
+  _values = ([0, [0, 0]] as unknown) as [number, ProtoLong];
 
   get_channel_id(): number {
     return this._values[0];
@@ -29142,7 +29370,7 @@ AllStructs.set(InputChannelS._id, InputChannelS);
 export class PeerChannelS {
   static _id = 0xbddde532;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_channel_id(): number {
     return this._values[0];
@@ -29192,7 +29420,7 @@ AllStructs.set(PeerChannelS._id, PeerChannelS);
 export class InputPeerChannelS {
   static _id = 0x20adaef8;
 
-  _values = [0, [0, 0]] as [number, ProtoLong];
+  _values = ([0, [0, 0]] as unknown) as [number, ProtoLong];
 
   get_channel_id(): number {
     return this._values[0];
@@ -29285,7 +29513,7 @@ AllStructs.set(InputPeerChannelS._id, InputPeerChannelS);
 export class ChannelS {
   static _id = 0xd31a961e;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -29303,15 +29531,15 @@ export class ChannelS {
     [0, 0],
     "",
     "",
-    new ChatPhotoT(),
+    (new ChatPhotoT() as unknown) as ChatPhotoT,
     0,
     0,
     [],
-    new ChatAdminRightsT(),
-    new ChatBannedRightsT(),
-    new ChatBannedRightsT(),
+    (new ChatAdminRightsT() as unknown) as ChatAdminRightsT,
+    (new ChatBannedRightsT() as unknown) as ChatBannedRightsT,
+    (new ChatBannedRightsT() as unknown) as ChatBannedRightsT,
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -29943,7 +30171,7 @@ export class ChannelS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: RestrictionReasonT = new RestrictionReasonT();
+        let val: RestrictionReasonT = (new RestrictionReasonT() as unknown) as RestrictionReasonT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -30001,7 +30229,7 @@ AllStructs.set(ChannelS._id, ChannelS);
 export class ChannelForbiddenS {
   static _id = 0x289da732;
 
-  _values = [0, true, true, 0, [0, 0], "", 0] as [
+  _values = ([0, true, true, 0, [0, 0], "", 0] as unknown) as [
     number,
     true,
     true,
@@ -30196,7 +30424,11 @@ AllStructs.set(ChannelForbiddenS._id, ChannelForbiddenS);
 export class ContactsResolvedPeerS {
   static _id = 0x7f077ad9;
 
-  _values = [new PeerT(), [], []] as [PeerT, ChatT[], UserT[]];
+  _values = ([(new PeerT() as unknown) as PeerT, [], []] as unknown) as [
+    PeerT,
+    ChatT[],
+    UserT[]
+  ];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -30285,7 +30517,7 @@ export class ContactsResolvedPeerS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -30303,7 +30535,7 @@ export class ContactsResolvedPeerS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -30357,7 +30589,7 @@ AllStructs.set(ContactsResolvedPeerS._id, ContactsResolvedPeerS);
 export class ChannelFullS {
   static _id = 0x2d895c74;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -30376,22 +30608,22 @@ export class ChannelFullS {
     0,
     0,
     0,
-    new PhotoT(),
-    new PeerNotifySettingsT(),
-    new ExportedChatInviteT(),
+    (new PhotoT() as unknown) as PhotoT,
+    (new PeerNotifySettingsT() as unknown) as PeerNotifySettingsT,
+    (new ExportedChatInviteT() as unknown) as ExportedChatInviteT,
     [],
     0,
     0,
     0,
-    new StickerSetT(),
+    (new StickerSetT() as unknown) as StickerSetT,
     0,
     0,
     0,
-    new ChannelLocationT(),
+    (new ChannelLocationT() as unknown) as ChannelLocationT,
     0,
     0,
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -31176,7 +31408,7 @@ export class ChannelFullS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: BotInfoT = new BotInfoT();
+        let val: BotInfoT = (new BotInfoT() as unknown) as BotInfoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -31269,7 +31501,7 @@ AllStructs.set(ChannelFullS._id, ChannelFullS);
 export class MessageRangeS {
   static _id = 0xae30253;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_min_id(): number {
     return this._values[0];
@@ -31344,7 +31576,7 @@ AllStructs.set(MessageRangeS._id, MessageRangeS);
 export class MessagesChannelMessagesS {
   static _id = 0x99262e37;
 
-  _values = [0, true, 0, 0, [], [], []] as [
+  _values = ([0, true, 0, 0, [], [], []] as unknown) as [
     number,
     true,
     number,
@@ -31525,7 +31757,7 @@ export class MessagesChannelMessagesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageT = new MessageT();
+        let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -31543,7 +31775,7 @@ export class MessagesChannelMessagesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -31561,7 +31793,7 @@ export class MessagesChannelMessagesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -31583,7 +31815,7 @@ AllStructs.set(MessagesChannelMessagesS._id, MessagesChannelMessagesS);
 export class MessageActionChannelCreateS {
   static _id = 0x95d2ac92;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_title(): string {
     return this._values[0];
@@ -31634,7 +31866,7 @@ AllStructs.set(MessageActionChannelCreateS._id, MessageActionChannelCreateS);
 export class UpdateChannelTooLongS {
   static _id = 0xeb0467fb;
 
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_flags(): number {
     return this._values[0];
@@ -31729,7 +31961,7 @@ AllStructs.set(UpdateChannelTooLongS._id, UpdateChannelTooLongS);
 export class UpdateChannelS {
   static _id = 0xb6d45656;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_channel_id(): number {
     return this._values[0];
@@ -31780,7 +32012,11 @@ AllStructs.set(UpdateChannelS._id, UpdateChannelS);
 export class UpdateNewChannelMessageS {
   static _id = 0x62ba04d9;
 
-  _values = [new MessageT(), 0, 0] as [MessageT, number, number];
+  _values = ([(new MessageT() as unknown) as MessageT, 0, 0] as unknown) as [
+    MessageT,
+    number,
+    number
+  ];
 
   get_message(): MessageT {
     return this._values[0];
@@ -31876,7 +32112,7 @@ AllStructs.set(UpdateNewChannelMessageS._id, UpdateNewChannelMessageS);
 export class UpdateReadChannelInboxS {
   static _id = 0x330b5424;
 
-  _values = [0, 0, 0, 0, 0, 0] as [
+  _values = ([0, 0, 0, 0, 0, 0] as unknown) as [
     number,
     number,
     number,
@@ -32041,7 +32277,12 @@ AllStructs.set(UpdateReadChannelInboxS._id, UpdateReadChannelInboxS);
 export class UpdateDeleteChannelMessagesS {
   static _id = 0xc37521c9;
 
-  _values = [0, [], 0, 0] as [number, number[], number, number];
+  _values = ([0, [], 0, 0] as unknown) as [
+    number,
+    number[],
+    number,
+    number
+  ];
 
   get_channel_id(): number {
     return this._values[0];
@@ -32169,7 +32410,7 @@ AllStructs.set(UpdateDeleteChannelMessagesS._id, UpdateDeleteChannelMessagesS);
 export class UpdateChannelMessageViewsS {
   static _id = 0x98a12b4b;
 
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_channel_id(): number {
     return this._values[0];
@@ -32261,7 +32502,7 @@ AllStructs.set(UpdateChannelMessageViewsS._id, UpdateChannelMessageViewsS);
 export class UpdatesChannelDifferenceEmptyS {
   static _id = 0x3e11affb;
 
-  _values = [0, true, 0, 0] as [number, true, number, number];
+  _values = ([0, true, 0, 0] as unknown) as [number, true, number, number];
 
   get_flags(): number {
     return this._values[0];
@@ -32390,7 +32631,15 @@ AllStructs.set(
 export class UpdatesChannelDifferenceTooLongS {
   static _id = 0xa4bcc6fe;
 
-  _values = [0, true, 0, new DialogT(), [], [], []] as [
+  _values = ([
+    0,
+    true,
+    0,
+    (new DialogT() as unknown) as DialogT,
+    [],
+    [],
+    []
+  ] as unknown) as [
     number,
     true,
     number,
@@ -32579,7 +32828,7 @@ export class UpdatesChannelDifferenceTooLongS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageT = new MessageT();
+        let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -32597,7 +32846,7 @@ export class UpdatesChannelDifferenceTooLongS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -32615,7 +32864,7 @@ export class UpdatesChannelDifferenceTooLongS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -32647,7 +32896,7 @@ AllStructs.set(
 export class UpdatesChannelDifferenceS {
   static _id = 0x2064674e;
 
-  _values = [0, true, 0, 0, [], [], [], []] as [
+  _values = ([0, true, 0, 0, [], [], [], []] as unknown) as [
     number,
     true,
     number,
@@ -32856,7 +33105,7 @@ export class UpdatesChannelDifferenceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageT = new MessageT();
+        let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -32874,7 +33123,7 @@ export class UpdatesChannelDifferenceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UpdateT = new UpdateT();
+        let val: UpdateT = (new UpdateT() as unknown) as UpdateT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -32892,7 +33141,7 @@ export class UpdatesChannelDifferenceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -32910,7 +33159,7 @@ export class UpdatesChannelDifferenceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -32932,7 +33181,7 @@ AllStructs.set(UpdatesChannelDifferenceS._id, UpdatesChannelDifferenceS);
 export class ChannelMessagesFilterEmptyS {
   static _id = 0x94d42ee7;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ChannelMessagesFilterEmptyS._id);
@@ -32960,7 +33209,7 @@ AllStructs.set(ChannelMessagesFilterEmptyS._id, ChannelMessagesFilterEmptyS);
 export class ChannelMessagesFilterS {
   static _id = 0xcd77d957;
 
-  _values = [0, true, []] as [number, true, MessageRangeT[]];
+  _values = ([0, true, []] as unknown) as [number, true, MessageRangeT[]];
 
   get_flags(): number {
     return this._values[0];
@@ -33051,7 +33300,7 @@ export class ChannelMessagesFilterS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageRangeT = new MessageRangeT();
+        let val: MessageRangeT = (new MessageRangeT() as unknown) as MessageRangeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -33074,7 +33323,7 @@ AllStructs.set(ChannelMessagesFilterS._id, ChannelMessagesFilterS);
 export class ChannelParticipantS {
   static _id = 0x15ebac1d;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_user_id(): number {
     return this._values[0];
@@ -33145,7 +33394,7 @@ AllStructs.set(ChannelParticipantS._id, ChannelParticipantS);
 export class ChannelParticipantSelfS {
   static _id = 0xa3289a6d;
 
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_user_id(): number {
     return this._values[0];
@@ -33236,7 +33485,7 @@ AllStructs.set(ChannelParticipantSelfS._id, ChannelParticipantSelfS);
 export class ChannelParticipantCreatorS {
   static _id = 0x808d15a4;
 
-  _values = [0, 0, ""] as [number, number, string];
+  _values = ([0, 0, ""] as unknown) as [number, number, string];
 
   get_flags(): number {
     return this._values[0];
@@ -33331,7 +33580,7 @@ AllStructs.set(ChannelParticipantCreatorS._id, ChannelParticipantCreatorS);
 export class ChannelParticipantsRecentS {
   static _id = 0xde3f3c79;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ChannelParticipantsRecentS._id);
@@ -33357,7 +33606,7 @@ AllStructs.set(ChannelParticipantsRecentS._id, ChannelParticipantsRecentS);
 export class ChannelParticipantsAdminsS {
   static _id = 0xb4608969;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ChannelParticipantsAdminsS._id);
@@ -33383,7 +33632,7 @@ AllStructs.set(ChannelParticipantsAdminsS._id, ChannelParticipantsAdminsS);
 export class ChannelParticipantsKickedS {
   static _id = 0xa3b54985;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_q(): string {
     return this._values[0];
@@ -33434,7 +33683,11 @@ AllStructs.set(ChannelParticipantsKickedS._id, ChannelParticipantsKickedS);
 export class ChannelsChannelParticipantsS {
   static _id = 0xf56ee2a8;
 
-  _values = [0, [], []] as [number, ChannelParticipantT[], UserT[]];
+  _values = ([0, [], []] as unknown) as [
+    number,
+    ChannelParticipantT[],
+    UserT[]
+  ];
 
   get_count(): number {
     return this._values[0];
@@ -33521,7 +33774,7 @@ export class ChannelsChannelParticipantsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChannelParticipantT = new ChannelParticipantT();
+        let val: ChannelParticipantT = (new ChannelParticipantT() as unknown) as ChannelParticipantT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -33539,7 +33792,7 @@ export class ChannelsChannelParticipantsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -33562,10 +33815,10 @@ AllStructs.set(ChannelsChannelParticipantsS._id, ChannelsChannelParticipantsS);
 export class ChannelsChannelParticipantS {
   static _id = 0xd0d9b163;
 
-  _values = [new ChannelParticipantT(), []] as [
-    ChannelParticipantT,
-    UserT[]
-  ];
+  _values = ([
+    (new ChannelParticipantT() as unknown) as ChannelParticipantT,
+    []
+  ] as unknown) as [ChannelParticipantT, UserT[]];
 
   get_participant(): ChannelParticipantT {
     return this._values[0];
@@ -33633,7 +33886,7 @@ export class ChannelsChannelParticipantS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -33655,7 +33908,7 @@ AllStructs.set(ChannelsChannelParticipantS._id, ChannelsChannelParticipantS);
 export class ChatParticipantCreatorS {
   static _id = 0xda13538a;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_user_id(): number {
     return this._values[0];
@@ -33706,7 +33959,7 @@ AllStructs.set(ChatParticipantCreatorS._id, ChatParticipantCreatorS);
 export class ChatParticipantAdminS {
   static _id = 0xe2d6e436;
 
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_user_id(): number {
     return this._values[0];
@@ -33798,7 +34051,12 @@ AllStructs.set(ChatParticipantAdminS._id, ChatParticipantAdminS);
 export class UpdateChatParticipantAdminS {
   static _id = 0xb6901959;
 
-  _values = [0, 0, new BoolT(), 0] as [number, number, BoolT, number];
+  _values = ([0, 0, (new BoolT() as unknown) as BoolT, 0] as unknown) as [
+    number,
+    number,
+    BoolT,
+    number
+  ];
 
   get_chat_id(): number {
     return this._values[0];
@@ -33909,7 +34167,7 @@ AllStructs.set(UpdateChatParticipantAdminS._id, UpdateChatParticipantAdminS);
 export class MessageActionChatMigrateToS {
   static _id = 0x51bdb021;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_channel_id(): number {
     return this._values[0];
@@ -33959,7 +34217,7 @@ AllStructs.set(MessageActionChatMigrateToS._id, MessageActionChatMigrateToS);
 export class MessageActionChannelMigrateFromS {
   static _id = 0xb055eaee;
 
-  _values = ["", 0] as [string, number];
+  _values = (["", 0] as unknown) as [string, number];
 
   get_title(): string {
     return this._values[0];
@@ -34031,7 +34289,7 @@ AllStructs.set(
 export class ChannelParticipantsBotsS {
   static _id = 0xb0d1865b;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ChannelParticipantsBotsS._id);
@@ -34062,7 +34320,14 @@ AllStructs.set(ChannelParticipantsBotsS._id, ChannelParticipantsBotsS);
 export class HelpTermsOfServiceS {
   static _id = 0x780a0310;
 
-  _values = [0, true, new DataJsonT(), "", [], 0] as [
+  _values = ([
+    0,
+    true,
+    (new DataJsonT() as unknown) as DataJsonT,
+    "",
+    [],
+    0
+  ] as unknown) as [
     number,
     true,
     DataJsonT,
@@ -34222,7 +34487,7 @@ export class HelpTermsOfServiceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -34250,7 +34515,9 @@ AllStructs.set(HelpTermsOfServiceS._id, HelpTermsOfServiceS);
 export class UpdateNewStickerSetS {
   static _id = 0x688a30aa;
 
-  _values = [new MessagesStickerSetT()] as [MessagesStickerSetT];
+  _values = ([
+    (new MessagesStickerSetT() as unknown) as MessagesStickerSetT
+  ] as unknown) as [MessagesStickerSetT];
 
   get_stickerset(): MessagesStickerSetT {
     return this._values[0];
@@ -34303,7 +34570,7 @@ AllStructs.set(UpdateNewStickerSetS._id, UpdateNewStickerSetS);
 export class UpdateStickerSetsOrderS {
   static _id = 0xbb2d201;
 
-  _values = [0, true, []] as [number, true, ProtoLong[]];
+  _values = ([0, true, []] as unknown) as [number, true, ProtoLong[]];
 
   get_flags(): number {
     return this._values[0];
@@ -34414,7 +34681,7 @@ AllStructs.set(UpdateStickerSetsOrderS._id, UpdateStickerSetsOrderS);
 export class UpdateStickerSetsS {
   static _id = 0x43ae3dec;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UpdateStickerSetsS._id);
@@ -34445,7 +34712,7 @@ AllStructs.set(UpdateStickerSetsS._id, UpdateStickerSetsS);
 export class FoundGifS {
   static _id = 0x162ecc1f;
 
-  _values = ["", "", "", "", 0, 0] as [
+  _values = (["", "", "", "", 0, 0] as unknown) as [
     string,
     string,
     string,
@@ -34603,7 +34870,11 @@ AllStructs.set(FoundGifS._id, FoundGifS);
 export class FoundGifCachedS {
   static _id = 0x9c750409;
 
-  _values = ["", new PhotoT(), new DocumentT()] as [string, PhotoT, DocumentT];
+  _values = ([
+    "",
+    (new PhotoT() as unknown) as PhotoT,
+    (new DocumentT() as unknown) as DocumentT
+  ] as unknown) as [string, PhotoT, DocumentT];
 
   get_url(): string {
     return this._values[0];
@@ -34697,7 +34968,7 @@ AllStructs.set(FoundGifCachedS._id, FoundGifCachedS);
 export class InputMediaGifExternalS {
   static _id = 0x4843b0fd;
 
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_url(): string {
     return this._values[0];
@@ -34767,7 +35038,7 @@ AllStructs.set(InputMediaGifExternalS._id, InputMediaGifExternalS);
 export class MessagesFoundGifsS {
   static _id = 0x450a1c0a;
 
-  _values = [0, []] as [number, FoundGifT[]];
+  _values = ([0, []] as unknown) as [number, FoundGifT[]];
 
   get_next_offset(): number {
     return this._values[0];
@@ -34833,7 +35104,7 @@ export class MessagesFoundGifsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: FoundGifT = new FoundGifT();
+        let val: FoundGifT = (new FoundGifT() as unknown) as FoundGifT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -34855,7 +35126,7 @@ AllStructs.set(MessagesFoundGifsS._id, MessagesFoundGifsS);
 export class MessagesSavedGifsNotModifiedS {
   static _id = 0xe8025ca2;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesSavedGifsNotModifiedS._id);
@@ -34885,7 +35156,7 @@ AllStructs.set(
 export class MessagesSavedGifsS {
   static _id = 0x2e0709a5;
 
-  _values = [0, []] as [number, DocumentT[]];
+  _values = ([0, []] as unknown) as [number, DocumentT[]];
 
   get_hash(): number {
     return this._values[0];
@@ -34951,7 +35222,7 @@ export class MessagesSavedGifsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentT = new DocumentT();
+        let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -34973,7 +35244,7 @@ AllStructs.set(MessagesSavedGifsS._id, MessagesSavedGifsS);
 export class UpdateSavedGifsS {
   static _id = 0x9375341e;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UpdateSavedGifsS._id);
@@ -35002,12 +35273,12 @@ AllStructs.set(UpdateSavedGifsS._id, UpdateSavedGifsS);
 export class InputBotInlineMessageMediaAutoS {
   static _id = 0x3380c786;
 
-  _values = [0, "", [], new ReplyMarkupT()] as [
-    number,
-    string,
-    MessageEntityT[],
-    ReplyMarkupT
-  ];
+  _values = ([
+    0,
+    "",
+    [],
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT
+  ] as unknown) as [number, string, MessageEntityT[], ReplyMarkupT];
 
   get_flags(): number {
     return this._values[0];
@@ -35119,7 +35390,7 @@ export class InputBotInlineMessageMediaAutoS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -35156,13 +35427,13 @@ AllStructs.set(
 export class InputBotInlineMessageTextS {
   static _id = 0x3dcd7a87;
 
-  _values = [0, true, "", [], new ReplyMarkupT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    string,
-    MessageEntityT[],
-    ReplyMarkupT
-  ];
+    "",
+    [],
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT
+  ] as unknown) as [number, true, string, MessageEntityT[], ReplyMarkupT];
 
   get_flags(): number {
     return this._values[0];
@@ -35299,7 +35570,7 @@ export class InputBotInlineMessageTextS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -35337,17 +35608,17 @@ AllStructs.set(InputBotInlineMessageTextS._id, InputBotInlineMessageTextS);
 export class InputBotInlineResultS {
   static _id = 0x88bf9319;
 
-  _values = [
+  _values = ([
     0,
     "",
     "",
     "",
     "",
     "",
-    new InputWebDocumentT(),
-    new InputWebDocumentT(),
-    new InputBotInlineMessageT()
-  ] as [
+    (new InputWebDocumentT() as unknown) as InputWebDocumentT,
+    (new InputWebDocumentT() as unknown) as InputWebDocumentT,
+    (new InputBotInlineMessageT() as unknown) as InputBotInlineMessageT
+  ] as unknown) as [
     number,
     string,
     string,
@@ -35605,12 +35876,12 @@ AllStructs.set(InputBotInlineResultS._id, InputBotInlineResultS);
 export class BotInlineMessageMediaAutoS {
   static _id = 0x764cf810;
 
-  _values = [0, "", [], new ReplyMarkupT()] as [
-    number,
-    string,
-    MessageEntityT[],
-    ReplyMarkupT
-  ];
+  _values = ([
+    0,
+    "",
+    [],
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT
+  ] as unknown) as [number, string, MessageEntityT[], ReplyMarkupT];
 
   get_flags(): number {
     return this._values[0];
@@ -35722,7 +35993,7 @@ export class BotInlineMessageMediaAutoS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -35756,13 +36027,13 @@ AllStructs.set(BotInlineMessageMediaAutoS._id, BotInlineMessageMediaAutoS);
 export class BotInlineMessageTextS {
   static _id = 0x8c7f65e2;
 
-  _values = [0, true, "", [], new ReplyMarkupT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    string,
-    MessageEntityT[],
-    ReplyMarkupT
-  ];
+    "",
+    [],
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT
+  ] as unknown) as [number, true, string, MessageEntityT[], ReplyMarkupT];
 
   get_flags(): number {
     return this._values[0];
@@ -35899,7 +36170,7 @@ export class BotInlineMessageTextS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -35937,17 +36208,17 @@ AllStructs.set(BotInlineMessageTextS._id, BotInlineMessageTextS);
 export class BotInlineResultS {
   static _id = 0x11965f3a;
 
-  _values = [
+  _values = ([
     0,
     "",
     "",
     "",
     "",
     "",
-    new WebDocumentT(),
-    new WebDocumentT(),
-    new BotInlineMessageT()
-  ] as [
+    (new WebDocumentT() as unknown) as WebDocumentT,
+    (new WebDocumentT() as unknown) as WebDocumentT,
+    (new BotInlineMessageT() as unknown) as BotInlineMessageT
+  ] as unknown) as [
     number,
     string,
     string,
@@ -36209,7 +36480,16 @@ AllStructs.set(BotInlineResultS._id, BotInlineResultS);
 export class MessagesBotResultsS {
   static _id = 0x947ca848;
 
-  _values = [0, true, [0, 0], "", new InlineBotSwitchPmT(), [], 0, []] as [
+  _values = ([
+    0,
+    true,
+    [0, 0],
+    "",
+    (new InlineBotSwitchPmT() as unknown) as InlineBotSwitchPmT,
+    [],
+    0,
+    []
+  ] as unknown) as [
     number,
     true,
     ProtoLong,
@@ -36418,7 +36698,7 @@ export class MessagesBotResultsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: BotInlineResultT = new BotInlineResultT();
+        let val: BotInlineResultT = (new BotInlineResultT() as unknown) as BotInlineResultT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -36442,7 +36722,7 @@ export class MessagesBotResultsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -36469,14 +36749,14 @@ AllStructs.set(MessagesBotResultsS._id, MessagesBotResultsS);
 export class UpdateBotInlineQueryS {
   static _id = 0x54826690;
 
-  _values = [0, [0, 0], 0, "", new GeoPointT(), ""] as [
-    number,
-    ProtoLong,
-    number,
-    string,
-    GeoPointT,
-    string
-  ];
+  _values = ([
+    0,
+    [0, 0],
+    0,
+    "",
+    (new GeoPointT() as unknown) as GeoPointT,
+    ""
+  ] as unknown) as [number, ProtoLong, number, string, GeoPointT, string];
 
   get_flags(): number {
     return this._values[0];
@@ -36638,7 +36918,14 @@ AllStructs.set(UpdateBotInlineQueryS._id, UpdateBotInlineQueryS);
 export class UpdateBotInlineSendS {
   static _id = 0xe48f964;
 
-  _values = [0, 0, "", new GeoPointT(), "", new InputBotInlineMessageIdT()] as [
+  _values = ([
+    0,
+    0,
+    "",
+    (new GeoPointT() as unknown) as GeoPointT,
+    "",
+    (new InputBotInlineMessageIdT() as unknown) as InputBotInlineMessageIdT
+  ] as unknown) as [
     number,
     number,
     string,
@@ -36810,7 +37097,7 @@ AllStructs.set(UpdateBotInlineSendS._id, UpdateBotInlineSendS);
 export class InputMessagesFilterVoiceS {
   static _id = 0x50f5c392;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterVoiceS._id);
@@ -36836,7 +37123,7 @@ AllStructs.set(InputMessagesFilterVoiceS._id, InputMessagesFilterVoiceS);
 export class InputMessagesFilterMusicS {
   static _id = 0x3751b49e;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterMusicS._id);
@@ -36862,7 +37149,7 @@ AllStructs.set(InputMessagesFilterMusicS._id, InputMessagesFilterMusicS);
 export class InputPrivacyKeyChatInviteS {
   static _id = 0xbdfb0426;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyKeyChatInviteS._id);
@@ -36888,7 +37175,7 @@ AllStructs.set(InputPrivacyKeyChatInviteS._id, InputPrivacyKeyChatInviteS);
 export class PrivacyKeyChatInviteS {
   static _id = 0x500e6dfa;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyKeyChatInviteS._id);
@@ -36915,7 +37202,7 @@ AllStructs.set(PrivacyKeyChatInviteS._id, PrivacyKeyChatInviteS);
 export class ExportedMessageLinkS {
   static _id = 0x5dab1af4;
 
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_link(): string {
     return this._values[0];
@@ -36992,7 +37279,17 @@ AllStructs.set(ExportedMessageLinkS._id, ExportedMessageLinkS);
 export class MessageFwdHeaderS {
   static _id = 0xec338270;
 
-  _values = [0, 0, "", 0, 0, 0, "", new PeerT(), 0] as [
+  _values = ([
+    0,
+    0,
+    "",
+    0,
+    0,
+    0,
+    "",
+    (new PeerT() as unknown) as PeerT,
+    0
+  ] as unknown) as [
     number,
     number,
     string,
@@ -37257,7 +37554,11 @@ AllStructs.set(MessageFwdHeaderS._id, MessageFwdHeaderS);
 export class UpdateEditChannelMessageS {
   static _id = 0x1b3f4df7;
 
-  _values = [new MessageT(), 0, 0] as [MessageT, number, number];
+  _values = ([(new MessageT() as unknown) as MessageT, 0, 0] as unknown) as [
+    MessageT,
+    number,
+    number
+  ];
 
   get_message(): MessageT {
     return this._values[0];
@@ -37349,7 +37650,7 @@ AllStructs.set(UpdateEditChannelMessageS._id, UpdateEditChannelMessageS);
 export class UpdateChannelPinnedMessageS {
   static _id = 0x98592475;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_channel_id(): number {
     return this._values[0];
@@ -37418,7 +37719,7 @@ AllStructs.set(UpdateChannelPinnedMessageS._id, UpdateChannelPinnedMessageS);
 export class MessageActionPinMessageS {
   static _id = 0x94bd38ed;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessageActionPinMessageS._id);
@@ -37444,7 +37745,7 @@ AllStructs.set(MessageActionPinMessageS._id, MessageActionPinMessageS);
 export class AuthCodeTypeSmsS {
   static _id = 0x72a3158c;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AuthCodeTypeSmsS._id);
@@ -37470,7 +37771,7 @@ AllStructs.set(AuthCodeTypeSmsS._id, AuthCodeTypeSmsS);
 export class AuthCodeTypeCallS {
   static _id = 0x741cd3e3;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AuthCodeTypeCallS._id);
@@ -37496,7 +37797,7 @@ AllStructs.set(AuthCodeTypeCallS._id, AuthCodeTypeCallS);
 export class AuthCodeTypeFlashCallS {
   static _id = 0x226ccefb;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AuthCodeTypeFlashCallS._id);
@@ -37522,7 +37823,7 @@ AllStructs.set(AuthCodeTypeFlashCallS._id, AuthCodeTypeFlashCallS);
 export class AuthSentCodeTypeAppS {
   static _id = 0x3dbb5986;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_length(): number {
     return this._values[0];
@@ -37571,7 +37872,7 @@ AllStructs.set(AuthSentCodeTypeAppS._id, AuthSentCodeTypeAppS);
 export class AuthSentCodeTypeSmsS {
   static _id = 0xc000bba2;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_length(): number {
     return this._values[0];
@@ -37620,7 +37921,7 @@ AllStructs.set(AuthSentCodeTypeSmsS._id, AuthSentCodeTypeSmsS);
 export class AuthSentCodeTypeCallS {
   static _id = 0x5353e5a7;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_length(): number {
     return this._values[0];
@@ -37669,7 +37970,7 @@ AllStructs.set(AuthSentCodeTypeCallS._id, AuthSentCodeTypeCallS);
 export class AuthSentCodeTypeFlashCallS {
   static _id = 0xab03c6d9;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_pattern(): string {
     return this._values[0];
@@ -37719,7 +38020,7 @@ AllStructs.set(AuthSentCodeTypeFlashCallS._id, AuthSentCodeTypeFlashCallS);
 export class KeyboardButtonUrlS {
   static _id = 0x258aff05;
 
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_text(): string {
     return this._values[0];
@@ -37789,7 +38090,7 @@ AllStructs.set(KeyboardButtonUrlS._id, KeyboardButtonUrlS);
 export class KeyboardButtonCallbackS {
   static _id = 0x683a5e46;
 
-  _values = ["", new Uint8Array()] as [string, Uint8Array];
+  _values = (["", new Uint8Array()] as unknown) as [string, Uint8Array];
 
   get_text(): string {
     return this._values[0];
@@ -37858,7 +38159,7 @@ AllStructs.set(KeyboardButtonCallbackS._id, KeyboardButtonCallbackS);
 export class KeyboardButtonRequestPhoneS {
   static _id = 0xb16a6c29;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_text(): string {
     return this._values[0];
@@ -37907,7 +38208,7 @@ AllStructs.set(KeyboardButtonRequestPhoneS._id, KeyboardButtonRequestPhoneS);
 export class KeyboardButtonRequestGeoLocationS {
   static _id = 0xfc796b3f;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_text(): string {
     return this._values[0];
@@ -37962,7 +38263,7 @@ AllStructs.set(
 export class KeyboardButtonSwitchInlineS {
   static _id = 0x568a748;
 
-  _values = [0, true, "", ""] as [number, true, string, string];
+  _values = ([0, true, "", ""] as unknown) as [number, true, string, string];
 
   get_flags(): number {
     return this._values[0];
@@ -38076,7 +38377,7 @@ AllStructs.set(KeyboardButtonSwitchInlineS._id, KeyboardButtonSwitchInlineS);
 export class ReplyInlineMarkupS {
   static _id = 0x48a30254;
 
-  _values = [[]] as [KeyboardButtonRowT[]];
+  _values = ([[]] as unknown) as [KeyboardButtonRowT[]];
 
   get_rows(): KeyboardButtonRowT[] {
     return this._values[0];
@@ -38122,7 +38423,7 @@ export class ReplyInlineMarkupS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: KeyboardButtonRowT = new KeyboardButtonRowT();
+        let val: KeyboardButtonRowT = (new KeyboardButtonRowT() as unknown) as KeyboardButtonRowT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -38150,7 +38451,7 @@ AllStructs.set(ReplyInlineMarkupS._id, ReplyInlineMarkupS);
 export class MessagesBotCallbackAnswerS {
   static _id = 0x36585ea4;
 
-  _values = [0, true, true, true, "", "", 0] as [
+  _values = ([0, true, true, true, "", "", 0] as unknown) as [
     number,
     true,
     true,
@@ -38361,7 +38662,16 @@ AllStructs.set(MessagesBotCallbackAnswerS._id, MessagesBotCallbackAnswerS);
 export class UpdateBotCallbackQueryS {
   static _id = 0xe73547e1;
 
-  _values = [0, [0, 0], 0, new PeerT(), 0, [0, 0], new Uint8Array(), ""] as [
+  _values = ([
+    0,
+    [0, 0],
+    0,
+    (new PeerT() as unknown) as PeerT,
+    0,
+    [0, 0],
+    new Uint8Array(),
+    ""
+  ] as unknown) as [
     number,
     ProtoLong,
     number,
@@ -38574,7 +38884,7 @@ AllStructs.set(UpdateBotCallbackQueryS._id, UpdateBotCallbackQueryS);
 export class MessagesMessageEditDataS {
   static _id = 0x26b5dde6;
 
-  _values = [0, true] as [number, true];
+  _values = ([0, true] as unknown) as [number, true];
 
   get_flags(): number {
     return this._values[0];
@@ -38650,7 +38960,11 @@ AllStructs.set(MessagesMessageEditDataS._id, MessagesMessageEditDataS);
 export class UpdateEditMessageS {
   static _id = 0xe40370a3;
 
-  _values = [new MessageT(), 0, 0] as [MessageT, number, number];
+  _values = ([(new MessageT() as unknown) as MessageT, 0, 0] as unknown) as [
+    MessageT,
+    number,
+    number
+  ];
 
   get_message(): MessageT {
     return this._values[0];
@@ -38744,12 +39058,12 @@ AllStructs.set(UpdateEditMessageS._id, UpdateEditMessageS);
 export class InputBotInlineMessageMediaGeoS {
   static _id = 0xc1b15d65;
 
-  _values = [0, new InputGeoPointT(), 0, new ReplyMarkupT()] as [
-    number,
-    InputGeoPointT,
-    number,
-    ReplyMarkupT
-  ];
+  _values = ([
+    0,
+    (new InputGeoPointT() as unknown) as InputGeoPointT,
+    0,
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT
+  ] as unknown) as [number, InputGeoPointT, number, ReplyMarkupT];
 
   get_flags(): number {
     return this._values[0];
@@ -38878,16 +39192,16 @@ AllStructs.set(
 export class InputBotInlineMessageMediaVenueS {
   static _id = 0x417bbf11;
 
-  _values = [
+  _values = ([
     0,
-    new InputGeoPointT(),
+    (new InputGeoPointT() as unknown) as InputGeoPointT,
     "",
     "",
     "",
     "",
     "",
-    new ReplyMarkupT()
-  ] as [
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT
+  ] as unknown) as [
     number,
     InputGeoPointT,
     string,
@@ -39103,14 +39417,14 @@ AllStructs.set(
 export class InputBotInlineMessageMediaContactS {
   static _id = 0xa6edbffd;
 
-  _values = [0, "", "", "", "", new ReplyMarkupT()] as [
-    number,
-    string,
-    string,
-    string,
-    string,
-    ReplyMarkupT
-  ];
+  _values = ([
+    0,
+    "",
+    "",
+    "",
+    "",
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT
+  ] as unknown) as [number, string, string, string, string, ReplyMarkupT];
 
   get_flags(): number {
     return this._values[0];
@@ -39273,12 +39587,12 @@ AllStructs.set(
 export class BotInlineMessageMediaGeoS {
   static _id = 0xb722de65;
 
-  _values = [0, new GeoPointT(), 0, new ReplyMarkupT()] as [
-    number,
-    GeoPointT,
-    number,
-    ReplyMarkupT
-  ];
+  _values = ([
+    0,
+    (new GeoPointT() as unknown) as GeoPointT,
+    0,
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT
+  ] as unknown) as [number, GeoPointT, number, ReplyMarkupT];
 
   get_flags(): number {
     return this._values[0];
@@ -39404,7 +39718,16 @@ AllStructs.set(BotInlineMessageMediaGeoS._id, BotInlineMessageMediaGeoS);
 export class BotInlineMessageMediaVenueS {
   static _id = 0x8a86659c;
 
-  _values = [0, new GeoPointT(), "", "", "", "", "", new ReplyMarkupT()] as [
+  _values = ([
+    0,
+    (new GeoPointT() as unknown) as GeoPointT,
+    "",
+    "",
+    "",
+    "",
+    "",
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT
+  ] as unknown) as [
     number,
     GeoPointT,
     string,
@@ -39617,14 +39940,14 @@ AllStructs.set(BotInlineMessageMediaVenueS._id, BotInlineMessageMediaVenueS);
 export class BotInlineMessageMediaContactS {
   static _id = 0x18d1cdc2;
 
-  _values = [0, "", "", "", "", new ReplyMarkupT()] as [
-    number,
-    string,
-    string,
-    string,
-    string,
-    ReplyMarkupT
-  ];
+  _values = ([
+    0,
+    "",
+    "",
+    "",
+    "",
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT
+  ] as unknown) as [number, string, string, string, string, ReplyMarkupT];
 
   get_flags(): number {
     return this._values[0];
@@ -39787,12 +40110,12 @@ AllStructs.set(
 export class InputBotInlineResultPhotoS {
   static _id = 0xa8d864a7;
 
-  _values = ["", "", new InputPhotoT(), new InputBotInlineMessageT()] as [
-    string,
-    string,
-    InputPhotoT,
-    InputBotInlineMessageT
-  ];
+  _values = ([
+    "",
+    "",
+    (new InputPhotoT() as unknown) as InputPhotoT,
+    (new InputBotInlineMessageT() as unknown) as InputBotInlineMessageT
+  ] as unknown) as [string, string, InputPhotoT, InputBotInlineMessageT];
 
   get_id(): string {
     return this._values[0];
@@ -39911,15 +40234,15 @@ AllStructs.set(InputBotInlineResultPhotoS._id, InputBotInlineResultPhotoS);
 export class InputBotInlineResultDocumentS {
   static _id = 0xfff8fdc4;
 
-  _values = [
+  _values = ([
     0,
     "",
     "",
     "",
     "",
-    new InputDocumentT(),
-    new InputBotInlineMessageT()
-  ] as [
+    (new InputDocumentT() as unknown) as InputDocumentT,
+    (new InputBotInlineMessageT() as unknown) as InputBotInlineMessageT
+  ] as unknown) as [
     number,
     string,
     string,
@@ -40122,16 +40445,16 @@ AllStructs.set(
 export class BotInlineMediaResultS {
   static _id = 0x17db940b;
 
-  _values = [
+  _values = ([
     0,
     "",
     "",
-    new PhotoT(),
-    new DocumentT(),
+    (new PhotoT() as unknown) as PhotoT,
+    (new DocumentT() as unknown) as DocumentT,
     "",
     "",
-    new BotInlineMessageT()
-  ] as [
+    (new BotInlineMessageT() as unknown) as BotInlineMessageT
+  ] as unknown) as [
     number,
     string,
     string,
@@ -40361,7 +40684,7 @@ AllStructs.set(BotInlineMediaResultS._id, BotInlineMediaResultS);
 export class InputBotInlineMessageIdS {
   static _id = 0x890c3d89;
 
-  _values = [0, [0, 0], [0, 0]] as [number, ProtoLong, ProtoLong];
+  _values = ([0, [0, 0], [0, 0]] as unknown) as [number, ProtoLong, ProtoLong];
 
   get_dc_id(): number {
     return this._values[0];
@@ -40456,15 +40779,15 @@ AllStructs.set(InputBotInlineMessageIdS._id, InputBotInlineMessageIdS);
 export class UpdateInlineBotCallbackQueryS {
   static _id = 0xf9d27a5a;
 
-  _values = [
+  _values = ([
     0,
     [0, 0],
     0,
-    new InputBotInlineMessageIdT(),
+    (new InputBotInlineMessageIdT() as unknown) as InputBotInlineMessageIdT,
     [0, 0],
     new Uint8Array(),
     ""
-  ] as [
+  ] as unknown) as [
     number,
     ProtoLong,
     number,
@@ -40659,7 +40982,7 @@ AllStructs.set(
 export class InlineBotSwitchPmS {
   static _id = 0x3c20629f;
 
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_text(): string {
     return this._values[0];
@@ -40732,7 +41055,13 @@ AllStructs.set(InlineBotSwitchPmS._id, InlineBotSwitchPmS);
 export class MessagesPeerDialogsS {
   static _id = 0x3371c354;
 
-  _values = [[], [], [], [], new UpdatesStateT()] as [
+  _values = ([
+    [],
+    [],
+    [],
+    [],
+    (new UpdatesStateT() as unknown) as UpdatesStateT
+  ] as unknown) as [
     DialogT[],
     MessageT[],
     ChatT[],
@@ -40861,7 +41190,7 @@ export class MessagesPeerDialogsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DialogT = new DialogT();
+        let val: DialogT = (new DialogT() as unknown) as DialogT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -40879,7 +41208,7 @@ export class MessagesPeerDialogsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageT = new MessageT();
+        let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -40897,7 +41226,7 @@ export class MessagesPeerDialogsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -40915,7 +41244,7 @@ export class MessagesPeerDialogsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -40946,7 +41275,10 @@ AllStructs.set(MessagesPeerDialogsS._id, MessagesPeerDialogsS);
 export class TopPeerS {
   static _id = 0xedcdc05b;
 
-  _values = [new PeerT(), 0.0] as [PeerT, number];
+  _values = ([(new PeerT() as unknown) as PeerT, 0.0] as unknown) as [
+    PeerT,
+    number
+  ];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -41017,7 +41349,7 @@ AllStructs.set(TopPeerS._id, TopPeerS);
 export class TopPeerCategoryBotsPmS {
   static _id = 0xab661b5b;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(TopPeerCategoryBotsPmS._id);
@@ -41043,7 +41375,7 @@ AllStructs.set(TopPeerCategoryBotsPmS._id, TopPeerCategoryBotsPmS);
 export class TopPeerCategoryBotsInlineS {
   static _id = 0x148677e2;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(TopPeerCategoryBotsInlineS._id);
@@ -41069,7 +41401,7 @@ AllStructs.set(TopPeerCategoryBotsInlineS._id, TopPeerCategoryBotsInlineS);
 export class TopPeerCategoryCorrespondentsS {
   static _id = 0x637b7ed;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(TopPeerCategoryCorrespondentsS._id);
@@ -41098,7 +41430,7 @@ AllStructs.set(
 export class TopPeerCategoryGroupsS {
   static _id = 0xbd17a14a;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(TopPeerCategoryGroupsS._id);
@@ -41124,7 +41456,7 @@ AllStructs.set(TopPeerCategoryGroupsS._id, TopPeerCategoryGroupsS);
 export class TopPeerCategoryChannelsS {
   static _id = 0x161d9628;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(TopPeerCategoryChannelsS._id);
@@ -41152,11 +41484,11 @@ AllStructs.set(TopPeerCategoryChannelsS._id, TopPeerCategoryChannelsS);
 export class TopPeerCategoryPeersS {
   static _id = 0xfb834291;
 
-  _values = [new TopPeerCategoryT(), 0, []] as [
-    TopPeerCategoryT,
-    number,
-    TopPeerT[]
-  ];
+  _values = ([
+    (new TopPeerCategoryT() as unknown) as TopPeerCategoryT,
+    0,
+    []
+  ] as unknown) as [TopPeerCategoryT, number, TopPeerT[]];
 
   get_category(): TopPeerCategoryT {
     return this._values[0];
@@ -41244,7 +41576,7 @@ export class TopPeerCategoryPeersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: TopPeerT = new TopPeerT();
+        let val: TopPeerT = (new TopPeerT() as unknown) as TopPeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -41266,7 +41598,7 @@ AllStructs.set(TopPeerCategoryPeersS._id, TopPeerCategoryPeersS);
 export class ContactsTopPeersNotModifiedS {
   static _id = 0xde266ef5;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ContactsTopPeersNotModifiedS._id);
@@ -41294,7 +41626,7 @@ AllStructs.set(ContactsTopPeersNotModifiedS._id, ContactsTopPeersNotModifiedS);
 export class ContactsTopPeersS {
   static _id = 0x70b772a8;
 
-  _values = [[], [], []] as [
+  _values = ([[], [], []] as unknown) as [
     TopPeerCategoryPeersT[],
     ChatT[],
     UserT[]
@@ -41386,7 +41718,7 @@ export class ContactsTopPeersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: TopPeerCategoryPeersT = new TopPeerCategoryPeersT();
+        let val: TopPeerCategoryPeersT = (new TopPeerCategoryPeersT() as unknown) as TopPeerCategoryPeersT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -41404,7 +41736,7 @@ export class ContactsTopPeersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -41422,7 +41754,7 @@ export class ContactsTopPeersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -41446,7 +41778,7 @@ AllStructs.set(ContactsTopPeersS._id, ContactsTopPeersS);
 export class MessageEntityMentionNameS {
   static _id = 0x352dca58;
 
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -41537,7 +41869,11 @@ AllStructs.set(MessageEntityMentionNameS._id, MessageEntityMentionNameS);
 export class InputMessageEntityMentionNameS {
   static _id = 0x208e68c9;
 
-  _values = [0, 0, new InputUserT()] as [number, number, InputUserT];
+  _values = ([
+    0,
+    0,
+    (new InputUserT() as unknown) as InputUserT
+  ] as unknown) as [number, number, InputUserT];
 
   get_offset(): number {
     return this._values[0];
@@ -41631,7 +41967,7 @@ AllStructs.set(
 export class InputMessagesFilterChatPhotosS {
   static _id = 0x3a20ecb8;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterChatPhotosS._id);
@@ -41661,7 +41997,7 @@ AllStructs.set(
 export class UpdateReadChannelOutboxS {
   static _id = 0x25d6c9c7;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_channel_id(): number {
     return this._values[0];
@@ -41731,7 +42067,10 @@ AllStructs.set(UpdateReadChannelOutboxS._id, UpdateReadChannelOutboxS);
 export class UpdateDraftMessageS {
   static _id = 0xee2bb969;
 
-  _values = [new PeerT(), new DraftMessageT()] as [PeerT, DraftMessageT];
+  _values = ([
+    (new PeerT() as unknown) as PeerT,
+    (new DraftMessageT() as unknown) as DraftMessageT
+  ] as unknown) as [PeerT, DraftMessageT];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -41805,7 +42144,7 @@ AllStructs.set(UpdateDraftMessageS._id, UpdateDraftMessageS);
 export class DraftMessageEmptyS {
   static _id = 0x1b0c841a;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_flags(): number {
     return this._values[0];
@@ -41885,7 +42224,7 @@ AllStructs.set(DraftMessageEmptyS._id, DraftMessageEmptyS);
 export class DraftMessageS {
   static _id = 0xfd8e711f;
 
-  _values = [0, true, 0, "", [], 0] as [
+  _values = ([0, true, 0, "", [], 0] as unknown) as [
     number,
     true,
     number,
@@ -42049,7 +42388,7 @@ export class DraftMessageS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -42077,7 +42416,7 @@ AllStructs.set(DraftMessageS._id, DraftMessageS);
 export class MessageActionHistoryClearS {
   static _id = 0x9fbab604;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessageActionHistoryClearS._id);
@@ -42103,7 +42442,7 @@ AllStructs.set(MessageActionHistoryClearS._id, MessageActionHistoryClearS);
 export class MessagesFeaturedStickersNotModifiedS {
   static _id = 0x4ede3cf;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesFeaturedStickersNotModifiedS._id);
@@ -42135,7 +42474,7 @@ AllStructs.set(
 export class MessagesFeaturedStickersS {
   static _id = 0xf89d88e5;
 
-  _values = [0, [], []] as [
+  _values = ([0, [], []] as unknown) as [
     number,
     StickerSetCoveredT[],
     ProtoLong[]
@@ -42226,7 +42565,7 @@ export class MessagesFeaturedStickersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: StickerSetCoveredT = new StickerSetCoveredT();
+        let val: StickerSetCoveredT = (new StickerSetCoveredT() as unknown) as StickerSetCoveredT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -42264,7 +42603,7 @@ AllStructs.set(MessagesFeaturedStickersS._id, MessagesFeaturedStickersS);
 export class UpdateReadFeaturedStickersS {
   static _id = 0x571d2742;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UpdateReadFeaturedStickersS._id);
@@ -42290,7 +42629,7 @@ AllStructs.set(UpdateReadFeaturedStickersS._id, UpdateReadFeaturedStickersS);
 export class MessagesRecentStickersNotModifiedS {
   static _id = 0xb17f890;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesRecentStickersNotModifiedS._id);
@@ -42322,7 +42661,7 @@ AllStructs.set(
 export class MessagesRecentStickersS {
   static _id = 0x22f3afb3;
 
-  _values = [0, [], [], []] as [
+  _values = ([0, [], [], []] as unknown) as [
     number,
     StickerPackT[],
     DocumentT[],
@@ -42435,7 +42774,7 @@ export class MessagesRecentStickersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: StickerPackT = new StickerPackT();
+        let val: StickerPackT = (new StickerPackT() as unknown) as StickerPackT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -42453,7 +42792,7 @@ export class MessagesRecentStickersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentT = new DocumentT();
+        let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -42491,7 +42830,7 @@ AllStructs.set(MessagesRecentStickersS._id, MessagesRecentStickersS);
 export class UpdateRecentStickersS {
   static _id = 0x9a422c20;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UpdateRecentStickersS._id);
@@ -42518,7 +42857,7 @@ AllStructs.set(UpdateRecentStickersS._id, UpdateRecentStickersS);
 export class MessagesArchivedStickersS {
   static _id = 0x4fcba9c8;
 
-  _values = [0, []] as [number, StickerSetCoveredT[]];
+  _values = ([0, []] as unknown) as [number, StickerSetCoveredT[]];
 
   get_count(): number {
     return this._values[0];
@@ -42584,7 +42923,7 @@ export class MessagesArchivedStickersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: StickerSetCoveredT = new StickerSetCoveredT();
+        let val: StickerSetCoveredT = (new StickerSetCoveredT() as unknown) as StickerSetCoveredT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -42606,7 +42945,7 @@ AllStructs.set(MessagesArchivedStickersS._id, MessagesArchivedStickersS);
 export class MessagesStickerSetInstallResultSuccessS {
   static _id = 0x38641628;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesStickerSetInstallResultSuccessS._id);
@@ -42636,7 +42975,7 @@ AllStructs.set(
 export class MessagesStickerSetInstallResultArchiveS {
   static _id = 0x35e410a8;
 
-  _values = [[]] as [StickerSetCoveredT[]];
+  _values = ([[]] as unknown) as [StickerSetCoveredT[]];
 
   get_sets(): StickerSetCoveredT[] {
     return this._values[0];
@@ -42683,7 +43022,7 @@ export class MessagesStickerSetInstallResultArchiveS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: StickerSetCoveredT = new StickerSetCoveredT();
+        let val: StickerSetCoveredT = (new StickerSetCoveredT() as unknown) as StickerSetCoveredT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -42709,7 +43048,10 @@ AllStructs.set(
 export class StickerSetCoveredS {
   static _id = 0x6410a5d2;
 
-  _values = [new StickerSetT(), new DocumentT()] as [StickerSetT, DocumentT];
+  _values = ([
+    (new StickerSetT() as unknown) as StickerSetT,
+    (new DocumentT() as unknown) as DocumentT
+  ] as unknown) as [StickerSetT, DocumentT];
 
   get_set(): StickerSetT {
     return this._values[0];
@@ -42782,7 +43124,7 @@ AllStructs.set(StickerSetCoveredS._id, StickerSetCoveredS);
 export class UpdateConfigS {
   static _id = 0xa229dd06;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UpdateConfigS._id);
@@ -42808,7 +43150,7 @@ AllStructs.set(UpdateConfigS._id, UpdateConfigS);
 export class UpdatePtsChangedS {
   static _id = 0x3354678f;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UpdatePtsChangedS._id);
@@ -42836,7 +43178,7 @@ AllStructs.set(UpdatePtsChangedS._id, UpdatePtsChangedS);
 export class InputMediaPhotoExternalS {
   static _id = 0xe5bbfe1a;
 
-  _values = [0, "", 0] as [number, string, number];
+  _values = ([0, "", 0] as unknown) as [number, string, number];
 
   get_flags(): number {
     return this._values[0];
@@ -42933,7 +43275,7 @@ AllStructs.set(InputMediaPhotoExternalS._id, InputMediaPhotoExternalS);
 export class InputMediaDocumentExternalS {
   static _id = 0xfb52dc99;
 
-  _values = [0, "", 0] as [number, string, number];
+  _values = ([0, "", 0] as unknown) as [number, string, number];
 
   get_flags(): number {
     return this._values[0];
@@ -43029,7 +43371,10 @@ AllStructs.set(InputMediaDocumentExternalS._id, InputMediaDocumentExternalS);
 export class StickerSetMultiCoveredS {
   static _id = 0x3407e51b;
 
-  _values = [new StickerSetT(), []] as [StickerSetT, DocumentT[]];
+  _values = ([
+    (new StickerSetT() as unknown) as StickerSetT,
+    []
+  ] as unknown) as [StickerSetT, DocumentT[]];
 
   get_set(): StickerSetT {
     return this._values[0];
@@ -43097,7 +43442,7 @@ export class StickerSetMultiCoveredS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentT = new DocumentT();
+        let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -43122,7 +43467,7 @@ AllStructs.set(StickerSetMultiCoveredS._id, StickerSetMultiCoveredS);
 export class MaskCoordsS {
   static _id = 0xaed6dbb2;
 
-  _values = [0, 0.0, 0.0, 0.0] as [number, number, number, number];
+  _values = ([0, 0.0, 0.0, 0.0] as unknown) as [number, number, number, number];
 
   get_n(): number {
     return this._values[0];
@@ -43231,7 +43576,7 @@ AllStructs.set(MaskCoordsS._id, MaskCoordsS);
 export class DocumentAttributeHasStickersS {
   static _id = 0x9801d2f7;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(DocumentAttributeHasStickersS._id);
@@ -43260,7 +43605,9 @@ AllStructs.set(
 export class InputStickeredMediaPhotoS {
   static _id = 0x4a992157;
 
-  _values = [new InputPhotoT()] as [InputPhotoT];
+  _values = ([(new InputPhotoT() as unknown) as InputPhotoT] as unknown) as [
+    InputPhotoT
+  ];
 
   get_id(): InputPhotoT {
     return this._values[0];
@@ -43311,7 +43658,9 @@ AllStructs.set(InputStickeredMediaPhotoS._id, InputStickeredMediaPhotoS);
 export class InputStickeredMediaDocumentS {
   static _id = 0x438865b;
 
-  _values = [new InputDocumentT()] as [InputDocumentT];
+  _values = ([
+    (new InputDocumentT() as unknown) as InputDocumentT
+  ] as unknown) as [InputDocumentT];
 
   get_id(): InputDocumentT {
     return this._values[0];
@@ -43369,7 +43718,16 @@ AllStructs.set(InputStickeredMediaDocumentS._id, InputStickeredMediaDocumentS);
 export class GameS {
   static _id = 0xbdf9653b;
 
-  _values = [0, [0, 0], [0, 0], "", "", "", new PhotoT(), new DocumentT()] as [
+  _values = ([
+    0,
+    [0, 0],
+    [0, 0],
+    "",
+    "",
+    "",
+    (new PhotoT() as unknown) as PhotoT,
+    (new DocumentT() as unknown) as DocumentT
+  ] as unknown) as [
     number,
     ProtoLong,
     ProtoLong,
@@ -43579,11 +43937,11 @@ AllStructs.set(GameS._id, GameS);
 export class InputBotInlineResultGameS {
   static _id = 0x4fa417f2;
 
-  _values = ["", "", new InputBotInlineMessageT()] as [
-    string,
-    string,
-    InputBotInlineMessageT
-  ];
+  _values = ([
+    "",
+    "",
+    (new InputBotInlineMessageT() as unknown) as InputBotInlineMessageT
+  ] as unknown) as [string, string, InputBotInlineMessageT];
 
   get_id(): string {
     return this._values[0];
@@ -43675,7 +44033,10 @@ AllStructs.set(InputBotInlineResultGameS._id, InputBotInlineResultGameS);
 export class InputBotInlineMessageGameS {
   static _id = 0x4b425864;
 
-  _values = [0, new ReplyMarkupT()] as [number, ReplyMarkupT];
+  _values = ([
+    0,
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT
+  ] as unknown) as [number, ReplyMarkupT];
 
   get_flags(): number {
     return this._values[0];
@@ -43752,7 +44113,7 @@ AllStructs.set(InputBotInlineMessageGameS._id, InputBotInlineMessageGameS);
 export class MessageMediaGameS {
   static _id = 0xfdb19008;
 
-  _values = [new GameT()] as [GameT];
+  _values = ([(new GameT() as unknown) as GameT] as unknown) as [GameT];
 
   get_game(): GameT {
     return this._values[0];
@@ -43803,7 +44164,9 @@ AllStructs.set(MessageMediaGameS._id, MessageMediaGameS);
 export class InputMediaGameS {
   static _id = 0xd33f43f3;
 
-  _values = [new InputGameT()] as [InputGameT];
+  _values = ([(new InputGameT() as unknown) as InputGameT] as unknown) as [
+    InputGameT
+  ];
 
   get_id(): InputGameT {
     return this._values[0];
@@ -43855,7 +44218,7 @@ AllStructs.set(InputMediaGameS._id, InputMediaGameS);
 export class InputGameIdS {
   static _id = 0x32c3e77;
 
-  _values = [[0, 0], [0, 0]] as [ProtoLong, ProtoLong];
+  _values = ([[0, 0], [0, 0]] as unknown) as [ProtoLong, ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -43925,7 +44288,10 @@ AllStructs.set(InputGameIdS._id, InputGameIdS);
 export class InputGameShortNameS {
   static _id = 0xc331e80a;
 
-  _values = [new InputUserT(), ""] as [InputUserT, string];
+  _values = ([(new InputUserT() as unknown) as InputUserT, ""] as unknown) as [
+    InputUserT,
+    string
+  ];
 
   get_bot_id(): InputUserT {
     return this._values[0];
@@ -43996,7 +44362,7 @@ AllStructs.set(InputGameShortNameS._id, InputGameShortNameS);
 export class KeyboardButtonGameS {
   static _id = 0x50f41ccf;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_text(): string {
     return this._values[0];
@@ -44046,7 +44412,7 @@ AllStructs.set(KeyboardButtonGameS._id, KeyboardButtonGameS);
 export class MessageActionGameScoreS {
   static _id = 0x92a72876;
 
-  _values = [[0, 0], 0] as [ProtoLong, number];
+  _values = ([[0, 0], 0] as unknown) as [ProtoLong, number];
 
   get_game_id(): ProtoLong {
     return this._values[0];
@@ -44117,7 +44483,7 @@ AllStructs.set(MessageActionGameScoreS._id, MessageActionGameScoreS);
 export class HighScoreS {
   static _id = 0x58fffcd0;
 
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_pos(): number {
     return this._values[0];
@@ -44207,7 +44573,7 @@ AllStructs.set(HighScoreS._id, HighScoreS);
 export class MessagesHighScoresS {
   static _id = 0x9a3bfd99;
 
-  _values = [[], []] as [HighScoreT[], UserT[]];
+  _values = ([[], []] as unknown) as [HighScoreT[], UserT[]];
 
   get_scores(): HighScoreT[] {
     return this._values[0];
@@ -44274,7 +44640,7 @@ export class MessagesHighScoresS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: HighScoreT = new HighScoreT();
+        let val: HighScoreT = (new HighScoreT() as unknown) as HighScoreT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -44292,7 +44658,7 @@ export class MessagesHighScoresS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -44314,7 +44680,7 @@ AllStructs.set(MessagesHighScoresS._id, MessagesHighScoresS);
 export class UpdatesDifferenceTooLongS {
   static _id = 0x4afe8f6d;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_pts(): number {
     return this._values[0];
@@ -44366,7 +44732,12 @@ AllStructs.set(UpdatesDifferenceTooLongS._id, UpdatesDifferenceTooLongS);
 export class UpdateChannelWebPageS {
   static _id = 0x40771900;
 
-  _values = [0, new WebPageT(), 0, 0] as [number, WebPageT, number, number];
+  _values = ([0, (new WebPageT() as unknown) as WebPageT, 0, 0] as unknown) as [
+    number,
+    WebPageT,
+    number,
+    number
+  ];
 
   get_channel_id(): number {
     return this._values[0];
@@ -44478,7 +44849,7 @@ AllStructs.set(UpdateChannelWebPageS._id, UpdateChannelWebPageS);
 export class MessagesChatsSliceS {
   static _id = 0x9cd81144;
 
-  _values = [0, []] as [number, ChatT[]];
+  _values = ([0, []] as unknown) as [number, ChatT[]];
 
   get_count(): number {
     return this._values[0];
@@ -44544,7 +44915,7 @@ export class MessagesChatsSliceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -44566,7 +44937,7 @@ AllStructs.set(MessagesChatsSliceS._id, MessagesChatsSliceS);
 export class TextEmptyS {
   static _id = 0xdc3d824f;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(TextEmptyS._id);
@@ -44592,7 +44963,7 @@ AllStructs.set(TextEmptyS._id, TextEmptyS);
 export class TextPlainS {
   static _id = 0x744694e0;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_text(): string {
     return this._values[0];
@@ -44641,7 +45012,9 @@ AllStructs.set(TextPlainS._id, TextPlainS);
 export class TextBoldS {
   static _id = 0x6724abc4;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -44692,7 +45065,9 @@ AllStructs.set(TextBoldS._id, TextBoldS);
 export class TextItalicS {
   static _id = 0xd912a59c;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -44743,7 +45118,9 @@ AllStructs.set(TextItalicS._id, TextItalicS);
 export class TextUnderlineS {
   static _id = 0xc12622c4;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -44794,7 +45171,9 @@ AllStructs.set(TextUnderlineS._id, TextUnderlineS);
 export class TextStrikeS {
   static _id = 0x9bf8bb95;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -44845,7 +45224,9 @@ AllStructs.set(TextStrikeS._id, TextStrikeS);
 export class TextFixedS {
   static _id = 0x6c3f19b9;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -44898,7 +45279,11 @@ AllStructs.set(TextFixedS._id, TextFixedS);
 export class TextUrlS {
   static _id = 0x3c2884c1;
 
-  _values = [new RichTextT(), "", [0, 0]] as [RichTextT, string, ProtoLong];
+  _values = ([
+    (new RichTextT() as unknown) as RichTextT,
+    "",
+    [0, 0]
+  ] as unknown) as [RichTextT, string, ProtoLong];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -44990,7 +45375,10 @@ AllStructs.set(TextUrlS._id, TextUrlS);
 export class TextEmailS {
   static _id = 0xde5a0dd6;
 
-  _values = [new RichTextT(), ""] as [RichTextT, string];
+  _values = ([(new RichTextT() as unknown) as RichTextT, ""] as unknown) as [
+    RichTextT,
+    string
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -45061,7 +45449,7 @@ AllStructs.set(TextEmailS._id, TextEmailS);
 export class TextConcatS {
   static _id = 0x7e6260d7;
 
-  _values = [[]] as [RichTextT[]];
+  _values = ([[]] as unknown) as [RichTextT[]];
 
   get_texts(): RichTextT[] {
     return this._values[0];
@@ -45107,7 +45495,7 @@ export class TextConcatS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: RichTextT = new RichTextT();
+        let val: RichTextT = (new RichTextT() as unknown) as RichTextT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -45129,7 +45517,7 @@ AllStructs.set(TextConcatS._id, TextConcatS);
 export class PageBlockUnsupportedS {
   static _id = 0x13567e8a;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PageBlockUnsupportedS._id);
@@ -45155,7 +45543,9 @@ AllStructs.set(PageBlockUnsupportedS._id, PageBlockUnsupportedS);
 export class PageBlockTitleS {
   static _id = 0x70abc3fd;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -45206,7 +45596,9 @@ AllStructs.set(PageBlockTitleS._id, PageBlockTitleS);
 export class PageBlockSubtitleS {
   static _id = 0x8ffa9a1f;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -45258,7 +45650,10 @@ AllStructs.set(PageBlockSubtitleS._id, PageBlockSubtitleS);
 export class PageBlockAuthorDateS {
   static _id = 0xbaafe5e0;
 
-  _values = [new RichTextT(), 0] as [RichTextT, number];
+  _values = ([(new RichTextT() as unknown) as RichTextT, 0] as unknown) as [
+    RichTextT,
+    number
+  ];
 
   get_author(): RichTextT {
     return this._values[0];
@@ -45329,7 +45724,9 @@ AllStructs.set(PageBlockAuthorDateS._id, PageBlockAuthorDateS);
 export class PageBlockHeaderS {
   static _id = 0xbfd064ec;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -45380,7 +45777,9 @@ AllStructs.set(PageBlockHeaderS._id, PageBlockHeaderS);
 export class PageBlockSubheaderS {
   static _id = 0xf12bb6e1;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -45431,7 +45830,9 @@ AllStructs.set(PageBlockSubheaderS._id, PageBlockSubheaderS);
 export class PageBlockParagraphS {
   static _id = 0x467a0766;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -45483,7 +45884,10 @@ AllStructs.set(PageBlockParagraphS._id, PageBlockParagraphS);
 export class PageBlockPreformattedS {
   static _id = 0xc070d93e;
 
-  _values = [new RichTextT(), ""] as [RichTextT, string];
+  _values = ([(new RichTextT() as unknown) as RichTextT, ""] as unknown) as [
+    RichTextT,
+    string
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -45554,7 +45958,9 @@ AllStructs.set(PageBlockPreformattedS._id, PageBlockPreformattedS);
 export class PageBlockFooterS {
   static _id = 0x48870999;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -45605,7 +46011,7 @@ AllStructs.set(PageBlockFooterS._id, PageBlockFooterS);
 export class PageBlockDividerS {
   static _id = 0xdb20b188;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PageBlockDividerS._id);
@@ -45631,7 +46037,7 @@ AllStructs.set(PageBlockDividerS._id, PageBlockDividerS);
 export class PageBlockAnchorS {
   static _id = 0xce0d37b0;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_name(): string {
     return this._values[0];
@@ -45680,7 +46086,7 @@ AllStructs.set(PageBlockAnchorS._id, PageBlockAnchorS);
 export class PageBlockListS {
   static _id = 0xe4e88011;
 
-  _values = [[]] as [PageListItemT[]];
+  _values = ([[]] as unknown) as [PageListItemT[]];
 
   get_items(): PageListItemT[] {
     return this._values[0];
@@ -45726,7 +46132,7 @@ export class PageBlockListS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageListItemT = new PageListItemT();
+        let val: PageListItemT = (new PageListItemT() as unknown) as PageListItemT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -45749,7 +46155,10 @@ AllStructs.set(PageBlockListS._id, PageBlockListS);
 export class PageBlockBlockquoteS {
   static _id = 0x263d7c26;
 
-  _values = [new RichTextT(), new RichTextT()] as [RichTextT, RichTextT];
+  _values = ([
+    (new RichTextT() as unknown) as RichTextT,
+    (new RichTextT() as unknown) as RichTextT
+  ] as unknown) as [RichTextT, RichTextT];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -45823,7 +46232,10 @@ AllStructs.set(PageBlockBlockquoteS._id, PageBlockBlockquoteS);
 export class PageBlockPullquoteS {
   static _id = 0x4f4456d3;
 
-  _values = [new RichTextT(), new RichTextT()] as [RichTextT, RichTextT];
+  _values = ([
+    (new RichTextT() as unknown) as RichTextT,
+    (new RichTextT() as unknown) as RichTextT
+  ] as unknown) as [RichTextT, RichTextT];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -45900,13 +46312,13 @@ AllStructs.set(PageBlockPullquoteS._id, PageBlockPullquoteS);
 export class PageBlockPhotoS {
   static _id = 0x1759c560;
 
-  _values = [0, [0, 0], new PageCaptionT(), "", [0, 0]] as [
-    number,
-    ProtoLong,
-    PageCaptionT,
-    string,
-    ProtoLong
-  ];
+  _values = ([
+    0,
+    [0, 0],
+    (new PageCaptionT() as unknown) as PageCaptionT,
+    "",
+    [0, 0]
+  ] as unknown) as [number, ProtoLong, PageCaptionT, string, ProtoLong];
 
   get_flags(): number {
     return this._values[0];
@@ -46053,13 +46465,13 @@ AllStructs.set(PageBlockPhotoS._id, PageBlockPhotoS);
 export class PageBlockVideoS {
   static _id = 0x7c8fe7b6;
 
-  _values = [0, true, true, [0, 0], new PageCaptionT()] as [
-    number,
+  _values = ([
+    0,
     true,
     true,
-    ProtoLong,
-    PageCaptionT
-  ];
+    [0, 0],
+    (new PageCaptionT() as unknown) as PageCaptionT
+  ] as unknown) as [number, true, true, ProtoLong, PageCaptionT];
 
   get_flags(): number {
     return this._values[0];
@@ -46200,7 +46612,9 @@ AllStructs.set(PageBlockVideoS._id, PageBlockVideoS);
 export class PageBlockCoverS {
   static _id = 0x39f23300;
 
-  _values = [new PageBlockT()] as [PageBlockT];
+  _values = ([(new PageBlockT() as unknown) as PageBlockT] as unknown) as [
+    PageBlockT
+  ];
 
   get_cover(): PageBlockT {
     return this._values[0];
@@ -46259,7 +46673,17 @@ AllStructs.set(PageBlockCoverS._id, PageBlockCoverS);
 export class PageBlockEmbedS {
   static _id = 0xa8718dc5;
 
-  _values = [0, true, true, "", "", [0, 0], 0, 0, new PageCaptionT()] as [
+  _values = ([
+    0,
+    true,
+    true,
+    "",
+    "",
+    [0, 0],
+    0,
+    0,
+    (new PageCaptionT() as unknown) as PageCaptionT
+  ] as unknown) as [
     number,
     true,
     true,
@@ -46526,7 +46950,15 @@ AllStructs.set(PageBlockEmbedS._id, PageBlockEmbedS);
 export class PageBlockEmbedPostS {
   static _id = 0xf259a80b;
 
-  _values = ["", [0, 0], [0, 0], "", 0, [], new PageCaptionT()] as [
+  _values = ([
+    "",
+    [0, 0],
+    [0, 0],
+    "",
+    0,
+    [],
+    (new PageCaptionT() as unknown) as PageCaptionT
+  ] as unknown) as [
     string,
     ProtoLong,
     ProtoLong,
@@ -46694,7 +47126,7 @@ export class PageBlockEmbedPostS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageBlockT = new PageBlockT();
+        let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -46725,7 +47157,10 @@ AllStructs.set(PageBlockEmbedPostS._id, PageBlockEmbedPostS);
 export class PageBlockCollageS {
   static _id = 0x65a0fa4d;
 
-  _values = [[], new PageCaptionT()] as [PageBlockT[], PageCaptionT];
+  _values = ([
+    [],
+    (new PageCaptionT() as unknown) as PageCaptionT
+  ] as unknown) as [PageBlockT[], PageCaptionT];
 
   get_items(): PageBlockT[] {
     return this._values[0];
@@ -46785,7 +47220,7 @@ export class PageBlockCollageS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageBlockT = new PageBlockT();
+        let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -46816,7 +47251,10 @@ AllStructs.set(PageBlockCollageS._id, PageBlockCollageS);
 export class PageBlockSlideshowS {
   static _id = 0x31f9590;
 
-  _values = [[], new PageCaptionT()] as [PageBlockT[], PageCaptionT];
+  _values = ([
+    [],
+    (new PageCaptionT() as unknown) as PageCaptionT
+  ] as unknown) as [PageBlockT[], PageCaptionT];
 
   get_items(): PageBlockT[] {
     return this._values[0];
@@ -46876,7 +47314,7 @@ export class PageBlockSlideshowS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageBlockT = new PageBlockT();
+        let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -46906,7 +47344,7 @@ AllStructs.set(PageBlockSlideshowS._id, PageBlockSlideshowS);
 export class WebPageNotModifiedS {
   static _id = 0x85849473;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(WebPageNotModifiedS._id);
@@ -46932,7 +47370,7 @@ AllStructs.set(WebPageNotModifiedS._id, WebPageNotModifiedS);
 export class InputPrivacyKeyPhoneCallS {
   static _id = 0xfabadc5f;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyKeyPhoneCallS._id);
@@ -46958,7 +47396,7 @@ AllStructs.set(InputPrivacyKeyPhoneCallS._id, InputPrivacyKeyPhoneCallS);
 export class PrivacyKeyPhoneCallS {
   static _id = 0x3d662b7b;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyKeyPhoneCallS._id);
@@ -46984,7 +47422,7 @@ AllStructs.set(PrivacyKeyPhoneCallS._id, PrivacyKeyPhoneCallS);
 export class SendMessageGamePlayActionS {
   static _id = 0xdd6a8f48;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SendMessageGamePlayActionS._id);
@@ -47010,7 +47448,7 @@ AllStructs.set(SendMessageGamePlayActionS._id, SendMessageGamePlayActionS);
 export class PhoneCallDiscardReasonMissedS {
   static _id = 0x85e42301;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PhoneCallDiscardReasonMissedS._id);
@@ -47039,7 +47477,7 @@ AllStructs.set(
 export class PhoneCallDiscardReasonDisconnectS {
   static _id = 0xe095c1a0;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PhoneCallDiscardReasonDisconnectS._id);
@@ -47068,7 +47506,7 @@ AllStructs.set(
 export class PhoneCallDiscardReasonHangupS {
   static _id = 0x57adc690;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PhoneCallDiscardReasonHangupS._id);
@@ -47097,7 +47535,7 @@ AllStructs.set(
 export class PhoneCallDiscardReasonBusyS {
   static _id = 0xfaf7e8c9;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PhoneCallDiscardReasonBusyS._id);
@@ -47126,12 +47564,12 @@ AllStructs.set(PhoneCallDiscardReasonBusyS._id, PhoneCallDiscardReasonBusyS);
 export class UpdateDialogPinnedS {
   static _id = 0x6e6fe51c;
 
-  _values = [0, true, 0, new DialogPeerT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    number,
-    DialogPeerT
-  ];
+    0,
+    (new DialogPeerT() as unknown) as DialogPeerT
+  ] as unknown) as [number, true, number, DialogPeerT];
 
   get_flags(): number {
     return this._values[0];
@@ -47255,7 +47693,7 @@ AllStructs.set(UpdateDialogPinnedS._id, UpdateDialogPinnedS);
 export class UpdatePinnedDialogsS {
   static _id = 0xfa0f3ca2;
 
-  _values = [0, 0, []] as [number, number, DialogPeerT[]];
+  _values = ([0, 0, []] as unknown) as [number, number, DialogPeerT[]];
 
   get_flags(): number {
     return this._values[0];
@@ -47353,7 +47791,7 @@ export class UpdatePinnedDialogsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DialogPeerT = new DialogPeerT();
+        let val: DialogPeerT = (new DialogPeerT() as unknown) as DialogPeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -47375,7 +47813,7 @@ AllStructs.set(UpdatePinnedDialogsS._id, UpdatePinnedDialogsS);
 export class DataJsonS {
   static _id = 0x7d748d04;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_data(): string {
     return this._values[0];
@@ -47424,7 +47862,9 @@ AllStructs.set(DataJsonS._id, DataJsonS);
 export class UpdateBotWebhookJsonS {
   static _id = 0x8317c0c3;
 
-  _values = [new DataJsonT()] as [DataJsonT];
+  _values = ([(new DataJsonT() as unknown) as DataJsonT] as unknown) as [
+    DataJsonT
+  ];
 
   get_data(): DataJsonT {
     return this._values[0];
@@ -47477,7 +47917,11 @@ AllStructs.set(UpdateBotWebhookJsonS._id, UpdateBotWebhookJsonS);
 export class UpdateBotWebhookJsonQueryS {
   static _id = 0x9b9240a6;
 
-  _values = [[0, 0], new DataJsonT(), 0] as [ProtoLong, DataJsonT, number];
+  _values = ([
+    [0, 0],
+    (new DataJsonT() as unknown) as DataJsonT,
+    0
+  ] as unknown) as [ProtoLong, DataJsonT, number];
 
   get_query_id(): ProtoLong {
     return this._values[0];
@@ -47569,7 +48013,7 @@ AllStructs.set(UpdateBotWebhookJsonQueryS._id, UpdateBotWebhookJsonQueryS);
 export class LabeledPriceS {
   static _id = 0xcb296bf8;
 
-  _values = ["", [0, 0]] as [string, ProtoLong];
+  _values = (["", [0, 0]] as unknown) as [string, ProtoLong];
 
   get_label(): string {
     return this._values[0];
@@ -47648,7 +48092,19 @@ AllStructs.set(LabeledPriceS._id, LabeledPriceS);
 export class InvoiceS {
   static _id = 0xc30aa358;
 
-  _values = [0, true, true, true, true, true, true, true, true, "", []] as [
+  _values = ([
+    0,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    "",
+    []
+  ] as unknown) as [
     number,
     true,
     true,
@@ -47946,7 +48402,7 @@ export class InvoiceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: LabeledPriceT = new LabeledPriceT();
+        let val: LabeledPriceT = (new LabeledPriceT() as unknown) as LabeledPriceT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -47976,17 +48432,17 @@ AllStructs.set(InvoiceS._id, InvoiceS);
 export class InputMediaInvoiceS {
   static _id = 0xf4e096c3;
 
-  _values = [
+  _values = ([
     0,
     "",
     "",
-    new InputWebDocumentT(),
-    new InvoiceT(),
+    (new InputWebDocumentT() as unknown) as InputWebDocumentT,
+    (new InvoiceT() as unknown) as InvoiceT,
     new Uint8Array(),
     "",
-    new DataJsonT(),
+    (new DataJsonT() as unknown) as DataJsonT,
     ""
-  ] as [
+  ] as unknown) as [
     number,
     string,
     string,
@@ -48218,7 +48674,7 @@ AllStructs.set(InputMediaInvoiceS._id, InputMediaInvoiceS);
 export class PaymentChargeS {
   static _id = 0xea02c27e;
 
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_id(): string {
     return this._values[0];
@@ -48293,15 +48749,15 @@ AllStructs.set(PaymentChargeS._id, PaymentChargeS);
 export class MessageActionPaymentSentMeS {
   static _id = 0x8f31b327;
 
-  _values = [
+  _values = ([
     0,
     "",
     [0, 0],
     new Uint8Array(),
-    new PaymentRequestedInfoT(),
+    (new PaymentRequestedInfoT() as unknown) as PaymentRequestedInfoT,
     "",
-    new PaymentChargeT()
-  ] as [
+    (new PaymentChargeT() as unknown) as PaymentChargeT
+  ] as unknown) as [
     number,
     string,
     ProtoLong,
@@ -48503,7 +48959,18 @@ AllStructs.set(MessageActionPaymentSentMeS._id, MessageActionPaymentSentMeS);
 export class MessageMediaInvoiceS {
   static _id = 0x84551347;
 
-  _values = [0, true, true, "", "", new WebDocumentT(), 0, "", [0, 0], ""] as [
+  _values = ([
+    0,
+    true,
+    true,
+    "",
+    "",
+    (new WebDocumentT() as unknown) as WebDocumentT,
+    0,
+    "",
+    [0, 0],
+    ""
+  ] as unknown) as [
     number,
     true,
     true,
@@ -48772,7 +49239,7 @@ AllStructs.set(MessageMediaInvoiceS._id, MessageMediaInvoiceS);
 export class PostAddressS {
   static _id = 0x1e8caaeb;
 
-  _values = ["", "", "", "", "", ""] as [
+  _values = (["", "", "", "", "", ""] as unknown) as [
     string,
     string,
     string,
@@ -48932,13 +49399,13 @@ AllStructs.set(PostAddressS._id, PostAddressS);
 export class PaymentRequestedInfoS {
   static _id = 0x909c3f94;
 
-  _values = [0, "", "", "", new PostAddressT()] as [
-    number,
-    string,
-    string,
-    string,
-    PostAddressT
-  ];
+  _values = ([
+    0,
+    "",
+    "",
+    "",
+    (new PostAddressT() as unknown) as PostAddressT
+  ] as unknown) as [number, string, string, string, PostAddressT];
 
   get_flags(): number {
     return this._values[0];
@@ -49093,7 +49560,7 @@ AllStructs.set(PaymentRequestedInfoS._id, PaymentRequestedInfoS);
 export class KeyboardButtonBuyS {
   static _id = 0xafd93fbb;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_text(): string {
     return this._values[0];
@@ -49143,7 +49610,7 @@ AllStructs.set(KeyboardButtonBuyS._id, KeyboardButtonBuyS);
 export class MessageActionPaymentSentS {
   static _id = 0x40699cd0;
 
-  _values = ["", [0, 0]] as [string, ProtoLong];
+  _values = (["", [0, 0]] as unknown) as [string, ProtoLong];
 
   get_currency(): string {
     return this._values[0];
@@ -49213,7 +49680,7 @@ AllStructs.set(MessageActionPaymentSentS._id, MessageActionPaymentSentS);
 export class PaymentSavedCredentialsCardS {
   static _id = 0xcdc27a1f;
 
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_id(): string {
     return this._values[0];
@@ -49286,7 +49753,7 @@ AllStructs.set(PaymentSavedCredentialsCardS._id, PaymentSavedCredentialsCardS);
 export class WebDocumentS {
   static _id = 0x1c570ed1;
 
-  _values = ["", [0, 0], 0, "", []] as [
+  _values = (["", [0, 0], 0, "", []] as unknown) as [
     string,
     ProtoLong,
     number,
@@ -49418,7 +49885,7 @@ export class WebDocumentS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentAttributeT = new DocumentAttributeT();
+        let val: DocumentAttributeT = (new DocumentAttributeT() as unknown) as DocumentAttributeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -49443,7 +49910,7 @@ AllStructs.set(WebDocumentS._id, WebDocumentS);
 export class InputWebDocumentS {
   static _id = 0x9bed434d;
 
-  _values = ["", 0, "", []] as [
+  _values = (["", 0, "", []] as unknown) as [
     string,
     number,
     string,
@@ -49554,7 +50021,7 @@ export class InputWebDocumentS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentAttributeT = new DocumentAttributeT();
+        let val: DocumentAttributeT = (new DocumentAttributeT() as unknown) as DocumentAttributeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -49577,7 +50044,7 @@ AllStructs.set(InputWebDocumentS._id, InputWebDocumentS);
 export class InputWebFileLocationS {
   static _id = 0xc239d686;
 
-  _values = ["", [0, 0]] as [string, ProtoLong];
+  _values = (["", [0, 0]] as unknown) as [string, ProtoLong];
 
   get_url(): string {
     return this._values[0];
@@ -49650,13 +50117,13 @@ AllStructs.set(InputWebFileLocationS._id, InputWebFileLocationS);
 export class UploadWebFileS {
   static _id = 0x21e753bc;
 
-  _values = [0, "", new StorageFileTypeT(), 0, new Uint8Array()] as [
-    number,
-    string,
-    StorageFileTypeT,
-    number,
-    Uint8Array
-  ];
+  _values = ([
+    0,
+    "",
+    (new StorageFileTypeT() as unknown) as StorageFileTypeT,
+    0,
+    new Uint8Array()
+  ] as unknown) as [number, string, StorageFileTypeT, number, Uint8Array];
 
   get_size(): number {
     return this._values[0];
@@ -49798,20 +50265,20 @@ AllStructs.set(UploadWebFileS._id, UploadWebFileS);
 export class PaymentsPaymentFormS {
   static _id = 0x3f56aea3;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
     0,
-    new InvoiceT(),
+    (new InvoiceT() as unknown) as InvoiceT,
     0,
     "",
     "",
-    new DataJsonT(),
-    new PaymentRequestedInfoT(),
-    new PaymentSavedCredentialsT(),
+    (new DataJsonT() as unknown) as DataJsonT,
+    (new PaymentRequestedInfoT() as unknown) as PaymentRequestedInfoT,
+    (new PaymentSavedCredentialsT() as unknown) as PaymentSavedCredentialsT,
     []
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -50132,7 +50599,7 @@ export class PaymentsPaymentFormS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -50156,7 +50623,11 @@ AllStructs.set(PaymentsPaymentFormS._id, PaymentsPaymentFormS);
 export class PaymentsValidatedRequestedInfoS {
   static _id = 0xd1451883;
 
-  _values = [0, "", []] as [number, string, ShippingOptionT[]];
+  _values = ([0, "", []] as unknown) as [
+    number,
+    string,
+    ShippingOptionT[]
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -50254,7 +50725,7 @@ export class PaymentsValidatedRequestedInfoS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ShippingOptionT = new ShippingOptionT();
+        let val: ShippingOptionT = (new ShippingOptionT() as unknown) as ShippingOptionT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -50279,7 +50750,9 @@ AllStructs.set(
 export class PaymentsPaymentResultS {
   static _id = 0x4e5f810d;
 
-  _values = [new UpdatesT()] as [UpdatesT];
+  _values = ([(new UpdatesT() as unknown) as UpdatesT] as unknown) as [
+    UpdatesT
+  ];
 
   get_updates(): UpdatesT {
     return this._values[0];
@@ -50340,19 +50813,19 @@ AllStructs.set(PaymentsPaymentResultS._id, PaymentsPaymentResultS);
 export class PaymentsPaymentReceiptS {
   static _id = 0x500911e1;
 
-  _values = [
+  _values = ([
     0,
     0,
     0,
-    new InvoiceT(),
+    (new InvoiceT() as unknown) as InvoiceT,
     0,
-    new PaymentRequestedInfoT(),
-    new ShippingOptionT(),
+    (new PaymentRequestedInfoT() as unknown) as PaymentRequestedInfoT,
+    (new ShippingOptionT() as unknown) as ShippingOptionT,
     "",
     [0, 0],
     "",
     []
-  ] as [
+  ] as unknown) as [
     number,
     number,
     number,
@@ -50628,7 +51101,7 @@ export class PaymentsPaymentReceiptS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -50652,11 +51125,11 @@ AllStructs.set(PaymentsPaymentReceiptS._id, PaymentsPaymentReceiptS);
 export class PaymentsSavedInfoS {
   static _id = 0xfb8fe43c;
 
-  _values = [0, true, new PaymentRequestedInfoT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    PaymentRequestedInfoT
-  ];
+    (new PaymentRequestedInfoT() as unknown) as PaymentRequestedInfoT
+  ] as unknown) as [number, true, PaymentRequestedInfoT];
 
   get_flags(): number {
     return this._values[0];
@@ -50759,7 +51232,7 @@ AllStructs.set(PaymentsSavedInfoS._id, PaymentsSavedInfoS);
 export class InputPaymentCredentialsSavedS {
   static _id = 0xc10eb2cf;
 
-  _values = ["", new Uint8Array()] as [string, Uint8Array];
+  _values = (["", new Uint8Array()] as unknown) as [string, Uint8Array];
 
   get_id(): string {
     return this._values[0];
@@ -50833,7 +51306,11 @@ AllStructs.set(
 export class InputPaymentCredentialsS {
   static _id = 0x3417d728;
 
-  _values = [0, true, new DataJsonT()] as [number, true, DataJsonT];
+  _values = ([
+    0,
+    true,
+    (new DataJsonT() as unknown) as DataJsonT
+  ] as unknown) as [number, true, DataJsonT];
 
   get_flags(): number {
     return this._values[0];
@@ -50930,7 +51407,7 @@ AllStructs.set(InputPaymentCredentialsS._id, InputPaymentCredentialsS);
 export class AccountTmpPasswordS {
   static _id = 0xdb64fd34;
 
-  _values = [new Uint8Array(), 0] as [Uint8Array, number];
+  _values = ([new Uint8Array(), 0] as unknown) as [Uint8Array, number];
 
   get_tmp_password(): Uint8Array {
     return this._values[0];
@@ -51001,7 +51478,7 @@ AllStructs.set(AccountTmpPasswordS._id, AccountTmpPasswordS);
 export class ShippingOptionS {
   static _id = 0xb6213cdf;
 
-  _values = ["", "", []] as [string, string, LabeledPriceT[]];
+  _values = (["", "", []] as unknown) as [string, string, LabeledPriceT[]];
 
   get_id(): string {
     return this._values[0];
@@ -51087,7 +51564,7 @@ export class ShippingOptionS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: LabeledPriceT = new LabeledPriceT();
+        let val: LabeledPriceT = (new LabeledPriceT() as unknown) as LabeledPriceT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -51112,12 +51589,12 @@ AllStructs.set(ShippingOptionS._id, ShippingOptionS);
 export class UpdateBotShippingQueryS {
   static _id = 0xe0cdc940;
 
-  _values = [[0, 0], 0, new Uint8Array(), new PostAddressT()] as [
-    ProtoLong,
-    number,
-    Uint8Array,
-    PostAddressT
-  ];
+  _values = ([
+    [0, 0],
+    0,
+    new Uint8Array(),
+    (new PostAddressT() as unknown) as PostAddressT
+  ] as unknown) as [ProtoLong, number, Uint8Array, PostAddressT];
 
   get_query_id(): ProtoLong {
     return this._values[0];
@@ -51235,16 +51712,16 @@ AllStructs.set(UpdateBotShippingQueryS._id, UpdateBotShippingQueryS);
 export class UpdateBotPrecheckoutQueryS {
   static _id = 0x5d2f3aa9;
 
-  _values = [
+  _values = ([
     0,
     [0, 0],
     0,
     new Uint8Array(),
-    new PaymentRequestedInfoT(),
+    (new PaymentRequestedInfoT() as unknown) as PaymentRequestedInfoT,
     "",
     "",
     [0, 0]
-  ] as [
+  ] as unknown) as [
     number,
     ProtoLong,
     number,
@@ -51459,12 +51936,12 @@ AllStructs.set(UpdateBotPrecheckoutQueryS._id, UpdateBotPrecheckoutQueryS);
 export class InputStickerSetItemS {
   static _id = 0xffa0a496;
 
-  _values = [0, new InputDocumentT(), "", new MaskCoordsT()] as [
-    number,
-    InputDocumentT,
-    string,
-    MaskCoordsT
-  ];
+  _values = ([
+    0,
+    (new InputDocumentT() as unknown) as InputDocumentT,
+    "",
+    (new MaskCoordsT() as unknown) as MaskCoordsT
+  ] as unknown) as [number, InputDocumentT, string, MaskCoordsT];
 
   get_flags(): number {
     return this._values[0];
@@ -51583,7 +52060,9 @@ AllStructs.set(InputStickerSetItemS._id, InputStickerSetItemS);
 export class UpdatePhoneCallS {
   static _id = 0xab0f6b1e;
 
-  _values = [new PhoneCallT()] as [PhoneCallT];
+  _values = ([(new PhoneCallT() as unknown) as PhoneCallT] as unknown) as [
+    PhoneCallT
+  ];
 
   get_phone_call(): PhoneCallT {
     return this._values[0];
@@ -51635,7 +52114,7 @@ AllStructs.set(UpdatePhoneCallS._id, UpdatePhoneCallS);
 export class InputPhoneCallS {
   static _id = 0x1e36fded;
 
-  _values = [[0, 0], [0, 0]] as [ProtoLong, ProtoLong];
+  _values = ([[0, 0], [0, 0]] as unknown) as [ProtoLong, ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -51704,7 +52183,7 @@ AllStructs.set(InputPhoneCallS._id, InputPhoneCallS);
 export class PhoneCallEmptyS {
   static _id = 0x5366c915;
 
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -51761,7 +52240,17 @@ AllStructs.set(PhoneCallEmptyS._id, PhoneCallEmptyS);
 export class PhoneCallWaitingS {
   static _id = 0x1b8f4ad1;
 
-  _values = [0, true, [0, 0], [0, 0], 0, 0, 0, new PhoneCallProtocolT(), 0] as [
+  _values = ([
+    0,
+    true,
+    [0, 0],
+    [0, 0],
+    0,
+    0,
+    0,
+    (new PhoneCallProtocolT() as unknown) as PhoneCallProtocolT,
+    0
+  ] as unknown) as [
     number,
     true,
     ProtoLong,
@@ -52001,7 +52490,7 @@ AllStructs.set(PhoneCallWaitingS._id, PhoneCallWaitingS);
 export class PhoneCallRequestedS {
   static _id = 0x87eabb53;
 
-  _values = [
+  _values = ([
     0,
     true,
     [0, 0],
@@ -52010,8 +52499,8 @@ export class PhoneCallRequestedS {
     0,
     0,
     new Uint8Array(),
-    new PhoneCallProtocolT()
-  ] as [
+    (new PhoneCallProtocolT() as unknown) as PhoneCallProtocolT
+  ] as unknown) as [
     number,
     true,
     ProtoLong,
@@ -52245,7 +52734,7 @@ AllStructs.set(PhoneCallRequestedS._id, PhoneCallRequestedS);
 export class PhoneCallAcceptedS {
   static _id = 0x997c454a;
 
-  _values = [
+  _values = ([
     0,
     true,
     [0, 0],
@@ -52254,8 +52743,8 @@ export class PhoneCallAcceptedS {
     0,
     0,
     new Uint8Array(),
-    new PhoneCallProtocolT()
-  ] as [
+    (new PhoneCallProtocolT() as unknown) as PhoneCallProtocolT
+  ] as unknown) as [
     number,
     true,
     ProtoLong,
@@ -52492,7 +52981,7 @@ AllStructs.set(PhoneCallAcceptedS._id, PhoneCallAcceptedS);
 export class PhoneCallS {
   static _id = 0x8742ae7f;
 
-  _values = [
+  _values = ([
     0,
     true,
     [0, 0],
@@ -52502,10 +52991,10 @@ export class PhoneCallS {
     0,
     new Uint8Array(),
     [0, 0],
-    new PhoneCallProtocolT(),
+    (new PhoneCallProtocolT() as unknown) as PhoneCallProtocolT,
     [],
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     ProtoLong,
@@ -52785,7 +53274,7 @@ export class PhoneCallS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PhoneConnectionT = new PhoneConnectionT();
+        let val: PhoneConnectionT = (new PhoneConnectionT() as unknown) as PhoneConnectionT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -52819,7 +53308,15 @@ AllStructs.set(PhoneCallS._id, PhoneCallS);
 export class PhoneCallDiscardedS {
   static _id = 0x50ca4de1;
 
-  _values = [0, true, true, true, [0, 0], new PhoneCallDiscardReasonT(), 0] as [
+  _values = ([
+    0,
+    true,
+    true,
+    true,
+    [0, 0],
+    (new PhoneCallDiscardReasonT() as unknown) as PhoneCallDiscardReasonT,
+    0
+  ] as unknown) as [
     number,
     true,
     true,
@@ -53029,7 +53526,7 @@ AllStructs.set(PhoneCallDiscardedS._id, PhoneCallDiscardedS);
 export class PhoneConnectionS {
   static _id = 0x9d4c17c0;
 
-  _values = [[0, 0], "", "", 0, new Uint8Array()] as [
+  _values = ([[0, 0], "", "", 0, new Uint8Array()] as unknown) as [
     ProtoLong,
     string,
     string,
@@ -53168,7 +53665,13 @@ AllStructs.set(PhoneConnectionS._id, PhoneConnectionS);
 export class PhoneCallProtocolS {
   static _id = 0xa2bb35cb;
 
-  _values = [0, true, true, 0, 0] as [number, true, true, number, number];
+  _values = ([0, true, true, 0, 0] as unknown) as [
+    number,
+    true,
+    true,
+    number,
+    number
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -53308,7 +53811,10 @@ AllStructs.set(PhoneCallProtocolS._id, PhoneCallProtocolS);
 export class PhonePhoneCallS {
   static _id = 0xec82e140;
 
-  _values = [new PhoneCallT(), []] as [PhoneCallT, UserT[]];
+  _values = ([(new PhoneCallT() as unknown) as PhoneCallT, []] as unknown) as [
+    PhoneCallT,
+    UserT[]
+  ];
 
   get_phone_call(): PhoneCallT {
     return this._values[0];
@@ -53376,7 +53882,7 @@ export class PhonePhoneCallS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -53399,7 +53905,7 @@ AllStructs.set(PhonePhoneCallS._id, PhonePhoneCallS);
 export class InputMessagesFilterPhoneCallsS {
   static _id = 0x80c99768;
 
-  _values = [0, true] as [number, true];
+  _values = ([0, true] as unknown) as [number, true];
 
   get_flags(): number {
     return this._values[0];
@@ -53480,13 +53986,13 @@ AllStructs.set(
 export class MessageActionPhoneCallS {
   static _id = 0x80e11a7f;
 
-  _values = [0, true, [0, 0], new PhoneCallDiscardReasonT(), 0] as [
-    number,
+  _values = ([
+    0,
     true,
-    ProtoLong,
-    PhoneCallDiscardReasonT,
-    number
-  ];
+    [0, 0],
+    (new PhoneCallDiscardReasonT() as unknown) as PhoneCallDiscardReasonT,
+    0
+  ] as unknown) as [number, true, ProtoLong, PhoneCallDiscardReasonT, number];
 
   get_flags(): number {
     return this._values[0];
@@ -53634,7 +54140,7 @@ AllStructs.set(MessageActionPhoneCallS._id, MessageActionPhoneCallS);
 export class InputMessagesFilterRoundVoiceS {
   static _id = 0x7a7c17a4;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterRoundVoiceS._id);
@@ -53663,7 +54169,7 @@ AllStructs.set(
 export class InputMessagesFilterRoundVideoS {
   static _id = 0xb549da53;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterRoundVideoS._id);
@@ -53692,7 +54198,7 @@ AllStructs.set(
 export class SendMessageRecordRoundActionS {
   static _id = 0x88f27fbc;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SendMessageRecordRoundActionS._id);
@@ -53721,7 +54227,7 @@ AllStructs.set(
 export class SendMessageUploadRoundActionS {
   static _id = 0x243e1c66;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_progress(): number {
     return this._values[0];
@@ -53777,7 +54283,13 @@ AllStructs.set(
 export class UploadFileCdnRedirectS {
   static _id = 0xf18cda44;
 
-  _values = [0, new Uint8Array(), new Uint8Array(), new Uint8Array(), []] as [
+  _values = ([
+    0,
+    new Uint8Array(),
+    new Uint8Array(),
+    new Uint8Array(),
+    []
+  ] as unknown) as [
     number,
     Uint8Array,
     Uint8Array,
@@ -53909,7 +54421,7 @@ export class UploadFileCdnRedirectS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: FileHashT = new FileHashT();
+        let val: FileHashT = (new FileHashT() as unknown) as FileHashT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -53931,7 +54443,7 @@ AllStructs.set(UploadFileCdnRedirectS._id, UploadFileCdnRedirectS);
 export class UploadCdnFileReuploadNeededS {
   static _id = 0xeea8e46e;
 
-  _values = [new Uint8Array()] as [Uint8Array];
+  _values = ([new Uint8Array()] as unknown) as [Uint8Array];
 
   get_request_token(): Uint8Array {
     return this._values[0];
@@ -53980,7 +54492,7 @@ AllStructs.set(UploadCdnFileReuploadNeededS._id, UploadCdnFileReuploadNeededS);
 export class UploadCdnFileS {
   static _id = 0xa99fca4f;
 
-  _values = [new Uint8Array()] as [Uint8Array];
+  _values = ([new Uint8Array()] as unknown) as [Uint8Array];
 
   get_bytes(): Uint8Array {
     return this._values[0];
@@ -54030,7 +54542,7 @@ AllStructs.set(UploadCdnFileS._id, UploadCdnFileS);
 export class CdnPublicKeyS {
   static _id = 0xc982eaba;
 
-  _values = [0, ""] as [number, string];
+  _values = ([0, ""] as unknown) as [number, string];
 
   get_dc_id(): number {
     return this._values[0];
@@ -54099,7 +54611,7 @@ AllStructs.set(CdnPublicKeyS._id, CdnPublicKeyS);
 export class CdnConfigS {
   static _id = 0x5725e40a;
 
-  _values = [[]] as [CdnPublicKeyT[]];
+  _values = ([[]] as unknown) as [CdnPublicKeyT[]];
 
   get_public_keys(): CdnPublicKeyT[] {
     return this._values[0];
@@ -54145,7 +54657,7 @@ export class CdnConfigS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: CdnPublicKeyT = new CdnPublicKeyT();
+        let val: CdnPublicKeyT = (new CdnPublicKeyT() as unknown) as CdnPublicKeyT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -54167,7 +54679,7 @@ AllStructs.set(CdnConfigS._id, CdnConfigS);
 export class PageBlockChannelS {
   static _id = 0xef1751b5;
 
-  _values = [new ChatT()] as [ChatT];
+  _values = ([(new ChatT() as unknown) as ChatT] as unknown) as [ChatT];
 
   get_channel(): ChatT {
     return this._values[0];
@@ -54219,7 +54731,7 @@ AllStructs.set(PageBlockChannelS._id, PageBlockChannelS);
 export class LangPackStringS {
   static _id = 0xcad181f6;
 
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_key(): string {
     return this._values[0];
@@ -54295,7 +54807,7 @@ AllStructs.set(LangPackStringS._id, LangPackStringS);
 export class LangPackStringPluralizedS {
   static _id = 0x6c47ac9f;
 
-  _values = [0, "", "", "", "", "", "", ""] as [
+  _values = ([0, "", "", "", "", "", "", ""] as unknown) as [
     number,
     string,
     string,
@@ -54523,7 +55035,7 @@ AllStructs.set(LangPackStringPluralizedS._id, LangPackStringPluralizedS);
 export class LangPackStringDeletedS {
   static _id = 0x2979eeb2;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_key(): string {
     return this._values[0];
@@ -54575,7 +55087,12 @@ AllStructs.set(LangPackStringDeletedS._id, LangPackStringDeletedS);
 export class LangPackDifferenceS {
   static _id = 0xf385c1f6;
 
-  _values = ["", 0, 0, []] as [string, number, number, LangPackStringT[]];
+  _values = (["", 0, 0, []] as unknown) as [
+    string,
+    number,
+    number,
+    LangPackStringT[]
+  ];
 
   get_lang_code(): string {
     return this._values[0];
@@ -54681,7 +55198,7 @@ export class LangPackDifferenceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: LangPackStringT = new LangPackStringT();
+        let val: LangPackStringT = (new LangPackStringT() as unknown) as LangPackStringT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -54714,7 +55231,20 @@ AllStructs.set(LangPackDifferenceS._id, LangPackDifferenceS);
 export class LangPackLanguageS {
   static _id = 0xeeca5ce3;
 
-  _values = [0, true, true, true, "", "", "", "", "", 0, 0, ""] as [
+  _values = ([
+    0,
+    true,
+    true,
+    true,
+    "",
+    "",
+    "",
+    "",
+    "",
+    0,
+    0,
+    ""
+  ] as unknown) as [
     number,
     true,
     true,
@@ -55017,7 +55547,7 @@ AllStructs.set(LangPackLanguageS._id, LangPackLanguageS);
 export class UpdateLangPackTooLongS {
   static _id = 0x46560264;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_lang_code(): string {
     return this._values[0];
@@ -55066,7 +55596,9 @@ AllStructs.set(UpdateLangPackTooLongS._id, UpdateLangPackTooLongS);
 export class UpdateLangPackS {
   static _id = 0x56022f4d;
 
-  _values = [new LangPackDifferenceT()] as [LangPackDifferenceT];
+  _values = ([
+    (new LangPackDifferenceT() as unknown) as LangPackDifferenceT
+  ] as unknown) as [LangPackDifferenceT];
 
   get_difference(): LangPackDifferenceT {
     return this._values[0];
@@ -55125,7 +55657,17 @@ AllStructs.set(UpdateLangPackS._id, UpdateLangPackS);
 export class ChannelParticipantAdminS {
   static _id = 0xccbebbaf;
 
-  _values = [0, true, true, 0, 0, 0, 0, new ChatAdminRightsT(), ""] as [
+  _values = ([
+    0,
+    true,
+    true,
+    0,
+    0,
+    0,
+    0,
+    (new ChatAdminRightsT() as unknown) as ChatAdminRightsT,
+    ""
+  ] as unknown) as [
     number,
     true,
     true,
@@ -55373,14 +55915,14 @@ AllStructs.set(ChannelParticipantAdminS._id, ChannelParticipantAdminS);
 export class ChannelParticipantBannedS {
   static _id = 0x1c0facaf;
 
-  _values = [0, true, 0, 0, 0, new ChatBannedRightsT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    number,
-    number,
-    number,
-    ChatBannedRightsT
-  ];
+    0,
+    0,
+    0,
+    (new ChatBannedRightsT() as unknown) as ChatBannedRightsT
+  ] as unknown) as [number, true, number, number, number, ChatBannedRightsT];
 
   get_flags(): number {
     return this._values[0];
@@ -55536,7 +56078,7 @@ AllStructs.set(ChannelParticipantBannedS._id, ChannelParticipantBannedS);
 export class ChannelParticipantsBannedS {
   static _id = 0x1427a5e1;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_q(): string {
     return this._values[0];
@@ -55585,7 +56127,7 @@ AllStructs.set(ChannelParticipantsBannedS._id, ChannelParticipantsBannedS);
 export class ChannelParticipantsSearchS {
   static _id = 0x656ac4b;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_q(): string {
     return this._values[0];
@@ -55635,7 +56177,7 @@ AllStructs.set(ChannelParticipantsSearchS._id, ChannelParticipantsSearchS);
 export class ChannelAdminLogEventActionChangeTitleS {
   static _id = 0xe6dfb825;
 
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_prev_value(): string {
     return this._values[0];
@@ -55709,7 +56251,7 @@ AllStructs.set(
 export class ChannelAdminLogEventActionChangeAboutS {
   static _id = 0x55188a2e;
 
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_prev_value(): string {
     return this._values[0];
@@ -55783,7 +56325,7 @@ AllStructs.set(
 export class ChannelAdminLogEventActionChangeUsernameS {
   static _id = 0x6a4afc38;
 
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_prev_value(): string {
     return this._values[0];
@@ -55857,7 +56399,10 @@ AllStructs.set(
 export class ChannelAdminLogEventActionChangePhotoS {
   static _id = 0x434bd2af;
 
-  _values = [new PhotoT(), new PhotoT()] as [PhotoT, PhotoT];
+  _values = ([
+    (new PhotoT() as unknown) as PhotoT,
+    (new PhotoT() as unknown) as PhotoT
+  ] as unknown) as [PhotoT, PhotoT];
 
   get_prev_photo(): PhotoT {
     return this._values[0];
@@ -55934,7 +56479,7 @@ AllStructs.set(
 export class ChannelAdminLogEventActionToggleInvitesS {
   static _id = 0x1b7907ae;
 
-  _values = [new BoolT()] as [BoolT];
+  _values = ([(new BoolT() as unknown) as BoolT] as unknown) as [BoolT];
 
   get_new_value(): BoolT {
     return this._values[0];
@@ -55989,7 +56534,7 @@ AllStructs.set(
 export class ChannelAdminLogEventActionToggleSignaturesS {
   static _id = 0x26ae0971;
 
-  _values = [new BoolT()] as [BoolT];
+  _values = ([(new BoolT() as unknown) as BoolT] as unknown) as [BoolT];
 
   get_new_value(): BoolT {
     return this._values[0];
@@ -56044,7 +56589,9 @@ AllStructs.set(
 export class ChannelAdminLogEventActionUpdatePinnedS {
   static _id = 0xe9e82c18;
 
-  _values = [new MessageT()] as [MessageT];
+  _values = ([(new MessageT() as unknown) as MessageT] as unknown) as [
+    MessageT
+  ];
 
   get_message(): MessageT {
     return this._values[0];
@@ -56100,7 +56647,10 @@ AllStructs.set(
 export class ChannelAdminLogEventActionEditMessageS {
   static _id = 0x709b2405;
 
-  _values = [new MessageT(), new MessageT()] as [MessageT, MessageT];
+  _values = ([
+    (new MessageT() as unknown) as MessageT,
+    (new MessageT() as unknown) as MessageT
+  ] as unknown) as [MessageT, MessageT];
 
   get_prev_message(): MessageT {
     return this._values[0];
@@ -56177,7 +56727,9 @@ AllStructs.set(
 export class ChannelAdminLogEventActionDeleteMessageS {
   static _id = 0x42e047bb;
 
-  _values = [new MessageT()] as [MessageT];
+  _values = ([(new MessageT() as unknown) as MessageT] as unknown) as [
+    MessageT
+  ];
 
   get_message(): MessageT {
     return this._values[0];
@@ -56232,7 +56784,7 @@ AllStructs.set(
 export class ChannelAdminLogEventActionParticipantJoinS {
   static _id = 0x183040d3;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ChannelAdminLogEventActionParticipantJoinS._id);
@@ -56262,7 +56814,7 @@ AllStructs.set(
 export class ChannelAdminLogEventActionParticipantLeaveS {
   static _id = 0xf89777f2;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ChannelAdminLogEventActionParticipantLeaveS._id);
@@ -56292,7 +56844,9 @@ AllStructs.set(
 export class ChannelAdminLogEventActionParticipantInviteS {
   static _id = 0xe31c34d8;
 
-  _values = [new ChannelParticipantT()] as [ChannelParticipantT];
+  _values = ([
+    (new ChannelParticipantT() as unknown) as ChannelParticipantT
+  ] as unknown) as [ChannelParticipantT];
 
   get_participant(): ChannelParticipantT {
     return this._values[0];
@@ -56348,10 +56902,10 @@ AllStructs.set(
 export class ChannelAdminLogEventActionParticipantToggleBanS {
   static _id = 0xe6d83d7e;
 
-  _values = [new ChannelParticipantT(), new ChannelParticipantT()] as [
-    ChannelParticipantT,
-    ChannelParticipantT
-  ];
+  _values = ([
+    (new ChannelParticipantT() as unknown) as ChannelParticipantT,
+    (new ChannelParticipantT() as unknown) as ChannelParticipantT
+  ] as unknown) as [ChannelParticipantT, ChannelParticipantT];
 
   get_prev_participant(): ChannelParticipantT {
     return this._values[0];
@@ -56430,10 +56984,10 @@ AllStructs.set(
 export class ChannelAdminLogEventActionParticipantToggleAdminS {
   static _id = 0xd5676710;
 
-  _values = [new ChannelParticipantT(), new ChannelParticipantT()] as [
-    ChannelParticipantT,
-    ChannelParticipantT
-  ];
+  _values = ([
+    (new ChannelParticipantT() as unknown) as ChannelParticipantT,
+    (new ChannelParticipantT() as unknown) as ChannelParticipantT
+  ] as unknown) as [ChannelParticipantT, ChannelParticipantT];
 
   get_prev_participant(): ChannelParticipantT {
     return this._values[0];
@@ -56514,12 +57068,12 @@ AllStructs.set(
 export class ChannelAdminLogEventS {
   static _id = 0x3b5a3e40;
 
-  _values = [[0, 0], 0, 0, new ChannelAdminLogEventActionT()] as [
-    ProtoLong,
-    number,
-    number,
-    ChannelAdminLogEventActionT
-  ];
+  _values = ([
+    [0, 0],
+    0,
+    0,
+    (new ChannelAdminLogEventActionT() as unknown) as ChannelAdminLogEventActionT
+  ] as unknown) as [ProtoLong, number, number, ChannelAdminLogEventActionT];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -56632,7 +57186,7 @@ AllStructs.set(ChannelAdminLogEventS._id, ChannelAdminLogEventS);
 export class ChannelsAdminLogResultsS {
   static _id = 0xed8af74d;
 
-  _values = [[], [], []] as [
+  _values = ([[], [], []] as unknown) as [
     ChannelAdminLogEventT[],
     ChatT[],
     UserT[]
@@ -56724,7 +57278,7 @@ export class ChannelsAdminLogResultsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChannelAdminLogEventT = new ChannelAdminLogEventT();
+        let val: ChannelAdminLogEventT = (new ChannelAdminLogEventT() as unknown) as ChannelAdminLogEventT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -56742,7 +57296,7 @@ export class ChannelsAdminLogResultsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -56760,7 +57314,7 @@ export class ChannelsAdminLogResultsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -56796,7 +57350,7 @@ AllStructs.set(ChannelsAdminLogResultsS._id, ChannelsAdminLogResultsS);
 export class ChannelAdminLogEventsFilterS {
   static _id = 0xea107ae4;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -56812,7 +57366,7 @@ export class ChannelAdminLogEventsFilterS {
     true,
     true,
     true
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -57227,7 +57781,7 @@ AllStructs.set(ChannelAdminLogEventsFilterS._id, ChannelAdminLogEventsFilterS);
 export class TopPeerCategoryPhoneCallsS {
   static _id = 0x1e76a78c;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(TopPeerCategoryPhoneCallsS._id);
@@ -57254,7 +57808,10 @@ AllStructs.set(TopPeerCategoryPhoneCallsS._id, TopPeerCategoryPhoneCallsS);
 export class PageBlockAudioS {
   static _id = 0x804361ea;
 
-  _values = [[0, 0], new PageCaptionT()] as [ProtoLong, PageCaptionT];
+  _values = ([
+    [0, 0],
+    (new PageCaptionT() as unknown) as PageCaptionT
+  ] as unknown) as [ProtoLong, PageCaptionT];
 
   get_audio_id(): ProtoLong {
     return this._values[0];
@@ -57326,7 +57883,7 @@ AllStructs.set(PageBlockAudioS._id, PageBlockAudioS);
 export class PopularContactS {
   static _id = 0x5ce14175;
 
-  _values = [[0, 0], 0] as [ProtoLong, number];
+  _values = ([[0, 0], 0] as unknown) as [ProtoLong, number];
 
   get_client_id(): ProtoLong {
     return this._values[0];
@@ -57395,7 +57952,7 @@ AllStructs.set(PopularContactS._id, PopularContactS);
 export class MessageActionScreenshotTakenS {
   static _id = 0x4792929b;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessageActionScreenshotTakenS._id);
@@ -57424,7 +57981,7 @@ AllStructs.set(
 export class MessagesFavedStickersNotModifiedS {
   static _id = 0x9e8fa6d3;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesFavedStickersNotModifiedS._id);
@@ -57455,7 +58012,11 @@ AllStructs.set(
 export class MessagesFavedStickersS {
   static _id = 0xf37f2f16;
 
-  _values = [0, [], []] as [number, StickerPackT[], DocumentT[]];
+  _values = ([0, [], []] as unknown) as [
+    number,
+    StickerPackT[],
+    DocumentT[]
+  ];
 
   get_hash(): number {
     return this._values[0];
@@ -57542,7 +58103,7 @@ export class MessagesFavedStickersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: StickerPackT = new StickerPackT();
+        let val: StickerPackT = (new StickerPackT() as unknown) as StickerPackT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -57560,7 +58121,7 @@ export class MessagesFavedStickersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentT = new DocumentT();
+        let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -57582,7 +58143,7 @@ AllStructs.set(MessagesFavedStickersS._id, MessagesFavedStickersS);
 export class UpdateFavedStickersS {
   static _id = 0xe511996d;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UpdateFavedStickersS._id);
@@ -57609,7 +58170,7 @@ AllStructs.set(UpdateFavedStickersS._id, UpdateFavedStickersS);
 export class UpdateChannelReadMessagesContentsS {
   static _id = 0x89893b45;
 
-  _values = [0, []] as [number, number[]];
+  _values = ([0, []] as unknown) as [number, number[]];
 
   get_channel_id(): number {
     return this._values[0];
@@ -57698,7 +58259,7 @@ AllStructs.set(
 export class InputMessagesFilterMyMentionsS {
   static _id = 0xc1f8e69a;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterMyMentionsS._id);
@@ -57727,7 +58288,7 @@ AllStructs.set(
 export class UpdateContactsResetS {
   static _id = 0x7084a7be;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UpdateContactsResetS._id);
@@ -57754,10 +58315,10 @@ AllStructs.set(UpdateContactsResetS._id, UpdateContactsResetS);
 export class ChannelAdminLogEventActionChangeStickerSetS {
   static _id = 0xb1c3caa7;
 
-  _values = [new InputStickerSetT(), new InputStickerSetT()] as [
-    InputStickerSetT,
-    InputStickerSetT
-  ];
+  _values = ([
+    (new InputStickerSetT() as unknown) as InputStickerSetT,
+    (new InputStickerSetT() as unknown) as InputStickerSetT
+  ] as unknown) as [InputStickerSetT, InputStickerSetT];
 
   get_prev_stickerset(): InputStickerSetT {
     return this._values[0];
@@ -57834,7 +58395,7 @@ AllStructs.set(
 export class MessageActionCustomActionS {
   static _id = 0xfae69f56;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_message(): string {
     return this._values[0];
@@ -57883,7 +58444,9 @@ AllStructs.set(MessageActionCustomActionS._id, MessageActionCustomActionS);
 export class InputPaymentCredentialsApplePayS {
   static _id = 0xaa1c39f;
 
-  _values = [new DataJsonT()] as [DataJsonT];
+  _values = ([(new DataJsonT() as unknown) as DataJsonT] as unknown) as [
+    DataJsonT
+  ];
 
   get_payment_data(): DataJsonT {
     return this._values[0];
@@ -57938,7 +58501,10 @@ AllStructs.set(
 export class InputPaymentCredentialsAndroidPayS {
   static _id = 0xca05d50e;
 
-  _values = [new DataJsonT(), ""] as [DataJsonT, string];
+  _values = ([(new DataJsonT() as unknown) as DataJsonT, ""] as unknown) as [
+    DataJsonT,
+    string
+  ];
 
   get_payment_token(): DataJsonT {
     return this._values[0];
@@ -58012,7 +58578,7 @@ AllStructs.set(
 export class InputMessagesFilterGeoS {
   static _id = 0xe7026d0d;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterGeoS._id);
@@ -58038,7 +58604,7 @@ AllStructs.set(InputMessagesFilterGeoS._id, InputMessagesFilterGeoS);
 export class InputMessagesFilterContactsS {
   static _id = 0xe062db83;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagesFilterContactsS._id);
@@ -58065,7 +58631,7 @@ AllStructs.set(InputMessagesFilterContactsS._id, InputMessagesFilterContactsS);
 export class UpdateChannelAvailableMessagesS {
   static _id = 0x70db6837;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_channel_id(): number {
     return this._values[0];
@@ -58137,7 +58703,7 @@ AllStructs.set(
 export class ChannelAdminLogEventActionTogglePreHistoryHiddenS {
   static _id = 0x5f5c95f1;
 
-  _values = [new BoolT()] as [BoolT];
+  _values = ([(new BoolT() as unknown) as BoolT] as unknown) as [BoolT];
 
   get_new_value(): BoolT {
     return this._values[0];
@@ -58196,12 +58762,12 @@ AllStructs.set(
 export class InputMediaGeoLiveS {
   static _id = 0xce4e82fd;
 
-  _values = [0, true, new InputGeoPointT(), 0] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputGeoPointT,
-    number
-  ];
+    (new InputGeoPointT() as unknown) as InputGeoPointT,
+    0
+  ] as unknown) as [number, true, InputGeoPointT, number];
 
   get_flags(): number {
     return this._values[0];
@@ -58324,7 +58890,10 @@ AllStructs.set(InputMediaGeoLiveS._id, InputMediaGeoLiveS);
 export class MessageMediaGeoLiveS {
   static _id = 0x7c3c2609;
 
-  _values = [new GeoPointT(), 0] as [GeoPointT, number];
+  _values = ([(new GeoPointT() as unknown) as GeoPointT, 0] as unknown) as [
+    GeoPointT,
+    number
+  ];
 
   get_geo(): GeoPointT {
     return this._values[0];
@@ -58395,7 +58964,7 @@ AllStructs.set(MessageMediaGeoLiveS._id, MessageMediaGeoLiveS);
 export class RecentMeUrlUnknownS {
   static _id = 0x46e1d13d;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_url(): string {
     return this._values[0];
@@ -58445,7 +59014,7 @@ AllStructs.set(RecentMeUrlUnknownS._id, RecentMeUrlUnknownS);
 export class RecentMeUrlUserS {
   static _id = 0x8dbc3336;
 
-  _values = ["", 0] as [string, number];
+  _values = (["", 0] as unknown) as [string, number];
 
   get_url(): string {
     return this._values[0];
@@ -58515,7 +59084,7 @@ AllStructs.set(RecentMeUrlUserS._id, RecentMeUrlUserS);
 export class RecentMeUrlChatS {
   static _id = 0xa01b22f9;
 
-  _values = ["", 0] as [string, number];
+  _values = (["", 0] as unknown) as [string, number];
 
   get_url(): string {
     return this._values[0];
@@ -58585,7 +59154,10 @@ AllStructs.set(RecentMeUrlChatS._id, RecentMeUrlChatS);
 export class RecentMeUrlChatInviteS {
   static _id = 0xeb49081d;
 
-  _values = ["", new ChatInviteT()] as [string, ChatInviteT];
+  _values = ([
+    "",
+    (new ChatInviteT() as unknown) as ChatInviteT
+  ] as unknown) as [string, ChatInviteT];
 
   get_url(): string {
     return this._values[0];
@@ -58657,7 +59229,10 @@ AllStructs.set(RecentMeUrlChatInviteS._id, RecentMeUrlChatInviteS);
 export class RecentMeUrlStickerSetS {
   static _id = 0xbc0a57dc;
 
-  _values = ["", new StickerSetCoveredT()] as [string, StickerSetCoveredT];
+  _values = ([
+    "",
+    (new StickerSetCoveredT() as unknown) as StickerSetCoveredT
+  ] as unknown) as [string, StickerSetCoveredT];
 
   get_url(): string {
     return this._values[0];
@@ -58730,7 +59305,11 @@ AllStructs.set(RecentMeUrlStickerSetS._id, RecentMeUrlStickerSetS);
 export class HelpRecentMeUrlsS {
   static _id = 0xe0310d7;
 
-  _values = [[], [], []] as [RecentMeUrlT[], ChatT[], UserT[]];
+  _values = ([[], [], []] as unknown) as [
+    RecentMeUrlT[],
+    ChatT[],
+    UserT[]
+  ];
 
   get_urls(): RecentMeUrlT[] {
     return this._values[0];
@@ -58818,7 +59397,7 @@ export class HelpRecentMeUrlsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: RecentMeUrlT = new RecentMeUrlT();
+        let val: RecentMeUrlT = (new RecentMeUrlT() as unknown) as RecentMeUrlT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -58836,7 +59415,7 @@ export class HelpRecentMeUrlsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -58854,7 +59433,7 @@ export class HelpRecentMeUrlsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -58876,7 +59455,7 @@ AllStructs.set(HelpRecentMeUrlsS._id, HelpRecentMeUrlsS);
 export class ChannelsChannelParticipantsNotModifiedS {
   static _id = 0xf0173fe9;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ChannelsChannelParticipantsNotModifiedS._id);
@@ -58906,7 +59485,7 @@ AllStructs.set(
 export class MessagesMessagesNotModifiedS {
   static _id = 0x74535f21;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_count(): number {
     return this._values[0];
@@ -58959,7 +59538,13 @@ AllStructs.set(MessagesMessagesNotModifiedS._id, MessagesMessagesNotModifiedS);
 export class InputSingleMediaS {
   static _id = 0x1cc6e91f;
 
-  _values = [0, new InputMediaT(), [0, 0], "", []] as [
+  _values = ([
+    0,
+    (new InputMediaT() as unknown) as InputMediaT,
+    [0, 0],
+    "",
+    []
+  ] as unknown) as [
     number,
     InputMediaT,
     ProtoLong,
@@ -59099,7 +59684,7 @@ export class InputSingleMediaS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -59129,7 +59714,7 @@ AllStructs.set(InputSingleMediaS._id, InputSingleMediaS);
 export class WebAuthorizationS {
   static _id = 0xcac943f2;
 
-  _values = [[0, 0], 0, "", "", "", 0, 0, "", ""] as [
+  _values = ([[0, 0], 0, "", "", "", 0, 0, "", ""] as unknown) as [
     ProtoLong,
     number,
     string,
@@ -59349,7 +59934,7 @@ AllStructs.set(WebAuthorizationS._id, WebAuthorizationS);
 export class AccountWebAuthorizationsS {
   static _id = 0xed56c9fc;
 
-  _values = [[], []] as [WebAuthorizationT[], UserT[]];
+  _values = ([[], []] as unknown) as [WebAuthorizationT[], UserT[]];
 
   get_authorizations(): WebAuthorizationT[] {
     return this._values[0];
@@ -59416,7 +60001,7 @@ export class AccountWebAuthorizationsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: WebAuthorizationT = new WebAuthorizationT();
+        let val: WebAuthorizationT = (new WebAuthorizationT() as unknown) as WebAuthorizationT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -59434,7 +60019,7 @@ export class AccountWebAuthorizationsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -59456,7 +60041,7 @@ AllStructs.set(AccountWebAuthorizationsS._id, AccountWebAuthorizationsS);
 export class InputMessageIdS {
   static _id = 0xa676a322;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_id(): number {
     return this._values[0];
@@ -59505,7 +60090,7 @@ AllStructs.set(InputMessageIdS._id, InputMessageIdS);
 export class InputMessageReplyToS {
   static _id = 0xbad88395;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_id(): number {
     return this._values[0];
@@ -59554,7 +60139,7 @@ AllStructs.set(InputMessageReplyToS._id, InputMessageReplyToS);
 export class InputMessagePinnedS {
   static _id = 0x86872538;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputMessagePinnedS._id);
@@ -59581,7 +60166,7 @@ AllStructs.set(InputMessagePinnedS._id, InputMessagePinnedS);
 export class MessageEntityPhoneS {
   static _id = 0x9b69e34b;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -59651,7 +60236,7 @@ AllStructs.set(MessageEntityPhoneS._id, MessageEntityPhoneS);
 export class MessageEntityCashtagS {
   static _id = 0x4c4e743f;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -59720,7 +60305,7 @@ AllStructs.set(MessageEntityCashtagS._id, MessageEntityCashtagS);
 export class MessageActionBotAllowedS {
   static _id = 0xabe9affe;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_domain(): string {
     return this._values[0];
@@ -59769,7 +60354,9 @@ AllStructs.set(MessageActionBotAllowedS._id, MessageActionBotAllowedS);
 export class InputDialogPeerS {
   static _id = 0xfcaafeb7;
 
-  _values = [new InputPeerT()] as [InputPeerT];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT] as unknown) as [
+    InputPeerT
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -59820,7 +60407,7 @@ AllStructs.set(InputDialogPeerS._id, InputDialogPeerS);
 export class DialogPeerS {
   static _id = 0xe56dbf05;
 
-  _values = [new PeerT()] as [PeerT];
+  _values = ([(new PeerT() as unknown) as PeerT] as unknown) as [PeerT];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -59871,7 +60458,7 @@ AllStructs.set(DialogPeerS._id, DialogPeerS);
 export class MessagesFoundStickerSetsNotModifiedS {
   static _id = 0xd54b65d;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesFoundStickerSetsNotModifiedS._id);
@@ -59902,7 +60489,7 @@ AllStructs.set(
 export class MessagesFoundStickerSetsS {
   static _id = 0x5108d648;
 
-  _values = [0, []] as [number, StickerSetCoveredT[]];
+  _values = ([0, []] as unknown) as [number, StickerSetCoveredT[]];
 
   get_hash(): number {
     return this._values[0];
@@ -59968,7 +60555,7 @@ export class MessagesFoundStickerSetsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: StickerSetCoveredT = new StickerSetCoveredT();
+        let val: StickerSetCoveredT = (new StickerSetCoveredT() as unknown) as StickerSetCoveredT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -59992,7 +60579,11 @@ AllStructs.set(MessagesFoundStickerSetsS._id, MessagesFoundStickerSetsS);
 export class FileHashS {
   static _id = 0x6242c773;
 
-  _values = [0, 0, new Uint8Array()] as [number, number, Uint8Array];
+  _values = ([0, 0, new Uint8Array()] as unknown) as [
+    number,
+    number,
+    Uint8Array
+  ];
 
   get_offset(): number {
     return this._values[0];
@@ -60084,7 +60675,7 @@ AllStructs.set(FileHashS._id, FileHashS);
 export class WebDocumentNoProxyS {
   static _id = 0xf9c8bcc6;
 
-  _values = ["", 0, "", []] as [
+  _values = (["", 0, "", []] as unknown) as [
     string,
     number,
     string,
@@ -60195,7 +60786,7 @@ export class WebDocumentNoProxyS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentAttributeT = new DocumentAttributeT();
+        let val: DocumentAttributeT = (new DocumentAttributeT() as unknown) as DocumentAttributeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -60218,7 +60809,7 @@ AllStructs.set(WebDocumentNoProxyS._id, WebDocumentNoProxyS);
 export class InputClientProxyS {
   static _id = 0x75588b3f;
 
-  _values = ["", 0] as [string, number];
+  _values = (["", 0] as unknown) as [string, number];
 
   get_address(): string {
     return this._values[0];
@@ -60287,7 +60878,7 @@ AllStructs.set(InputClientProxyS._id, InputClientProxyS);
 export class HelpProxyDataEmptyS {
   static _id = 0xe09e1fb8;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_expires(): number {
     return this._values[0];
@@ -60339,7 +60930,7 @@ AllStructs.set(HelpProxyDataEmptyS._id, HelpProxyDataEmptyS);
 export class HelpProxyDataPromoS {
   static _id = 0x2bf7ee23;
 
-  _values = [0, new PeerT(), [], []] as [
+  _values = ([0, (new PeerT() as unknown) as PeerT, [], []] as unknown) as [
     number,
     PeerT,
     ChatT[],
@@ -60453,7 +61044,7 @@ export class HelpProxyDataPromoS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ChatT = new ChatT();
+        let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -60471,7 +61062,7 @@ export class HelpProxyDataPromoS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -60493,7 +61084,7 @@ AllStructs.set(HelpProxyDataPromoS._id, HelpProxyDataPromoS);
 export class HelpTermsOfServiceUpdateEmptyS {
   static _id = 0xe3309f7f;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_expires(): number {
     return this._values[0];
@@ -60546,7 +61137,10 @@ AllStructs.set(
 export class HelpTermsOfServiceUpdateS {
   static _id = 0x28ecf961;
 
-  _values = [0, new HelpTermsOfServiceT()] as [number, HelpTermsOfServiceT];
+  _values = ([
+    0,
+    (new HelpTermsOfServiceT() as unknown) as HelpTermsOfServiceT
+  ] as unknown) as [number, HelpTermsOfServiceT];
 
   get_expires(): number {
     return this._values[0];
@@ -60621,13 +61215,13 @@ AllStructs.set(HelpTermsOfServiceUpdateS._id, HelpTermsOfServiceUpdateS);
 export class InputSecureFileUploadedS {
   static _id = 0x3334b0f0;
 
-  _values = [[0, 0], 0, "", new Uint8Array(), new Uint8Array()] as [
-    ProtoLong,
-    number,
-    string,
-    Uint8Array,
-    Uint8Array
-  ];
+  _values = ([
+    [0, 0],
+    0,
+    "",
+    new Uint8Array(),
+    new Uint8Array()
+  ] as unknown) as [ProtoLong, number, string, Uint8Array, Uint8Array];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -60757,7 +61351,7 @@ AllStructs.set(InputSecureFileUploadedS._id, InputSecureFileUploadedS);
 export class InputSecureFileS {
   static _id = 0x5367e5be;
 
-  _values = [[0, 0], [0, 0]] as [ProtoLong, ProtoLong];
+  _values = ([[0, 0], [0, 0]] as unknown) as [ProtoLong, ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -60827,7 +61421,7 @@ AllStructs.set(InputSecureFileS._id, InputSecureFileS);
 export class InputSecureFileLocationS {
   static _id = 0xcbc7ee28;
 
-  _values = [[0, 0], [0, 0]] as [ProtoLong, ProtoLong];
+  _values = ([[0, 0], [0, 0]] as unknown) as [ProtoLong, ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -60896,7 +61490,7 @@ AllStructs.set(InputSecureFileLocationS._id, InputSecureFileLocationS);
 export class SecureFileEmptyS {
   static _id = 0x64199744;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureFileEmptyS._id);
@@ -60928,7 +61522,15 @@ AllStructs.set(SecureFileEmptyS._id, SecureFileEmptyS);
 export class SecureFileS {
   static _id = 0xe0277a62;
 
-  _values = [[0, 0], [0, 0], 0, 0, 0, new Uint8Array(), new Uint8Array()] as [
+  _values = ([
+    [0, 0],
+    [0, 0],
+    0,
+    0,
+    0,
+    new Uint8Array(),
+    new Uint8Array()
+  ] as unknown) as [
     ProtoLong,
     ProtoLong,
     number,
@@ -61107,11 +61709,11 @@ AllStructs.set(SecureFileS._id, SecureFileS);
 export class SecureDataS {
   static _id = 0x8aeabec3;
 
-  _values = [new Uint8Array(), new Uint8Array(), new Uint8Array()] as [
-    Uint8Array,
-    Uint8Array,
-    Uint8Array
-  ];
+  _values = ([
+    new Uint8Array(),
+    new Uint8Array(),
+    new Uint8Array()
+  ] as unknown) as [Uint8Array, Uint8Array, Uint8Array];
 
   get_data(): Uint8Array {
     return this._values[0];
@@ -61200,7 +61802,7 @@ AllStructs.set(SecureDataS._id, SecureDataS);
 export class SecurePlainPhoneS {
   static _id = 0x7d6099dd;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_phone(): string {
     return this._values[0];
@@ -61249,7 +61851,7 @@ AllStructs.set(SecurePlainPhoneS._id, SecurePlainPhoneS);
 export class SecurePlainEmailS {
   static _id = 0x21ec5a5f;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_email(): string {
     return this._values[0];
@@ -61298,7 +61900,7 @@ AllStructs.set(SecurePlainEmailS._id, SecurePlainEmailS);
 export class SecureValueTypePersonalDetailsS {
   static _id = 0x9d2a81e3;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypePersonalDetailsS._id);
@@ -61327,7 +61929,7 @@ AllStructs.set(
 export class SecureValueTypePassportS {
   static _id = 0x3dac6a00;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypePassportS._id);
@@ -61353,7 +61955,7 @@ AllStructs.set(SecureValueTypePassportS._id, SecureValueTypePassportS);
 export class SecureValueTypeDriverLicenseS {
   static _id = 0x6e425c4;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypeDriverLicenseS._id);
@@ -61382,7 +61984,7 @@ AllStructs.set(
 export class SecureValueTypeIdentityCardS {
   static _id = 0xa0d0744b;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypeIdentityCardS._id);
@@ -61408,7 +62010,7 @@ AllStructs.set(SecureValueTypeIdentityCardS._id, SecureValueTypeIdentityCardS);
 export class SecureValueTypeInternalPassportS {
   static _id = 0x99a48f23;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypeInternalPassportS._id);
@@ -61437,7 +62039,7 @@ AllStructs.set(
 export class SecureValueTypeAddressS {
   static _id = 0xcbe31e26;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypeAddressS._id);
@@ -61463,7 +62065,7 @@ AllStructs.set(SecureValueTypeAddressS._id, SecureValueTypeAddressS);
 export class SecureValueTypeUtilityBillS {
   static _id = 0xfc36954e;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypeUtilityBillS._id);
@@ -61489,7 +62091,7 @@ AllStructs.set(SecureValueTypeUtilityBillS._id, SecureValueTypeUtilityBillS);
 export class SecureValueTypeBankStatementS {
   static _id = 0x89137c0d;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypeBankStatementS._id);
@@ -61518,7 +62120,7 @@ AllStructs.set(
 export class SecureValueTypeRentalAgreementS {
   static _id = 0x8b883488;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypeRentalAgreementS._id);
@@ -61547,7 +62149,7 @@ AllStructs.set(
 export class SecureValueTypePassportRegistrationS {
   static _id = 0x99e3806a;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypePassportRegistrationS._id);
@@ -61577,7 +62179,7 @@ AllStructs.set(
 export class SecureValueTypeTemporaryRegistrationS {
   static _id = 0xea02ec33;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypeTemporaryRegistrationS._id);
@@ -61607,7 +62209,7 @@ AllStructs.set(
 export class SecureValueTypePhoneS {
   static _id = 0xb320aadb;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypePhoneS._id);
@@ -61633,7 +62235,7 @@ AllStructs.set(SecureValueTypePhoneS._id, SecureValueTypePhoneS);
 export class SecureValueTypeEmailS {
   static _id = 0x8e3ca7ee;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecureValueTypeEmailS._id);
@@ -61668,18 +62270,18 @@ AllStructs.set(SecureValueTypeEmailS._id, SecureValueTypeEmailS);
 export class SecureValueS {
   static _id = 0x187fa0ca;
 
-  _values = [
+  _values = ([
     0,
-    new SecureValueTypeT(),
-    new SecureDataT(),
-    new SecureFileT(),
-    new SecureFileT(),
-    new SecureFileT(),
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    (new SecureDataT() as unknown) as SecureDataT,
+    (new SecureFileT() as unknown) as SecureFileT,
+    (new SecureFileT() as unknown) as SecureFileT,
+    (new SecureFileT() as unknown) as SecureFileT,
     [],
     [],
-    new SecurePlainDataT(),
+    (new SecurePlainDataT() as unknown) as SecurePlainDataT,
     new Uint8Array()
-  ] as [
+  ] as unknown) as [
     number,
     SecureValueTypeT,
     SecureDataT,
@@ -61957,7 +62559,7 @@ export class SecureValueS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureFileT = new SecureFileT();
+        let val: SecureFileT = (new SecureFileT() as unknown) as SecureFileT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -61975,7 +62577,7 @@ export class SecureValueS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureFileT = new SecureFileT();
+        let val: SecureFileT = (new SecureFileT() as unknown) as SecureFileT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -62019,17 +62621,17 @@ AllStructs.set(SecureValueS._id, SecureValueS);
 export class InputSecureValueS {
   static _id = 0xdb21d0a7;
 
-  _values = [
+  _values = ([
     0,
-    new SecureValueTypeT(),
-    new SecureDataT(),
-    new InputSecureFileT(),
-    new InputSecureFileT(),
-    new InputSecureFileT(),
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    (new SecureDataT() as unknown) as SecureDataT,
+    (new InputSecureFileT() as unknown) as InputSecureFileT,
+    (new InputSecureFileT() as unknown) as InputSecureFileT,
+    (new InputSecureFileT() as unknown) as InputSecureFileT,
     [],
     [],
-    new SecurePlainDataT()
-  ] as [
+    (new SecurePlainDataT() as unknown) as SecurePlainDataT
+  ] as unknown) as [
     number,
     SecureValueTypeT,
     SecureDataT,
@@ -62292,7 +62894,7 @@ export class InputSecureValueS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputSecureFileT = new InputSecureFileT();
+        let val: InputSecureFileT = (new InputSecureFileT() as unknown) as InputSecureFileT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -62310,7 +62912,7 @@ export class InputSecureValueS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputSecureFileT = new InputSecureFileT();
+        let val: InputSecureFileT = (new InputSecureFileT() as unknown) as InputSecureFileT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -62341,10 +62943,10 @@ AllStructs.set(InputSecureValueS._id, InputSecureValueS);
 export class SecureValueHashS {
   static _id = 0xed1ecdb0;
 
-  _values = [new SecureValueTypeT(), new Uint8Array()] as [
-    SecureValueTypeT,
-    Uint8Array
-  ];
+  _values = ([
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    new Uint8Array()
+  ] as unknown) as [SecureValueTypeT, Uint8Array];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -62418,12 +63020,12 @@ AllStructs.set(SecureValueHashS._id, SecureValueHashS);
 export class SecureValueErrorDataS {
   static _id = 0xe8a40bd9;
 
-  _values = [new SecureValueTypeT(), new Uint8Array(), "", ""] as [
-    SecureValueTypeT,
-    Uint8Array,
-    string,
-    string
-  ];
+  _values = ([
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    new Uint8Array(),
+    "",
+    ""
+  ] as unknown) as [SecureValueTypeT, Uint8Array, string, string];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -62536,11 +63138,11 @@ AllStructs.set(SecureValueErrorDataS._id, SecureValueErrorDataS);
 export class SecureValueErrorFrontSideS {
   static _id = 0xbe3dfa;
 
-  _values = [new SecureValueTypeT(), new Uint8Array(), ""] as [
-    SecureValueTypeT,
-    Uint8Array,
-    string
-  ];
+  _values = ([
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    new Uint8Array(),
+    ""
+  ] as unknown) as [SecureValueTypeT, Uint8Array, string];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -62633,11 +63235,11 @@ AllStructs.set(SecureValueErrorFrontSideS._id, SecureValueErrorFrontSideS);
 export class SecureValueErrorReverseSideS {
   static _id = 0x868a2aa5;
 
-  _values = [new SecureValueTypeT(), new Uint8Array(), ""] as [
-    SecureValueTypeT,
-    Uint8Array,
-    string
-  ];
+  _values = ([
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    new Uint8Array(),
+    ""
+  ] as unknown) as [SecureValueTypeT, Uint8Array, string];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -62730,11 +63332,11 @@ AllStructs.set(SecureValueErrorReverseSideS._id, SecureValueErrorReverseSideS);
 export class SecureValueErrorSelfieS {
   static _id = 0xe537ced6;
 
-  _values = [new SecureValueTypeT(), new Uint8Array(), ""] as [
-    SecureValueTypeT,
-    Uint8Array,
-    string
-  ];
+  _values = ([
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    new Uint8Array(),
+    ""
+  ] as unknown) as [SecureValueTypeT, Uint8Array, string];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -62827,11 +63429,11 @@ AllStructs.set(SecureValueErrorSelfieS._id, SecureValueErrorSelfieS);
 export class SecureValueErrorFileS {
   static _id = 0x7a700873;
 
-  _values = [new SecureValueTypeT(), new Uint8Array(), ""] as [
-    SecureValueTypeT,
-    Uint8Array,
-    string
-  ];
+  _values = ([
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    new Uint8Array(),
+    ""
+  ] as unknown) as [SecureValueTypeT, Uint8Array, string];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -62924,11 +63526,11 @@ AllStructs.set(SecureValueErrorFileS._id, SecureValueErrorFileS);
 export class SecureValueErrorFilesS {
   static _id = 0x666220e9;
 
-  _values = [new SecureValueTypeT(), [], ""] as [
-    SecureValueTypeT,
-    Uint8Array[],
-    string
-  ];
+  _values = ([
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    [],
+    ""
+  ] as unknown) as [SecureValueTypeT, Uint8Array[], string];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -63038,11 +63640,11 @@ AllStructs.set(SecureValueErrorFilesS._id, SecureValueErrorFilesS);
 export class SecureCredentialsEncryptedS {
   static _id = 0x33f0ea47;
 
-  _values = [new Uint8Array(), new Uint8Array(), new Uint8Array()] as [
-    Uint8Array,
-    Uint8Array,
-    Uint8Array
-  ];
+  _values = ([
+    new Uint8Array(),
+    new Uint8Array(),
+    new Uint8Array()
+  ] as unknown) as [Uint8Array, Uint8Array, Uint8Array];
 
   get_data(): Uint8Array {
     return this._values[0];
@@ -63136,7 +63738,7 @@ AllStructs.set(SecureCredentialsEncryptedS._id, SecureCredentialsEncryptedS);
 export class AccountAuthorizationFormS {
   static _id = 0xad2e1cd8;
 
-  _values = [0, [], [], [], [], ""] as [
+  _values = ([0, [], [], [], [], ""] as unknown) as [
     number,
     SecureRequiredTypeT[],
     SecureValueT[],
@@ -63292,7 +63894,7 @@ export class AccountAuthorizationFormS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureRequiredTypeT = new SecureRequiredTypeT();
+        let val: SecureRequiredTypeT = (new SecureRequiredTypeT() as unknown) as SecureRequiredTypeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -63310,7 +63912,7 @@ export class AccountAuthorizationFormS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureValueT = new SecureValueT();
+        let val: SecureValueT = (new SecureValueT() as unknown) as SecureValueT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -63328,7 +63930,7 @@ export class AccountAuthorizationFormS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureValueErrorT = new SecureValueErrorT();
+        let val: SecureValueErrorT = (new SecureValueErrorT() as unknown) as SecureValueErrorT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -63346,7 +63948,7 @@ export class AccountAuthorizationFormS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: UserT = new UserT();
+        let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -63375,7 +63977,7 @@ AllStructs.set(AccountAuthorizationFormS._id, AccountAuthorizationFormS);
 export class AccountSentEmailCodeS {
   static _id = 0x811f854f;
 
-  _values = ["", 0] as [string, number];
+  _values = (["", 0] as unknown) as [string, number];
 
   get_email_pattern(): string {
     return this._values[0];
@@ -63445,10 +64047,10 @@ AllStructs.set(AccountSentEmailCodeS._id, AccountSentEmailCodeS);
 export class MessageActionSecureValuesSentMeS {
   static _id = 0x1b287353;
 
-  _values = [[], new SecureCredentialsEncryptedT()] as [
-    SecureValueT[],
-    SecureCredentialsEncryptedT
-  ];
+  _values = ([
+    [],
+    (new SecureCredentialsEncryptedT() as unknown) as SecureCredentialsEncryptedT
+  ] as unknown) as [SecureValueT[], SecureCredentialsEncryptedT];
 
   get_values(): SecureValueT[] {
     return this._values[0];
@@ -63508,7 +64110,7 @@ export class MessageActionSecureValuesSentMeS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureValueT = new SecureValueT();
+        let val: SecureValueT = (new SecureValueT() as unknown) as SecureValueT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -63541,7 +64143,7 @@ AllStructs.set(
 export class MessageActionSecureValuesSentS {
   static _id = 0xd95c6154;
 
-  _values = [[]] as [SecureValueTypeT[]];
+  _values = ([[]] as unknown) as [SecureValueTypeT[]];
 
   get_types(): SecureValueTypeT[] {
     return this._values[0];
@@ -63587,7 +64189,7 @@ export class MessageActionSecureValuesSentS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureValueTypeT = new SecureValueTypeT();
+        let val: SecureValueTypeT = (new SecureValueTypeT() as unknown) as SecureValueTypeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -63612,7 +64214,7 @@ AllStructs.set(
 export class HelpDeepLinkInfoEmptyS {
   static _id = 0x66afa166;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpDeepLinkInfoEmptyS._id);
@@ -63641,7 +64243,12 @@ AllStructs.set(HelpDeepLinkInfoEmptyS._id, HelpDeepLinkInfoEmptyS);
 export class HelpDeepLinkInfoS {
   static _id = 0x6a4ee832;
 
-  _values = [0, true, "", []] as [number, true, string, MessageEntityT[]];
+  _values = ([0, true, "", []] as unknown) as [
+    number,
+    true,
+    string,
+    MessageEntityT[]
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -63758,7 +64365,7 @@ export class HelpDeepLinkInfoS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -63783,7 +64390,7 @@ AllStructs.set(HelpDeepLinkInfoS._id, HelpDeepLinkInfoS);
 export class SavedPhoneContactS {
   static _id = 0x1142bd56;
 
-  _values = ["", "", "", 0] as [string, string, string, number];
+  _values = (["", "", "", 0] as unknown) as [string, string, string, number];
 
   get_phone(): string {
     return this._values[0];
@@ -63892,7 +64499,7 @@ AllStructs.set(SavedPhoneContactS._id, SavedPhoneContactS);
 export class AccountTakeoutS {
   static _id = 0x4dba4501;
 
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -63941,7 +64548,7 @@ AllStructs.set(AccountTakeoutS._id, AccountTakeoutS);
 export class InputTakeoutFileLocationS {
   static _id = 0x29be5899;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputTakeoutFileLocationS._id);
@@ -63969,7 +64576,11 @@ AllStructs.set(InputTakeoutFileLocationS._id, InputTakeoutFileLocationS);
 export class UpdateDialogUnreadMarkS {
   static _id = 0xe16459c3;
 
-  _values = [0, true, new DialogPeerT()] as [number, true, DialogPeerT];
+  _values = ([
+    0,
+    true,
+    (new DialogPeerT() as unknown) as DialogPeerT
+  ] as unknown) as [number, true, DialogPeerT];
 
   get_flags(): number {
     return this._values[0];
@@ -64065,7 +64676,7 @@ AllStructs.set(UpdateDialogUnreadMarkS._id, UpdateDialogUnreadMarkS);
 export class MessagesDialogsNotModifiedS {
   static _id = 0xf0e3e596;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_count(): number {
     return this._values[0];
@@ -64119,14 +64730,14 @@ AllStructs.set(MessagesDialogsNotModifiedS._id, MessagesDialogsNotModifiedS);
 export class InputWebFileGeoPointLocationS {
   static _id = 0x9f2221c9;
 
-  _values = [new InputGeoPointT(), [0, 0], 0, 0, 0, 0] as [
-    InputGeoPointT,
-    ProtoLong,
-    number,
-    number,
-    number,
-    number
-  ];
+  _values = ([
+    (new InputGeoPointT() as unknown) as InputGeoPointT,
+    [0, 0],
+    0,
+    0,
+    0,
+    0
+  ] as unknown) as [InputGeoPointT, ProtoLong, number, number, number, number];
 
   get_geo_point(): InputGeoPointT {
     return this._values[0];
@@ -64280,7 +64891,7 @@ AllStructs.set(
 export class ContactsTopPeersDisabledS {
   static _id = 0xb52c939d;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ContactsTopPeersDisabledS._id);
@@ -64306,7 +64917,7 @@ AllStructs.set(ContactsTopPeersDisabledS._id, ContactsTopPeersDisabledS);
 export class InputReportReasonCopyrightS {
   static _id = 0x9b89f93a;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputReportReasonCopyrightS._id);
@@ -64332,7 +64943,7 @@ AllStructs.set(InputReportReasonCopyrightS._id, InputReportReasonCopyrightS);
 export class PasswordKdfAlgoUnknownS {
   static _id = 0xd45ab096;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PasswordKdfAlgoUnknownS._id);
@@ -64358,7 +64969,7 @@ AllStructs.set(PasswordKdfAlgoUnknownS._id, PasswordKdfAlgoUnknownS);
 export class SecurePasswordKdfAlgoUnknownS {
   static _id = 0x4a8537;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(SecurePasswordKdfAlgoUnknownS._id);
@@ -64387,7 +64998,7 @@ AllStructs.set(
 export class SecurePasswordKdfAlgoPbkdf2Hmacsha512Iter100000S {
   static _id = 0xbbf2dda0;
 
-  _values = [new Uint8Array()] as [Uint8Array];
+  _values = ([new Uint8Array()] as unknown) as [Uint8Array];
 
   get_salt(): Uint8Array {
     return this._values[0];
@@ -64441,7 +65052,7 @@ AllStructs.set(
 export class SecurePasswordKdfAlgoSha512S {
   static _id = 0x86471d92;
 
-  _values = [new Uint8Array()] as [Uint8Array];
+  _values = ([new Uint8Array()] as unknown) as [Uint8Array];
 
   get_salt(): Uint8Array {
     return this._values[0];
@@ -64492,11 +65103,11 @@ AllStructs.set(SecurePasswordKdfAlgoSha512S._id, SecurePasswordKdfAlgoSha512S);
 export class SecureSecretSettingsS {
   static _id = 0x1527bcac;
 
-  _values = [new SecurePasswordKdfAlgoT(), new Uint8Array(), [0, 0]] as [
-    SecurePasswordKdfAlgoT,
-    Uint8Array,
-    ProtoLong
-  ];
+  _values = ([
+    (new SecurePasswordKdfAlgoT() as unknown) as SecurePasswordKdfAlgoT,
+    new Uint8Array(),
+    [0, 0]
+  ] as unknown) as [SecurePasswordKdfAlgoT, Uint8Array, ProtoLong];
 
   get_secure_algo(): SecurePasswordKdfAlgoT {
     return this._values[0];
@@ -64590,12 +65201,12 @@ AllStructs.set(SecureSecretSettingsS._id, SecureSecretSettingsS);
 export class PasswordKdfAlgoSha256Sha256Pbkdf2Hmacsha512Iter100000Sha256ModPowS {
   static _id = 0x3a912d4a;
 
-  _values = [new Uint8Array(), new Uint8Array(), 0, new Uint8Array()] as [
-    Uint8Array,
-    Uint8Array,
-    number,
-    Uint8Array
-  ];
+  _values = ([
+    new Uint8Array(),
+    new Uint8Array(),
+    0,
+    new Uint8Array()
+  ] as unknown) as [Uint8Array, Uint8Array, number, Uint8Array];
 
   get_salt1(): Uint8Array {
     return this._values[0];
@@ -64714,7 +65325,7 @@ AllStructs.set(
 export class InputCheckPasswordEmptyS {
   static _id = 0x9880f658;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputCheckPasswordEmptyS._id);
@@ -64742,7 +65353,7 @@ AllStructs.set(InputCheckPasswordEmptyS._id, InputCheckPasswordEmptyS);
 export class InputCheckPasswordSrpS {
   static _id = 0xd27ff082;
 
-  _values = [[0, 0], new Uint8Array(), new Uint8Array()] as [
+  _values = ([[0, 0], new Uint8Array(), new Uint8Array()] as unknown) as [
     ProtoLong,
     Uint8Array,
     Uint8Array
@@ -64837,11 +65448,11 @@ AllStructs.set(InputCheckPasswordSrpS._id, InputCheckPasswordSrpS);
 export class SecureValueErrorS {
   static _id = 0x869d758f;
 
-  _values = [new SecureValueTypeT(), new Uint8Array(), ""] as [
-    SecureValueTypeT,
-    Uint8Array,
-    string
-  ];
+  _values = ([
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    new Uint8Array(),
+    ""
+  ] as unknown) as [SecureValueTypeT, Uint8Array, string];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -64934,11 +65545,11 @@ AllStructs.set(SecureValueErrorS._id, SecureValueErrorS);
 export class SecureValueErrorTranslationFileS {
   static _id = 0xa1144770;
 
-  _values = [new SecureValueTypeT(), new Uint8Array(), ""] as [
-    SecureValueTypeT,
-    Uint8Array,
-    string
-  ];
+  _values = ([
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    new Uint8Array(),
+    ""
+  ] as unknown) as [SecureValueTypeT, Uint8Array, string];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -65034,11 +65645,11 @@ AllStructs.set(
 export class SecureValueErrorTranslationFilesS {
   static _id = 0x34636dd8;
 
-  _values = [new SecureValueTypeT(), [], ""] as [
-    SecureValueTypeT,
-    Uint8Array[],
-    string
-  ];
+  _values = ([
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT,
+    [],
+    ""
+  ] as unknown) as [SecureValueTypeT, Uint8Array[], string];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -65153,13 +65764,13 @@ AllStructs.set(
 export class SecureRequiredTypeS {
   static _id = 0x829d99da;
 
-  _values = [0, true, true, true, new SecureValueTypeT()] as [
-    number,
+  _values = ([
+    0,
     true,
     true,
     true,
-    SecureValueTypeT
-  ];
+    (new SecureValueTypeT() as unknown) as SecureValueTypeT
+  ] as unknown) as [number, true, true, true, SecureValueTypeT];
 
   get_flags(): number {
     return this._values[0];
@@ -65305,7 +65916,7 @@ AllStructs.set(SecureRequiredTypeS._id, SecureRequiredTypeS);
 export class SecureRequiredTypeOneOfS {
   static _id = 0x27477b4;
 
-  _values = [[]] as [SecureRequiredTypeT[]];
+  _values = ([[]] as unknown) as [SecureRequiredTypeT[]];
 
   get_types(): SecureRequiredTypeT[] {
     return this._values[0];
@@ -65351,7 +65962,7 @@ export class SecureRequiredTypeOneOfS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureRequiredTypeT = new SecureRequiredTypeT();
+        let val: SecureRequiredTypeT = (new SecureRequiredTypeT() as unknown) as SecureRequiredTypeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -65373,7 +65984,7 @@ AllStructs.set(SecureRequiredTypeOneOfS._id, SecureRequiredTypeOneOfS);
 export class HelpPassportConfigNotModifiedS {
   static _id = 0xbfb9f457;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpPassportConfigNotModifiedS._id);
@@ -65403,7 +66014,10 @@ AllStructs.set(
 export class HelpPassportConfigS {
   static _id = 0xa098d6af;
 
-  _values = [0, new DataJsonT()] as [number, DataJsonT];
+  _values = ([0, (new DataJsonT() as unknown) as DataJsonT] as unknown) as [
+    number,
+    DataJsonT
+  ];
 
   get_hash(): number {
     return this._values[0];
@@ -65477,12 +66091,12 @@ AllStructs.set(HelpPassportConfigS._id, HelpPassportConfigS);
 export class InputAppEventS {
   static _id = 0x1d1b1245;
 
-  _values = [0.0, "", [0, 0], new JsonValueT()] as [
-    number,
-    string,
-    ProtoLong,
-    JsonValueT
-  ];
+  _values = ([
+    0.0,
+    "",
+    [0, 0],
+    (new JsonValueT() as unknown) as JsonValueT
+  ] as unknown) as [number, string, ProtoLong, JsonValueT];
 
   get_time(): number {
     return this._values[0];
@@ -65594,7 +66208,10 @@ AllStructs.set(InputAppEventS._id, InputAppEventS);
 export class JsonObjectValueS {
   static _id = 0xc0de1bd9;
 
-  _values = ["", new JsonValueT()] as [string, JsonValueT];
+  _values = (["", (new JsonValueT() as unknown) as JsonValueT] as unknown) as [
+    string,
+    JsonValueT
+  ];
 
   get_key(): string {
     return this._values[0];
@@ -65665,7 +66282,7 @@ AllStructs.set(JsonObjectValueS._id, JsonObjectValueS);
 export class JsonNullS {
   static _id = 0x3f6d7b68;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(JsonNullS._id);
@@ -65691,7 +66308,7 @@ AllStructs.set(JsonNullS._id, JsonNullS);
 export class JsonBoolS {
   static _id = 0xc7345e6a;
 
-  _values = [new BoolT()] as [BoolT];
+  _values = ([(new BoolT() as unknown) as BoolT] as unknown) as [BoolT];
 
   get_value(): BoolT {
     return this._values[0];
@@ -65742,7 +66359,7 @@ AllStructs.set(JsonBoolS._id, JsonBoolS);
 export class JsonNumberS {
   static _id = 0x2be0dfa4;
 
-  _values = [0.0] as [number];
+  _values = ([0.0] as unknown) as [number];
 
   get_value(): number {
     return this._values[0];
@@ -65791,7 +66408,7 @@ AllStructs.set(JsonNumberS._id, JsonNumberS);
 export class JsonStringS {
   static _id = 0xb71e767a;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_value(): string {
     return this._values[0];
@@ -65840,7 +66457,7 @@ AllStructs.set(JsonStringS._id, JsonStringS);
 export class JsonArrayS {
   static _id = 0xf7444763;
 
-  _values = [[]] as [JsonValueT[]];
+  _values = ([[]] as unknown) as [JsonValueT[]];
 
   get_value(): JsonValueT[] {
     return this._values[0];
@@ -65886,7 +66503,7 @@ export class JsonArrayS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: JsonValueT = new JsonValueT();
+        let val: JsonValueT = (new JsonValueT() as unknown) as JsonValueT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -65908,7 +66525,7 @@ AllStructs.set(JsonArrayS._id, JsonArrayS);
 export class JsonObjectS {
   static _id = 0x99c1d49d;
 
-  _values = [[]] as [JsonObjectValueT[]];
+  _values = ([[]] as unknown) as [JsonObjectValueT[]];
 
   get_value(): JsonObjectValueT[] {
     return this._values[0];
@@ -65954,7 +66571,7 @@ export class JsonObjectS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: JsonObjectValueT = new JsonObjectValueT();
+        let val: JsonObjectValueT = (new JsonObjectValueT() as unknown) as JsonObjectValueT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -65977,7 +66594,7 @@ AllStructs.set(JsonObjectS._id, JsonObjectS);
 export class UpdateUserPinnedMessageS {
   static _id = 0x4c43da18;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_user_id(): number {
     return this._values[0];
@@ -66048,7 +66665,7 @@ AllStructs.set(UpdateUserPinnedMessageS._id, UpdateUserPinnedMessageS);
 export class UpdateChatPinnedMessageS {
   static _id = 0xe10db349;
 
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_chat_id(): number {
     return this._values[0];
@@ -66137,7 +66754,7 @@ AllStructs.set(UpdateChatPinnedMessageS._id, UpdateChatPinnedMessageS);
 export class InputNotifyBroadcastsS {
   static _id = 0xb1db7c7e;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputNotifyBroadcastsS._id);
@@ -66163,7 +66780,7 @@ AllStructs.set(InputNotifyBroadcastsS._id, InputNotifyBroadcastsS);
 export class NotifyBroadcastsS {
   static _id = 0xd612e8ef;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(NotifyBroadcastsS._id);
@@ -66189,7 +66806,9 @@ AllStructs.set(NotifyBroadcastsS._id, NotifyBroadcastsS);
 export class TextSubscriptS {
   static _id = 0xed6a8504;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -66240,7 +66859,9 @@ AllStructs.set(TextSubscriptS._id, TextSubscriptS);
 export class TextSuperscriptS {
   static _id = 0xc7fb5e01;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -66291,7 +66912,9 @@ AllStructs.set(TextSuperscriptS._id, TextSuperscriptS);
 export class TextMarkedS {
   static _id = 0x34b8621;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -66343,7 +66966,10 @@ AllStructs.set(TextMarkedS._id, TextMarkedS);
 export class TextPhoneS {
   static _id = 0x1ccb966a;
 
-  _values = [new RichTextT(), ""] as [RichTextT, string];
+  _values = ([(new RichTextT() as unknown) as RichTextT, ""] as unknown) as [
+    RichTextT,
+    string
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -66416,7 +67042,7 @@ AllStructs.set(TextPhoneS._id, TextPhoneS);
 export class TextImageS {
   static _id = 0x81ccf4f;
 
-  _values = [[0, 0], 0, 0] as [ProtoLong, number, number];
+  _values = ([[0, 0], 0, 0] as unknown) as [ProtoLong, number, number];
 
   get_document_id(): ProtoLong {
     return this._values[0];
@@ -66505,7 +67131,9 @@ AllStructs.set(TextImageS._id, TextImageS);
 export class PageBlockKickerS {
   static _id = 0x1e148390;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -66564,7 +67192,17 @@ AllStructs.set(PageBlockKickerS._id, PageBlockKickerS);
 export class PageTableCellS {
   static _id = 0x34566b6a;
 
-  _values = [0, true, true, true, true, true, new RichTextT(), 0, 0] as [
+  _values = ([
+    0,
+    true,
+    true,
+    true,
+    true,
+    true,
+    (new RichTextT() as unknown) as RichTextT,
+    0,
+    0
+  ] as unknown) as [
     number,
     true,
     true,
@@ -66828,7 +67466,7 @@ AllStructs.set(PageTableCellS._id, PageTableCellS);
 export class PageTableRowS {
   static _id = 0xe0c0c5e5;
 
-  _values = [[]] as [PageTableCellT[]];
+  _values = ([[]] as unknown) as [PageTableCellT[]];
 
   get_cells(): PageTableCellT[] {
     return this._values[0];
@@ -66874,7 +67512,7 @@ export class PageTableRowS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageTableCellT = new PageTableCellT();
+        let val: PageTableCellT = (new PageTableCellT() as unknown) as PageTableCellT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -66900,13 +67538,13 @@ AllStructs.set(PageTableRowS._id, PageTableRowS);
 export class PageBlockTableS {
   static _id = 0xbf4dea82;
 
-  _values = [0, true, true, new RichTextT(), []] as [
-    number,
+  _values = ([
+    0,
     true,
     true,
-    RichTextT,
-    PageTableRowT[]
-  ];
+    (new RichTextT() as unknown) as RichTextT,
+    []
+  ] as unknown) as [number, true, true, RichTextT, PageTableRowT[]];
 
   get_flags(): number {
     return this._values[0];
@@ -67044,7 +67682,7 @@ export class PageBlockTableS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageTableRowT = new PageTableRowT();
+        let val: PageTableRowT = (new PageTableRowT() as unknown) as PageTableRowT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -67067,7 +67705,10 @@ AllStructs.set(PageBlockTableS._id, PageBlockTableS);
 export class PageCaptionS {
   static _id = 0x6f747657;
 
-  _values = [new RichTextT(), new RichTextT()] as [RichTextT, RichTextT];
+  _values = ([
+    (new RichTextT() as unknown) as RichTextT,
+    (new RichTextT() as unknown) as RichTextT
+  ] as unknown) as [RichTextT, RichTextT];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -67140,7 +67781,9 @@ AllStructs.set(PageCaptionS._id, PageCaptionS);
 export class PageListItemTextS {
   static _id = 0xb92fb6cd;
 
-  _values = [new RichTextT()] as [RichTextT];
+  _values = ([(new RichTextT() as unknown) as RichTextT] as unknown) as [
+    RichTextT
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -67191,7 +67834,7 @@ AllStructs.set(PageListItemTextS._id, PageListItemTextS);
 export class PageListItemBlocksS {
   static _id = 0x25e073fc;
 
-  _values = [[]] as [PageBlockT[]];
+  _values = ([[]] as unknown) as [PageBlockT[]];
 
   get_blocks(): PageBlockT[] {
     return this._values[0];
@@ -67237,7 +67880,7 @@ export class PageListItemBlocksS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageBlockT = new PageBlockT();
+        let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -67260,7 +67903,10 @@ AllStructs.set(PageListItemBlocksS._id, PageListItemBlocksS);
 export class PageListOrderedItemTextS {
   static _id = 0x5e068047;
 
-  _values = ["", new RichTextT()] as [string, RichTextT];
+  _values = (["", (new RichTextT() as unknown) as RichTextT] as unknown) as [
+    string,
+    RichTextT
+  ];
 
   get_num(): string {
     return this._values[0];
@@ -67332,7 +67978,7 @@ AllStructs.set(PageListOrderedItemTextS._id, PageListOrderedItemTextS);
 export class PageListOrderedItemBlocksS {
   static _id = 0x98dd8936;
 
-  _values = ["", []] as [string, PageBlockT[]];
+  _values = (["", []] as unknown) as [string, PageBlockT[]];
 
   get_num(): string {
     return this._values[0];
@@ -67398,7 +68044,7 @@ export class PageListOrderedItemBlocksS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageBlockT = new PageBlockT();
+        let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -67420,7 +68066,7 @@ AllStructs.set(PageListOrderedItemBlocksS._id, PageListOrderedItemBlocksS);
 export class PageBlockOrderedListS {
   static _id = 0x9a8ae1e1;
 
-  _values = [[]] as [PageListOrderedItemT[]];
+  _values = ([[]] as unknown) as [PageListOrderedItemT[]];
 
   get_items(): PageListOrderedItemT[] {
     return this._values[0];
@@ -67466,7 +68112,7 @@ export class PageBlockOrderedListS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageListOrderedItemT = new PageListOrderedItemT();
+        let val: PageListOrderedItemT = (new PageListOrderedItemT() as unknown) as PageListOrderedItemT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -67491,12 +68137,12 @@ AllStructs.set(PageBlockOrderedListS._id, PageBlockOrderedListS);
 export class PageBlockDetailsS {
   static _id = 0x76768bed;
 
-  _values = [0, true, [], new RichTextT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    PageBlockT[],
-    RichTextT
-  ];
+    [],
+    (new RichTextT() as unknown) as RichTextT
+  ] as unknown) as [number, true, PageBlockT[], RichTextT];
 
   get_flags(): number {
     return this._values[0];
@@ -67601,7 +68247,7 @@ export class PageBlockDetailsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageBlockT = new PageBlockT();
+        let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -67638,7 +68284,7 @@ AllStructs.set(PageBlockDetailsS._id, PageBlockDetailsS);
 export class PageRelatedArticleS {
   static _id = 0xb390dc08;
 
-  _values = [0, "", [0, 0], "", "", [0, 0], "", 0] as [
+  _values = ([0, "", [0, 0], "", "", [0, 0], "", 0] as unknown) as [
     number,
     string,
     ProtoLong,
@@ -67867,7 +68513,10 @@ AllStructs.set(PageRelatedArticleS._id, PageRelatedArticleS);
 export class PageBlockRelatedArticlesS {
   static _id = 0x16115a96;
 
-  _values = [new RichTextT(), []] as [RichTextT, PageRelatedArticleT[]];
+  _values = ([(new RichTextT() as unknown) as RichTextT, []] as unknown) as [
+    RichTextT,
+    PageRelatedArticleT[]
+  ];
 
   get_title(): RichTextT {
     return this._values[0];
@@ -67935,7 +68584,7 @@ export class PageBlockRelatedArticlesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageRelatedArticleT = new PageRelatedArticleT();
+        let val: PageRelatedArticleT = (new PageRelatedArticleT() as unknown) as PageRelatedArticleT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -67961,13 +68610,13 @@ AllStructs.set(PageBlockRelatedArticlesS._id, PageBlockRelatedArticlesS);
 export class PageBlockMapS {
   static _id = 0xa44f3ef6;
 
-  _values = [new GeoPointT(), 0, 0, 0, new PageCaptionT()] as [
-    GeoPointT,
-    number,
-    number,
-    number,
-    PageCaptionT
-  ];
+  _values = ([
+    (new GeoPointT() as unknown) as GeoPointT,
+    0,
+    0,
+    0,
+    (new PageCaptionT() as unknown) as PageCaptionT
+  ] as unknown) as [GeoPointT, number, number, number, PageCaptionT];
 
   get_geo(): GeoPointT {
     return this._values[0];
@@ -68107,7 +68756,7 @@ AllStructs.set(PageBlockMapS._id, PageBlockMapS);
 export class PageS {
   static _id = 0xae891bec;
 
-  _values = [0, true, true, true, "", [], [], []] as [
+  _values = ([0, true, true, true, "", [], [], []] as unknown) as [
     number,
     true,
     true,
@@ -68319,7 +68968,7 @@ export class PageS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PageBlockT = new PageBlockT();
+        let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -68337,7 +68986,7 @@ export class PageS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PhotoT = new PhotoT();
+        let val: PhotoT = (new PhotoT() as unknown) as PhotoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -68355,7 +69004,7 @@ export class PageS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: DocumentT = new DocumentT();
+        let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -68377,7 +69026,7 @@ AllStructs.set(PageS._id, PageS);
 export class InputPrivacyKeyPhoneP2PS {
   static _id = 0xdb9e70d2;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyKeyPhoneP2PS._id);
@@ -68403,7 +69052,7 @@ AllStructs.set(InputPrivacyKeyPhoneP2PS._id, InputPrivacyKeyPhoneP2PS);
 export class PrivacyKeyPhoneP2PS {
   static _id = 0x39491cc8;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyKeyPhoneP2PS._id);
@@ -68430,7 +69079,10 @@ AllStructs.set(PrivacyKeyPhoneP2PS._id, PrivacyKeyPhoneP2PS);
 export class TextAnchorS {
   static _id = 0x35553762;
 
-  _values = [new RichTextT(), ""] as [RichTextT, string];
+  _values = ([(new RichTextT() as unknown) as RichTextT, ""] as unknown) as [
+    RichTextT,
+    string
+  ];
 
   get_text(): RichTextT {
     return this._values[0];
@@ -68501,7 +69153,7 @@ AllStructs.set(TextAnchorS._id, TextAnchorS);
 export class HelpSupportNameS {
   static _id = 0x8c05f1c9;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_name(): string {
     return this._values[0];
@@ -68550,7 +69202,7 @@ AllStructs.set(HelpSupportNameS._id, HelpSupportNameS);
 export class HelpUserInfoEmptyS {
   static _id = 0xf3ae2eed;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpUserInfoEmptyS._id);
@@ -68579,7 +69231,12 @@ AllStructs.set(HelpUserInfoEmptyS._id, HelpUserInfoEmptyS);
 export class HelpUserInfoS {
   static _id = 0x1eb3758;
 
-  _values = ["", [], "", 0] as [string, MessageEntityT[], string, number];
+  _values = (["", [], "", 0] as unknown) as [
+    string,
+    MessageEntityT[],
+    string,
+    number
+  ];
 
   get_message(): string {
     return this._values[0];
@@ -68673,7 +69330,7 @@ export class HelpUserInfoS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -68707,7 +69364,7 @@ AllStructs.set(HelpUserInfoS._id, HelpUserInfoS);
 export class MessageActionContactSignUpS {
   static _id = 0xf3f25f76;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessageActionContactSignUpS._id);
@@ -68736,12 +69393,12 @@ AllStructs.set(MessageActionContactSignUpS._id, MessageActionContactSignUpS);
 export class UpdateMessagePollS {
   static _id = 0xaca1657b;
 
-  _values = [0, [0, 0], new PollT(), new PollResultsT()] as [
-    number,
-    ProtoLong,
-    PollT,
-    PollResultsT
-  ];
+  _values = ([
+    0,
+    [0, 0],
+    (new PollT() as unknown) as PollT,
+    (new PollResultsT() as unknown) as PollResultsT
+  ] as unknown) as [number, ProtoLong, PollT, PollResultsT];
 
   get_flags(): number {
     return this._values[0];
@@ -68861,7 +69518,7 @@ AllStructs.set(UpdateMessagePollS._id, UpdateMessagePollS);
 export class PollAnswerS {
   static _id = 0x6ca9c2e9;
 
-  _values = ["", new Uint8Array()] as [string, Uint8Array];
+  _values = (["", new Uint8Array()] as unknown) as [string, Uint8Array];
 
   get_text(): string {
     return this._values[0];
@@ -68934,7 +69591,7 @@ AllStructs.set(PollAnswerS._id, PollAnswerS);
 export class PollS {
   static _id = 0xd5529d06;
 
-  _values = [[0, 0], 0, true, "", []] as [
+  _values = ([[0, 0], 0, true, "", []] as unknown) as [
     ProtoLong,
     number,
     true,
@@ -69071,7 +69728,7 @@ export class PollS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PollAnswerT = new PollAnswerT();
+        let val: PollAnswerT = (new PollAnswerT() as unknown) as PollAnswerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -69096,7 +69753,7 @@ AllStructs.set(PollS._id, PollS);
 export class PollAnswerVotersS {
   static _id = 0x3b6ddad2;
 
-  _values = [0, true, new Uint8Array(), 0] as [
+  _values = ([0, true, new Uint8Array(), 0] as unknown) as [
     number,
     true,
     Uint8Array,
@@ -69218,7 +69875,7 @@ AllStructs.set(PollAnswerVotersS._id, PollAnswerVotersS);
 export class PollResultsS {
   static _id = 0x5755785a;
 
-  _values = [0, true, [], 0] as [
+  _values = ([0, true, [], 0] as unknown) as [
     number,
     true,
     PollAnswerVotersT[],
@@ -69340,7 +69997,7 @@ export class PollResultsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PollAnswerVotersT = new PollAnswerVotersT();
+        let val: PollAnswerVotersT = (new PollAnswerVotersT() as unknown) as PollAnswerVotersT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -69368,7 +70025,7 @@ AllStructs.set(PollResultsS._id, PollResultsS);
 export class InputMediaPollS {
   static _id = 0x6b3765b;
 
-  _values = [new PollT()] as [PollT];
+  _values = ([(new PollT() as unknown) as PollT] as unknown) as [PollT];
 
   get_poll(): PollT {
     return this._values[0];
@@ -69420,7 +70077,10 @@ AllStructs.set(InputMediaPollS._id, InputMediaPollS);
 export class MessageMediaPollS {
   static _id = 0x4bd6e798;
 
-  _values = [new PollT(), new PollResultsT()] as [PollT, PollResultsT];
+  _values = ([
+    (new PollT() as unknown) as PollT,
+    (new PollResultsT() as unknown) as PollResultsT
+  ] as unknown) as [PollT, PollResultsT];
 
   get_poll(): PollT {
     return this._values[0];
@@ -69493,7 +70153,7 @@ AllStructs.set(MessageMediaPollS._id, MessageMediaPollS);
 export class ChatOnlinesS {
   static _id = 0xf041e250;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_onlines(): number {
     return this._values[0];
@@ -69542,7 +70202,7 @@ AllStructs.set(ChatOnlinesS._id, ChatOnlinesS);
 export class StatsUrlS {
   static _id = 0x47a971e0;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_url(): string {
     return this._values[0];
@@ -69592,7 +70252,7 @@ AllStructs.set(StatsUrlS._id, StatsUrlS);
 export class PhotoStrippedSizeS {
   static _id = 0xe0b0bc2e;
 
-  _values = ["", new Uint8Array()] as [string, Uint8Array];
+  _values = (["", new Uint8Array()] as unknown) as [string, Uint8Array];
 
   get_type(): string {
     return this._values[0];
@@ -69669,8 +70329,8 @@ AllStructs.set(PhotoStrippedSizeS._id, PhotoStrippedSizeS);
 export class ChatAdminRightsS {
   static _id = 0x5fb224d5;
 
-  _values = [0, true, true, true, true, true, true, true, true] as [
-    number,
+  _values = ([
+    0,
     true,
     true,
     true,
@@ -69679,7 +70339,7 @@ export class ChatAdminRightsS {
     true,
     true,
     true
-  ];
+  ] as unknown) as [number, true, true, true, true, true, true, true, true];
 
   get_flags(): number {
     return this._values[0];
@@ -69941,7 +70601,7 @@ AllStructs.set(ChatAdminRightsS._id, ChatAdminRightsS);
 export class ChatBannedRightsS {
   static _id = 0x9f120418;
 
-  _values = [
+  _values = ([
     0,
     true,
     true,
@@ -69956,7 +70616,7 @@ export class ChatBannedRightsS {
     true,
     true,
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -70342,11 +71002,11 @@ AllStructs.set(ChatBannedRightsS._id, ChatBannedRightsS);
 export class UpdateChatDefaultBannedRightsS {
   static _id = 0x54c01850;
 
-  _values = [new PeerT(), new ChatBannedRightsT(), 0] as [
-    PeerT,
-    ChatBannedRightsT,
-    number
-  ];
+  _values = ([
+    (new PeerT() as unknown) as PeerT,
+    (new ChatBannedRightsT() as unknown) as ChatBannedRightsT,
+    0
+  ] as unknown) as [PeerT, ChatBannedRightsT, number];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -70443,7 +71103,7 @@ AllStructs.set(
 export class InputWallPaperS {
   static _id = 0xe630b979;
 
-  _values = [[0, 0], [0, 0]] as [ProtoLong, ProtoLong];
+  _values = ([[0, 0], [0, 0]] as unknown) as [ProtoLong, ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -70512,7 +71172,7 @@ AllStructs.set(InputWallPaperS._id, InputWallPaperS);
 export class InputWallPaperSlugS {
   static _id = 0x72091c80;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_slug(): string {
     return this._values[0];
@@ -70561,7 +71221,7 @@ AllStructs.set(InputWallPaperSlugS._id, InputWallPaperSlugS);
 export class ChannelParticipantsContactsS {
   static _id = 0xbb6ae88d;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_q(): string {
     return this._values[0];
@@ -70611,10 +71271,10 @@ AllStructs.set(ChannelParticipantsContactsS._id, ChannelParticipantsContactsS);
 export class ChannelAdminLogEventActionDefaultBannedRightsS {
   static _id = 0x2df5fc0a;
 
-  _values = [new ChatBannedRightsT(), new ChatBannedRightsT()] as [
-    ChatBannedRightsT,
-    ChatBannedRightsT
-  ];
+  _values = ([
+    (new ChatBannedRightsT() as unknown) as ChatBannedRightsT,
+    (new ChatBannedRightsT() as unknown) as ChatBannedRightsT
+  ] as unknown) as [ChatBannedRightsT, ChatBannedRightsT];
 
   get_prev_banned_rights(): ChatBannedRightsT {
     return this._values[0];
@@ -70691,7 +71351,9 @@ AllStructs.set(
 export class ChannelAdminLogEventActionStopPollS {
   static _id = 0x8f079643;
 
-  _values = [new MessageT()] as [MessageT];
+  _values = ([(new MessageT() as unknown) as MessageT] as unknown) as [
+    MessageT
+  ];
 
   get_message(): MessageT {
     return this._values[0];
@@ -70746,7 +71408,7 @@ AllStructs.set(
 export class AccountWallPapersNotModifiedS {
   static _id = 0x1c199183;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountWallPapersNotModifiedS._id);
@@ -70776,7 +71438,7 @@ AllStructs.set(
 export class AccountWallPapersS {
   static _id = 0x702b65a9;
 
-  _values = [0, []] as [number, WallPaperT[]];
+  _values = ([0, []] as unknown) as [number, WallPaperT[]];
 
   get_hash(): number {
     return this._values[0];
@@ -70842,7 +71504,7 @@ export class AccountWallPapersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: WallPaperT = new WallPaperT();
+        let val: WallPaperT = (new WallPaperT() as unknown) as WallPaperT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -70867,7 +71529,7 @@ AllStructs.set(AccountWallPapersS._id, AccountWallPapersS);
 export class CodeSettingsS {
   static _id = 0xdebebe83;
 
-  _values = [0, true, true, true] as [number, true, true, true];
+  _values = ([0, true, true, true] as unknown) as [number, true, true, true];
 
   get_flags(): number {
     return this._values[0];
@@ -70995,7 +71657,13 @@ AllStructs.set(CodeSettingsS._id, CodeSettingsS);
 export class WallPaperSettingsS {
   static _id = 0xa12f40b8;
 
-  _values = [0, true, true, 0, 0] as [number, true, true, number, number];
+  _values = ([0, true, true, 0, 0] as unknown) as [
+    number,
+    true,
+    true,
+    number,
+    number
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -71153,7 +71821,7 @@ AllStructs.set(WallPaperSettingsS._id, WallPaperSettingsS);
 export class AutoDownloadSettingsS {
   static _id = 0xd246fd47;
 
-  _values = [0, true, true, true, true, 0, 0, 0] as [
+  _values = ([0, true, true, true, true, 0, 0, 0] as unknown) as [
     number,
     true,
     true,
@@ -71373,11 +72041,15 @@ AllStructs.set(AutoDownloadSettingsS._id, AutoDownloadSettingsS);
 export class AccountAutoDownloadSettingsS {
   static _id = 0x63cacf26;
 
-  _values = [
-    new AutoDownloadSettingsT(),
-    new AutoDownloadSettingsT(),
-    new AutoDownloadSettingsT()
-  ] as [AutoDownloadSettingsT, AutoDownloadSettingsT, AutoDownloadSettingsT];
+  _values = ([
+    (new AutoDownloadSettingsT() as unknown) as AutoDownloadSettingsT,
+    (new AutoDownloadSettingsT() as unknown) as AutoDownloadSettingsT,
+    (new AutoDownloadSettingsT() as unknown) as AutoDownloadSettingsT
+  ] as unknown) as [
+    AutoDownloadSettingsT,
+    AutoDownloadSettingsT,
+    AutoDownloadSettingsT
+  ];
 
   get_low(): AutoDownloadSettingsT {
     return this._values[0];
@@ -71473,7 +72145,7 @@ AllStructs.set(AccountAutoDownloadSettingsS._id, AccountAutoDownloadSettingsS);
 export class EmojiKeywordS {
   static _id = 0xd5b3b9f9;
 
-  _values = ["", []] as [string, string[]];
+  _values = (["", []] as unknown) as [string, string[]];
 
   get_keyword(): string {
     return this._values[0];
@@ -71560,7 +72232,7 @@ AllStructs.set(EmojiKeywordS._id, EmojiKeywordS);
 export class EmojiKeywordDeletedS {
   static _id = 0x236df622;
 
-  _values = ["", []] as [string, string[]];
+  _values = (["", []] as unknown) as [string, string[]];
 
   get_keyword(): string {
     return this._values[0];
@@ -71649,7 +72321,12 @@ AllStructs.set(EmojiKeywordDeletedS._id, EmojiKeywordDeletedS);
 export class EmojiKeywordsDifferenceS {
   static _id = 0x5cc761bd;
 
-  _values = ["", 0, 0, []] as [string, number, number, EmojiKeywordT[]];
+  _values = (["", 0, 0, []] as unknown) as [
+    string,
+    number,
+    number,
+    EmojiKeywordT[]
+  ];
 
   get_lang_code(): string {
     return this._values[0];
@@ -71755,7 +72432,7 @@ export class EmojiKeywordsDifferenceS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: EmojiKeywordT = new EmojiKeywordT();
+        let val: EmojiKeywordT = (new EmojiKeywordT() as unknown) as EmojiKeywordT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -71777,7 +72454,7 @@ AllStructs.set(EmojiKeywordsDifferenceS._id, EmojiKeywordsDifferenceS);
 export class EmojiUrlS {
   static _id = 0xa575739d;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_url(): string {
     return this._values[0];
@@ -71826,7 +72503,7 @@ AllStructs.set(EmojiUrlS._id, EmojiUrlS);
 export class EmojiLanguageS {
   static _id = 0xb3fb5361;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_lang_code(): string {
     return this._values[0];
@@ -71875,7 +72552,7 @@ AllStructs.set(EmojiLanguageS._id, EmojiLanguageS);
 export class InputPrivacyKeyForwardsS {
   static _id = 0xa4dd4c08;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyKeyForwardsS._id);
@@ -71901,7 +72578,7 @@ AllStructs.set(InputPrivacyKeyForwardsS._id, InputPrivacyKeyForwardsS);
 export class PrivacyKeyForwardsS {
   static _id = 0x69ec56a3;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyKeyForwardsS._id);
@@ -71927,7 +72604,7 @@ AllStructs.set(PrivacyKeyForwardsS._id, PrivacyKeyForwardsS);
 export class InputPrivacyKeyProfilePhotoS {
   static _id = 0x5719bacc;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyKeyProfilePhotoS._id);
@@ -71953,7 +72630,7 @@ AllStructs.set(InputPrivacyKeyProfilePhotoS._id, InputPrivacyKeyProfilePhotoS);
 export class PrivacyKeyProfilePhotoS {
   static _id = 0x96151fed;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyKeyProfilePhotoS._id);
@@ -71980,7 +72657,7 @@ AllStructs.set(PrivacyKeyProfilePhotoS._id, PrivacyKeyProfilePhotoS);
 export class FileLocationToBeDeprecatedS {
   static _id = 0xbc7fc6cd;
 
-  _values = [[0, 0], 0] as [ProtoLong, number];
+  _values = ([[0, 0], 0] as unknown) as [ProtoLong, number];
 
   get_volume_id(): ProtoLong {
     return this._values[0];
@@ -72052,7 +72729,7 @@ AllStructs.set(FileLocationToBeDeprecatedS._id, FileLocationToBeDeprecatedS);
 export class InputPhotoFileLocationS {
   static _id = 0x40181ffe;
 
-  _values = [[0, 0], [0, 0], new Uint8Array(), ""] as [
+  _values = ([[0, 0], [0, 0], new Uint8Array(), ""] as unknown) as [
     ProtoLong,
     ProtoLong,
     Uint8Array,
@@ -72171,7 +72848,14 @@ AllStructs.set(InputPhotoFileLocationS._id, InputPhotoFileLocationS);
 export class InputPhotoLegacyFileLocationS {
   static _id = 0xd83466f3;
 
-  _values = [[0, 0], [0, 0], new Uint8Array(), [0, 0], 0, [0, 0]] as [
+  _values = ([
+    [0, 0],
+    [0, 0],
+    new Uint8Array(),
+    [0, 0],
+    0,
+    [0, 0]
+  ] as unknown) as [
     ProtoLong,
     ProtoLong,
     Uint8Array,
@@ -72334,13 +73018,13 @@ AllStructs.set(
 export class InputPeerPhotoFileLocationS {
   static _id = 0x27d69997;
 
-  _values = [0, true, new InputPeerT(), [0, 0], 0] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputPeerT,
-    ProtoLong,
-    number
-  ];
+    (new InputPeerT() as unknown) as InputPeerT,
+    [0, 0],
+    0
+  ] as unknown) as [number, true, InputPeerT, ProtoLong, number];
 
   get_flags(): number {
     return this._values[0];
@@ -72478,11 +73162,11 @@ AllStructs.set(InputPeerPhotoFileLocationS._id, InputPeerPhotoFileLocationS);
 export class InputStickerSetThumbS {
   static _id = 0xdbaeae9;
 
-  _values = [new InputStickerSetT(), [0, 0], 0] as [
-    InputStickerSetT,
-    ProtoLong,
-    number
-  ];
+  _values = ([
+    (new InputStickerSetT() as unknown) as InputStickerSetT,
+    [0, 0],
+    0
+  ] as unknown) as [InputStickerSetT, ProtoLong, number];
 
   get_stickerset(): InputStickerSetT {
     return this._values[0];
@@ -72579,15 +73263,15 @@ AllStructs.set(InputStickerSetThumbS._id, InputStickerSetThumbS);
 export class FolderS {
   static _id = 0xff544e65;
 
-  _values = [0, true, true, true, 0, "", new ChatPhotoT()] as [
-    number,
+  _values = ([
+    0,
     true,
     true,
     true,
-    number,
-    string,
-    ChatPhotoT
-  ];
+    0,
+    "",
+    (new ChatPhotoT() as unknown) as ChatPhotoT
+  ] as unknown) as [number, true, true, true, number, string, ChatPhotoT];
 
   get_flags(): number {
     return this._values[0];
@@ -72787,7 +73471,17 @@ AllStructs.set(FolderS._id, FolderS);
 export class DialogFolderS {
   static _id = 0x71bd134c;
 
-  _values = [0, true, new FolderT(), new PeerT(), 0, 0, 0, 0, 0] as [
+  _values = ([
+    0,
+    true,
+    (new FolderT() as unknown) as FolderT,
+    (new PeerT() as unknown) as PeerT,
+    0,
+    0,
+    0,
+    0,
+    0
+  ] as unknown) as [
     number,
     true,
     FolderT,
@@ -73015,7 +73709,7 @@ AllStructs.set(DialogFolderS._id, DialogFolderS);
 export class InputDialogPeerFolderS {
   static _id = 0x64600527;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_folder_id(): number {
     return this._values[0];
@@ -73064,7 +73758,7 @@ AllStructs.set(InputDialogPeerFolderS._id, InputDialogPeerFolderS);
 export class DialogPeerFolderS {
   static _id = 0x514519e2;
 
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_folder_id(): number {
     return this._values[0];
@@ -73114,7 +73808,10 @@ AllStructs.set(DialogPeerFolderS._id, DialogPeerFolderS);
 export class InputFolderPeerS {
   static _id = 0xfbd2c296;
 
-  _values = [new InputPeerT(), 0] as [InputPeerT, number];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT, 0] as unknown) as [
+    InputPeerT,
+    number
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -73186,7 +73883,10 @@ AllStructs.set(InputFolderPeerS._id, InputFolderPeerS);
 export class FolderPeerS {
   static _id = 0xe9baa668;
 
-  _values = [new PeerT(), 0] as [PeerT, number];
+  _values = ([(new PeerT() as unknown) as PeerT, 0] as unknown) as [
+    PeerT,
+    number
+  ];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -73259,7 +73959,7 @@ AllStructs.set(FolderPeerS._id, FolderPeerS);
 export class UpdateFolderPeersS {
   static _id = 0x19360dc0;
 
-  _values = [[], 0, 0] as [FolderPeerT[], number, number];
+  _values = ([[], 0, 0] as unknown) as [FolderPeerT[], number, number];
 
   get_folder_peers(): FolderPeerT[] {
     return this._values[0];
@@ -73333,7 +74033,7 @@ export class UpdateFolderPeersS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: FolderPeerT = new FolderPeerT();
+        let val: FolderPeerT = (new FolderPeerT() as unknown) as FolderPeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -73369,7 +74069,11 @@ AllStructs.set(UpdateFolderPeersS._id, UpdateFolderPeersS);
 export class InputUserFromMessageS {
   static _id = 0x2d117597;
 
-  _values = [new InputPeerT(), 0, 0] as [InputPeerT, number, number];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    0
+  ] as unknown) as [InputPeerT, number, number];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -73462,7 +74166,11 @@ AllStructs.set(InputUserFromMessageS._id, InputUserFromMessageS);
 export class InputChannelFromMessageS {
   static _id = 0x2a286531;
 
-  _values = [new InputPeerT(), 0, 0] as [InputPeerT, number, number];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    0
+  ] as unknown) as [InputPeerT, number, number];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -73555,7 +74263,11 @@ AllStructs.set(InputChannelFromMessageS._id, InputChannelFromMessageS);
 export class InputPeerUserFromMessageS {
   static _id = 0x17bae2e6;
 
-  _values = [new InputPeerT(), 0, 0] as [InputPeerT, number, number];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    0
+  ] as unknown) as [InputPeerT, number, number];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -73648,7 +74360,11 @@ AllStructs.set(InputPeerUserFromMessageS._id, InputPeerUserFromMessageS);
 export class InputPeerChannelFromMessageS {
   static _id = 0x9c95f7bb;
 
-  _values = [new InputPeerT(), 0, 0] as [InputPeerT, number, number];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    0
+  ] as unknown) as [InputPeerT, number, number];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -73739,7 +74455,7 @@ AllStructs.set(InputPeerChannelFromMessageS._id, InputPeerChannelFromMessageS);
 export class InputPrivacyKeyPhoneNumberS {
   static _id = 0x352dafa;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyKeyPhoneNumberS._id);
@@ -73765,7 +74481,7 @@ AllStructs.set(InputPrivacyKeyPhoneNumberS._id, InputPrivacyKeyPhoneNumberS);
 export class PrivacyKeyPhoneNumberS {
   static _id = 0xd19ae46d;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyKeyPhoneNumberS._id);
@@ -73791,7 +74507,7 @@ AllStructs.set(PrivacyKeyPhoneNumberS._id, PrivacyKeyPhoneNumberS);
 export class TopPeerCategoryForwardUsersS {
   static _id = 0xa8406ca9;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(TopPeerCategoryForwardUsersS._id);
@@ -73817,7 +74533,7 @@ AllStructs.set(TopPeerCategoryForwardUsersS._id, TopPeerCategoryForwardUsersS);
 export class TopPeerCategoryForwardChatsS {
   static _id = 0xfbeec0f0;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(TopPeerCategoryForwardChatsS._id);
@@ -73844,7 +74560,7 @@ AllStructs.set(TopPeerCategoryForwardChatsS._id, TopPeerCategoryForwardChatsS);
 export class ChannelAdminLogEventActionChangeLinkedChatS {
   static _id = 0xa26f881b;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_prev_value(): number {
     return this._values[0];
@@ -73920,12 +74636,12 @@ AllStructs.set(
 export class MessagesSearchCounterS {
   static _id = 0xe844ebff;
 
-  _values = [0, true, new MessagesFilterT(), 0] as [
-    number,
+  _values = ([
+    0,
     true,
-    MessagesFilterT,
-    number
-  ];
+    (new MessagesFilterT() as unknown) as MessagesFilterT,
+    0
+  ] as unknown) as [number, true, MessagesFilterT, number];
 
   get_flags(): number {
     return this._values[0];
@@ -74045,7 +74761,13 @@ AllStructs.set(MessagesSearchCounterS._id, MessagesSearchCounterS);
 export class KeyboardButtonUrlAuthS {
   static _id = 0x10b78d29;
 
-  _values = [0, "", "", "", 0] as [number, string, string, string, number];
+  _values = ([0, "", "", "", 0] as unknown) as [
+    number,
+    string,
+    string,
+    string,
+    number
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -74185,14 +74907,14 @@ AllStructs.set(KeyboardButtonUrlAuthS._id, KeyboardButtonUrlAuthS);
 export class InputKeyboardButtonUrlAuthS {
   static _id = 0xd02e7fd4;
 
-  _values = [0, true, "", "", "", new InputUserT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    string,
-    string,
-    string,
-    InputUserT
-  ];
+    "",
+    "",
+    "",
+    (new InputUserT() as unknown) as InputUserT
+  ] as unknown) as [number, true, string, string, string, InputUserT];
 
   get_flags(): number {
     return this._values[0];
@@ -74357,7 +75079,12 @@ AllStructs.set(InputKeyboardButtonUrlAuthS._id, InputKeyboardButtonUrlAuthS);
 export class UrlAuthResultRequestS {
   static _id = 0x92d33a0e;
 
-  _values = [0, true, new UserT(), ""] as [number, true, UserT, string];
+  _values = ([0, true, (new UserT() as unknown) as UserT, ""] as unknown) as [
+    number,
+    true,
+    UserT,
+    string
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -74473,7 +75200,7 @@ AllStructs.set(UrlAuthResultRequestS._id, UrlAuthResultRequestS);
 export class UrlAuthResultAcceptedS {
   static _id = 0x8f8c0e4e;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_url(): string {
     return this._values[0];
@@ -74522,7 +75249,7 @@ AllStructs.set(UrlAuthResultAcceptedS._id, UrlAuthResultAcceptedS);
 export class UrlAuthResultDefaultS {
   static _id = 0xa9d6db1f;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UrlAuthResultDefaultS._id);
@@ -74548,7 +75275,7 @@ AllStructs.set(UrlAuthResultDefaultS._id, UrlAuthResultDefaultS);
 export class InputPrivacyValueAllowChatParticipantsS {
   static _id = 0x4c81c1ba;
 
-  _values = [[]] as [number[]];
+  _values = ([[]] as unknown) as [number[]];
 
   get_chats(): number[] {
     return this._values[0];
@@ -74618,7 +75345,7 @@ AllStructs.set(
 export class InputPrivacyValueDisallowChatParticipantsS {
   static _id = 0xd82363af;
 
-  _values = [[]] as [number[]];
+  _values = ([[]] as unknown) as [number[]];
 
   get_chats(): number[] {
     return this._values[0];
@@ -74688,7 +75415,7 @@ AllStructs.set(
 export class PrivacyValueAllowChatParticipantsS {
   static _id = 0x18be796b;
 
-  _values = [[]] as [number[]];
+  _values = ([[]] as unknown) as [number[]];
 
   get_chats(): number[] {
     return this._values[0];
@@ -74757,7 +75484,7 @@ AllStructs.set(
 export class PrivacyValueDisallowChatParticipantsS {
   static _id = 0xacae0690;
 
-  _values = [[]] as [number[]];
+  _values = ([[]] as unknown) as [number[]];
 
   get_chats(): number[] {
     return this._values[0];
@@ -74828,7 +75555,7 @@ AllStructs.set(
 export class MessageEntityUnderlineS {
   static _id = 0x9c4e7e8b;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -74898,7 +75625,7 @@ AllStructs.set(MessageEntityUnderlineS._id, MessageEntityUnderlineS);
 export class MessageEntityStrikeS {
   static _id = 0xbf0693d4;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -74968,7 +75695,7 @@ AllStructs.set(MessageEntityStrikeS._id, MessageEntityStrikeS);
 export class MessageEntityBlockquoteS {
   static _id = 0x20df5d0;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -75038,7 +75765,10 @@ AllStructs.set(MessageEntityBlockquoteS._id, MessageEntityBlockquoteS);
 export class UpdatePeerSettingsS {
   static _id = 0x6a7e7366;
 
-  _values = [new PeerT(), new PeerSettingsT()] as [PeerT, PeerSettingsT];
+  _values = ([
+    (new PeerT() as unknown) as PeerT,
+    (new PeerSettingsT() as unknown) as PeerSettingsT
+  ] as unknown) as [PeerT, PeerSettingsT];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -75111,7 +75841,7 @@ AllStructs.set(UpdatePeerSettingsS._id, UpdatePeerSettingsS);
 export class ChannelLocationEmptyS {
   static _id = 0xbfb5ad8b;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ChannelLocationEmptyS._id);
@@ -75138,7 +75868,10 @@ AllStructs.set(ChannelLocationEmptyS._id, ChannelLocationEmptyS);
 export class ChannelLocationS {
   static _id = 0x209b82db;
 
-  _values = [new GeoPointT(), ""] as [GeoPointT, string];
+  _values = ([(new GeoPointT() as unknown) as GeoPointT, ""] as unknown) as [
+    GeoPointT,
+    string
+  ];
 
   get_geo_point(): GeoPointT {
     return this._values[0];
@@ -75211,7 +75944,11 @@ AllStructs.set(ChannelLocationS._id, ChannelLocationS);
 export class PeerLocatedS {
   static _id = 0xca461b5d;
 
-  _values = [new PeerT(), 0, 0] as [PeerT, number, number];
+  _values = ([(new PeerT() as unknown) as PeerT, 0, 0] as unknown) as [
+    PeerT,
+    number,
+    number
+  ];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -75302,7 +76039,7 @@ AllStructs.set(PeerLocatedS._id, PeerLocatedS);
 export class UpdatePeerLocatedS {
   static _id = 0xb4afcfb0;
 
-  _values = [[]] as [PeerLocatedT[]];
+  _values = ([[]] as unknown) as [PeerLocatedT[]];
 
   get_peers(): PeerLocatedT[] {
     return this._values[0];
@@ -75348,7 +76085,7 @@ export class UpdatePeerLocatedS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: PeerLocatedT = new PeerLocatedT();
+        let val: PeerLocatedT = (new PeerLocatedT() as unknown) as PeerLocatedT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -75371,10 +76108,10 @@ AllStructs.set(UpdatePeerLocatedS._id, UpdatePeerLocatedS);
 export class ChannelAdminLogEventActionChangeLocationS {
   static _id = 0xe6b76ae;
 
-  _values = [new ChannelLocationT(), new ChannelLocationT()] as [
-    ChannelLocationT,
-    ChannelLocationT
-  ];
+  _values = ([
+    (new ChannelLocationT() as unknown) as ChannelLocationT,
+    (new ChannelLocationT() as unknown) as ChannelLocationT
+  ] as unknown) as [ChannelLocationT, ChannelLocationT];
 
   get_prev_value(): ChannelLocationT {
     return this._values[0];
@@ -75451,7 +76188,7 @@ AllStructs.set(
 export class InputReportReasonGeoIrrelevantS {
   static _id = 0xdbd4feed;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputReportReasonGeoIrrelevantS._id);
@@ -75481,7 +76218,7 @@ AllStructs.set(
 export class ChannelAdminLogEventActionToggleSlowModeS {
   static _id = 0x53909779;
 
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_prev_value(): number {
     return this._values[0];
@@ -75555,7 +76292,10 @@ AllStructs.set(
 export class AuthAuthorizationSignUpRequiredS {
   static _id = 0x44747e9a;
 
-  _values = [0, new HelpTermsOfServiceT()] as [number, HelpTermsOfServiceT];
+  _values = ([
+    0,
+    (new HelpTermsOfServiceT() as unknown) as HelpTermsOfServiceT
+  ] as unknown) as [number, HelpTermsOfServiceT];
 
   get_flags(): number {
     return this._values[0];
@@ -75635,7 +76375,7 @@ AllStructs.set(
 export class PaymentsPaymentVerificationNeededS {
   static _id = 0xd8411139;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_url(): string {
     return this._values[0];
@@ -75687,7 +76427,7 @@ AllStructs.set(
 export class InputStickerSetAnimatedEmojiS {
   static _id = 0x28703c8;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputStickerSetAnimatedEmojiS._id);
@@ -75716,7 +76456,9 @@ AllStructs.set(
 export class UpdateNewScheduledMessageS {
   static _id = 0x39a51dfb;
 
-  _values = [new MessageT()] as [MessageT];
+  _values = ([(new MessageT() as unknown) as MessageT] as unknown) as [
+    MessageT
+  ];
 
   get_message(): MessageT {
     return this._values[0];
@@ -75768,7 +76510,10 @@ AllStructs.set(UpdateNewScheduledMessageS._id, UpdateNewScheduledMessageS);
 export class UpdateDeleteScheduledMessagesS {
   static _id = 0x90866cee;
 
-  _values = [new PeerT(), []] as [PeerT, number[]];
+  _values = ([(new PeerT() as unknown) as PeerT, []] as unknown) as [
+    PeerT,
+    number[]
+  ];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -75861,7 +76606,7 @@ AllStructs.set(
 export class RestrictionReasonS {
   static _id = 0xd072acb4;
 
-  _values = ["", "", ""] as [string, string, string];
+  _values = (["", "", ""] as unknown) as [string, string, string];
 
   get_platform(): string {
     return this._values[0];
@@ -75951,7 +76696,7 @@ AllStructs.set(RestrictionReasonS._id, RestrictionReasonS);
 export class InputThemeS {
   static _id = 0x3c5693e9;
 
-  _values = [[0, 0], [0, 0]] as [ProtoLong, ProtoLong];
+  _values = ([[0, 0], [0, 0]] as unknown) as [ProtoLong, ProtoLong];
 
   get_id(): ProtoLong {
     return this._values[0];
@@ -76020,7 +76765,7 @@ AllStructs.set(InputThemeS._id, InputThemeS);
 export class InputThemeSlugS {
   static _id = 0xf5890df1;
 
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_slug(): string {
     return this._values[0];
@@ -76069,7 +76814,7 @@ AllStructs.set(InputThemeSlugS._id, InputThemeSlugS);
 export class ThemeDocumentNotModifiedS {
   static _id = 0x483d270c;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ThemeDocumentNotModifiedS._id);
@@ -76103,7 +76848,17 @@ AllStructs.set(ThemeDocumentNotModifiedS._id, ThemeDocumentNotModifiedS);
 export class ThemeS {
   static _id = 0xf7d90ce0;
 
-  _values = [0, true, true, [0, 0], [0, 0], "", "", new DocumentT(), 0] as [
+  _values = ([
+    0,
+    true,
+    true,
+    [0, 0],
+    [0, 0],
+    "",
+    "",
+    (new DocumentT() as unknown) as DocumentT,
+    0
+  ] as unknown) as [
     number,
     true,
     true,
@@ -76340,7 +77095,7 @@ AllStructs.set(ThemeS._id, ThemeS);
 export class AccountThemesNotModifiedS {
   static _id = 0xf41eb622;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountThemesNotModifiedS._id);
@@ -76367,7 +77122,7 @@ AllStructs.set(AccountThemesNotModifiedS._id, AccountThemesNotModifiedS);
 export class AccountThemesS {
   static _id = 0x7f676421;
 
-  _values = [0, []] as [number, ThemeT[]];
+  _values = ([0, []] as unknown) as [number, ThemeT[]];
 
   get_hash(): number {
     return this._values[0];
@@ -76433,7 +77188,7 @@ export class AccountThemesS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ThemeT = new ThemeT();
+        let val: ThemeT = (new ThemeT() as unknown) as ThemeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -76455,7 +77210,7 @@ AllStructs.set(AccountThemesS._id, AccountThemesS);
 export class UpdateThemeS {
   static _id = 0x8216fba3;
 
-  _values = [new ThemeT()] as [ThemeT];
+  _values = ([(new ThemeT() as unknown) as ThemeT] as unknown) as [ThemeT];
 
   get_theme(): ThemeT {
     return this._values[0];
@@ -76506,7 +77261,7 @@ AllStructs.set(UpdateThemeS._id, UpdateThemeS);
 export class InputPrivacyKeyAddedByPhoneS {
   static _id = 0xd1219bdd;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(InputPrivacyKeyAddedByPhoneS._id);
@@ -76532,7 +77287,7 @@ AllStructs.set(InputPrivacyKeyAddedByPhoneS._id, InputPrivacyKeyAddedByPhoneS);
 export class PrivacyKeyAddedByPhoneS {
   static _id = 0x42ffd42b;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PrivacyKeyAddedByPhoneS._id);
@@ -76550,11 +77305,7 @@ export class PrivacyKeyAddedByPhoneS {
 }
 AllStructs.set(PrivacyKeyAddedByPhoneS._id, PrivacyKeyAddedByPhoneS);
 
-export type BoolT =
-  | BoolFalseS
-  | BoolTrueS
-  | OneOf<typeof BoolFalseS | typeof BoolTrueS, BoolFalseS | BoolTrueS>;
-
+export type BoolT = BoolFalseS | BoolTrueS;
 export const BoolT = OneOf;
 
 export const VectorTT = VectorS;
@@ -76567,49 +77318,20 @@ export type InputPeerT =
   | InputPeerUserS
   | InputPeerChannelS
   | InputPeerUserFromMessageS
-  | InputPeerChannelFromMessageS
-  | OneOf<
-      | typeof InputPeerEmptyS
-      | typeof InputPeerSelfS
-      | typeof InputPeerChatS
-      | typeof InputPeerUserS
-      | typeof InputPeerChannelS
-      | typeof InputPeerUserFromMessageS
-      | typeof InputPeerChannelFromMessageS,
-      | InputPeerEmptyS
-      | InputPeerSelfS
-      | InputPeerChatS
-      | InputPeerUserS
-      | InputPeerChannelS
-      | InputPeerUserFromMessageS
-      | InputPeerChannelFromMessageS
-    >;
-
+  | InputPeerChannelFromMessageS;
 export const InputPeerT = OneOf;
 
 export type InputUserT =
   | InputUserEmptyS
   | InputUserSelfS
   | InputUserS
-  | InputUserFromMessageS
-  | OneOf<
-      | typeof InputUserEmptyS
-      | typeof InputUserSelfS
-      | typeof InputUserS
-      | typeof InputUserFromMessageS,
-      InputUserEmptyS | InputUserSelfS | InputUserS | InputUserFromMessageS
-    >;
-
+  | InputUserFromMessageS;
 export const InputUserT = OneOf;
 
 export const InputContactT = InputPhoneContactS;
 export type InputContactT = InputPhoneContactS;
 
-export type InputFileT =
-  | InputFileS
-  | InputFileBigS
-  | OneOf<typeof InputFileS | typeof InputFileBigS, InputFileS | InputFileBigS>;
-
+export type InputFileT = InputFileS | InputFileBigS;
 export const InputFileT = OneOf;
 
 export type InputMediaT =
@@ -76627,73 +77349,19 @@ export type InputMediaT =
   | InputMediaGameS
   | InputMediaInvoiceS
   | InputMediaGeoLiveS
-  | InputMediaPollS
-  | OneOf<
-      | typeof InputMediaEmptyS
-      | typeof InputMediaUploadedPhotoS
-      | typeof InputMediaPhotoS
-      | typeof InputMediaGeoPointS
-      | typeof InputMediaContactS
-      | typeof InputMediaUploadedDocumentS
-      | typeof InputMediaDocumentS
-      | typeof InputMediaVenueS
-      | typeof InputMediaGifExternalS
-      | typeof InputMediaPhotoExternalS
-      | typeof InputMediaDocumentExternalS
-      | typeof InputMediaGameS
-      | typeof InputMediaInvoiceS
-      | typeof InputMediaGeoLiveS
-      | typeof InputMediaPollS,
-      | InputMediaEmptyS
-      | InputMediaUploadedPhotoS
-      | InputMediaPhotoS
-      | InputMediaGeoPointS
-      | InputMediaContactS
-      | InputMediaUploadedDocumentS
-      | InputMediaDocumentS
-      | InputMediaVenueS
-      | InputMediaGifExternalS
-      | InputMediaPhotoExternalS
-      | InputMediaDocumentExternalS
-      | InputMediaGameS
-      | InputMediaInvoiceS
-      | InputMediaGeoLiveS
-      | InputMediaPollS
-    >;
-
+  | InputMediaPollS;
 export const InputMediaT = OneOf;
 
 export type InputChatPhotoT =
   | InputChatPhotoEmptyS
   | InputChatUploadedPhotoS
-  | InputChatPhotoS
-  | OneOf<
-      | typeof InputChatPhotoEmptyS
-      | typeof InputChatUploadedPhotoS
-      | typeof InputChatPhotoS,
-      InputChatPhotoEmptyS | InputChatUploadedPhotoS | InputChatPhotoS
-    >;
-
+  | InputChatPhotoS;
 export const InputChatPhotoT = OneOf;
 
-export type InputGeoPointT =
-  | InputGeoPointEmptyS
-  | InputGeoPointS
-  | OneOf<
-      typeof InputGeoPointEmptyS | typeof InputGeoPointS,
-      InputGeoPointEmptyS | InputGeoPointS
-    >;
-
+export type InputGeoPointT = InputGeoPointEmptyS | InputGeoPointS;
 export const InputGeoPointT = OneOf;
 
-export type InputPhotoT =
-  | InputPhotoEmptyS
-  | InputPhotoS
-  | OneOf<
-      typeof InputPhotoEmptyS | typeof InputPhotoS,
-      InputPhotoEmptyS | InputPhotoS
-    >;
-
+export type InputPhotoT = InputPhotoEmptyS | InputPhotoS;
 export const InputPhotoT = OneOf;
 
 export type InputFileLocationT =
@@ -76705,39 +77373,10 @@ export type InputFileLocationT =
   | InputPhotoFileLocationS
   | InputPhotoLegacyFileLocationS
   | InputPeerPhotoFileLocationS
-  | InputStickerSetThumbS
-  | OneOf<
-      | typeof InputFileLocationS
-      | typeof InputEncryptedFileLocationS
-      | typeof InputDocumentFileLocationS
-      | typeof InputSecureFileLocationS
-      | typeof InputTakeoutFileLocationS
-      | typeof InputPhotoFileLocationS
-      | typeof InputPhotoLegacyFileLocationS
-      | typeof InputPeerPhotoFileLocationS
-      | typeof InputStickerSetThumbS,
-      | InputFileLocationS
-      | InputEncryptedFileLocationS
-      | InputDocumentFileLocationS
-      | InputSecureFileLocationS
-      | InputTakeoutFileLocationS
-      | InputPhotoFileLocationS
-      | InputPhotoLegacyFileLocationS
-      | InputPeerPhotoFileLocationS
-      | InputStickerSetThumbS
-    >;
-
+  | InputStickerSetThumbS;
 export const InputFileLocationT = OneOf;
 
-export type PeerT =
-  | PeerUserS
-  | PeerChatS
-  | PeerChannelS
-  | OneOf<
-      typeof PeerUserS | typeof PeerChatS | typeof PeerChannelS,
-      PeerUserS | PeerChatS | PeerChannelS
-    >;
-
+export type PeerT = PeerUserS | PeerChatS | PeerChannelS;
 export const PeerT = OneOf;
 
 export type StorageFileTypeT =
@@ -76750,47 +77389,13 @@ export type StorageFileTypeT =
   | StorageFileMp3S
   | StorageFileMovS
   | StorageFileMp4S
-  | StorageFileWebpS
-  | OneOf<
-      | typeof StorageFileUnknownS
-      | typeof StorageFilePartialS
-      | typeof StorageFileJpegS
-      | typeof StorageFileGifS
-      | typeof StorageFilePngS
-      | typeof StorageFilePdfS
-      | typeof StorageFileMp3S
-      | typeof StorageFileMovS
-      | typeof StorageFileMp4S
-      | typeof StorageFileWebpS,
-      | StorageFileUnknownS
-      | StorageFilePartialS
-      | StorageFileJpegS
-      | StorageFileGifS
-      | StorageFilePngS
-      | StorageFilePdfS
-      | StorageFileMp3S
-      | StorageFileMovS
-      | StorageFileMp4S
-      | StorageFileWebpS
-    >;
-
+  | StorageFileWebpS;
 export const StorageFileTypeT = OneOf;
 
-export type UserT =
-  | UserEmptyS
-  | UserS
-  | OneOf<typeof UserEmptyS | typeof UserS, UserEmptyS | UserS>;
-
+export type UserT = UserEmptyS | UserS;
 export const UserT = OneOf;
 
-export type UserProfilePhotoT =
-  | UserProfilePhotoEmptyS
-  | UserProfilePhotoS
-  | OneOf<
-      typeof UserProfilePhotoEmptyS | typeof UserProfilePhotoS,
-      UserProfilePhotoEmptyS | UserProfilePhotoS
-    >;
-
+export type UserProfilePhotoT = UserProfilePhotoEmptyS | UserProfilePhotoS;
 export const UserProfilePhotoT = OneOf;
 
 export type UserStatusT =
@@ -76799,22 +77404,7 @@ export type UserStatusT =
   | UserStatusOfflineS
   | UserStatusRecentlyS
   | UserStatusLastWeekS
-  | UserStatusLastMonthS
-  | OneOf<
-      | typeof UserStatusEmptyS
-      | typeof UserStatusOnlineS
-      | typeof UserStatusOfflineS
-      | typeof UserStatusRecentlyS
-      | typeof UserStatusLastWeekS
-      | typeof UserStatusLastMonthS,
-      | UserStatusEmptyS
-      | UserStatusOnlineS
-      | UserStatusOfflineS
-      | UserStatusRecentlyS
-      | UserStatusLastWeekS
-      | UserStatusLastMonthS
-    >;
-
+  | UserStatusLastMonthS;
 export const UserStatusT = OneOf;
 
 export type ChatT =
@@ -76822,67 +77412,25 @@ export type ChatT =
   | ChatS
   | ChatForbiddenS
   | ChannelS
-  | ChannelForbiddenS
-  | OneOf<
-      | typeof ChatEmptyS
-      | typeof ChatS
-      | typeof ChatForbiddenS
-      | typeof ChannelS
-      | typeof ChannelForbiddenS,
-      ChatEmptyS | ChatS | ChatForbiddenS | ChannelS | ChannelForbiddenS
-    >;
-
+  | ChannelForbiddenS;
 export const ChatT = OneOf;
 
-export type ChatFullT =
-  | ChatFullS
-  | ChannelFullS
-  | OneOf<typeof ChatFullS | typeof ChannelFullS, ChatFullS | ChannelFullS>;
-
+export type ChatFullT = ChatFullS | ChannelFullS;
 export const ChatFullT = OneOf;
 
 export type ChatParticipantT =
   | ChatParticipantS
   | ChatParticipantCreatorS
-  | ChatParticipantAdminS
-  | OneOf<
-      | typeof ChatParticipantS
-      | typeof ChatParticipantCreatorS
-      | typeof ChatParticipantAdminS,
-      ChatParticipantS | ChatParticipantCreatorS | ChatParticipantAdminS
-    >;
-
+  | ChatParticipantAdminS;
 export const ChatParticipantT = OneOf;
 
-export type ChatParticipantsT =
-  | ChatParticipantsForbiddenS
-  | ChatParticipantsS
-  | OneOf<
-      typeof ChatParticipantsForbiddenS | typeof ChatParticipantsS,
-      ChatParticipantsForbiddenS | ChatParticipantsS
-    >;
-
+export type ChatParticipantsT = ChatParticipantsForbiddenS | ChatParticipantsS;
 export const ChatParticipantsT = OneOf;
 
-export type ChatPhotoT =
-  | ChatPhotoEmptyS
-  | ChatPhotoS
-  | OneOf<
-      typeof ChatPhotoEmptyS | typeof ChatPhotoS,
-      ChatPhotoEmptyS | ChatPhotoS
-    >;
-
+export type ChatPhotoT = ChatPhotoEmptyS | ChatPhotoS;
 export const ChatPhotoT = OneOf;
 
-export type MessageT =
-  | MessageEmptyS
-  | MessageS
-  | MessageServiceS
-  | OneOf<
-      typeof MessageEmptyS | typeof MessageS | typeof MessageServiceS,
-      MessageEmptyS | MessageS | MessageServiceS
-    >;
-
+export type MessageT = MessageEmptyS | MessageS | MessageServiceS;
 export const MessageT = OneOf;
 
 export type MessageMediaT =
@@ -76897,34 +77445,7 @@ export type MessageMediaT =
   | MessageMediaGameS
   | MessageMediaInvoiceS
   | MessageMediaGeoLiveS
-  | MessageMediaPollS
-  | OneOf<
-      | typeof MessageMediaEmptyS
-      | typeof MessageMediaPhotoS
-      | typeof MessageMediaGeoS
-      | typeof MessageMediaContactS
-      | typeof MessageMediaUnsupportedS
-      | typeof MessageMediaDocumentS
-      | typeof MessageMediaWebPageS
-      | typeof MessageMediaVenueS
-      | typeof MessageMediaGameS
-      | typeof MessageMediaInvoiceS
-      | typeof MessageMediaGeoLiveS
-      | typeof MessageMediaPollS,
-      | MessageMediaEmptyS
-      | MessageMediaPhotoS
-      | MessageMediaGeoS
-      | MessageMediaContactS
-      | MessageMediaUnsupportedS
-      | MessageMediaDocumentS
-      | MessageMediaWebPageS
-      | MessageMediaVenueS
-      | MessageMediaGameS
-      | MessageMediaInvoiceS
-      | MessageMediaGeoLiveS
-      | MessageMediaPollS
-    >;
-
+  | MessageMediaPollS;
 export const MessageMediaT = OneOf;
 
 export type MessageActionT =
@@ -76950,120 +77471,35 @@ export type MessageActionT =
   | MessageActionBotAllowedS
   | MessageActionSecureValuesSentMeS
   | MessageActionSecureValuesSentS
-  | MessageActionContactSignUpS
-  | OneOf<
-      | typeof MessageActionEmptyS
-      | typeof MessageActionChatCreateS
-      | typeof MessageActionChatEditTitleS
-      | typeof MessageActionChatEditPhotoS
-      | typeof MessageActionChatDeletePhotoS
-      | typeof MessageActionChatAddUserS
-      | typeof MessageActionChatDeleteUserS
-      | typeof MessageActionChatJoinedByLinkS
-      | typeof MessageActionChannelCreateS
-      | typeof MessageActionChatMigrateToS
-      | typeof MessageActionChannelMigrateFromS
-      | typeof MessageActionPinMessageS
-      | typeof MessageActionHistoryClearS
-      | typeof MessageActionGameScoreS
-      | typeof MessageActionPaymentSentMeS
-      | typeof MessageActionPaymentSentS
-      | typeof MessageActionPhoneCallS
-      | typeof MessageActionScreenshotTakenS
-      | typeof MessageActionCustomActionS
-      | typeof MessageActionBotAllowedS
-      | typeof MessageActionSecureValuesSentMeS
-      | typeof MessageActionSecureValuesSentS
-      | typeof MessageActionContactSignUpS,
-      | MessageActionEmptyS
-      | MessageActionChatCreateS
-      | MessageActionChatEditTitleS
-      | MessageActionChatEditPhotoS
-      | MessageActionChatDeletePhotoS
-      | MessageActionChatAddUserS
-      | MessageActionChatDeleteUserS
-      | MessageActionChatJoinedByLinkS
-      | MessageActionChannelCreateS
-      | MessageActionChatMigrateToS
-      | MessageActionChannelMigrateFromS
-      | MessageActionPinMessageS
-      | MessageActionHistoryClearS
-      | MessageActionGameScoreS
-      | MessageActionPaymentSentMeS
-      | MessageActionPaymentSentS
-      | MessageActionPhoneCallS
-      | MessageActionScreenshotTakenS
-      | MessageActionCustomActionS
-      | MessageActionBotAllowedS
-      | MessageActionSecureValuesSentMeS
-      | MessageActionSecureValuesSentS
-      | MessageActionContactSignUpS
-    >;
-
+  | MessageActionContactSignUpS;
 export const MessageActionT = OneOf;
 
-export type DialogT =
-  | DialogS
-  | DialogFolderS
-  | OneOf<typeof DialogS | typeof DialogFolderS, DialogS | DialogFolderS>;
-
+export type DialogT = DialogS | DialogFolderS;
 export const DialogT = OneOf;
 
-export type PhotoT =
-  | PhotoEmptyS
-  | PhotoS
-  | OneOf<typeof PhotoEmptyS | typeof PhotoS, PhotoEmptyS | PhotoS>;
-
+export type PhotoT = PhotoEmptyS | PhotoS;
 export const PhotoT = OneOf;
 
 export type PhotoSizeT =
   | PhotoSizeEmptyS
   | PhotoSizeS
   | PhotoCachedSizeS
-  | PhotoStrippedSizeS
-  | OneOf<
-      | typeof PhotoSizeEmptyS
-      | typeof PhotoSizeS
-      | typeof PhotoCachedSizeS
-      | typeof PhotoStrippedSizeS,
-      PhotoSizeEmptyS | PhotoSizeS | PhotoCachedSizeS | PhotoStrippedSizeS
-    >;
-
+  | PhotoStrippedSizeS;
 export const PhotoSizeT = OneOf;
 
-export type GeoPointT =
-  | GeoPointEmptyS
-  | GeoPointS
-  | OneOf<typeof GeoPointEmptyS | typeof GeoPointS, GeoPointEmptyS | GeoPointS>;
-
+export type GeoPointT = GeoPointEmptyS | GeoPointS;
 export const GeoPointT = OneOf;
 
 export type AuthAuthorizationT =
   | AuthAuthorizationS
-  | AuthAuthorizationSignUpRequiredS
-  | OneOf<
-      typeof AuthAuthorizationS | typeof AuthAuthorizationSignUpRequiredS,
-      AuthAuthorizationS | AuthAuthorizationSignUpRequiredS
-    >;
-
+  | AuthAuthorizationSignUpRequiredS;
 export const AuthAuthorizationT = OneOf;
 
 export type InputNotifyPeerT =
   | InputNotifyPeerS
   | InputNotifyUsersS
   | InputNotifyChatsS
-  | InputNotifyBroadcastsS
-  | OneOf<
-      | typeof InputNotifyPeerS
-      | typeof InputNotifyUsersS
-      | typeof InputNotifyChatsS
-      | typeof InputNotifyBroadcastsS,
-      | InputNotifyPeerS
-      | InputNotifyUsersS
-      | InputNotifyChatsS
-      | InputNotifyBroadcastsS
-    >;
-
+  | InputNotifyBroadcastsS;
 export const InputNotifyPeerT = OneOf;
 
 export const PeerNotifySettingsT = PeerNotifySettingsS;
@@ -77082,24 +77518,7 @@ export type ReportReasonT =
   | InputReportReasonChildAbuseS
   | InputReportReasonOtherS
   | InputReportReasonCopyrightS
-  | InputReportReasonGeoIrrelevantS
-  | OneOf<
-      | typeof InputReportReasonSpamS
-      | typeof InputReportReasonViolenceS
-      | typeof InputReportReasonPornographyS
-      | typeof InputReportReasonChildAbuseS
-      | typeof InputReportReasonOtherS
-      | typeof InputReportReasonCopyrightS
-      | typeof InputReportReasonGeoIrrelevantS,
-      | InputReportReasonSpamS
-      | InputReportReasonViolenceS
-      | InputReportReasonPornographyS
-      | InputReportReasonChildAbuseS
-      | InputReportReasonOtherS
-      | InputReportReasonCopyrightS
-      | InputReportReasonGeoIrrelevantS
-    >;
-
+  | InputReportReasonGeoIrrelevantS;
 export const ReportReasonT = OneOf;
 
 export const ContactT = ContactS;
@@ -77113,63 +77532,26 @@ export type ContactBlockedT = ContactBlockedS;
 
 export type ContactsContactsT =
   | ContactsContactsNotModifiedS
-  | ContactsContactsS
-  | OneOf<
-      typeof ContactsContactsNotModifiedS | typeof ContactsContactsS,
-      ContactsContactsNotModifiedS | ContactsContactsS
-    >;
-
+  | ContactsContactsS;
 export const ContactsContactsT = OneOf;
 
-export type ContactsBlockedT =
-  | ContactsBlockedS
-  | ContactsBlockedSliceS
-  | OneOf<
-      typeof ContactsBlockedS | typeof ContactsBlockedSliceS,
-      ContactsBlockedS | ContactsBlockedSliceS
-    >;
-
+export type ContactsBlockedT = ContactsBlockedS | ContactsBlockedSliceS;
 export const ContactsBlockedT = OneOf;
 
 export type MessagesDialogsT =
   | MessagesDialogsS
   | MessagesDialogsSliceS
-  | MessagesDialogsNotModifiedS
-  | OneOf<
-      | typeof MessagesDialogsS
-      | typeof MessagesDialogsSliceS
-      | typeof MessagesDialogsNotModifiedS,
-      MessagesDialogsS | MessagesDialogsSliceS | MessagesDialogsNotModifiedS
-    >;
-
+  | MessagesDialogsNotModifiedS;
 export const MessagesDialogsT = OneOf;
 
 export type MessagesMessagesT =
   | MessagesMessagesS
   | MessagesMessagesSliceS
   | MessagesChannelMessagesS
-  | MessagesMessagesNotModifiedS
-  | OneOf<
-      | typeof MessagesMessagesS
-      | typeof MessagesMessagesSliceS
-      | typeof MessagesChannelMessagesS
-      | typeof MessagesMessagesNotModifiedS,
-      | MessagesMessagesS
-      | MessagesMessagesSliceS
-      | MessagesChannelMessagesS
-      | MessagesMessagesNotModifiedS
-    >;
-
+  | MessagesMessagesNotModifiedS;
 export const MessagesMessagesT = OneOf;
 
-export type MessagesChatsT =
-  | MessagesChatsS
-  | MessagesChatsSliceS
-  | OneOf<
-      typeof MessagesChatsS | typeof MessagesChatsSliceS,
-      MessagesChatsS | MessagesChatsSliceS
-    >;
-
+export type MessagesChatsT = MessagesChatsS | MessagesChatsSliceS;
 export const MessagesChatsT = OneOf;
 
 export type MessagesFilterT =
@@ -77188,42 +77570,7 @@ export type MessagesFilterT =
   | InputMessagesFilterRoundVideoS
   | InputMessagesFilterMyMentionsS
   | InputMessagesFilterGeoS
-  | InputMessagesFilterContactsS
-  | OneOf<
-      | typeof InputMessagesFilterEmptyS
-      | typeof InputMessagesFilterPhotosS
-      | typeof InputMessagesFilterVideoS
-      | typeof InputMessagesFilterPhotoVideoS
-      | typeof InputMessagesFilterDocumentS
-      | typeof InputMessagesFilterUrlS
-      | typeof InputMessagesFilterGifS
-      | typeof InputMessagesFilterVoiceS
-      | typeof InputMessagesFilterMusicS
-      | typeof InputMessagesFilterChatPhotosS
-      | typeof InputMessagesFilterPhoneCallsS
-      | typeof InputMessagesFilterRoundVoiceS
-      | typeof InputMessagesFilterRoundVideoS
-      | typeof InputMessagesFilterMyMentionsS
-      | typeof InputMessagesFilterGeoS
-      | typeof InputMessagesFilterContactsS,
-      | InputMessagesFilterEmptyS
-      | InputMessagesFilterPhotosS
-      | InputMessagesFilterVideoS
-      | InputMessagesFilterPhotoVideoS
-      | InputMessagesFilterDocumentS
-      | InputMessagesFilterUrlS
-      | InputMessagesFilterGifS
-      | InputMessagesFilterVoiceS
-      | InputMessagesFilterMusicS
-      | InputMessagesFilterChatPhotosS
-      | InputMessagesFilterPhoneCallsS
-      | InputMessagesFilterRoundVoiceS
-      | InputMessagesFilterRoundVideoS
-      | InputMessagesFilterMyMentionsS
-      | InputMessagesFilterGeoS
-      | InputMessagesFilterContactsS
-    >;
-
+  | InputMessagesFilterContactsS;
 export const MessagesFilterT = OneOf;
 
 export type UpdateT =
@@ -77300,158 +77647,7 @@ export type UpdateT =
   | UpdatePeerLocatedS
   | UpdateNewScheduledMessageS
   | UpdateDeleteScheduledMessagesS
-  | UpdateThemeS
-  | OneOf<
-      | typeof UpdateNewMessageS
-      | typeof UpdateMessageIdS
-      | typeof UpdateDeleteMessagesS
-      | typeof UpdateUserTypingS
-      | typeof UpdateChatUserTypingS
-      | typeof UpdateChatParticipantsS
-      | typeof UpdateUserStatusS
-      | typeof UpdateUserNameS
-      | typeof UpdateUserPhotoS
-      | typeof UpdateNewEncryptedMessageS
-      | typeof UpdateEncryptedChatTypingS
-      | typeof UpdateEncryptionS
-      | typeof UpdateEncryptedMessagesReadS
-      | typeof UpdateChatParticipantAddS
-      | typeof UpdateChatParticipantDeleteS
-      | typeof UpdateDcOptionsS
-      | typeof UpdateUserBlockedS
-      | typeof UpdateNotifySettingsS
-      | typeof UpdateServiceNotificationS
-      | typeof UpdatePrivacyS
-      | typeof UpdateUserPhoneS
-      | typeof UpdateReadHistoryInboxS
-      | typeof UpdateReadHistoryOutboxS
-      | typeof UpdateWebPageS
-      | typeof UpdateReadMessagesContentsS
-      | typeof UpdateChannelTooLongS
-      | typeof UpdateChannelS
-      | typeof UpdateNewChannelMessageS
-      | typeof UpdateReadChannelInboxS
-      | typeof UpdateDeleteChannelMessagesS
-      | typeof UpdateChannelMessageViewsS
-      | typeof UpdateChatParticipantAdminS
-      | typeof UpdateNewStickerSetS
-      | typeof UpdateStickerSetsOrderS
-      | typeof UpdateStickerSetsS
-      | typeof UpdateSavedGifsS
-      | typeof UpdateBotInlineQueryS
-      | typeof UpdateBotInlineSendS
-      | typeof UpdateEditChannelMessageS
-      | typeof UpdateChannelPinnedMessageS
-      | typeof UpdateBotCallbackQueryS
-      | typeof UpdateEditMessageS
-      | typeof UpdateInlineBotCallbackQueryS
-      | typeof UpdateReadChannelOutboxS
-      | typeof UpdateDraftMessageS
-      | typeof UpdateReadFeaturedStickersS
-      | typeof UpdateRecentStickersS
-      | typeof UpdateConfigS
-      | typeof UpdatePtsChangedS
-      | typeof UpdateChannelWebPageS
-      | typeof UpdateDialogPinnedS
-      | typeof UpdatePinnedDialogsS
-      | typeof UpdateBotWebhookJsonS
-      | typeof UpdateBotWebhookJsonQueryS
-      | typeof UpdateBotShippingQueryS
-      | typeof UpdateBotPrecheckoutQueryS
-      | typeof UpdatePhoneCallS
-      | typeof UpdateLangPackTooLongS
-      | typeof UpdateLangPackS
-      | typeof UpdateFavedStickersS
-      | typeof UpdateChannelReadMessagesContentsS
-      | typeof UpdateContactsResetS
-      | typeof UpdateChannelAvailableMessagesS
-      | typeof UpdateDialogUnreadMarkS
-      | typeof UpdateUserPinnedMessageS
-      | typeof UpdateChatPinnedMessageS
-      | typeof UpdateMessagePollS
-      | typeof UpdateChatDefaultBannedRightsS
-      | typeof UpdateFolderPeersS
-      | typeof UpdatePeerSettingsS
-      | typeof UpdatePeerLocatedS
-      | typeof UpdateNewScheduledMessageS
-      | typeof UpdateDeleteScheduledMessagesS
-      | typeof UpdateThemeS,
-      | UpdateNewMessageS
-      | UpdateMessageIdS
-      | UpdateDeleteMessagesS
-      | UpdateUserTypingS
-      | UpdateChatUserTypingS
-      | UpdateChatParticipantsS
-      | UpdateUserStatusS
-      | UpdateUserNameS
-      | UpdateUserPhotoS
-      | UpdateNewEncryptedMessageS
-      | UpdateEncryptedChatTypingS
-      | UpdateEncryptionS
-      | UpdateEncryptedMessagesReadS
-      | UpdateChatParticipantAddS
-      | UpdateChatParticipantDeleteS
-      | UpdateDcOptionsS
-      | UpdateUserBlockedS
-      | UpdateNotifySettingsS
-      | UpdateServiceNotificationS
-      | UpdatePrivacyS
-      | UpdateUserPhoneS
-      | UpdateReadHistoryInboxS
-      | UpdateReadHistoryOutboxS
-      | UpdateWebPageS
-      | UpdateReadMessagesContentsS
-      | UpdateChannelTooLongS
-      | UpdateChannelS
-      | UpdateNewChannelMessageS
-      | UpdateReadChannelInboxS
-      | UpdateDeleteChannelMessagesS
-      | UpdateChannelMessageViewsS
-      | UpdateChatParticipantAdminS
-      | UpdateNewStickerSetS
-      | UpdateStickerSetsOrderS
-      | UpdateStickerSetsS
-      | UpdateSavedGifsS
-      | UpdateBotInlineQueryS
-      | UpdateBotInlineSendS
-      | UpdateEditChannelMessageS
-      | UpdateChannelPinnedMessageS
-      | UpdateBotCallbackQueryS
-      | UpdateEditMessageS
-      | UpdateInlineBotCallbackQueryS
-      | UpdateReadChannelOutboxS
-      | UpdateDraftMessageS
-      | UpdateReadFeaturedStickersS
-      | UpdateRecentStickersS
-      | UpdateConfigS
-      | UpdatePtsChangedS
-      | UpdateChannelWebPageS
-      | UpdateDialogPinnedS
-      | UpdatePinnedDialogsS
-      | UpdateBotWebhookJsonS
-      | UpdateBotWebhookJsonQueryS
-      | UpdateBotShippingQueryS
-      | UpdateBotPrecheckoutQueryS
-      | UpdatePhoneCallS
-      | UpdateLangPackTooLongS
-      | UpdateLangPackS
-      | UpdateFavedStickersS
-      | UpdateChannelReadMessagesContentsS
-      | UpdateContactsResetS
-      | UpdateChannelAvailableMessagesS
-      | UpdateDialogUnreadMarkS
-      | UpdateUserPinnedMessageS
-      | UpdateChatPinnedMessageS
-      | UpdateMessagePollS
-      | UpdateChatDefaultBannedRightsS
-      | UpdateFolderPeersS
-      | UpdatePeerSettingsS
-      | UpdatePeerLocatedS
-      | UpdateNewScheduledMessageS
-      | UpdateDeleteScheduledMessagesS
-      | UpdateThemeS
-    >;
-
+  | UpdateThemeS;
 export const UpdateT = OneOf;
 
 export const UpdatesStateT = UpdatesStateS;
@@ -77461,18 +77657,7 @@ export type UpdatesDifferenceT =
   | UpdatesDifferenceEmptyS
   | UpdatesDifferenceS
   | UpdatesDifferenceSliceS
-  | UpdatesDifferenceTooLongS
-  | OneOf<
-      | typeof UpdatesDifferenceEmptyS
-      | typeof UpdatesDifferenceS
-      | typeof UpdatesDifferenceSliceS
-      | typeof UpdatesDifferenceTooLongS,
-      | UpdatesDifferenceEmptyS
-      | UpdatesDifferenceS
-      | UpdatesDifferenceSliceS
-      | UpdatesDifferenceTooLongS
-    >;
-
+  | UpdatesDifferenceTooLongS;
 export const UpdatesDifferenceT = OneOf;
 
 export type UpdatesT =
@@ -77482,57 +77667,19 @@ export type UpdatesT =
   | UpdateShortS
   | UpdatesCombinedS
   | UpdatesS
-  | UpdateShortSentMessageS
-  | OneOf<
-      | typeof UpdatesTooLongS
-      | typeof UpdateShortMessageS
-      | typeof UpdateShortChatMessageS
-      | typeof UpdateShortS
-      | typeof UpdatesCombinedS
-      | typeof UpdatesS
-      | typeof UpdateShortSentMessageS,
-      | UpdatesTooLongS
-      | UpdateShortMessageS
-      | UpdateShortChatMessageS
-      | UpdateShortS
-      | UpdatesCombinedS
-      | UpdatesS
-      | UpdateShortSentMessageS
-    >;
-
+  | UpdateShortSentMessageS;
 export const UpdatesT = OneOf;
 
-export type PhotosPhotosT =
-  | PhotosPhotosS
-  | PhotosPhotosSliceS
-  | OneOf<
-      typeof PhotosPhotosS | typeof PhotosPhotosSliceS,
-      PhotosPhotosS | PhotosPhotosSliceS
-    >;
-
+export type PhotosPhotosT = PhotosPhotosS | PhotosPhotosSliceS;
 export const PhotosPhotosT = OneOf;
 
-export type UploadFileT =
-  | UploadFileS
-  | UploadFileCdnRedirectS
-  | OneOf<
-      typeof UploadFileS | typeof UploadFileCdnRedirectS,
-      UploadFileS | UploadFileCdnRedirectS
-    >;
-
+export type UploadFileT = UploadFileS | UploadFileCdnRedirectS;
 export const UploadFileT = OneOf;
 
 export const DcOptionT = DcOptionS;
 export type DcOptionT = DcOptionS;
 
-export type HelpAppUpdateT =
-  | HelpAppUpdateS
-  | HelpNoAppUpdateS
-  | OneOf<
-      typeof HelpAppUpdateS | typeof HelpNoAppUpdateS,
-      HelpAppUpdateS | HelpNoAppUpdateS
-    >;
-
+export type HelpAppUpdateT = HelpAppUpdateS | HelpNoAppUpdateS;
 export const HelpAppUpdateT = OneOf;
 
 export type EncryptedChatT =
@@ -77540,110 +77687,43 @@ export type EncryptedChatT =
   | EncryptedChatWaitingS
   | EncryptedChatRequestedS
   | EncryptedChatS
-  | EncryptedChatDiscardedS
-  | OneOf<
-      | typeof EncryptedChatEmptyS
-      | typeof EncryptedChatWaitingS
-      | typeof EncryptedChatRequestedS
-      | typeof EncryptedChatS
-      | typeof EncryptedChatDiscardedS,
-      | EncryptedChatEmptyS
-      | EncryptedChatWaitingS
-      | EncryptedChatRequestedS
-      | EncryptedChatS
-      | EncryptedChatDiscardedS
-    >;
-
+  | EncryptedChatDiscardedS;
 export const EncryptedChatT = OneOf;
 
-export type EncryptedFileT =
-  | EncryptedFileEmptyS
-  | EncryptedFileS
-  | OneOf<
-      typeof EncryptedFileEmptyS | typeof EncryptedFileS,
-      EncryptedFileEmptyS | EncryptedFileS
-    >;
-
+export type EncryptedFileT = EncryptedFileEmptyS | EncryptedFileS;
 export const EncryptedFileT = OneOf;
 
 export type InputEncryptedFileT =
   | InputEncryptedFileEmptyS
   | InputEncryptedFileUploadedS
   | InputEncryptedFileS
-  | InputEncryptedFileBigUploadedS
-  | OneOf<
-      | typeof InputEncryptedFileEmptyS
-      | typeof InputEncryptedFileUploadedS
-      | typeof InputEncryptedFileS
-      | typeof InputEncryptedFileBigUploadedS,
-      | InputEncryptedFileEmptyS
-      | InputEncryptedFileUploadedS
-      | InputEncryptedFileS
-      | InputEncryptedFileBigUploadedS
-    >;
-
+  | InputEncryptedFileBigUploadedS;
 export const InputEncryptedFileT = OneOf;
 
-export type EncryptedMessageT =
-  | EncryptedMessageS
-  | EncryptedMessageServiceS
-  | OneOf<
-      typeof EncryptedMessageS | typeof EncryptedMessageServiceS,
-      EncryptedMessageS | EncryptedMessageServiceS
-    >;
-
+export type EncryptedMessageT = EncryptedMessageS | EncryptedMessageServiceS;
 export const EncryptedMessageT = OneOf;
 
 export type MessagesDhConfigT =
   | MessagesDhConfigNotModifiedS
-  | MessagesDhConfigS
-  | OneOf<
-      typeof MessagesDhConfigNotModifiedS | typeof MessagesDhConfigS,
-      MessagesDhConfigNotModifiedS | MessagesDhConfigS
-    >;
-
+  | MessagesDhConfigS;
 export const MessagesDhConfigT = OneOf;
 
 export type MessagesSentEncryptedMessageT =
   | MessagesSentEncryptedMessageS
-  | MessagesSentEncryptedFileS
-  | OneOf<
-      typeof MessagesSentEncryptedMessageS | typeof MessagesSentEncryptedFileS,
-      MessagesSentEncryptedMessageS | MessagesSentEncryptedFileS
-    >;
-
+  | MessagesSentEncryptedFileS;
 export const MessagesSentEncryptedMessageT = OneOf;
 
-export type InputDocumentT =
-  | InputDocumentEmptyS
-  | InputDocumentS
-  | OneOf<
-      typeof InputDocumentEmptyS | typeof InputDocumentS,
-      InputDocumentEmptyS | InputDocumentS
-    >;
-
+export type InputDocumentT = InputDocumentEmptyS | InputDocumentS;
 export const InputDocumentT = OneOf;
 
-export type DocumentT =
-  | DocumentEmptyS
-  | DocumentS
-  | OneOf<typeof DocumentEmptyS | typeof DocumentS, DocumentEmptyS | DocumentS>;
-
+export type DocumentT = DocumentEmptyS | DocumentS;
 export const DocumentT = OneOf;
 
 export type NotifyPeerT =
   | NotifyPeerS
   | NotifyUsersS
   | NotifyChatsS
-  | NotifyBroadcastsS
-  | OneOf<
-      | typeof NotifyPeerS
-      | typeof NotifyUsersS
-      | typeof NotifyChatsS
-      | typeof NotifyBroadcastsS,
-      NotifyPeerS | NotifyUsersS | NotifyChatsS | NotifyBroadcastsS
-    >;
-
+  | NotifyBroadcastsS;
 export const NotifyPeerT = OneOf;
 
 export type SendMessageActionT =
@@ -77659,36 +77739,7 @@ export type SendMessageActionT =
   | SendMessageChooseContactActionS
   | SendMessageGamePlayActionS
   | SendMessageRecordRoundActionS
-  | SendMessageUploadRoundActionS
-  | OneOf<
-      | typeof SendMessageTypingActionS
-      | typeof SendMessageCancelActionS
-      | typeof SendMessageRecordVideoActionS
-      | typeof SendMessageUploadVideoActionS
-      | typeof SendMessageRecordAudioActionS
-      | typeof SendMessageUploadAudioActionS
-      | typeof SendMessageUploadPhotoActionS
-      | typeof SendMessageUploadDocumentActionS
-      | typeof SendMessageGeoLocationActionS
-      | typeof SendMessageChooseContactActionS
-      | typeof SendMessageGamePlayActionS
-      | typeof SendMessageRecordRoundActionS
-      | typeof SendMessageUploadRoundActionS,
-      | SendMessageTypingActionS
-      | SendMessageCancelActionS
-      | SendMessageRecordVideoActionS
-      | SendMessageUploadVideoActionS
-      | SendMessageRecordAudioActionS
-      | SendMessageUploadAudioActionS
-      | SendMessageUploadPhotoActionS
-      | SendMessageUploadDocumentActionS
-      | SendMessageGeoLocationActionS
-      | SendMessageChooseContactActionS
-      | SendMessageGamePlayActionS
-      | SendMessageRecordRoundActionS
-      | SendMessageUploadRoundActionS
-    >;
-
+  | SendMessageUploadRoundActionS;
 export const SendMessageActionT = OneOf;
 
 export type InputPrivacyKeyT =
@@ -77699,26 +77750,7 @@ export type InputPrivacyKeyT =
   | InputPrivacyKeyForwardsS
   | InputPrivacyKeyProfilePhotoS
   | InputPrivacyKeyPhoneNumberS
-  | InputPrivacyKeyAddedByPhoneS
-  | OneOf<
-      | typeof InputPrivacyKeyStatusTimestampS
-      | typeof InputPrivacyKeyChatInviteS
-      | typeof InputPrivacyKeyPhoneCallS
-      | typeof InputPrivacyKeyPhoneP2PS
-      | typeof InputPrivacyKeyForwardsS
-      | typeof InputPrivacyKeyProfilePhotoS
-      | typeof InputPrivacyKeyPhoneNumberS
-      | typeof InputPrivacyKeyAddedByPhoneS,
-      | InputPrivacyKeyStatusTimestampS
-      | InputPrivacyKeyChatInviteS
-      | InputPrivacyKeyPhoneCallS
-      | InputPrivacyKeyPhoneP2PS
-      | InputPrivacyKeyForwardsS
-      | InputPrivacyKeyProfilePhotoS
-      | InputPrivacyKeyPhoneNumberS
-      | InputPrivacyKeyAddedByPhoneS
-    >;
-
+  | InputPrivacyKeyAddedByPhoneS;
 export const InputPrivacyKeyT = OneOf;
 
 export type PrivacyKeyT =
@@ -77729,26 +77761,7 @@ export type PrivacyKeyT =
   | PrivacyKeyForwardsS
   | PrivacyKeyProfilePhotoS
   | PrivacyKeyPhoneNumberS
-  | PrivacyKeyAddedByPhoneS
-  | OneOf<
-      | typeof PrivacyKeyStatusTimestampS
-      | typeof PrivacyKeyChatInviteS
-      | typeof PrivacyKeyPhoneCallS
-      | typeof PrivacyKeyPhoneP2PS
-      | typeof PrivacyKeyForwardsS
-      | typeof PrivacyKeyProfilePhotoS
-      | typeof PrivacyKeyPhoneNumberS
-      | typeof PrivacyKeyAddedByPhoneS,
-      | PrivacyKeyStatusTimestampS
-      | PrivacyKeyChatInviteS
-      | PrivacyKeyPhoneCallS
-      | PrivacyKeyPhoneP2PS
-      | PrivacyKeyForwardsS
-      | PrivacyKeyProfilePhotoS
-      | PrivacyKeyPhoneNumberS
-      | PrivacyKeyAddedByPhoneS
-    >;
-
+  | PrivacyKeyAddedByPhoneS;
 export const PrivacyKeyT = OneOf;
 
 export type InputPrivacyRuleT =
@@ -77759,26 +77772,7 @@ export type InputPrivacyRuleT =
   | InputPrivacyValueDisallowAllS
   | InputPrivacyValueDisallowUsersS
   | InputPrivacyValueAllowChatParticipantsS
-  | InputPrivacyValueDisallowChatParticipantsS
-  | OneOf<
-      | typeof InputPrivacyValueAllowContactsS
-      | typeof InputPrivacyValueAllowAllS
-      | typeof InputPrivacyValueAllowUsersS
-      | typeof InputPrivacyValueDisallowContactsS
-      | typeof InputPrivacyValueDisallowAllS
-      | typeof InputPrivacyValueDisallowUsersS
-      | typeof InputPrivacyValueAllowChatParticipantsS
-      | typeof InputPrivacyValueDisallowChatParticipantsS,
-      | InputPrivacyValueAllowContactsS
-      | InputPrivacyValueAllowAllS
-      | InputPrivacyValueAllowUsersS
-      | InputPrivacyValueDisallowContactsS
-      | InputPrivacyValueDisallowAllS
-      | InputPrivacyValueDisallowUsersS
-      | InputPrivacyValueAllowChatParticipantsS
-      | InputPrivacyValueDisallowChatParticipantsS
-    >;
-
+  | InputPrivacyValueDisallowChatParticipantsS;
 export const InputPrivacyRuleT = OneOf;
 
 export type PrivacyRuleT =
@@ -77789,26 +77783,7 @@ export type PrivacyRuleT =
   | PrivacyValueDisallowAllS
   | PrivacyValueDisallowUsersS
   | PrivacyValueAllowChatParticipantsS
-  | PrivacyValueDisallowChatParticipantsS
-  | OneOf<
-      | typeof PrivacyValueAllowContactsS
-      | typeof PrivacyValueAllowAllS
-      | typeof PrivacyValueAllowUsersS
-      | typeof PrivacyValueDisallowContactsS
-      | typeof PrivacyValueDisallowAllS
-      | typeof PrivacyValueDisallowUsersS
-      | typeof PrivacyValueAllowChatParticipantsS
-      | typeof PrivacyValueDisallowChatParticipantsS,
-      | PrivacyValueAllowContactsS
-      | PrivacyValueAllowAllS
-      | PrivacyValueAllowUsersS
-      | PrivacyValueDisallowContactsS
-      | PrivacyValueDisallowAllS
-      | PrivacyValueDisallowUsersS
-      | PrivacyValueAllowChatParticipantsS
-      | PrivacyValueDisallowChatParticipantsS
-    >;
-
+  | PrivacyValueDisallowChatParticipantsS;
 export const PrivacyRuleT = OneOf;
 
 export type DocumentAttributeT =
@@ -77818,34 +77793,12 @@ export type DocumentAttributeT =
   | DocumentAttributeVideoS
   | DocumentAttributeAudioS
   | DocumentAttributeFilenameS
-  | DocumentAttributeHasStickersS
-  | OneOf<
-      | typeof DocumentAttributeImageSizeS
-      | typeof DocumentAttributeAnimatedS
-      | typeof DocumentAttributeStickerS
-      | typeof DocumentAttributeVideoS
-      | typeof DocumentAttributeAudioS
-      | typeof DocumentAttributeFilenameS
-      | typeof DocumentAttributeHasStickersS,
-      | DocumentAttributeImageSizeS
-      | DocumentAttributeAnimatedS
-      | DocumentAttributeStickerS
-      | DocumentAttributeVideoS
-      | DocumentAttributeAudioS
-      | DocumentAttributeFilenameS
-      | DocumentAttributeHasStickersS
-    >;
-
+  | DocumentAttributeHasStickersS;
 export const DocumentAttributeT = OneOf;
 
 export type MessagesStickersT =
   | MessagesStickersNotModifiedS
-  | MessagesStickersS
-  | OneOf<
-      typeof MessagesStickersNotModifiedS | typeof MessagesStickersS,
-      MessagesStickersNotModifiedS | MessagesStickersS
-    >;
-
+  | MessagesStickersS;
 export const MessagesStickersT = OneOf;
 
 export const StickerPackT = StickerPackS;
@@ -77853,68 +77806,30 @@ export type StickerPackT = StickerPackS;
 
 export type MessagesAllStickersT =
   | MessagesAllStickersNotModifiedS
-  | MessagesAllStickersS
-  | OneOf<
-      typeof MessagesAllStickersNotModifiedS | typeof MessagesAllStickersS,
-      MessagesAllStickersNotModifiedS | MessagesAllStickersS
-    >;
-
+  | MessagesAllStickersS;
 export const MessagesAllStickersT = OneOf;
 
 export type WebPageT =
   | WebPageEmptyS
   | WebPagePendingS
   | WebPageS
-  | WebPageNotModifiedS
-  | OneOf<
-      | typeof WebPageEmptyS
-      | typeof WebPagePendingS
-      | typeof WebPageS
-      | typeof WebPageNotModifiedS,
-      WebPageEmptyS | WebPagePendingS | WebPageS | WebPageNotModifiedS
-    >;
-
+  | WebPageNotModifiedS;
 export const WebPageT = OneOf;
 
 export const AuthorizationT = AuthorizationS;
 export type AuthorizationT = AuthorizationS;
 
-export type ExportedChatInviteT =
-  | ChatInviteEmptyS
-  | ChatInviteExportedS
-  | OneOf<
-      typeof ChatInviteEmptyS | typeof ChatInviteExportedS,
-      ChatInviteEmptyS | ChatInviteExportedS
-    >;
-
+export type ExportedChatInviteT = ChatInviteEmptyS | ChatInviteExportedS;
 export const ExportedChatInviteT = OneOf;
 
-export type ChatInviteT =
-  | ChatInviteAlreadyS
-  | ChatInviteS
-  | OneOf<
-      typeof ChatInviteAlreadyS | typeof ChatInviteS,
-      ChatInviteAlreadyS | ChatInviteS
-    >;
-
+export type ChatInviteT = ChatInviteAlreadyS | ChatInviteS;
 export const ChatInviteT = OneOf;
 
 export type InputStickerSetT =
   | InputStickerSetEmptyS
   | InputStickerSetIdS
   | InputStickerSetShortNameS
-  | InputStickerSetAnimatedEmojiS
-  | OneOf<
-      | typeof InputStickerSetEmptyS
-      | typeof InputStickerSetIdS
-      | typeof InputStickerSetShortNameS
-      | typeof InputStickerSetAnimatedEmojiS,
-      | InputStickerSetEmptyS
-      | InputStickerSetIdS
-      | InputStickerSetShortNameS
-      | InputStickerSetAnimatedEmojiS
-    >;
-
+  | InputStickerSetAnimatedEmojiS;
 export const InputStickerSetT = OneOf;
 
 export const StickerSetT = StickerSetS;
@@ -77939,30 +77854,7 @@ export type KeyboardButtonT =
   | KeyboardButtonGameS
   | KeyboardButtonBuyS
   | KeyboardButtonUrlAuthS
-  | InputKeyboardButtonUrlAuthS
-  | OneOf<
-      | typeof KeyboardButtonS
-      | typeof KeyboardButtonUrlS
-      | typeof KeyboardButtonCallbackS
-      | typeof KeyboardButtonRequestPhoneS
-      | typeof KeyboardButtonRequestGeoLocationS
-      | typeof KeyboardButtonSwitchInlineS
-      | typeof KeyboardButtonGameS
-      | typeof KeyboardButtonBuyS
-      | typeof KeyboardButtonUrlAuthS
-      | typeof InputKeyboardButtonUrlAuthS,
-      | KeyboardButtonS
-      | KeyboardButtonUrlS
-      | KeyboardButtonCallbackS
-      | KeyboardButtonRequestPhoneS
-      | KeyboardButtonRequestGeoLocationS
-      | KeyboardButtonSwitchInlineS
-      | KeyboardButtonGameS
-      | KeyboardButtonBuyS
-      | KeyboardButtonUrlAuthS
-      | InputKeyboardButtonUrlAuthS
-    >;
-
+  | InputKeyboardButtonUrlAuthS;
 export const KeyboardButtonT = OneOf;
 
 export const KeyboardButtonRowT = KeyboardButtonRowS;
@@ -77972,18 +77864,7 @@ export type ReplyMarkupT =
   | ReplyKeyboardHideS
   | ReplyKeyboardForceReplyS
   | ReplyKeyboardMarkupS
-  | ReplyInlineMarkupS
-  | OneOf<
-      | typeof ReplyKeyboardHideS
-      | typeof ReplyKeyboardForceReplyS
-      | typeof ReplyKeyboardMarkupS
-      | typeof ReplyInlineMarkupS,
-      | ReplyKeyboardHideS
-      | ReplyKeyboardForceReplyS
-      | ReplyKeyboardMarkupS
-      | ReplyInlineMarkupS
-    >;
-
+  | ReplyInlineMarkupS;
 export const ReplyMarkupT = OneOf;
 
 export type MessageEntityT =
@@ -78004,59 +77885,13 @@ export type MessageEntityT =
   | MessageEntityCashtagS
   | MessageEntityUnderlineS
   | MessageEntityStrikeS
-  | MessageEntityBlockquoteS
-  | OneOf<
-      | typeof MessageEntityUnknownS
-      | typeof MessageEntityMentionS
-      | typeof MessageEntityHashtagS
-      | typeof MessageEntityBotCommandS
-      | typeof MessageEntityUrlS
-      | typeof MessageEntityEmailS
-      | typeof MessageEntityBoldS
-      | typeof MessageEntityItalicS
-      | typeof MessageEntityCodeS
-      | typeof MessageEntityPreS
-      | typeof MessageEntityTextUrlS
-      | typeof MessageEntityMentionNameS
-      | typeof InputMessageEntityMentionNameS
-      | typeof MessageEntityPhoneS
-      | typeof MessageEntityCashtagS
-      | typeof MessageEntityUnderlineS
-      | typeof MessageEntityStrikeS
-      | typeof MessageEntityBlockquoteS,
-      | MessageEntityUnknownS
-      | MessageEntityMentionS
-      | MessageEntityHashtagS
-      | MessageEntityBotCommandS
-      | MessageEntityUrlS
-      | MessageEntityEmailS
-      | MessageEntityBoldS
-      | MessageEntityItalicS
-      | MessageEntityCodeS
-      | MessageEntityPreS
-      | MessageEntityTextUrlS
-      | MessageEntityMentionNameS
-      | InputMessageEntityMentionNameS
-      | MessageEntityPhoneS
-      | MessageEntityCashtagS
-      | MessageEntityUnderlineS
-      | MessageEntityStrikeS
-      | MessageEntityBlockquoteS
-    >;
-
+  | MessageEntityBlockquoteS;
 export const MessageEntityT = OneOf;
 
 export type InputChannelT =
   | InputChannelEmptyS
   | InputChannelS
-  | InputChannelFromMessageS
-  | OneOf<
-      | typeof InputChannelEmptyS
-      | typeof InputChannelS
-      | typeof InputChannelFromMessageS,
-      InputChannelEmptyS | InputChannelS | InputChannelFromMessageS
-    >;
-
+  | InputChannelFromMessageS;
 export const InputChannelT = OneOf;
 
 export const MessageRangeT = MessageRangeS;
@@ -78065,26 +77900,12 @@ export type MessageRangeT = MessageRangeS;
 export type UpdatesChannelDifferenceT =
   | UpdatesChannelDifferenceEmptyS
   | UpdatesChannelDifferenceTooLongS
-  | UpdatesChannelDifferenceS
-  | OneOf<
-      | typeof UpdatesChannelDifferenceEmptyS
-      | typeof UpdatesChannelDifferenceTooLongS
-      | typeof UpdatesChannelDifferenceS,
-      | UpdatesChannelDifferenceEmptyS
-      | UpdatesChannelDifferenceTooLongS
-      | UpdatesChannelDifferenceS
-    >;
-
+  | UpdatesChannelDifferenceS;
 export const UpdatesChannelDifferenceT = OneOf;
 
 export type ChannelMessagesFilterT =
   | ChannelMessagesFilterEmptyS
-  | ChannelMessagesFilterS
-  | OneOf<
-      typeof ChannelMessagesFilterEmptyS | typeof ChannelMessagesFilterS,
-      ChannelMessagesFilterEmptyS | ChannelMessagesFilterS
-    >;
-
+  | ChannelMessagesFilterS;
 export const ChannelMessagesFilterT = OneOf;
 
 export type ChannelParticipantT =
@@ -78092,20 +77913,7 @@ export type ChannelParticipantT =
   | ChannelParticipantSelfS
   | ChannelParticipantCreatorS
   | ChannelParticipantAdminS
-  | ChannelParticipantBannedS
-  | OneOf<
-      | typeof ChannelParticipantS
-      | typeof ChannelParticipantSelfS
-      | typeof ChannelParticipantCreatorS
-      | typeof ChannelParticipantAdminS
-      | typeof ChannelParticipantBannedS,
-      | ChannelParticipantS
-      | ChannelParticipantSelfS
-      | ChannelParticipantCreatorS
-      | ChannelParticipantAdminS
-      | ChannelParticipantBannedS
-    >;
-
+  | ChannelParticipantBannedS;
 export const ChannelParticipantT = OneOf;
 
 export type ChannelParticipantsFilterT =
@@ -78115,58 +77923,23 @@ export type ChannelParticipantsFilterT =
   | ChannelParticipantsBotsS
   | ChannelParticipantsBannedS
   | ChannelParticipantsSearchS
-  | ChannelParticipantsContactsS
-  | OneOf<
-      | typeof ChannelParticipantsRecentS
-      | typeof ChannelParticipantsAdminsS
-      | typeof ChannelParticipantsKickedS
-      | typeof ChannelParticipantsBotsS
-      | typeof ChannelParticipantsBannedS
-      | typeof ChannelParticipantsSearchS
-      | typeof ChannelParticipantsContactsS,
-      | ChannelParticipantsRecentS
-      | ChannelParticipantsAdminsS
-      | ChannelParticipantsKickedS
-      | ChannelParticipantsBotsS
-      | ChannelParticipantsBannedS
-      | ChannelParticipantsSearchS
-      | ChannelParticipantsContactsS
-    >;
-
+  | ChannelParticipantsContactsS;
 export const ChannelParticipantsFilterT = OneOf;
 
 export type ChannelsChannelParticipantsT =
   | ChannelsChannelParticipantsS
-  | ChannelsChannelParticipantsNotModifiedS
-  | OneOf<
-      | typeof ChannelsChannelParticipantsS
-      | typeof ChannelsChannelParticipantsNotModifiedS,
-      ChannelsChannelParticipantsS | ChannelsChannelParticipantsNotModifiedS
-    >;
-
+  | ChannelsChannelParticipantsNotModifiedS;
 export const ChannelsChannelParticipantsT = OneOf;
 
 export const HelpTermsOfServiceT = HelpTermsOfServiceS;
 export type HelpTermsOfServiceT = HelpTermsOfServiceS;
 
-export type FoundGifT =
-  | FoundGifS
-  | FoundGifCachedS
-  | OneOf<
-      typeof FoundGifS | typeof FoundGifCachedS,
-      FoundGifS | FoundGifCachedS
-    >;
-
+export type FoundGifT = FoundGifS | FoundGifCachedS;
 export const FoundGifT = OneOf;
 
 export type MessagesSavedGifsT =
   | MessagesSavedGifsNotModifiedS
-  | MessagesSavedGifsS
-  | OneOf<
-      typeof MessagesSavedGifsNotModifiedS | typeof MessagesSavedGifsS,
-      MessagesSavedGifsNotModifiedS | MessagesSavedGifsS
-    >;
-
+  | MessagesSavedGifsS;
 export const MessagesSavedGifsT = OneOf;
 
 export type InputBotInlineMessageT =
@@ -78175,40 +77948,14 @@ export type InputBotInlineMessageT =
   | InputBotInlineMessageMediaGeoS
   | InputBotInlineMessageMediaVenueS
   | InputBotInlineMessageMediaContactS
-  | InputBotInlineMessageGameS
-  | OneOf<
-      | typeof InputBotInlineMessageMediaAutoS
-      | typeof InputBotInlineMessageTextS
-      | typeof InputBotInlineMessageMediaGeoS
-      | typeof InputBotInlineMessageMediaVenueS
-      | typeof InputBotInlineMessageMediaContactS
-      | typeof InputBotInlineMessageGameS,
-      | InputBotInlineMessageMediaAutoS
-      | InputBotInlineMessageTextS
-      | InputBotInlineMessageMediaGeoS
-      | InputBotInlineMessageMediaVenueS
-      | InputBotInlineMessageMediaContactS
-      | InputBotInlineMessageGameS
-    >;
-
+  | InputBotInlineMessageGameS;
 export const InputBotInlineMessageT = OneOf;
 
 export type InputBotInlineResultT =
   | InputBotInlineResultS
   | InputBotInlineResultPhotoS
   | InputBotInlineResultDocumentS
-  | InputBotInlineResultGameS
-  | OneOf<
-      | typeof InputBotInlineResultS
-      | typeof InputBotInlineResultPhotoS
-      | typeof InputBotInlineResultDocumentS
-      | typeof InputBotInlineResultGameS,
-      | InputBotInlineResultS
-      | InputBotInlineResultPhotoS
-      | InputBotInlineResultDocumentS
-      | InputBotInlineResultGameS
-    >;
-
+  | InputBotInlineResultGameS;
 export const InputBotInlineResultT = OneOf;
 
 export type BotInlineMessageT =
@@ -78216,30 +77963,10 @@ export type BotInlineMessageT =
   | BotInlineMessageTextS
   | BotInlineMessageMediaGeoS
   | BotInlineMessageMediaVenueS
-  | BotInlineMessageMediaContactS
-  | OneOf<
-      | typeof BotInlineMessageMediaAutoS
-      | typeof BotInlineMessageTextS
-      | typeof BotInlineMessageMediaGeoS
-      | typeof BotInlineMessageMediaVenueS
-      | typeof BotInlineMessageMediaContactS,
-      | BotInlineMessageMediaAutoS
-      | BotInlineMessageTextS
-      | BotInlineMessageMediaGeoS
-      | BotInlineMessageMediaVenueS
-      | BotInlineMessageMediaContactS
-    >;
-
+  | BotInlineMessageMediaContactS;
 export const BotInlineMessageT = OneOf;
 
-export type BotInlineResultT =
-  | BotInlineResultS
-  | BotInlineMediaResultS
-  | OneOf<
-      typeof BotInlineResultS | typeof BotInlineMediaResultS,
-      BotInlineResultS | BotInlineMediaResultS
-    >;
-
+export type BotInlineResultT = BotInlineResultS | BotInlineMediaResultS;
 export const BotInlineResultT = OneOf;
 
 export const MessageFwdHeaderT = MessageFwdHeaderS;
@@ -78248,32 +77975,14 @@ export type MessageFwdHeaderT = MessageFwdHeaderS;
 export type AuthCodeTypeT =
   | AuthCodeTypeSmsS
   | AuthCodeTypeCallS
-  | AuthCodeTypeFlashCallS
-  | OneOf<
-      | typeof AuthCodeTypeSmsS
-      | typeof AuthCodeTypeCallS
-      | typeof AuthCodeTypeFlashCallS,
-      AuthCodeTypeSmsS | AuthCodeTypeCallS | AuthCodeTypeFlashCallS
-    >;
-
+  | AuthCodeTypeFlashCallS;
 export const AuthCodeTypeT = OneOf;
 
 export type AuthSentCodeTypeT =
   | AuthSentCodeTypeAppS
   | AuthSentCodeTypeSmsS
   | AuthSentCodeTypeCallS
-  | AuthSentCodeTypeFlashCallS
-  | OneOf<
-      | typeof AuthSentCodeTypeAppS
-      | typeof AuthSentCodeTypeSmsS
-      | typeof AuthSentCodeTypeCallS
-      | typeof AuthSentCodeTypeFlashCallS,
-      | AuthSentCodeTypeAppS
-      | AuthSentCodeTypeSmsS
-      | AuthSentCodeTypeCallS
-      | AuthSentCodeTypeFlashCallS
-    >;
-
+  | AuthSentCodeTypeFlashCallS;
 export const AuthSentCodeTypeT = OneOf;
 
 export const InputBotInlineMessageIdT = InputBotInlineMessageIdS;
@@ -78293,26 +78002,7 @@ export type TopPeerCategoryT =
   | TopPeerCategoryChannelsS
   | TopPeerCategoryPhoneCallsS
   | TopPeerCategoryForwardUsersS
-  | TopPeerCategoryForwardChatsS
-  | OneOf<
-      | typeof TopPeerCategoryBotsPmS
-      | typeof TopPeerCategoryBotsInlineS
-      | typeof TopPeerCategoryCorrespondentsS
-      | typeof TopPeerCategoryGroupsS
-      | typeof TopPeerCategoryChannelsS
-      | typeof TopPeerCategoryPhoneCallsS
-      | typeof TopPeerCategoryForwardUsersS
-      | typeof TopPeerCategoryForwardChatsS,
-      | TopPeerCategoryBotsPmS
-      | TopPeerCategoryBotsInlineS
-      | TopPeerCategoryCorrespondentsS
-      | TopPeerCategoryGroupsS
-      | TopPeerCategoryChannelsS
-      | TopPeerCategoryPhoneCallsS
-      | TopPeerCategoryForwardUsersS
-      | TopPeerCategoryForwardChatsS
-    >;
-
+  | TopPeerCategoryForwardChatsS;
 export const TopPeerCategoryT = OneOf;
 
 export const TopPeerCategoryPeersT = TopPeerCategoryPeersS;
@@ -78321,70 +78011,28 @@ export type TopPeerCategoryPeersT = TopPeerCategoryPeersS;
 export type ContactsTopPeersT =
   | ContactsTopPeersNotModifiedS
   | ContactsTopPeersS
-  | ContactsTopPeersDisabledS
-  | OneOf<
-      | typeof ContactsTopPeersNotModifiedS
-      | typeof ContactsTopPeersS
-      | typeof ContactsTopPeersDisabledS,
-      | ContactsTopPeersNotModifiedS
-      | ContactsTopPeersS
-      | ContactsTopPeersDisabledS
-    >;
-
+  | ContactsTopPeersDisabledS;
 export const ContactsTopPeersT = OneOf;
 
-export type DraftMessageT =
-  | DraftMessageEmptyS
-  | DraftMessageS
-  | OneOf<
-      typeof DraftMessageEmptyS | typeof DraftMessageS,
-      DraftMessageEmptyS | DraftMessageS
-    >;
-
+export type DraftMessageT = DraftMessageEmptyS | DraftMessageS;
 export const DraftMessageT = OneOf;
 
 export type MessagesFeaturedStickersT =
   | MessagesFeaturedStickersNotModifiedS
-  | MessagesFeaturedStickersS
-  | OneOf<
-      | typeof MessagesFeaturedStickersNotModifiedS
-      | typeof MessagesFeaturedStickersS,
-      MessagesFeaturedStickersNotModifiedS | MessagesFeaturedStickersS
-    >;
-
+  | MessagesFeaturedStickersS;
 export const MessagesFeaturedStickersT = OneOf;
 
 export type MessagesRecentStickersT =
   | MessagesRecentStickersNotModifiedS
-  | MessagesRecentStickersS
-  | OneOf<
-      | typeof MessagesRecentStickersNotModifiedS
-      | typeof MessagesRecentStickersS,
-      MessagesRecentStickersNotModifiedS | MessagesRecentStickersS
-    >;
-
+  | MessagesRecentStickersS;
 export const MessagesRecentStickersT = OneOf;
 
 export type MessagesStickerSetInstallResultT =
   | MessagesStickerSetInstallResultSuccessS
-  | MessagesStickerSetInstallResultArchiveS
-  | OneOf<
-      | typeof MessagesStickerSetInstallResultSuccessS
-      | typeof MessagesStickerSetInstallResultArchiveS,
-      | MessagesStickerSetInstallResultSuccessS
-      | MessagesStickerSetInstallResultArchiveS
-    >;
-
+  | MessagesStickerSetInstallResultArchiveS;
 export const MessagesStickerSetInstallResultT = OneOf;
 
-export type StickerSetCoveredT =
-  | StickerSetCoveredS
-  | StickerSetMultiCoveredS
-  | OneOf<
-      typeof StickerSetCoveredS | typeof StickerSetMultiCoveredS,
-      StickerSetCoveredS | StickerSetMultiCoveredS
-    >;
-
+export type StickerSetCoveredT = StickerSetCoveredS | StickerSetMultiCoveredS;
 export const StickerSetCoveredT = OneOf;
 
 export const MaskCoordsT = MaskCoordsS;
@@ -78392,25 +78040,13 @@ export type MaskCoordsT = MaskCoordsS;
 
 export type InputStickeredMediaT =
   | InputStickeredMediaPhotoS
-  | InputStickeredMediaDocumentS
-  | OneOf<
-      typeof InputStickeredMediaPhotoS | typeof InputStickeredMediaDocumentS,
-      InputStickeredMediaPhotoS | InputStickeredMediaDocumentS
-    >;
-
+  | InputStickeredMediaDocumentS;
 export const InputStickeredMediaT = OneOf;
 
 export const GameT = GameS;
 export type GameT = GameS;
 
-export type InputGameT =
-  | InputGameIdS
-  | InputGameShortNameS
-  | OneOf<
-      typeof InputGameIdS | typeof InputGameShortNameS,
-      InputGameIdS | InputGameShortNameS
-    >;
-
+export type InputGameT = InputGameIdS | InputGameShortNameS;
 export const InputGameT = OneOf;
 
 export const HighScoreT = HighScoreS;
@@ -78432,42 +78068,7 @@ export type RichTextT =
   | TextMarkedS
   | TextPhoneS
   | TextImageS
-  | TextAnchorS
-  | OneOf<
-      | typeof TextEmptyS
-      | typeof TextPlainS
-      | typeof TextBoldS
-      | typeof TextItalicS
-      | typeof TextUnderlineS
-      | typeof TextStrikeS
-      | typeof TextFixedS
-      | typeof TextUrlS
-      | typeof TextEmailS
-      | typeof TextConcatS
-      | typeof TextSubscriptS
-      | typeof TextSuperscriptS
-      | typeof TextMarkedS
-      | typeof TextPhoneS
-      | typeof TextImageS
-      | typeof TextAnchorS,
-      | TextEmptyS
-      | TextPlainS
-      | TextBoldS
-      | TextItalicS
-      | TextUnderlineS
-      | TextStrikeS
-      | TextFixedS
-      | TextUrlS
-      | TextEmailS
-      | TextConcatS
-      | TextSubscriptS
-      | TextSuperscriptS
-      | TextMarkedS
-      | TextPhoneS
-      | TextImageS
-      | TextAnchorS
-    >;
-
+  | TextAnchorS;
 export const RichTextT = OneOf;
 
 export type PageBlockT =
@@ -78499,86 +78100,14 @@ export type PageBlockT =
   | PageBlockOrderedListS
   | PageBlockDetailsS
   | PageBlockRelatedArticlesS
-  | PageBlockMapS
-  | OneOf<
-      | typeof PageBlockUnsupportedS
-      | typeof PageBlockTitleS
-      | typeof PageBlockSubtitleS
-      | typeof PageBlockAuthorDateS
-      | typeof PageBlockHeaderS
-      | typeof PageBlockSubheaderS
-      | typeof PageBlockParagraphS
-      | typeof PageBlockPreformattedS
-      | typeof PageBlockFooterS
-      | typeof PageBlockDividerS
-      | typeof PageBlockAnchorS
-      | typeof PageBlockListS
-      | typeof PageBlockBlockquoteS
-      | typeof PageBlockPullquoteS
-      | typeof PageBlockPhotoS
-      | typeof PageBlockVideoS
-      | typeof PageBlockCoverS
-      | typeof PageBlockEmbedS
-      | typeof PageBlockEmbedPostS
-      | typeof PageBlockCollageS
-      | typeof PageBlockSlideshowS
-      | typeof PageBlockChannelS
-      | typeof PageBlockAudioS
-      | typeof PageBlockKickerS
-      | typeof PageBlockTableS
-      | typeof PageBlockOrderedListS
-      | typeof PageBlockDetailsS
-      | typeof PageBlockRelatedArticlesS
-      | typeof PageBlockMapS,
-      | PageBlockUnsupportedS
-      | PageBlockTitleS
-      | PageBlockSubtitleS
-      | PageBlockAuthorDateS
-      | PageBlockHeaderS
-      | PageBlockSubheaderS
-      | PageBlockParagraphS
-      | PageBlockPreformattedS
-      | PageBlockFooterS
-      | PageBlockDividerS
-      | PageBlockAnchorS
-      | PageBlockListS
-      | PageBlockBlockquoteS
-      | PageBlockPullquoteS
-      | PageBlockPhotoS
-      | PageBlockVideoS
-      | PageBlockCoverS
-      | PageBlockEmbedS
-      | PageBlockEmbedPostS
-      | PageBlockCollageS
-      | PageBlockSlideshowS
-      | PageBlockChannelS
-      | PageBlockAudioS
-      | PageBlockKickerS
-      | PageBlockTableS
-      | PageBlockOrderedListS
-      | PageBlockDetailsS
-      | PageBlockRelatedArticlesS
-      | PageBlockMapS
-    >;
-
+  | PageBlockMapS;
 export const PageBlockT = OneOf;
 
 export type PhoneCallDiscardReasonT =
   | PhoneCallDiscardReasonMissedS
   | PhoneCallDiscardReasonDisconnectS
   | PhoneCallDiscardReasonHangupS
-  | PhoneCallDiscardReasonBusyS
-  | OneOf<
-      | typeof PhoneCallDiscardReasonMissedS
-      | typeof PhoneCallDiscardReasonDisconnectS
-      | typeof PhoneCallDiscardReasonHangupS
-      | typeof PhoneCallDiscardReasonBusyS,
-      | PhoneCallDiscardReasonMissedS
-      | PhoneCallDiscardReasonDisconnectS
-      | PhoneCallDiscardReasonHangupS
-      | PhoneCallDiscardReasonBusyS
-    >;
-
+  | PhoneCallDiscardReasonBusyS;
 export const PhoneCallDiscardReasonT = OneOf;
 
 export const DataJsonT = DataJsonS;
@@ -78602,14 +78131,7 @@ export type PaymentRequestedInfoT = PaymentRequestedInfoS;
 export const PaymentSavedCredentialsT = PaymentSavedCredentialsCardS;
 export type PaymentSavedCredentialsT = PaymentSavedCredentialsCardS;
 
-export type WebDocumentT =
-  | WebDocumentS
-  | WebDocumentNoProxyS
-  | OneOf<
-      typeof WebDocumentS | typeof WebDocumentNoProxyS,
-      WebDocumentS | WebDocumentNoProxyS
-    >;
-
+export type WebDocumentT = WebDocumentS | WebDocumentNoProxyS;
 export const WebDocumentT = OneOf;
 
 export const InputWebDocumentT = InputWebDocumentS;
@@ -78617,40 +78139,19 @@ export type InputWebDocumentT = InputWebDocumentS;
 
 export type InputWebFileLocationT =
   | InputWebFileLocationS
-  | InputWebFileGeoPointLocationS
-  | OneOf<
-      typeof InputWebFileLocationS | typeof InputWebFileGeoPointLocationS,
-      InputWebFileLocationS | InputWebFileGeoPointLocationS
-    >;
-
+  | InputWebFileGeoPointLocationS;
 export const InputWebFileLocationT = OneOf;
 
 export type PaymentsPaymentResultT =
   | PaymentsPaymentResultS
-  | PaymentsPaymentVerificationNeededS
-  | OneOf<
-      typeof PaymentsPaymentResultS | typeof PaymentsPaymentVerificationNeededS,
-      PaymentsPaymentResultS | PaymentsPaymentVerificationNeededS
-    >;
-
+  | PaymentsPaymentVerificationNeededS;
 export const PaymentsPaymentResultT = OneOf;
 
 export type InputPaymentCredentialsT =
   | InputPaymentCredentialsSavedS
   | InputPaymentCredentialsS
   | InputPaymentCredentialsApplePayS
-  | InputPaymentCredentialsAndroidPayS
-  | OneOf<
-      | typeof InputPaymentCredentialsSavedS
-      | typeof InputPaymentCredentialsS
-      | typeof InputPaymentCredentialsApplePayS
-      | typeof InputPaymentCredentialsAndroidPayS,
-      | InputPaymentCredentialsSavedS
-      | InputPaymentCredentialsS
-      | InputPaymentCredentialsApplePayS
-      | InputPaymentCredentialsAndroidPayS
-    >;
-
+  | InputPaymentCredentialsAndroidPayS;
 export const InputPaymentCredentialsT = OneOf;
 
 export const ShippingOptionT = ShippingOptionS;
@@ -78662,22 +78163,7 @@ export type PhoneCallT =
   | PhoneCallRequestedS
   | PhoneCallAcceptedS
   | PhoneCallS
-  | PhoneCallDiscardedS
-  | OneOf<
-      | typeof PhoneCallEmptyS
-      | typeof PhoneCallWaitingS
-      | typeof PhoneCallRequestedS
-      | typeof PhoneCallAcceptedS
-      | typeof PhoneCallS
-      | typeof PhoneCallDiscardedS,
-      | PhoneCallEmptyS
-      | PhoneCallWaitingS
-      | PhoneCallRequestedS
-      | PhoneCallAcceptedS
-      | PhoneCallS
-      | PhoneCallDiscardedS
-    >;
-
+  | PhoneCallDiscardedS;
 export const PhoneCallT = OneOf;
 
 export const PhoneConnectionT = PhoneConnectionS;
@@ -78686,14 +78172,7 @@ export type PhoneConnectionT = PhoneConnectionS;
 export const PhoneCallProtocolT = PhoneCallProtocolS;
 export type PhoneCallProtocolT = PhoneCallProtocolS;
 
-export type UploadCdnFileT =
-  | UploadCdnFileReuploadNeededS
-  | UploadCdnFileS
-  | OneOf<
-      typeof UploadCdnFileReuploadNeededS | typeof UploadCdnFileS,
-      UploadCdnFileReuploadNeededS | UploadCdnFileS
-    >;
-
+export type UploadCdnFileT = UploadCdnFileReuploadNeededS | UploadCdnFileS;
 export const UploadCdnFileT = OneOf;
 
 export const CdnPublicKeyT = CdnPublicKeyS;
@@ -78702,14 +78181,7 @@ export type CdnPublicKeyT = CdnPublicKeyS;
 export type LangPackStringT =
   | LangPackStringS
   | LangPackStringPluralizedS
-  | LangPackStringDeletedS
-  | OneOf<
-      | typeof LangPackStringS
-      | typeof LangPackStringPluralizedS
-      | typeof LangPackStringDeletedS,
-      LangPackStringS | LangPackStringPluralizedS | LangPackStringDeletedS
-    >;
-
+  | LangPackStringDeletedS;
 export const LangPackStringT = OneOf;
 
 export const LangPackDifferenceT = LangPackDifferenceS;
@@ -78736,52 +78208,7 @@ export type ChannelAdminLogEventActionT =
   | ChannelAdminLogEventActionStopPollS
   | ChannelAdminLogEventActionChangeLinkedChatS
   | ChannelAdminLogEventActionChangeLocationS
-  | ChannelAdminLogEventActionToggleSlowModeS
-  | OneOf<
-      | typeof ChannelAdminLogEventActionChangeTitleS
-      | typeof ChannelAdminLogEventActionChangeAboutS
-      | typeof ChannelAdminLogEventActionChangeUsernameS
-      | typeof ChannelAdminLogEventActionChangePhotoS
-      | typeof ChannelAdminLogEventActionToggleInvitesS
-      | typeof ChannelAdminLogEventActionToggleSignaturesS
-      | typeof ChannelAdminLogEventActionUpdatePinnedS
-      | typeof ChannelAdminLogEventActionEditMessageS
-      | typeof ChannelAdminLogEventActionDeleteMessageS
-      | typeof ChannelAdminLogEventActionParticipantJoinS
-      | typeof ChannelAdminLogEventActionParticipantLeaveS
-      | typeof ChannelAdminLogEventActionParticipantInviteS
-      | typeof ChannelAdminLogEventActionParticipantToggleBanS
-      | typeof ChannelAdminLogEventActionParticipantToggleAdminS
-      | typeof ChannelAdminLogEventActionChangeStickerSetS
-      | typeof ChannelAdminLogEventActionTogglePreHistoryHiddenS
-      | typeof ChannelAdminLogEventActionDefaultBannedRightsS
-      | typeof ChannelAdminLogEventActionStopPollS
-      | typeof ChannelAdminLogEventActionChangeLinkedChatS
-      | typeof ChannelAdminLogEventActionChangeLocationS
-      | typeof ChannelAdminLogEventActionToggleSlowModeS,
-      | ChannelAdminLogEventActionChangeTitleS
-      | ChannelAdminLogEventActionChangeAboutS
-      | ChannelAdminLogEventActionChangeUsernameS
-      | ChannelAdminLogEventActionChangePhotoS
-      | ChannelAdminLogEventActionToggleInvitesS
-      | ChannelAdminLogEventActionToggleSignaturesS
-      | ChannelAdminLogEventActionUpdatePinnedS
-      | ChannelAdminLogEventActionEditMessageS
-      | ChannelAdminLogEventActionDeleteMessageS
-      | ChannelAdminLogEventActionParticipantJoinS
-      | ChannelAdminLogEventActionParticipantLeaveS
-      | ChannelAdminLogEventActionParticipantInviteS
-      | ChannelAdminLogEventActionParticipantToggleBanS
-      | ChannelAdminLogEventActionParticipantToggleAdminS
-      | ChannelAdminLogEventActionChangeStickerSetS
-      | ChannelAdminLogEventActionTogglePreHistoryHiddenS
-      | ChannelAdminLogEventActionDefaultBannedRightsS
-      | ChannelAdminLogEventActionStopPollS
-      | ChannelAdminLogEventActionChangeLinkedChatS
-      | ChannelAdminLogEventActionChangeLocationS
-      | ChannelAdminLogEventActionToggleSlowModeS
-    >;
-
+  | ChannelAdminLogEventActionToggleSlowModeS;
 export const ChannelAdminLogEventActionT = OneOf;
 
 export const ChannelAdminLogEventT = ChannelAdminLogEventS;
@@ -78792,12 +78219,7 @@ export type PopularContactT = PopularContactS;
 
 export type MessagesFavedStickersT =
   | MessagesFavedStickersNotModifiedS
-  | MessagesFavedStickersS
-  | OneOf<
-      typeof MessagesFavedStickersNotModifiedS | typeof MessagesFavedStickersS,
-      MessagesFavedStickersNotModifiedS | MessagesFavedStickersS
-    >;
-
+  | MessagesFavedStickersS;
 export const MessagesFavedStickersT = OneOf;
 
 export type RecentMeUrlT =
@@ -78805,20 +78227,7 @@ export type RecentMeUrlT =
   | RecentMeUrlUserS
   | RecentMeUrlChatS
   | RecentMeUrlChatInviteS
-  | RecentMeUrlStickerSetS
-  | OneOf<
-      | typeof RecentMeUrlUnknownS
-      | typeof RecentMeUrlUserS
-      | typeof RecentMeUrlChatS
-      | typeof RecentMeUrlChatInviteS
-      | typeof RecentMeUrlStickerSetS,
-      | RecentMeUrlUnknownS
-      | RecentMeUrlUserS
-      | RecentMeUrlChatS
-      | RecentMeUrlChatInviteS
-      | RecentMeUrlStickerSetS
-    >;
-
+  | RecentMeUrlStickerSetS;
 export const RecentMeUrlT = OneOf;
 
 export const WebAuthorizationT = WebAuthorizationS;
@@ -78827,101 +78236,41 @@ export type WebAuthorizationT = WebAuthorizationS;
 export type InputMessageT =
   | InputMessageIdS
   | InputMessageReplyToS
-  | InputMessagePinnedS
-  | OneOf<
-      | typeof InputMessageIdS
-      | typeof InputMessageReplyToS
-      | typeof InputMessagePinnedS,
-      InputMessageIdS | InputMessageReplyToS | InputMessagePinnedS
-    >;
-
+  | InputMessagePinnedS;
 export const InputMessageT = OneOf;
 
-export type InputDialogPeerT =
-  | InputDialogPeerS
-  | InputDialogPeerFolderS
-  | OneOf<
-      typeof InputDialogPeerS | typeof InputDialogPeerFolderS,
-      InputDialogPeerS | InputDialogPeerFolderS
-    >;
-
+export type InputDialogPeerT = InputDialogPeerS | InputDialogPeerFolderS;
 export const InputDialogPeerT = OneOf;
 
-export type DialogPeerT =
-  | DialogPeerS
-  | DialogPeerFolderS
-  | OneOf<
-      typeof DialogPeerS | typeof DialogPeerFolderS,
-      DialogPeerS | DialogPeerFolderS
-    >;
-
+export type DialogPeerT = DialogPeerS | DialogPeerFolderS;
 export const DialogPeerT = OneOf;
 
 export type MessagesFoundStickerSetsT =
   | MessagesFoundStickerSetsNotModifiedS
-  | MessagesFoundStickerSetsS
-  | OneOf<
-      | typeof MessagesFoundStickerSetsNotModifiedS
-      | typeof MessagesFoundStickerSetsS,
-      MessagesFoundStickerSetsNotModifiedS | MessagesFoundStickerSetsS
-    >;
-
+  | MessagesFoundStickerSetsS;
 export const MessagesFoundStickerSetsT = OneOf;
 
 export const FileHashT = FileHashS;
 export type FileHashT = FileHashS;
 
-export type HelpProxyDataT =
-  | HelpProxyDataEmptyS
-  | HelpProxyDataPromoS
-  | OneOf<
-      typeof HelpProxyDataEmptyS | typeof HelpProxyDataPromoS,
-      HelpProxyDataEmptyS | HelpProxyDataPromoS
-    >;
-
+export type HelpProxyDataT = HelpProxyDataEmptyS | HelpProxyDataPromoS;
 export const HelpProxyDataT = OneOf;
 
 export type HelpTermsOfServiceUpdateT =
   | HelpTermsOfServiceUpdateEmptyS
-  | HelpTermsOfServiceUpdateS
-  | OneOf<
-      typeof HelpTermsOfServiceUpdateEmptyS | typeof HelpTermsOfServiceUpdateS,
-      HelpTermsOfServiceUpdateEmptyS | HelpTermsOfServiceUpdateS
-    >;
-
+  | HelpTermsOfServiceUpdateS;
 export const HelpTermsOfServiceUpdateT = OneOf;
 
-export type InputSecureFileT =
-  | InputSecureFileUploadedS
-  | InputSecureFileS
-  | OneOf<
-      typeof InputSecureFileUploadedS | typeof InputSecureFileS,
-      InputSecureFileUploadedS | InputSecureFileS
-    >;
-
+export type InputSecureFileT = InputSecureFileUploadedS | InputSecureFileS;
 export const InputSecureFileT = OneOf;
 
-export type SecureFileT =
-  | SecureFileEmptyS
-  | SecureFileS
-  | OneOf<
-      typeof SecureFileEmptyS | typeof SecureFileS,
-      SecureFileEmptyS | SecureFileS
-    >;
-
+export type SecureFileT = SecureFileEmptyS | SecureFileS;
 export const SecureFileT = OneOf;
 
 export const SecureDataT = SecureDataS;
 export type SecureDataT = SecureDataS;
 
-export type SecurePlainDataT =
-  | SecurePlainPhoneS
-  | SecurePlainEmailS
-  | OneOf<
-      typeof SecurePlainPhoneS | typeof SecurePlainEmailS,
-      SecurePlainPhoneS | SecurePlainEmailS
-    >;
-
+export type SecurePlainDataT = SecurePlainPhoneS | SecurePlainEmailS;
 export const SecurePlainDataT = OneOf;
 
 export type SecureValueTypeT =
@@ -78937,36 +78286,7 @@ export type SecureValueTypeT =
   | SecureValueTypePassportRegistrationS
   | SecureValueTypeTemporaryRegistrationS
   | SecureValueTypePhoneS
-  | SecureValueTypeEmailS
-  | OneOf<
-      | typeof SecureValueTypePersonalDetailsS
-      | typeof SecureValueTypePassportS
-      | typeof SecureValueTypeDriverLicenseS
-      | typeof SecureValueTypeIdentityCardS
-      | typeof SecureValueTypeInternalPassportS
-      | typeof SecureValueTypeAddressS
-      | typeof SecureValueTypeUtilityBillS
-      | typeof SecureValueTypeBankStatementS
-      | typeof SecureValueTypeRentalAgreementS
-      | typeof SecureValueTypePassportRegistrationS
-      | typeof SecureValueTypeTemporaryRegistrationS
-      | typeof SecureValueTypePhoneS
-      | typeof SecureValueTypeEmailS,
-      | SecureValueTypePersonalDetailsS
-      | SecureValueTypePassportS
-      | SecureValueTypeDriverLicenseS
-      | SecureValueTypeIdentityCardS
-      | SecureValueTypeInternalPassportS
-      | SecureValueTypeAddressS
-      | SecureValueTypeUtilityBillS
-      | SecureValueTypeBankStatementS
-      | SecureValueTypeRentalAgreementS
-      | SecureValueTypePassportRegistrationS
-      | SecureValueTypeTemporaryRegistrationS
-      | SecureValueTypePhoneS
-      | SecureValueTypeEmailS
-    >;
-
+  | SecureValueTypeEmailS;
 export const SecureValueTypeT = OneOf;
 
 export const SecureValueT = SecureValueS;
@@ -78981,41 +78301,13 @@ export type SecureValueErrorT =
   | SecureValueErrorFilesS
   | SecureValueErrorS
   | SecureValueErrorTranslationFileS
-  | SecureValueErrorTranslationFilesS
-  | OneOf<
-      | typeof SecureValueErrorDataS
-      | typeof SecureValueErrorFrontSideS
-      | typeof SecureValueErrorReverseSideS
-      | typeof SecureValueErrorSelfieS
-      | typeof SecureValueErrorFileS
-      | typeof SecureValueErrorFilesS
-      | typeof SecureValueErrorS
-      | typeof SecureValueErrorTranslationFileS
-      | typeof SecureValueErrorTranslationFilesS,
-      | SecureValueErrorDataS
-      | SecureValueErrorFrontSideS
-      | SecureValueErrorReverseSideS
-      | SecureValueErrorSelfieS
-      | SecureValueErrorFileS
-      | SecureValueErrorFilesS
-      | SecureValueErrorS
-      | SecureValueErrorTranslationFileS
-      | SecureValueErrorTranslationFilesS
-    >;
-
+  | SecureValueErrorTranslationFilesS;
 export const SecureValueErrorT = OneOf;
 
 export const SecureCredentialsEncryptedT = SecureCredentialsEncryptedS;
 export type SecureCredentialsEncryptedT = SecureCredentialsEncryptedS;
 
-export type HelpDeepLinkInfoT =
-  | HelpDeepLinkInfoEmptyS
-  | HelpDeepLinkInfoS
-  | OneOf<
-      typeof HelpDeepLinkInfoEmptyS | typeof HelpDeepLinkInfoS,
-      HelpDeepLinkInfoEmptyS | HelpDeepLinkInfoS
-    >;
-
+export type HelpDeepLinkInfoT = HelpDeepLinkInfoEmptyS | HelpDeepLinkInfoS;
 export const HelpDeepLinkInfoT = OneOf;
 
 export const SavedContactT = SavedPhoneContactS;
@@ -79023,29 +78315,13 @@ export type SavedContactT = SavedPhoneContactS;
 
 export type PasswordKdfAlgoT =
   | PasswordKdfAlgoUnknownS
-  | PasswordKdfAlgoSha256Sha256Pbkdf2Hmacsha512Iter100000Sha256ModPowS
-  | OneOf<
-      | typeof PasswordKdfAlgoUnknownS
-      | typeof PasswordKdfAlgoSha256Sha256Pbkdf2Hmacsha512Iter100000Sha256ModPowS,
-      | PasswordKdfAlgoUnknownS
-      | PasswordKdfAlgoSha256Sha256Pbkdf2Hmacsha512Iter100000Sha256ModPowS
-    >;
-
+  | PasswordKdfAlgoSha256Sha256Pbkdf2Hmacsha512Iter100000Sha256ModPowS;
 export const PasswordKdfAlgoT = OneOf;
 
 export type SecurePasswordKdfAlgoT =
   | SecurePasswordKdfAlgoUnknownS
   | SecurePasswordKdfAlgoPbkdf2Hmacsha512Iter100000S
-  | SecurePasswordKdfAlgoSha512S
-  | OneOf<
-      | typeof SecurePasswordKdfAlgoUnknownS
-      | typeof SecurePasswordKdfAlgoPbkdf2Hmacsha512Iter100000S
-      | typeof SecurePasswordKdfAlgoSha512S,
-      | SecurePasswordKdfAlgoUnknownS
-      | SecurePasswordKdfAlgoPbkdf2Hmacsha512Iter100000S
-      | SecurePasswordKdfAlgoSha512S
-    >;
-
+  | SecurePasswordKdfAlgoSha512S;
 export const SecurePasswordKdfAlgoT = OneOf;
 
 export const SecureSecretSettingsT = SecureSecretSettingsS;
@@ -79053,32 +78329,17 @@ export type SecureSecretSettingsT = SecureSecretSettingsS;
 
 export type InputCheckPasswordSrpT =
   | InputCheckPasswordEmptyS
-  | InputCheckPasswordSrpS
-  | OneOf<
-      typeof InputCheckPasswordEmptyS | typeof InputCheckPasswordSrpS,
-      InputCheckPasswordEmptyS | InputCheckPasswordSrpS
-    >;
-
+  | InputCheckPasswordSrpS;
 export const InputCheckPasswordSrpT = OneOf;
 
 export type SecureRequiredTypeT =
   | SecureRequiredTypeS
-  | SecureRequiredTypeOneOfS
-  | OneOf<
-      typeof SecureRequiredTypeS | typeof SecureRequiredTypeOneOfS,
-      SecureRequiredTypeS | SecureRequiredTypeOneOfS
-    >;
-
+  | SecureRequiredTypeOneOfS;
 export const SecureRequiredTypeT = OneOf;
 
 export type HelpPassportConfigT =
   | HelpPassportConfigNotModifiedS
-  | HelpPassportConfigS
-  | OneOf<
-      typeof HelpPassportConfigNotModifiedS | typeof HelpPassportConfigS,
-      HelpPassportConfigNotModifiedS | HelpPassportConfigS
-    >;
-
+  | HelpPassportConfigS;
 export const HelpPassportConfigT = OneOf;
 
 export const JsonObjectValueT = JsonObjectValueS;
@@ -79090,22 +78351,7 @@ export type JsonValueT =
   | JsonNumberS
   | JsonStringS
   | JsonArrayS
-  | JsonObjectS
-  | OneOf<
-      | typeof JsonNullS
-      | typeof JsonBoolS
-      | typeof JsonNumberS
-      | typeof JsonStringS
-      | typeof JsonArrayS
-      | typeof JsonObjectS,
-      | JsonNullS
-      | JsonBoolS
-      | JsonNumberS
-      | JsonStringS
-      | JsonArrayS
-      | JsonObjectS
-    >;
-
+  | JsonObjectS;
 export const JsonValueT = OneOf;
 
 export const PageTableCellT = PageTableCellS;
@@ -79117,24 +78363,12 @@ export type PageTableRowT = PageTableRowS;
 export const PageCaptionT = PageCaptionS;
 export type PageCaptionT = PageCaptionS;
 
-export type PageListItemT =
-  | PageListItemTextS
-  | PageListItemBlocksS
-  | OneOf<
-      typeof PageListItemTextS | typeof PageListItemBlocksS,
-      PageListItemTextS | PageListItemBlocksS
-    >;
-
+export type PageListItemT = PageListItemTextS | PageListItemBlocksS;
 export const PageListItemT = OneOf;
 
 export type PageListOrderedItemT =
   | PageListOrderedItemTextS
-  | PageListOrderedItemBlocksS
-  | OneOf<
-      typeof PageListOrderedItemTextS | typeof PageListOrderedItemBlocksS,
-      PageListOrderedItemTextS | PageListOrderedItemBlocksS
-    >;
-
+  | PageListOrderedItemBlocksS;
 export const PageListOrderedItemT = OneOf;
 
 export const PageRelatedArticleT = PageRelatedArticleS;
@@ -79143,14 +78377,7 @@ export type PageRelatedArticleT = PageRelatedArticleS;
 export const PageT = PageS;
 export type PageT = PageS;
 
-export type HelpUserInfoT =
-  | HelpUserInfoEmptyS
-  | HelpUserInfoS
-  | OneOf<
-      typeof HelpUserInfoEmptyS | typeof HelpUserInfoS,
-      HelpUserInfoEmptyS | HelpUserInfoS
-    >;
-
+export type HelpUserInfoT = HelpUserInfoEmptyS | HelpUserInfoS;
 export const HelpUserInfoT = OneOf;
 
 export const PollAnswerT = PollAnswerS;
@@ -79171,24 +78398,12 @@ export type ChatAdminRightsT = ChatAdminRightsS;
 export const ChatBannedRightsT = ChatBannedRightsS;
 export type ChatBannedRightsT = ChatBannedRightsS;
 
-export type InputWallPaperT =
-  | InputWallPaperS
-  | InputWallPaperSlugS
-  | OneOf<
-      typeof InputWallPaperS | typeof InputWallPaperSlugS,
-      InputWallPaperS | InputWallPaperSlugS
-    >;
-
+export type InputWallPaperT = InputWallPaperS | InputWallPaperSlugS;
 export const InputWallPaperT = OneOf;
 
 export type AccountWallPapersT =
   | AccountWallPapersNotModifiedS
-  | AccountWallPapersS
-  | OneOf<
-      typeof AccountWallPapersNotModifiedS | typeof AccountWallPapersS,
-      AccountWallPapersNotModifiedS | AccountWallPapersS
-    >;
-
+  | AccountWallPapersS;
 export const AccountWallPapersT = OneOf;
 
 export const WallPaperSettingsT = WallPaperSettingsS;
@@ -79197,14 +78412,7 @@ export type WallPaperSettingsT = WallPaperSettingsS;
 export const AutoDownloadSettingsT = AutoDownloadSettingsS;
 export type AutoDownloadSettingsT = AutoDownloadSettingsS;
 
-export type EmojiKeywordT =
-  | EmojiKeywordS
-  | EmojiKeywordDeletedS
-  | OneOf<
-      typeof EmojiKeywordS | typeof EmojiKeywordDeletedS,
-      EmojiKeywordS | EmojiKeywordDeletedS
-    >;
-
+export type EmojiKeywordT = EmojiKeywordS | EmojiKeywordDeletedS;
 export const EmojiKeywordT = OneOf;
 
 export const FileLocationT = FileLocationToBeDeprecatedS;
@@ -79219,24 +78427,10 @@ export type FolderPeerT = FolderPeerS;
 export type UrlAuthResultT =
   | UrlAuthResultRequestS
   | UrlAuthResultAcceptedS
-  | UrlAuthResultDefaultS
-  | OneOf<
-      | typeof UrlAuthResultRequestS
-      | typeof UrlAuthResultAcceptedS
-      | typeof UrlAuthResultDefaultS,
-      UrlAuthResultRequestS | UrlAuthResultAcceptedS | UrlAuthResultDefaultS
-    >;
-
+  | UrlAuthResultDefaultS;
 export const UrlAuthResultT = OneOf;
 
-export type ChannelLocationT =
-  | ChannelLocationEmptyS
-  | ChannelLocationS
-  | OneOf<
-      typeof ChannelLocationEmptyS | typeof ChannelLocationS,
-      ChannelLocationEmptyS | ChannelLocationS
-    >;
-
+export type ChannelLocationT = ChannelLocationEmptyS | ChannelLocationS;
 export const ChannelLocationT = OneOf;
 
 export const PeerLocatedT = PeerLocatedS;
@@ -79245,34 +78439,13 @@ export type PeerLocatedT = PeerLocatedS;
 export const RestrictionReasonT = RestrictionReasonS;
 export type RestrictionReasonT = RestrictionReasonS;
 
-export type InputThemeT =
-  | InputThemeS
-  | InputThemeSlugS
-  | OneOf<
-      typeof InputThemeS | typeof InputThemeSlugS,
-      InputThemeS | InputThemeSlugS
-    >;
-
+export type InputThemeT = InputThemeS | InputThemeSlugS;
 export const InputThemeT = OneOf;
 
-export type ThemeT =
-  | ThemeDocumentNotModifiedS
-  | ThemeS
-  | OneOf<
-      typeof ThemeDocumentNotModifiedS | typeof ThemeS,
-      ThemeDocumentNotModifiedS | ThemeS
-    >;
-
+export type ThemeT = ThemeDocumentNotModifiedS | ThemeS;
 export const ThemeT = OneOf;
 
-export type AccountThemesT =
-  | AccountThemesNotModifiedS
-  | AccountThemesS
-  | OneOf<
-      typeof AccountThemesNotModifiedS | typeof AccountThemesS,
-      AccountThemesNotModifiedS | AccountThemesS
-    >;
-
+export type AccountThemesT = AccountThemesNotModifiedS | AccountThemesS;
 export const AccountThemesT = OneOf;
 
 /**
@@ -79284,7 +78457,7 @@ export const AccountThemesT = OneOf;
 export class InvokeAfterMsgM {
   static _id = 0xcb9f372d;
   _method() {}
-  _values = [[0, 0], new OneOf()] as [ProtoLong, TMethod];
+  _values = ([[0, 0], new OneOf()] as unknown) as [ProtoLong, TMethod];
 
   get_msg_id(): ProtoLong {
     return this._values[0];
@@ -79356,7 +78529,7 @@ AllStructs.set(InvokeAfterMsgM._id, InvokeAfterMsgM);
 export class InvokeAfterMsgsM {
   static _id = 0x3dc4b4f0;
   _method() {}
-  _values = [[], new OneOf()] as [ProtoLong[], TMethod];
+  _values = ([[], new OneOf()] as unknown) as [ProtoLong[], TMethod];
 
   get_msg_ids(): ProtoLong[] {
     return this._values[0];
@@ -79447,12 +78620,12 @@ AllStructs.set(InvokeAfterMsgsM._id, InvokeAfterMsgsM);
 export class AuthSendCodeM {
   static _id = 0xa677244f;
   _method() {}
-  _values = ["", 0, "", new CodeSettingsS()] as [
-    string,
-    number,
-    string,
-    CodeSettingsS
-  ];
+  _values = ([
+    "",
+    0,
+    "",
+    (new CodeSettingsS() as unknown) as CodeSettingsS
+  ] as unknown) as [string, number, string, CodeSettingsS];
 
   get_phone_number(): string {
     return this._values[0];
@@ -79566,7 +78739,7 @@ AllStructs.set(AuthSendCodeM._id, AuthSendCodeM);
 export class AuthSignUpM {
   static _id = 0x80eee427;
   _method() {}
-  _values = ["", "", "", ""] as [string, string, string, string];
+  _values = (["", "", "", ""] as unknown) as [string, string, string, string];
 
   get_phone_number(): string {
     return this._values[0];
@@ -79677,7 +78850,7 @@ AllStructs.set(AuthSignUpM._id, AuthSignUpM);
 export class AuthSignInM {
   static _id = 0xbcd51581;
   _method() {}
-  _values = ["", "", ""] as [string, string, string];
+  _values = (["", "", ""] as unknown) as [string, string, string];
 
   get_phone_number(): string {
     return this._values[0];
@@ -79766,7 +78939,7 @@ AllStructs.set(AuthSignInM._id, AuthSignInM);
 export class AuthLogOutM {
   static _id = 0x5717da40;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AuthLogOutM._id);
@@ -79792,7 +78965,7 @@ AllStructs.set(AuthLogOutM._id, AuthLogOutM);
 export class AuthResetAuthorizationsM {
   static _id = 0x9fab0d1a;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AuthResetAuthorizationsM._id);
@@ -79818,7 +78991,7 @@ AllStructs.set(AuthResetAuthorizationsM._id, AuthResetAuthorizationsM);
 export class AuthExportAuthorizationM {
   static _id = 0xe5bfffcd;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_dc_id(): number {
     return this._values[0];
@@ -79868,7 +79041,7 @@ AllStructs.set(AuthExportAuthorizationM._id, AuthExportAuthorizationM);
 export class AuthImportAuthorizationM {
   static _id = 0xe3ef9613;
   _method() {}
-  _values = [0, new Uint8Array()] as [number, Uint8Array];
+  _values = ([0, new Uint8Array()] as unknown) as [number, Uint8Array];
 
   get_id(): number {
     return this._values[0];
@@ -79940,7 +79113,7 @@ AllStructs.set(AuthImportAuthorizationM._id, AuthImportAuthorizationM);
 export class AuthBindTempAuthKeyM {
   static _id = 0xcdd42a05;
   _method() {}
-  _values = [[0, 0], [0, 0], 0, new Uint8Array()] as [
+  _values = ([[0, 0], [0, 0], 0, new Uint8Array()] as unknown) as [
     ProtoLong,
     ProtoLong,
     number,
@@ -80060,7 +79233,15 @@ AllStructs.set(AuthBindTempAuthKeyM._id, AuthBindTempAuthKeyM);
 export class AccountRegisterDeviceM {
   static _id = 0x68976c6f;
   _method() {}
-  _values = [0, true, 0, "", new BoolT(), new Uint8Array(), []] as [
+  _values = ([
+    0,
+    true,
+    0,
+    "",
+    (new BoolT() as unknown) as BoolT,
+    new Uint8Array(),
+    []
+  ] as unknown) as [
     number,
     true,
     number,
@@ -80263,7 +79444,7 @@ AllStructs.set(AccountRegisterDeviceM._id, AccountRegisterDeviceM);
 export class AccountUnregisterDeviceM {
   static _id = 0x3076c4bf;
   _method() {}
-  _values = [0, "", []] as [number, string, number[]];
+  _values = ([0, "", []] as unknown) as [number, string, number[]];
 
   get_token_type(): number {
     return this._values[0];
@@ -80370,10 +79551,10 @@ AllStructs.set(AccountUnregisterDeviceM._id, AccountUnregisterDeviceM);
 export class AccountUpdateNotifySettingsM {
   static _id = 0x84be5b93;
   _method() {}
-  _values = [new InputNotifyPeerT(), new InputPeerNotifySettingsS()] as [
-    InputNotifyPeerT,
-    InputPeerNotifySettingsS
-  ];
+  _values = ([
+    (new InputNotifyPeerT() as unknown) as InputNotifyPeerT,
+    (new InputPeerNotifySettingsS() as unknown) as InputPeerNotifySettingsS
+  ] as unknown) as [InputNotifyPeerT, InputPeerNotifySettingsS];
 
   get_peer(): InputNotifyPeerT {
     return this._values[0];
@@ -80446,7 +79627,9 @@ AllStructs.set(AccountUpdateNotifySettingsM._id, AccountUpdateNotifySettingsM);
 export class AccountGetNotifySettingsM {
   static _id = 0x12b3ad31;
   _method() {}
-  _values = [new InputNotifyPeerT()] as [InputNotifyPeerT];
+  _values = ([
+    (new InputNotifyPeerT() as unknown) as InputNotifyPeerT
+  ] as unknown) as [InputNotifyPeerT];
 
   get_peer(): InputNotifyPeerT {
     return this._values[0];
@@ -80497,7 +79680,7 @@ AllStructs.set(AccountGetNotifySettingsM._id, AccountGetNotifySettingsM);
 export class AccountResetNotifySettingsM {
   static _id = 0xdb7e1747;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountResetNotifySettingsM._id);
@@ -80526,7 +79709,7 @@ AllStructs.set(AccountResetNotifySettingsM._id, AccountResetNotifySettingsM);
 export class AccountUpdateProfileM {
   static _id = 0x78515775;
   _method() {}
-  _values = [0, "", "", ""] as [number, string, string, string];
+  _values = ([0, "", "", ""] as unknown) as [number, string, string, string];
 
   get_flags(): number {
     return this._values[0];
@@ -80653,7 +79836,7 @@ AllStructs.set(AccountUpdateProfileM._id, AccountUpdateProfileM);
 export class AccountUpdateStatusM {
   static _id = 0x6628562c;
   _method() {}
-  _values = [new BoolT()] as [BoolT];
+  _values = ([(new BoolT() as unknown) as BoolT] as unknown) as [BoolT];
 
   get_offline(): BoolT {
     return this._values[0];
@@ -80704,7 +79887,7 @@ AllStructs.set(AccountUpdateStatusM._id, AccountUpdateStatusM);
 export class AccountGetWallPapersM {
   static _id = 0xaabb1763;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_hash(): number {
     return this._values[0];
@@ -80754,10 +79937,10 @@ AllStructs.set(AccountGetWallPapersM._id, AccountGetWallPapersM);
 export class AccountReportPeerM {
   static _id = 0xae189d5f;
   _method() {}
-  _values = [new InputPeerT(), new ReportReasonT()] as [
-    InputPeerT,
-    ReportReasonT
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    (new ReportReasonT() as unknown) as ReportReasonT
+  ] as unknown) as [InputPeerT, ReportReasonT];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -80830,7 +80013,7 @@ AllStructs.set(AccountReportPeerM._id, AccountReportPeerM);
 export class UsersGetUsersM {
   static _id = 0xd91a548;
   _method() {}
-  _values = [[]] as [InputUserT[]];
+  _values = ([[]] as unknown) as [InputUserT[]];
 
   get_id(): InputUserT[] {
     return this._values[0];
@@ -80876,7 +80059,7 @@ export class UsersGetUsersM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputUserT = new InputUserT();
+        let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -80898,7 +80081,9 @@ AllStructs.set(UsersGetUsersM._id, UsersGetUsersM);
 export class UsersGetFullUserM {
   static _id = 0xca30a5b1;
   _method() {}
-  _values = [new InputUserT()] as [InputUserT];
+  _values = ([(new InputUserT() as unknown) as InputUserT] as unknown) as [
+    InputUserT
+  ];
 
   get_id(): InputUserT {
     return this._values[0];
@@ -80949,7 +80134,7 @@ AllStructs.set(UsersGetFullUserM._id, UsersGetFullUserM);
 export class ContactsGetContactIDsM {
   static _id = 0x2caa4a42;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_hash(): number {
     return this._values[0];
@@ -80998,7 +80183,7 @@ AllStructs.set(ContactsGetContactIDsM._id, ContactsGetContactIDsM);
 export class ContactsGetStatusesM {
   static _id = 0xc4a353ee;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ContactsGetStatusesM._id);
@@ -81024,7 +80209,7 @@ AllStructs.set(ContactsGetStatusesM._id, ContactsGetStatusesM);
 export class ContactsGetContactsM {
   static _id = 0xc023849f;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_hash(): number {
     return this._values[0];
@@ -81073,7 +80258,7 @@ AllStructs.set(ContactsGetContactsM._id, ContactsGetContactsM);
 export class ContactsImportContactsM {
   static _id = 0x2c800be5;
   _method() {}
-  _values = [[]] as [InputContactT[]];
+  _values = ([[]] as unknown) as [InputContactT[]];
 
   get_contacts(): InputContactT[] {
     return this._values[0];
@@ -81119,7 +80304,7 @@ export class ContactsImportContactsM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputContactT = new InputContactT();
+        let val: InputContactT = (new InputContactT() as unknown) as InputContactT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -81141,7 +80326,7 @@ AllStructs.set(ContactsImportContactsM._id, ContactsImportContactsM);
 export class ContactsDeleteContactsM {
   static _id = 0x96a0e00;
   _method() {}
-  _values = [[]] as [InputUserT[]];
+  _values = ([[]] as unknown) as [InputUserT[]];
 
   get_id(): InputUserT[] {
     return this._values[0];
@@ -81187,7 +80372,7 @@ export class ContactsDeleteContactsM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputUserT = new InputUserT();
+        let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -81209,7 +80394,7 @@ AllStructs.set(ContactsDeleteContactsM._id, ContactsDeleteContactsM);
 export class ContactsDeleteByPhonesM {
   static _id = 0x1013fd9e;
   _method() {}
-  _values = [[]] as [string[]];
+  _values = ([[]] as unknown) as [string[]];
 
   get_phones(): string[] {
     return this._values[0];
@@ -81275,7 +80460,9 @@ AllStructs.set(ContactsDeleteByPhonesM._id, ContactsDeleteByPhonesM);
 export class ContactsBlockM {
   static _id = 0x332b49fc;
   _method() {}
-  _values = [new InputUserT()] as [InputUserT];
+  _values = ([(new InputUserT() as unknown) as InputUserT] as unknown) as [
+    InputUserT
+  ];
 
   get_id(): InputUserT {
     return this._values[0];
@@ -81326,7 +80513,9 @@ AllStructs.set(ContactsBlockM._id, ContactsBlockM);
 export class ContactsUnblockM {
   static _id = 0xe54100bd;
   _method() {}
-  _values = [new InputUserT()] as [InputUserT];
+  _values = ([(new InputUserT() as unknown) as InputUserT] as unknown) as [
+    InputUserT
+  ];
 
   get_id(): InputUserT {
     return this._values[0];
@@ -81378,7 +80567,7 @@ AllStructs.set(ContactsUnblockM._id, ContactsUnblockM);
 export class ContactsGetBlockedM {
   static _id = 0xf57c350f;
   _method() {}
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_offset(): number {
     return this._values[0];
@@ -81447,7 +80636,7 @@ AllStructs.set(ContactsGetBlockedM._id, ContactsGetBlockedM);
 export class MessagesGetMessagesM {
   static _id = 0x63c66506;
   _method() {}
-  _values = [[]] as [InputMessageT[]];
+  _values = ([[]] as unknown) as [InputMessageT[]];
 
   get_id(): InputMessageT[] {
     return this._values[0];
@@ -81493,7 +80682,7 @@ export class MessagesGetMessagesM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputMessageT = new InputMessageT();
+        let val: InputMessageT = (new InputMessageT() as unknown) as InputMessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -81522,7 +80711,16 @@ AllStructs.set(MessagesGetMessagesM._id, MessagesGetMessagesM);
 export class MessagesGetDialogsM {
   static _id = 0xa0ee3b73;
   _method() {}
-  _values = [0, true, 0, 0, 0, new InputPeerT(), 0, 0] as [
+  _values = ([
+    0,
+    true,
+    0,
+    0,
+    0,
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    0
+  ] as unknown) as [
     number,
     true,
     number,
@@ -81740,7 +80938,16 @@ AllStructs.set(MessagesGetDialogsM._id, MessagesGetDialogsM);
 export class MessagesGetHistoryM {
   static _id = 0xdcbb8260;
   _method() {}
-  _values = [new InputPeerT(), 0, 0, 0, 0, 0, 0, 0] as [
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ] as unknown) as [
     InputPeerT,
     number,
     number,
@@ -81952,12 +81159,12 @@ AllStructs.set(MessagesGetHistoryM._id, MessagesGetHistoryM);
 export class MessagesSearchM {
   static _id = 0x8614ef68;
   _method() {}
-  _values = [
+  _values = ([
     0,
-    new InputPeerT(),
+    (new InputPeerT() as unknown) as InputPeerT,
     "",
-    new InputUserT(),
-    new MessagesFilterT(),
+    (new InputUserT() as unknown) as InputUserT,
+    (new MessagesFilterT() as unknown) as MessagesFilterT,
     0,
     0,
     0,
@@ -81966,7 +81173,7 @@ export class MessagesSearchM {
     0,
     0,
     0
-  ] as [
+  ] as unknown) as [
     number,
     InputPeerT,
     string,
@@ -82282,7 +81489,10 @@ AllStructs.set(MessagesSearchM._id, MessagesSearchM);
 export class MessagesReadHistoryM {
   static _id = 0xe306d3a;
   _method() {}
-  _values = [new InputPeerT(), 0] as [InputPeerT, number];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT, 0] as unknown) as [
+    InputPeerT,
+    number
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -82357,13 +81567,13 @@ AllStructs.set(MessagesReadHistoryM._id, MessagesReadHistoryM);
 export class MessagesDeleteHistoryM {
   static _id = 0x1c015b09;
   _method() {}
-  _values = [0, true, true, new InputPeerT(), 0] as [
-    number,
+  _values = ([
+    0,
     true,
     true,
-    InputPeerT,
-    number
-  ];
+    (new InputPeerT() as unknown) as InputPeerT,
+    0
+  ] as unknown) as [number, true, true, InputPeerT, number];
 
   get_flags(): number {
     return this._values[0];
@@ -82506,7 +81716,7 @@ AllStructs.set(MessagesDeleteHistoryM._id, MessagesDeleteHistoryM);
 export class MessagesDeleteMessagesM {
   static _id = 0xe58e95d2;
   _method() {}
-  _values = [0, true, []] as [number, true, number[]];
+  _values = ([0, true, []] as unknown) as [number, true, number[]];
 
   get_flags(): number {
     return this._values[0];
@@ -82617,7 +81827,7 @@ AllStructs.set(MessagesDeleteMessagesM._id, MessagesDeleteMessagesM);
 export class MessagesReceivedMessagesM {
   static _id = 0x5a954c0;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_max_id(): number {
     return this._values[0];
@@ -82667,10 +81877,10 @@ AllStructs.set(MessagesReceivedMessagesM._id, MessagesReceivedMessagesM);
 export class MessagesSetTypingM {
   static _id = 0xa3825e50;
   _method() {}
-  _values = [new InputPeerT(), new SendMessageActionT()] as [
-    InputPeerT,
-    SendMessageActionT
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    (new SendMessageActionT() as unknown) as SendMessageActionT
+  ] as unknown) as [InputPeerT, SendMessageActionT];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -82754,20 +81964,20 @@ AllStructs.set(MessagesSetTypingM._id, MessagesSetTypingM);
 export class MessagesSendMessageM {
   static _id = 0x520c3870;
   _method() {}
-  _values = [
+  _values = ([
     0,
     true,
     true,
     true,
     true,
-    new InputPeerT(),
+    (new InputPeerT() as unknown) as InputPeerT,
     0,
     "",
     [0, 0],
-    new ReplyMarkupT(),
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT,
     [],
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -83088,7 +82298,7 @@ export class MessagesSendMessageM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -83127,20 +82337,20 @@ AllStructs.set(MessagesSendMessageM._id, MessagesSendMessageM);
 export class MessagesSendMediaM {
   static _id = 0x3491eba9;
   _method() {}
-  _values = [
+  _values = ([
     0,
     true,
     true,
     true,
-    new InputPeerT(),
+    (new InputPeerT() as unknown) as InputPeerT,
     0,
-    new InputMediaT(),
+    (new InputMediaT() as unknown) as InputMediaT,
     "",
     [0, 0],
-    new ReplyMarkupT(),
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT,
     [],
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -83458,7 +82668,7 @@ export class MessagesSendMediaM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -83495,18 +82705,18 @@ AllStructs.set(MessagesSendMediaM._id, MessagesSendMediaM);
 export class MessagesForwardMessagesM {
   static _id = 0xd9fee60e;
   _method() {}
-  _values = [
+  _values = ([
     0,
     true,
     true,
     true,
     true,
-    new InputPeerT(),
+    (new InputPeerT() as unknown) as InputPeerT,
     [],
     [],
-    new InputPeerT(),
+    (new InputPeerT() as unknown) as InputPeerT,
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -83810,7 +83020,9 @@ AllStructs.set(MessagesForwardMessagesM._id, MessagesForwardMessagesM);
 export class MessagesReportSpamM {
   static _id = 0xcf1592db;
   _method() {}
-  _values = [new InputPeerT()] as [InputPeerT];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT] as unknown) as [
+    InputPeerT
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -83861,7 +83073,9 @@ AllStructs.set(MessagesReportSpamM._id, MessagesReportSpamM);
 export class MessagesGetPeerSettingsM {
   static _id = 0x3672e09c;
   _method() {}
-  _values = [new InputPeerT()] as [InputPeerT];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT] as unknown) as [
+    InputPeerT
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -83914,11 +83128,11 @@ AllStructs.set(MessagesGetPeerSettingsM._id, MessagesGetPeerSettingsM);
 export class MessagesReportM {
   static _id = 0xbd82b658;
   _method() {}
-  _values = [new InputPeerT(), [], new ReportReasonT()] as [
-    InputPeerT,
-    number[],
-    ReportReasonT
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    [],
+    (new ReportReasonT() as unknown) as ReportReasonT
+  ] as unknown) as [InputPeerT, number[], ReportReasonT];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -84028,7 +83242,7 @@ AllStructs.set(MessagesReportM._id, MessagesReportM);
 export class MessagesGetChatsM {
   static _id = 0x3c6aa187;
   _method() {}
-  _values = [[]] as [number[]];
+  _values = ([[]] as unknown) as [number[]];
 
   get_id(): number[] {
     return this._values[0];
@@ -84094,7 +83308,7 @@ AllStructs.set(MessagesGetChatsM._id, MessagesGetChatsM);
 export class MessagesGetFullChatM {
   static _id = 0x3b831c66;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_chat_id(): number {
     return this._values[0];
@@ -84144,7 +83358,7 @@ AllStructs.set(MessagesGetFullChatM._id, MessagesGetFullChatM);
 export class MessagesEditChatTitleM {
   static _id = 0xdc452855;
   _method() {}
-  _values = [0, ""] as [number, string];
+  _values = ([0, ""] as unknown) as [number, string];
 
   get_chat_id(): number {
     return this._values[0];
@@ -84214,7 +83428,10 @@ AllStructs.set(MessagesEditChatTitleM._id, MessagesEditChatTitleM);
 export class MessagesEditChatPhotoM {
   static _id = 0xca4c79d8;
   _method() {}
-  _values = [0, new InputChatPhotoT()] as [number, InputChatPhotoT];
+  _values = ([
+    0,
+    (new InputChatPhotoT() as unknown) as InputChatPhotoT
+  ] as unknown) as [number, InputChatPhotoT];
 
   get_chat_id(): number {
     return this._values[0];
@@ -84287,7 +83504,11 @@ AllStructs.set(MessagesEditChatPhotoM._id, MessagesEditChatPhotoM);
 export class MessagesAddChatUserM {
   static _id = 0xf9a0aa09;
   _method() {}
-  _values = [0, new InputUserT(), 0] as [number, InputUserT, number];
+  _values = ([
+    0,
+    (new InputUserT() as unknown) as InputUserT,
+    0
+  ] as unknown) as [number, InputUserT, number];
 
   get_chat_id(): number {
     return this._values[0];
@@ -84379,7 +83600,10 @@ AllStructs.set(MessagesAddChatUserM._id, MessagesAddChatUserM);
 export class MessagesDeleteChatUserM {
   static _id = 0xe0611f16;
   _method() {}
-  _values = [0, new InputUserT()] as [number, InputUserT];
+  _values = ([0, (new InputUserT() as unknown) as InputUserT] as unknown) as [
+    number,
+    InputUserT
+  ];
 
   get_chat_id(): number {
     return this._values[0];
@@ -84451,7 +83675,7 @@ AllStructs.set(MessagesDeleteChatUserM._id, MessagesDeleteChatUserM);
 export class MessagesCreateChatM {
   static _id = 0x9cb126e;
   _method() {}
-  _values = [[], ""] as [InputUserT[], string];
+  _values = ([[], ""] as unknown) as [InputUserT[], string];
 
   get_users(): InputUserT[] {
     return this._values[0];
@@ -84511,7 +83735,7 @@ export class MessagesCreateChatM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputUserT = new InputUserT();
+        let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -84539,7 +83763,7 @@ AllStructs.set(MessagesCreateChatM._id, MessagesCreateChatM);
 export class UpdatesGetStateM {
   static _id = 0xedd4882a;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(UpdatesGetStateM._id);
@@ -84569,7 +83793,13 @@ AllStructs.set(UpdatesGetStateM._id, UpdatesGetStateM);
 export class UpdatesGetDifferenceM {
   static _id = 0x25939651;
   _method() {}
-  _values = [0, 0, 0, 0, 0] as [number, number, number, number, number];
+  _values = ([0, 0, 0, 0, 0] as unknown) as [
+    number,
+    number,
+    number,
+    number,
+    number
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -84704,7 +83934,9 @@ AllStructs.set(UpdatesGetDifferenceM._id, UpdatesGetDifferenceM);
 export class PhotosUpdateProfilePhotoM {
   static _id = 0xf0bb5152;
   _method() {}
-  _values = [new InputPhotoT()] as [InputPhotoT];
+  _values = ([(new InputPhotoT() as unknown) as InputPhotoT] as unknown) as [
+    InputPhotoT
+  ];
 
   get_id(): InputPhotoT {
     return this._values[0];
@@ -84755,7 +83987,9 @@ AllStructs.set(PhotosUpdateProfilePhotoM._id, PhotosUpdateProfilePhotoM);
 export class PhotosUploadProfilePhotoM {
   static _id = 0x4f32c098;
   _method() {}
-  _values = [new InputFileT()] as [InputFileT];
+  _values = ([(new InputFileT() as unknown) as InputFileT] as unknown) as [
+    InputFileT
+  ];
 
   get_file(): InputFileT {
     return this._values[0];
@@ -84806,7 +84040,7 @@ AllStructs.set(PhotosUploadProfilePhotoM._id, PhotosUploadProfilePhotoM);
 export class PhotosDeletePhotosM {
   static _id = 0x87cf7f2f;
   _method() {}
-  _values = [[]] as [InputPhotoT[]];
+  _values = ([[]] as unknown) as [InputPhotoT[]];
 
   get_id(): InputPhotoT[] {
     return this._values[0];
@@ -84852,7 +84086,7 @@ export class PhotosDeletePhotosM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputPhotoT = new InputPhotoT();
+        let val: InputPhotoT = (new InputPhotoT() as unknown) as InputPhotoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -84876,7 +84110,11 @@ AllStructs.set(PhotosDeletePhotosM._id, PhotosDeletePhotosM);
 export class UploadSaveFilePartM {
   static _id = 0xb304a621;
   _method() {}
-  _values = [[0, 0], 0, new Uint8Array()] as [ProtoLong, number, Uint8Array];
+  _values = ([[0, 0], 0, new Uint8Array()] as unknown) as [
+    ProtoLong,
+    number,
+    Uint8Array
+  ];
 
   get_file_id(): ProtoLong {
     return this._values[0];
@@ -84969,13 +84207,13 @@ AllStructs.set(UploadSaveFilePartM._id, UploadSaveFilePartM);
 export class UploadGetFileM {
   static _id = 0xb15a9afc;
   _method() {}
-  _values = [0, true, new InputFileLocationT(), 0, 0] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputFileLocationT,
-    number,
-    number
-  ];
+    (new InputFileLocationT() as unknown) as InputFileLocationT,
+    0,
+    0
+  ] as unknown) as [number, true, InputFileLocationT, number, number];
 
   get_flags(): number {
     return this._values[0];
@@ -85111,7 +84349,7 @@ AllStructs.set(UploadGetFileM._id, UploadGetFileM);
 export class HelpGetConfigM {
   static _id = 0xc4f9186b;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpGetConfigM._id);
@@ -85137,7 +84375,7 @@ AllStructs.set(HelpGetConfigM._id, HelpGetConfigM);
 export class HelpGetNearestDcM {
   static _id = 0x1fb33026;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpGetNearestDcM._id);
@@ -85163,7 +84401,7 @@ AllStructs.set(HelpGetNearestDcM._id, HelpGetNearestDcM);
 export class HelpGetAppUpdateM {
   static _id = 0x522d5a7d;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_source(): string {
     return this._values[0];
@@ -85212,7 +84450,7 @@ AllStructs.set(HelpGetAppUpdateM._id, HelpGetAppUpdateM);
 export class HelpGetInviteTextM {
   static _id = 0x4d392343;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpGetInviteTextM._id);
@@ -85241,12 +84479,12 @@ AllStructs.set(HelpGetInviteTextM._id, HelpGetInviteTextM);
 export class PhotosGetUserPhotosM {
   static _id = 0x91cd32a8;
   _method() {}
-  _values = [new InputUserT(), 0, [0, 0], 0] as [
-    InputUserT,
-    number,
-    ProtoLong,
-    number
-  ];
+  _values = ([
+    (new InputUserT() as unknown) as InputUserT,
+    0,
+    [0, 0],
+    0
+  ] as unknown) as [InputUserT, number, ProtoLong, number];
 
   get_user_id(): InputUserT {
     return this._values[0];
@@ -85358,7 +84596,7 @@ AllStructs.set(PhotosGetUserPhotosM._id, PhotosGetUserPhotosM);
 export class MessagesGetDhConfigM {
   static _id = 0x26cf8950;
   _method() {}
-  _values = [0, 0] as [number, number];
+  _values = ([0, 0] as unknown) as [number, number];
 
   get_version(): number {
     return this._values[0];
@@ -85429,11 +84667,11 @@ AllStructs.set(MessagesGetDhConfigM._id, MessagesGetDhConfigM);
 export class MessagesRequestEncryptionM {
   static _id = 0xf64daf43;
   _method() {}
-  _values = [new InputUserT(), 0, new Uint8Array()] as [
-    InputUserT,
-    number,
-    Uint8Array
-  ];
+  _values = ([
+    (new InputUserT() as unknown) as InputUserT,
+    0,
+    new Uint8Array()
+  ] as unknown) as [InputUserT, number, Uint8Array];
 
   get_user_id(): InputUserT {
     return this._values[0];
@@ -85526,11 +84764,11 @@ AllStructs.set(MessagesRequestEncryptionM._id, MessagesRequestEncryptionM);
 export class MessagesAcceptEncryptionM {
   static _id = 0x3dbc0415;
   _method() {}
-  _values = [new InputEncryptedChatS(), new Uint8Array(), [0, 0]] as [
-    InputEncryptedChatS,
-    Uint8Array,
-    ProtoLong
-  ];
+  _values = ([
+    (new InputEncryptedChatS() as unknown) as InputEncryptedChatS,
+    new Uint8Array(),
+    [0, 0]
+  ] as unknown) as [InputEncryptedChatS, Uint8Array, ProtoLong];
 
   get_peer(): InputEncryptedChatS {
     return this._values[0];
@@ -85621,7 +84859,7 @@ AllStructs.set(MessagesAcceptEncryptionM._id, MessagesAcceptEncryptionM);
 export class MessagesDiscardEncryptionM {
   static _id = 0xedd923c5;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_chat_id(): number {
     return this._values[0];
@@ -85671,10 +84909,10 @@ AllStructs.set(MessagesDiscardEncryptionM._id, MessagesDiscardEncryptionM);
 export class MessagesSetEncryptedTypingM {
   static _id = 0x791451ed;
   _method() {}
-  _values = [new InputEncryptedChatS(), new BoolT()] as [
-    InputEncryptedChatS,
-    BoolT
-  ];
+  _values = ([
+    (new InputEncryptedChatS() as unknown) as InputEncryptedChatS,
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [InputEncryptedChatS, BoolT];
 
   get_peer(): InputEncryptedChatS {
     return this._values[0];
@@ -85748,7 +84986,10 @@ AllStructs.set(MessagesSetEncryptedTypingM._id, MessagesSetEncryptedTypingM);
 export class MessagesReadEncryptedHistoryM {
   static _id = 0x7f4b690a;
   _method() {}
-  _values = [new InputEncryptedChatS(), 0] as [InputEncryptedChatS, number];
+  _values = ([
+    (new InputEncryptedChatS() as unknown) as InputEncryptedChatS,
+    0
+  ] as unknown) as [InputEncryptedChatS, number];
 
   get_peer(): InputEncryptedChatS {
     return this._values[0];
@@ -85824,11 +85065,11 @@ AllStructs.set(
 export class MessagesSendEncryptedM {
   static _id = 0xa9776773;
   _method() {}
-  _values = [new InputEncryptedChatS(), [0, 0], new Uint8Array()] as [
-    InputEncryptedChatS,
-    ProtoLong,
-    Uint8Array
-  ];
+  _values = ([
+    (new InputEncryptedChatS() as unknown) as InputEncryptedChatS,
+    [0, 0],
+    new Uint8Array()
+  ] as unknown) as [InputEncryptedChatS, ProtoLong, Uint8Array];
 
   get_peer(): InputEncryptedChatS {
     return this._values[0];
@@ -85922,12 +85163,17 @@ AllStructs.set(MessagesSendEncryptedM._id, MessagesSendEncryptedM);
 export class MessagesSendEncryptedFileM {
   static _id = 0x9a901b66;
   _method() {}
-  _values = [
-    new InputEncryptedChatS(),
+  _values = ([
+    (new InputEncryptedChatS() as unknown) as InputEncryptedChatS,
     [0, 0],
     new Uint8Array(),
-    new InputEncryptedFileT()
-  ] as [InputEncryptedChatS, ProtoLong, Uint8Array, InputEncryptedFileT];
+    (new InputEncryptedFileT() as unknown) as InputEncryptedFileT
+  ] as unknown) as [
+    InputEncryptedChatS,
+    ProtoLong,
+    Uint8Array,
+    InputEncryptedFileT
+  ];
 
   get_peer(): InputEncryptedChatS {
     return this._values[0];
@@ -86042,11 +85288,11 @@ AllStructs.set(MessagesSendEncryptedFileM._id, MessagesSendEncryptedFileM);
 export class MessagesSendEncryptedServiceM {
   static _id = 0x32d439a4;
   _method() {}
-  _values = [new InputEncryptedChatS(), [0, 0], new Uint8Array()] as [
-    InputEncryptedChatS,
-    ProtoLong,
-    Uint8Array
-  ];
+  _values = ([
+    (new InputEncryptedChatS() as unknown) as InputEncryptedChatS,
+    [0, 0],
+    new Uint8Array()
+  ] as unknown) as [InputEncryptedChatS, ProtoLong, Uint8Array];
 
   get_peer(): InputEncryptedChatS {
     return this._values[0];
@@ -86140,7 +85386,7 @@ AllStructs.set(
 export class MessagesReceivedQueueM {
   static _id = 0x55a5bb66;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_max_qts(): number {
     return this._values[0];
@@ -86189,7 +85435,9 @@ AllStructs.set(MessagesReceivedQueueM._id, MessagesReceivedQueueM);
 export class MessagesReportEncryptedSpamM {
   static _id = 0x4b0c8c0f;
   _method() {}
-  _values = [new InputEncryptedChatS()] as [InputEncryptedChatS];
+  _values = ([
+    (new InputEncryptedChatS() as unknown) as InputEncryptedChatS
+  ] as unknown) as [InputEncryptedChatS];
 
   get_peer(): InputEncryptedChatS {
     return this._values[0];
@@ -86243,7 +85491,7 @@ AllStructs.set(MessagesReportEncryptedSpamM._id, MessagesReportEncryptedSpamM);
 export class UploadSaveBigFilePartM {
   static _id = 0xde7b673d;
   _method() {}
-  _values = [[0, 0], 0, 0, new Uint8Array()] as [
+  _values = ([[0, 0], 0, 0, new Uint8Array()] as unknown) as [
     ProtoLong,
     number,
     number,
@@ -86366,7 +85614,7 @@ AllStructs.set(UploadSaveBigFilePartM._id, UploadSaveBigFilePartM);
 export class InitConnectionM {
   static _id = 0x785188b8;
   _method() {}
-  _values = [
+  _values = ([
     0,
     0,
     "",
@@ -86375,9 +85623,9 @@ export class InitConnectionM {
     "",
     "",
     "",
-    new InputClientProxyS(),
+    (new InputClientProxyS() as unknown) as InputClientProxyS,
     new OneOf()
-  ] as [
+  ] as unknown) as [
     number,
     number,
     string,
@@ -86627,7 +85875,7 @@ AllStructs.set(InitConnectionM._id, InitConnectionM);
 export class HelpGetSupportM {
   static _id = 0x9cdf08cd;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpGetSupportM._id);
@@ -86653,7 +85901,7 @@ AllStructs.set(HelpGetSupportM._id, HelpGetSupportM);
 export class MessagesReadMessageContentsM {
   static _id = 0x36a73f77;
   _method() {}
-  _values = [[]] as [number[]];
+  _values = ([[]] as unknown) as [number[]];
 
   get_id(): number[] {
     return this._values[0];
@@ -86719,7 +85967,7 @@ AllStructs.set(MessagesReadMessageContentsM._id, MessagesReadMessageContentsM);
 export class AccountCheckUsernameM {
   static _id = 0x2714d86c;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_username(): string {
     return this._values[0];
@@ -86768,7 +86016,7 @@ AllStructs.set(AccountCheckUsernameM._id, AccountCheckUsernameM);
 export class AccountUpdateUsernameM {
   static _id = 0x3e0bdd7c;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_username(): string {
     return this._values[0];
@@ -86818,7 +86066,7 @@ AllStructs.set(AccountUpdateUsernameM._id, AccountUpdateUsernameM);
 export class ContactsSearchM {
   static _id = 0x11f812d8;
   _method() {}
-  _values = ["", 0] as [string, number];
+  _values = (["", 0] as unknown) as [string, number];
 
   get_q(): string {
     return this._values[0];
@@ -86887,7 +86135,9 @@ AllStructs.set(ContactsSearchM._id, ContactsSearchM);
 export class AccountGetPrivacyM {
   static _id = 0xdadbc950;
   _method() {}
-  _values = [new InputPrivacyKeyT()] as [InputPrivacyKeyT];
+  _values = ([
+    (new InputPrivacyKeyT() as unknown) as InputPrivacyKeyT
+  ] as unknown) as [InputPrivacyKeyT];
 
   get_key(): InputPrivacyKeyT {
     return this._values[0];
@@ -86939,10 +86189,10 @@ AllStructs.set(AccountGetPrivacyM._id, AccountGetPrivacyM);
 export class AccountSetPrivacyM {
   static _id = 0xc9f81ce8;
   _method() {}
-  _values = [new InputPrivacyKeyT(), []] as [
-    InputPrivacyKeyT,
-    InputPrivacyRuleT[]
-  ];
+  _values = ([
+    (new InputPrivacyKeyT() as unknown) as InputPrivacyKeyT,
+    []
+  ] as unknown) as [InputPrivacyKeyT, InputPrivacyRuleT[]];
 
   get_key(): InputPrivacyKeyT {
     return this._values[0];
@@ -87010,7 +86260,7 @@ export class AccountSetPrivacyM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputPrivacyRuleT = new InputPrivacyRuleT();
+        let val: InputPrivacyRuleT = (new InputPrivacyRuleT() as unknown) as InputPrivacyRuleT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -87032,7 +86282,7 @@ AllStructs.set(AccountSetPrivacyM._id, AccountSetPrivacyM);
 export class AccountDeleteAccountM {
   static _id = 0x418d4e0b;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_reason(): string {
     return this._values[0];
@@ -87081,7 +86331,7 @@ AllStructs.set(AccountDeleteAccountM._id, AccountDeleteAccountM);
 export class AccountGetAccountTtlM {
   static _id = 0x8fc711d;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountGetAccountTtlM._id);
@@ -87107,7 +86357,9 @@ AllStructs.set(AccountGetAccountTtlM._id, AccountGetAccountTtlM);
 export class AccountSetAccountTtlM {
   static _id = 0x2442485e;
   _method() {}
-  _values = [new AccountDaysTtlS()] as [AccountDaysTtlS];
+  _values = ([
+    (new AccountDaysTtlS() as unknown) as AccountDaysTtlS
+  ] as unknown) as [AccountDaysTtlS];
 
   get_ttl(): AccountDaysTtlS {
     return this._values[0];
@@ -87159,7 +86411,7 @@ AllStructs.set(AccountSetAccountTtlM._id, AccountSetAccountTtlM);
 export class InvokeWithLayerM {
   static _id = 0xda9b0d0d;
   _method() {}
-  _values = [0, new OneOf()] as [number, TMethod];
+  _values = ([0, new OneOf()] as unknown) as [number, TMethod];
 
   get_layer(): number {
     return this._values[0];
@@ -87230,7 +86482,7 @@ AllStructs.set(InvokeWithLayerM._id, InvokeWithLayerM);
 export class ContactsResolveUsernameM {
   static _id = 0xf93ccba3;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_username(): string {
     return this._values[0];
@@ -87280,7 +86532,10 @@ AllStructs.set(ContactsResolveUsernameM._id, ContactsResolveUsernameM);
 export class AccountSendChangePhoneCodeM {
   static _id = 0x82574ae5;
   _method() {}
-  _values = ["", new CodeSettingsS()] as [string, CodeSettingsS];
+  _values = ([
+    "",
+    (new CodeSettingsS() as unknown) as CodeSettingsS
+  ] as unknown) as [string, CodeSettingsS];
 
   get_phone_number(): string {
     return this._values[0];
@@ -87353,7 +86608,7 @@ AllStructs.set(AccountSendChangePhoneCodeM._id, AccountSendChangePhoneCodeM);
 export class AccountChangePhoneM {
   static _id = 0x70c32edb;
   _method() {}
-  _values = ["", "", ""] as [string, string, string];
+  _values = (["", "", ""] as unknown) as [string, string, string];
 
   get_phone_number(): string {
     return this._values[0];
@@ -87443,7 +86698,7 @@ AllStructs.set(AccountChangePhoneM._id, AccountChangePhoneM);
 export class MessagesGetStickersM {
   static _id = 0x43d4f2c;
   _method() {}
-  _values = ["", 0] as [string, number];
+  _values = (["", 0] as unknown) as [string, number];
 
   get_emoticon(): string {
     return this._values[0];
@@ -87512,7 +86767,7 @@ AllStructs.set(MessagesGetStickersM._id, MessagesGetStickersM);
 export class MessagesGetAllStickersM {
   static _id = 0x1c9618b1;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_hash(): number {
     return this._values[0];
@@ -87561,7 +86816,7 @@ AllStructs.set(MessagesGetAllStickersM._id, MessagesGetAllStickersM);
 export class AccountUpdateDeviceLockedM {
   static _id = 0x38df3532;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_period(): number {
     return this._values[0];
@@ -87613,7 +86868,7 @@ AllStructs.set(AccountUpdateDeviceLockedM._id, AccountUpdateDeviceLockedM);
 export class AuthImportBotAuthorizationM {
   static _id = 0x67a3ff2c;
   _method() {}
-  _values = [0, 0, "", ""] as [number, number, string, string];
+  _values = ([0, 0, "", ""] as unknown) as [number, number, string, string];
 
   get_flags(): number {
     return this._values[0];
@@ -87724,7 +86979,7 @@ AllStructs.set(AuthImportBotAuthorizationM._id, AuthImportBotAuthorizationM);
 export class MessagesGetWebPagePreviewM {
   static _id = 0x8b68b0cc;
   _method() {}
-  _values = [0, "", []] as [number, string, MessageEntityT[]];
+  _values = ([0, "", []] as unknown) as [number, string, MessageEntityT[]];
 
   get_flags(): number {
     return this._values[0];
@@ -87816,7 +87071,7 @@ export class MessagesGetWebPagePreviewM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -87838,7 +87093,7 @@ AllStructs.set(MessagesGetWebPagePreviewM._id, MessagesGetWebPagePreviewM);
 export class AccountGetAuthorizationsM {
   static _id = 0xe320c158;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountGetAuthorizationsM._id);
@@ -87864,7 +87119,7 @@ AllStructs.set(AccountGetAuthorizationsM._id, AccountGetAuthorizationsM);
 export class AccountResetAuthorizationM {
   static _id = 0xdf77f3bc;
   _method() {}
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_hash(): ProtoLong {
     return this._values[0];
@@ -87913,7 +87168,7 @@ AllStructs.set(AccountResetAuthorizationM._id, AccountResetAuthorizationM);
 export class AccountGetPasswordM {
   static _id = 0x548a30f5;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountGetPasswordM._id);
@@ -87939,7 +87194,9 @@ AllStructs.set(AccountGetPasswordM._id, AccountGetPasswordM);
 export class AccountGetPasswordSettingsM {
   static _id = 0x9cd4eaf9;
   _method() {}
-  _values = [new InputCheckPasswordSrpT()] as [InputCheckPasswordSrpT];
+  _values = ([
+    (new InputCheckPasswordSrpT() as unknown) as InputCheckPasswordSrpT
+  ] as unknown) as [InputCheckPasswordSrpT];
 
   get_password(): InputCheckPasswordSrpT {
     return this._values[0];
@@ -87991,10 +87248,10 @@ AllStructs.set(AccountGetPasswordSettingsM._id, AccountGetPasswordSettingsM);
 export class AccountUpdatePasswordSettingsM {
   static _id = 0xa59b102f;
   _method() {}
-  _values = [
-    new InputCheckPasswordSrpT(),
-    new AccountPasswordInputSettingsS()
-  ] as [InputCheckPasswordSrpT, AccountPasswordInputSettingsS];
+  _values = ([
+    (new InputCheckPasswordSrpT() as unknown) as InputCheckPasswordSrpT,
+    (new AccountPasswordInputSettingsS() as unknown) as AccountPasswordInputSettingsS
+  ] as unknown) as [InputCheckPasswordSrpT, AccountPasswordInputSettingsS];
 
   get_password(): InputCheckPasswordSrpT {
     return this._values[0];
@@ -88070,7 +87327,9 @@ AllStructs.set(
 export class AuthCheckPasswordM {
   static _id = 0xd18b4d16;
   _method() {}
-  _values = [new InputCheckPasswordSrpT()] as [InputCheckPasswordSrpT];
+  _values = ([
+    (new InputCheckPasswordSrpT() as unknown) as InputCheckPasswordSrpT
+  ] as unknown) as [InputCheckPasswordSrpT];
 
   get_password(): InputCheckPasswordSrpT {
     return this._values[0];
@@ -88121,7 +87380,7 @@ AllStructs.set(AuthCheckPasswordM._id, AuthCheckPasswordM);
 export class AuthRequestPasswordRecoveryM {
   static _id = 0xd897bc66;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AuthRequestPasswordRecoveryM._id);
@@ -88147,7 +87406,7 @@ AllStructs.set(AuthRequestPasswordRecoveryM._id, AuthRequestPasswordRecoveryM);
 export class AuthRecoverPasswordM {
   static _id = 0x4ea56e92;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_code(): string {
     return this._values[0];
@@ -88196,7 +87455,7 @@ AllStructs.set(AuthRecoverPasswordM._id, AuthRecoverPasswordM);
 export class InvokeWithoutUpdatesM {
   static _id = 0xbf9459b7;
   _method() {}
-  _values = [new OneOf()] as [TMethod];
+  _values = ([new OneOf()] as unknown) as [TMethod];
 
   get_query(): TMethod {
     return this._values[0];
@@ -88247,7 +87506,9 @@ AllStructs.set(InvokeWithoutUpdatesM._id, InvokeWithoutUpdatesM);
 export class MessagesExportChatInviteM {
   static _id = 0xdf7534c;
   _method() {}
-  _values = [new InputPeerT()] as [InputPeerT];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT] as unknown) as [
+    InputPeerT
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -88298,7 +87559,7 @@ AllStructs.set(MessagesExportChatInviteM._id, MessagesExportChatInviteM);
 export class MessagesCheckChatInviteM {
   static _id = 0x3eadb1bb;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_hash(): string {
     return this._values[0];
@@ -88347,7 +87608,7 @@ AllStructs.set(MessagesCheckChatInviteM._id, MessagesCheckChatInviteM);
 export class MessagesImportChatInviteM {
   static _id = 0x6c50051c;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_hash(): string {
     return this._values[0];
@@ -88396,7 +87657,9 @@ AllStructs.set(MessagesImportChatInviteM._id, MessagesImportChatInviteM);
 export class MessagesGetStickerSetM {
   static _id = 0x2619a90e;
   _method() {}
-  _values = [new InputStickerSetT()] as [InputStickerSetT];
+  _values = ([
+    (new InputStickerSetT() as unknown) as InputStickerSetT
+  ] as unknown) as [InputStickerSetT];
 
   get_stickerset(): InputStickerSetT {
     return this._values[0];
@@ -88448,7 +87711,10 @@ AllStructs.set(MessagesGetStickerSetM._id, MessagesGetStickerSetM);
 export class MessagesInstallStickerSetM {
   static _id = 0xc78fe460;
   _method() {}
-  _values = [new InputStickerSetT(), new BoolT()] as [InputStickerSetT, BoolT];
+  _values = ([
+    (new InputStickerSetT() as unknown) as InputStickerSetT,
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [InputStickerSetT, BoolT];
 
   get_stickerset(): InputStickerSetT {
     return this._values[0];
@@ -88521,7 +87787,9 @@ AllStructs.set(MessagesInstallStickerSetM._id, MessagesInstallStickerSetM);
 export class MessagesUninstallStickerSetM {
   static _id = 0xf96e55de;
   _method() {}
-  _values = [new InputStickerSetT()] as [InputStickerSetT];
+  _values = ([
+    (new InputStickerSetT() as unknown) as InputStickerSetT
+  ] as unknown) as [InputStickerSetT];
 
   get_stickerset(): InputStickerSetT {
     return this._values[0];
@@ -88575,12 +87843,12 @@ AllStructs.set(MessagesUninstallStickerSetM._id, MessagesUninstallStickerSetM);
 export class MessagesStartBotM {
   static _id = 0xe6df7378;
   _method() {}
-  _values = [new InputUserT(), new InputPeerT(), [0, 0], ""] as [
-    InputUserT,
-    InputPeerT,
-    ProtoLong,
-    string
-  ];
+  _values = ([
+    (new InputUserT() as unknown) as InputUserT,
+    (new InputPeerT() as unknown) as InputPeerT,
+    [0, 0],
+    ""
+  ] as unknown) as [InputUserT, InputPeerT, ProtoLong, string];
 
   get_bot(): InputUserT {
     return this._values[0];
@@ -88693,7 +87961,7 @@ AllStructs.set(MessagesStartBotM._id, MessagesStartBotM);
 export class HelpGetAppChangelogM {
   static _id = 0x9010ef6f;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_prev_app_version(): string {
     return this._values[0];
@@ -88744,11 +88012,11 @@ AllStructs.set(HelpGetAppChangelogM._id, HelpGetAppChangelogM);
 export class MessagesGetMessagesViewsM {
   static _id = 0xc4c8a55d;
   _method() {}
-  _values = [new InputPeerT(), [], new BoolT()] as [
-    InputPeerT,
-    number[],
-    BoolT
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    [],
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [InputPeerT, number[], BoolT];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -88859,7 +88127,10 @@ AllStructs.set(MessagesGetMessagesViewsM._id, MessagesGetMessagesViewsM);
 export class ChannelsReadHistoryM {
   static _id = 0xcc104937;
   _method() {}
-  _values = [new InputChannelT(), 0] as [InputChannelT, number];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    0
+  ] as unknown) as [InputChannelT, number];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -88931,7 +88202,10 @@ AllStructs.set(ChannelsReadHistoryM._id, ChannelsReadHistoryM);
 export class ChannelsDeleteMessagesM {
   static _id = 0x84c1fd4e;
   _method() {}
-  _values = [new InputChannelT(), []] as [InputChannelT, number[]];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    []
+  ] as unknown) as [InputChannelT, number[]];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -89020,10 +88294,10 @@ AllStructs.set(ChannelsDeleteMessagesM._id, ChannelsDeleteMessagesM);
 export class ChannelsDeleteUserHistoryM {
   static _id = 0xd10dd71b;
   _method() {}
-  _values = [new InputChannelT(), new InputUserT()] as [
-    InputChannelT,
-    InputUserT
-  ];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new InputUserT() as unknown) as InputUserT
+  ] as unknown) as [InputChannelT, InputUserT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -89098,11 +88372,11 @@ AllStructs.set(ChannelsDeleteUserHistoryM._id, ChannelsDeleteUserHistoryM);
 export class ChannelsReportSpamM {
   static _id = 0xfe087810;
   _method() {}
-  _values = [new InputChannelT(), new InputUserT(), []] as [
-    InputChannelT,
-    InputUserT,
-    number[]
-  ];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new InputUserT() as unknown) as InputUserT,
+    []
+  ] as unknown) as [InputChannelT, InputUserT, number[]];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -89213,7 +88487,10 @@ AllStructs.set(ChannelsReportSpamM._id, ChannelsReportSpamM);
 export class ChannelsGetMessagesM {
   static _id = 0xad8c9a23;
   _method() {}
-  _values = [new InputChannelT(), []] as [InputChannelT, InputMessageT[]];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    []
+  ] as unknown) as [InputChannelT, InputMessageT[]];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -89281,7 +88558,7 @@ export class ChannelsGetMessagesM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputMessageT = new InputMessageT();
+        let val: InputMessageT = (new InputMessageT() as unknown) as InputMessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -89307,13 +88584,19 @@ AllStructs.set(ChannelsGetMessagesM._id, ChannelsGetMessagesM);
 export class ChannelsGetParticipantsM {
   static _id = 0x123e05e9;
   _method() {}
-  _values = [
-    new InputChannelT(),
-    new ChannelParticipantsFilterT(),
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new ChannelParticipantsFilterT() as unknown) as ChannelParticipantsFilterT,
     0,
     0,
     0
-  ] as [InputChannelT, ChannelParticipantsFilterT, number, number, number];
+  ] as unknown) as [
+    InputChannelT,
+    ChannelParticipantsFilterT,
+    number,
+    number,
+    number
+  ];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -89447,10 +88730,10 @@ AllStructs.set(ChannelsGetParticipantsM._id, ChannelsGetParticipantsM);
 export class ChannelsGetParticipantM {
   static _id = 0x546dd7a6;
   _method() {}
-  _values = [new InputChannelT(), new InputUserT()] as [
-    InputChannelT,
-    InputUserT
-  ];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new InputUserT() as unknown) as InputUserT
+  ] as unknown) as [InputChannelT, InputUserT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -89523,7 +88806,7 @@ AllStructs.set(ChannelsGetParticipantM._id, ChannelsGetParticipantM);
 export class ChannelsGetChannelsM {
   static _id = 0xa7f6bbb;
   _method() {}
-  _values = [[]] as [InputChannelT[]];
+  _values = ([[]] as unknown) as [InputChannelT[]];
 
   get_id(): InputChannelT[] {
     return this._values[0];
@@ -89569,7 +88852,7 @@ export class ChannelsGetChannelsM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputChannelT = new InputChannelT();
+        let val: InputChannelT = (new InputChannelT() as unknown) as InputChannelT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -89591,7 +88874,9 @@ AllStructs.set(ChannelsGetChannelsM._id, ChannelsGetChannelsM);
 export class ChannelsGetFullChannelM {
   static _id = 0x8736a09;
   _method() {}
-  _values = [new InputChannelT()] as [InputChannelT];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT
+  ] as unknown) as [InputChannelT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -89648,15 +88933,15 @@ AllStructs.set(ChannelsGetFullChannelM._id, ChannelsGetFullChannelM);
 export class ChannelsCreateChannelM {
   static _id = 0x3d5fb10f;
   _method() {}
-  _values = [0, true, true, "", "", new InputGeoPointT(), ""] as [
-    number,
+  _values = ([
+    0,
     true,
     true,
-    string,
-    string,
-    InputGeoPointT,
-    string
-  ];
+    "",
+    "",
+    (new InputGeoPointT() as unknown) as InputGeoPointT,
+    ""
+  ] as unknown) as [number, true, true, string, string, InputGeoPointT, string];
 
   get_flags(): number {
     return this._values[0];
@@ -89852,12 +89137,12 @@ AllStructs.set(ChannelsCreateChannelM._id, ChannelsCreateChannelM);
 export class ChannelsEditAdminM {
   static _id = 0xd33c8902;
   _method() {}
-  _values = [
-    new InputChannelT(),
-    new InputUserT(),
-    new ChatAdminRightsT(),
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new InputUserT() as unknown) as InputUserT,
+    (new ChatAdminRightsT() as unknown) as ChatAdminRightsT,
     ""
-  ] as [InputChannelT, InputUserT, ChatAdminRightsT, string];
+  ] as unknown) as [InputChannelT, InputUserT, ChatAdminRightsT, string];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -89973,7 +89258,10 @@ AllStructs.set(ChannelsEditAdminM._id, ChannelsEditAdminM);
 export class ChannelsEditTitleM {
   static _id = 0x566decd0;
   _method() {}
-  _values = [new InputChannelT(), ""] as [InputChannelT, string];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    ""
+  ] as unknown) as [InputChannelT, string];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -90045,10 +89333,10 @@ AllStructs.set(ChannelsEditTitleM._id, ChannelsEditTitleM);
 export class ChannelsEditPhotoM {
   static _id = 0xf12e57c9;
   _method() {}
-  _values = [new InputChannelT(), new InputChatPhotoT()] as [
-    InputChannelT,
-    InputChatPhotoT
-  ];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new InputChatPhotoT() as unknown) as InputChatPhotoT
+  ] as unknown) as [InputChannelT, InputChatPhotoT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -90122,7 +89410,10 @@ AllStructs.set(ChannelsEditPhotoM._id, ChannelsEditPhotoM);
 export class ChannelsCheckUsernameM {
   static _id = 0x10e6bd2c;
   _method() {}
-  _values = [new InputChannelT(), ""] as [InputChannelT, string];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    ""
+  ] as unknown) as [InputChannelT, string];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -90194,7 +89485,10 @@ AllStructs.set(ChannelsCheckUsernameM._id, ChannelsCheckUsernameM);
 export class ChannelsUpdateUsernameM {
   static _id = 0x3514b3de;
   _method() {}
-  _values = [new InputChannelT(), ""] as [InputChannelT, string];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    ""
+  ] as unknown) as [InputChannelT, string];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -90265,7 +89559,9 @@ AllStructs.set(ChannelsUpdateUsernameM._id, ChannelsUpdateUsernameM);
 export class ChannelsJoinChannelM {
   static _id = 0x24b524c5;
   _method() {}
-  _values = [new InputChannelT()] as [InputChannelT];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT
+  ] as unknown) as [InputChannelT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -90316,7 +89612,9 @@ AllStructs.set(ChannelsJoinChannelM._id, ChannelsJoinChannelM);
 export class ChannelsLeaveChannelM {
   static _id = 0xf836aa95;
   _method() {}
-  _values = [new InputChannelT()] as [InputChannelT];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT
+  ] as unknown) as [InputChannelT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -90368,7 +89666,10 @@ AllStructs.set(ChannelsLeaveChannelM._id, ChannelsLeaveChannelM);
 export class ChannelsInviteToChannelM {
   static _id = 0x199f3a6c;
   _method() {}
-  _values = [new InputChannelT(), []] as [InputChannelT, InputUserT[]];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    []
+  ] as unknown) as [InputChannelT, InputUserT[]];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -90436,7 +89737,7 @@ export class ChannelsInviteToChannelM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputUserT = new InputUserT();
+        let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -90458,7 +89759,9 @@ AllStructs.set(ChannelsInviteToChannelM._id, ChannelsInviteToChannelM);
 export class ChannelsDeleteChannelM {
   static _id = 0xc0111fe3;
   _method() {}
-  _values = [new InputChannelT()] as [InputChannelT];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT
+  ] as unknown) as [InputChannelT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -90514,14 +89817,21 @@ AllStructs.set(ChannelsDeleteChannelM._id, ChannelsDeleteChannelM);
 export class UpdatesGetChannelDifferenceM {
   static _id = 0x3173d78;
   _method() {}
-  _values = [
+  _values = ([
     0,
     true,
-    new InputChannelT(),
-    new ChannelMessagesFilterT(),
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new ChannelMessagesFilterT() as unknown) as ChannelMessagesFilterT,
     0,
     0
-  ] as [number, true, InputChannelT, ChannelMessagesFilterT, number, number];
+  ] as unknown) as [
+    number,
+    true,
+    InputChannelT,
+    ChannelMessagesFilterT,
+    number,
+    number
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -90681,7 +89991,11 @@ AllStructs.set(UpdatesGetChannelDifferenceM._id, UpdatesGetChannelDifferenceM);
 export class MessagesEditChatAdminM {
   static _id = 0xa9e69f2e;
   _method() {}
-  _values = [0, new InputUserT(), new BoolT()] as [number, InputUserT, BoolT];
+  _values = ([
+    0,
+    (new InputUserT() as unknown) as InputUserT,
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [number, InputUserT, BoolT];
 
   get_chat_id(): number {
     return this._values[0];
@@ -90774,7 +90088,7 @@ AllStructs.set(MessagesEditChatAdminM._id, MessagesEditChatAdminM);
 export class MessagesMigrateChatM {
   static _id = 0x15a3b8e3;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_chat_id(): number {
     return this._values[0];
@@ -90829,15 +90143,15 @@ AllStructs.set(MessagesMigrateChatM._id, MessagesMigrateChatM);
 export class MessagesSearchGlobalM {
   static _id = 0xbf7225a4;
   _method() {}
-  _values = [0, 0, "", 0, new InputPeerT(), 0, 0] as [
-    number,
-    number,
-    string,
-    number,
-    InputPeerT,
-    number,
-    number
-  ];
+  _values = ([
+    0,
+    0,
+    "",
+    0,
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    0
+  ] as unknown) as [number, number, string, number, InputPeerT, number, number];
 
   get_flags(): number {
     return this._values[0];
@@ -91016,7 +90330,7 @@ AllStructs.set(MessagesSearchGlobalM._id, MessagesSearchGlobalM);
 export class MessagesReorderStickerSetsM {
   static _id = 0x78337739;
   _method() {}
-  _values = [0, true, []] as [number, true, ProtoLong[]];
+  _values = ([0, true, []] as unknown) as [number, true, ProtoLong[]];
 
   get_flags(): number {
     return this._values[0];
@@ -91129,7 +90443,11 @@ AllStructs.set(MessagesReorderStickerSetsM._id, MessagesReorderStickerSetsM);
 export class MessagesGetDocumentByHashM {
   static _id = 0x338e2464;
   _method() {}
-  _values = [new Uint8Array(), 0, ""] as [Uint8Array, number, string];
+  _values = ([new Uint8Array(), 0, ""] as unknown) as [
+    Uint8Array,
+    number,
+    string
+  ];
 
   get_sha256(): Uint8Array {
     return this._values[0];
@@ -91219,7 +90537,7 @@ AllStructs.set(MessagesGetDocumentByHashM._id, MessagesGetDocumentByHashM);
 export class MessagesSearchGifsM {
   static _id = 0xbf9a776b;
   _method() {}
-  _values = ["", 0] as [string, number];
+  _values = (["", 0] as unknown) as [string, number];
 
   get_q(): string {
     return this._values[0];
@@ -91288,7 +90606,7 @@ AllStructs.set(MessagesSearchGifsM._id, MessagesSearchGifsM);
 export class MessagesGetSavedGifsM {
   static _id = 0x83bf3d52;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_hash(): number {
     return this._values[0];
@@ -91338,7 +90656,10 @@ AllStructs.set(MessagesGetSavedGifsM._id, MessagesGetSavedGifsM);
 export class MessagesSaveGifM {
   static _id = 0x327a30cb;
   _method() {}
-  _values = [new InputDocumentT(), new BoolT()] as [InputDocumentT, BoolT];
+  _values = ([
+    (new InputDocumentT() as unknown) as InputDocumentT,
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [InputDocumentT, BoolT];
 
   get_id(): InputDocumentT {
     return this._values[0];
@@ -91416,14 +90737,21 @@ AllStructs.set(MessagesSaveGifM._id, MessagesSaveGifM);
 export class MessagesGetInlineBotResultsM {
   static _id = 0x514e999d;
   _method() {}
-  _values = [
+  _values = ([
     0,
-    new InputUserT(),
-    new InputPeerT(),
-    new InputGeoPointT(),
+    (new InputUserT() as unknown) as InputUserT,
+    (new InputPeerT() as unknown) as InputPeerT,
+    (new InputGeoPointT() as unknown) as InputGeoPointT,
     "",
     ""
-  ] as [number, InputUserT, InputPeerT, InputGeoPointT, string, string];
+  ] as unknown) as [
+    number,
+    InputUserT,
+    InputPeerT,
+    InputGeoPointT,
+    string,
+    string
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -91591,7 +90919,16 @@ AllStructs.set(MessagesGetInlineBotResultsM._id, MessagesGetInlineBotResultsM);
 export class MessagesSetInlineBotResultsM {
   static _id = 0xeb5ea206;
   _method() {}
-  _values = [0, true, true, [0, 0], [], 0, "", new InlineBotSwitchPmT()] as [
+  _values = ([
+    0,
+    true,
+    true,
+    [0, 0],
+    [],
+    0,
+    "",
+    (new InlineBotSwitchPmT() as unknown) as InlineBotSwitchPmT
+  ] as unknown) as [
     number,
     true,
     true,
@@ -91790,7 +91127,7 @@ export class MessagesSetInlineBotResultsM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputBotInlineResultT = new InputBotInlineResultT();
+        let val: InputBotInlineResultT = (new InputBotInlineResultT() as unknown) as InputBotInlineResultT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -91842,19 +91179,19 @@ AllStructs.set(MessagesSetInlineBotResultsM._id, MessagesSetInlineBotResultsM);
 export class MessagesSendInlineBotResultM {
   static _id = 0x220815b0;
   _method() {}
-  _values = [
+  _values = ([
     0,
     true,
     true,
     true,
     true,
-    new InputPeerT(),
+    (new InputPeerT() as unknown) as InputPeerT,
     0,
     [0, 0],
     [0, 0],
     "",
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     true,
@@ -92151,11 +91488,11 @@ AllStructs.set(MessagesSendInlineBotResultM._id, MessagesSendInlineBotResultM);
 export class ChannelsExportMessageLinkM {
   static _id = 0xceb77163;
   _method() {}
-  _values = [new InputChannelT(), 0, new BoolT()] as [
-    InputChannelT,
-    number,
-    BoolT
-  ];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    0,
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [InputChannelT, number, BoolT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -92249,7 +91586,10 @@ AllStructs.set(ChannelsExportMessageLinkM._id, ChannelsExportMessageLinkM);
 export class ChannelsToggleSignaturesM {
   static _id = 0x1f69b606;
   _method() {}
-  _values = [new InputChannelT(), new BoolT()] as [InputChannelT, BoolT];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [InputChannelT, BoolT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -92323,7 +91663,7 @@ AllStructs.set(ChannelsToggleSignaturesM._id, ChannelsToggleSignaturesM);
 export class AuthResendCodeM {
   static _id = 0x3ef1a9bf;
   _method() {}
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_phone_number(): string {
     return this._values[0];
@@ -92393,7 +91733,7 @@ AllStructs.set(AuthResendCodeM._id, AuthResendCodeM);
 export class AuthCancelCodeM {
   static _id = 0x1f040578;
   _method() {}
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_phone_number(): string {
     return this._values[0];
@@ -92463,7 +91803,10 @@ AllStructs.set(AuthCancelCodeM._id, AuthCancelCodeM);
 export class MessagesGetMessageEditDataM {
   static _id = 0xfda68d36;
   _method() {}
-  _values = [new InputPeerT(), 0] as [InputPeerT, number];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT, 0] as unknown) as [
+    InputPeerT,
+    number
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -92542,17 +91885,17 @@ AllStructs.set(MessagesGetMessageEditDataM._id, MessagesGetMessageEditDataM);
 export class MessagesEditMessageM {
   static _id = 0x48f71778;
   _method() {}
-  _values = [
+  _values = ([
     0,
     true,
-    new InputPeerT(),
+    (new InputPeerT() as unknown) as InputPeerT,
     0,
     "",
-    new InputMediaT(),
-    new ReplyMarkupT(),
+    (new InputMediaT() as unknown) as InputMediaT,
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT,
     [],
     0
-  ] as [
+  ] as unknown) as [
     number,
     true,
     InputPeerT,
@@ -92803,7 +92146,7 @@ export class MessagesEditMessageM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -92837,15 +92180,15 @@ AllStructs.set(MessagesEditMessageM._id, MessagesEditMessageM);
 export class MessagesEditInlineBotMessageM {
   static _id = 0x83557dba;
   _method() {}
-  _values = [
+  _values = ([
     0,
     true,
-    new InputBotInlineMessageIdT(),
+    (new InputBotInlineMessageIdT() as unknown) as InputBotInlineMessageIdT,
     "",
-    new InputMediaT(),
-    new ReplyMarkupT(),
+    (new InputMediaT() as unknown) as InputMediaT,
+    (new ReplyMarkupT() as unknown) as ReplyMarkupT,
     []
-  ] as [
+  ] as unknown) as [
     number,
     true,
     InputBotInlineMessageIdT,
@@ -93054,7 +92397,7 @@ export class MessagesEditInlineBotMessageM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -93083,13 +92426,13 @@ AllStructs.set(
 export class MessagesGetBotCallbackAnswerM {
   static _id = 0x810a9fec;
   _method() {}
-  _values = [0, true, new InputPeerT(), 0, new Uint8Array()] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputPeerT,
-    number,
-    Uint8Array
-  ];
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    new Uint8Array()
+  ] as unknown) as [number, true, InputPeerT, number, Uint8Array];
 
   get_flags(): number {
     return this._values[0];
@@ -93239,7 +92582,7 @@ AllStructs.set(
 export class MessagesSetBotCallbackAnswerM {
   static _id = 0xd58f130a;
   _method() {}
-  _values = [0, true, [0, 0], "", "", 0] as [
+  _values = ([0, true, [0, 0], "", "", 0] as unknown) as [
     number,
     true,
     ProtoLong,
@@ -93426,7 +92769,20 @@ AllStructs.set(
 export class ContactsGetTopPeersM {
   static _id = 0xd4982db5;
   _method() {}
-  _values = [0, true, true, true, true, true, true, true, true, 0, 0, 0] as [
+  _values = ([
+    0,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    0,
+    0,
+    0
+  ] as unknown) as [
     number,
     true,
     true,
@@ -93749,10 +93105,10 @@ AllStructs.set(ContactsGetTopPeersM._id, ContactsGetTopPeersM);
 export class ContactsResetTopPeerRatingM {
   static _id = 0x1ae373ac;
   _method() {}
-  _values = [new TopPeerCategoryT(), new InputPeerT()] as [
-    TopPeerCategoryT,
-    InputPeerT
-  ];
+  _values = ([
+    (new TopPeerCategoryT() as unknown) as TopPeerCategoryT,
+    (new InputPeerT() as unknown) as InputPeerT
+  ] as unknown) as [TopPeerCategoryT, InputPeerT];
 
   get_category(): TopPeerCategoryT {
     return this._values[0];
@@ -93825,7 +93181,7 @@ AllStructs.set(ContactsResetTopPeerRatingM._id, ContactsResetTopPeerRatingM);
 export class MessagesGetPeerDialogsM {
   static _id = 0xe470bcfd;
   _method() {}
-  _values = [[]] as [InputDialogPeerT[]];
+  _values = ([[]] as unknown) as [InputDialogPeerT[]];
 
   get_peers(): InputDialogPeerT[] {
     return this._values[0];
@@ -93871,7 +93227,7 @@ export class MessagesGetPeerDialogsM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputDialogPeerT = new InputDialogPeerT();
+        let val: InputDialogPeerT = (new InputDialogPeerT() as unknown) as InputDialogPeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -93898,7 +93254,14 @@ AllStructs.set(MessagesGetPeerDialogsM._id, MessagesGetPeerDialogsM);
 export class MessagesSaveDraftM {
   static _id = 0xbc39e14b;
   _method() {}
-  _values = [0, true, 0, new InputPeerT(), "", []] as [
+  _values = ([
+    0,
+    true,
+    0,
+    (new InputPeerT() as unknown) as InputPeerT,
+    "",
+    []
+  ] as unknown) as [
     number,
     true,
     number,
@@ -94070,7 +93433,7 @@ export class MessagesSaveDraftM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -94092,7 +93455,7 @@ AllStructs.set(MessagesSaveDraftM._id, MessagesSaveDraftM);
 export class MessagesGetAllDraftsM {
   static _id = 0x6a3f8d65;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesGetAllDraftsM._id);
@@ -94118,7 +93481,7 @@ AllStructs.set(MessagesGetAllDraftsM._id, MessagesGetAllDraftsM);
 export class MessagesGetFeaturedStickersM {
   static _id = 0x2dacca4f;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_hash(): number {
     return this._values[0];
@@ -94167,7 +93530,7 @@ AllStructs.set(MessagesGetFeaturedStickersM._id, MessagesGetFeaturedStickersM);
 export class MessagesReadFeaturedStickersM {
   static _id = 0x5b118126;
   _method() {}
-  _values = [[]] as [ProtoLong[]];
+  _values = ([[]] as unknown) as [ProtoLong[]];
 
   get_id(): ProtoLong[] {
     return this._values[0];
@@ -94238,7 +93601,7 @@ AllStructs.set(
 export class MessagesGetRecentStickersM {
   static _id = 0x5ea192c9;
   _method() {}
-  _values = [0, true, 0] as [number, true, number];
+  _values = ([0, true, 0] as unknown) as [number, true, number];
 
   get_flags(): number {
     return this._values[0];
@@ -94335,12 +93698,12 @@ AllStructs.set(MessagesGetRecentStickersM._id, MessagesGetRecentStickersM);
 export class MessagesSaveRecentStickerM {
   static _id = 0x392718f8;
   _method() {}
-  _values = [0, true, new InputDocumentT(), new BoolT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputDocumentT,
-    BoolT
-  ];
+    (new InputDocumentT() as unknown) as InputDocumentT,
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [number, true, InputDocumentT, BoolT];
 
   get_flags(): number {
     return this._values[0];
@@ -94459,7 +93822,7 @@ AllStructs.set(MessagesSaveRecentStickerM._id, MessagesSaveRecentStickerM);
 export class MessagesClearRecentStickersM {
   static _id = 0x8999602d;
   _method() {}
-  _values = [0, true] as [number, true];
+  _values = ([0, true] as unknown) as [number, true];
 
   get_flags(): number {
     return this._values[0];
@@ -94536,7 +93899,12 @@ AllStructs.set(MessagesClearRecentStickersM._id, MessagesClearRecentStickersM);
 export class MessagesGetArchivedStickersM {
   static _id = 0x57f17692;
   _method() {}
-  _values = [0, true, [0, 0], 0] as [number, true, ProtoLong, number];
+  _values = ([0, true, [0, 0], 0] as unknown) as [
+    number,
+    true,
+    ProtoLong,
+    number
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -94651,7 +94019,10 @@ AllStructs.set(MessagesGetArchivedStickersM._id, MessagesGetArchivedStickersM);
 export class AccountSendConfirmPhoneCodeM {
   static _id = 0x1b3faa88;
   _method() {}
-  _values = ["", new CodeSettingsS()] as [string, CodeSettingsS];
+  _values = ([
+    "",
+    (new CodeSettingsS() as unknown) as CodeSettingsS
+  ] as unknown) as [string, CodeSettingsS];
 
   get_hash(): string {
     return this._values[0];
@@ -94723,7 +94094,7 @@ AllStructs.set(AccountSendConfirmPhoneCodeM._id, AccountSendConfirmPhoneCodeM);
 export class AccountConfirmPhoneM {
   static _id = 0x5f2178c3;
   _method() {}
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_phone_code_hash(): string {
     return this._values[0];
@@ -94794,7 +94165,7 @@ AllStructs.set(AccountConfirmPhoneM._id, AccountConfirmPhoneM);
 export class ChannelsGetAdminedPublicChannelsM {
   static _id = 0xf8b036af;
   _method() {}
-  _values = [0, true, true] as [number, true, true];
+  _values = ([0, true, true] as unknown) as [number, true, true];
 
   get_flags(): number {
     return this._values[0];
@@ -94896,7 +94267,7 @@ AllStructs.set(
 export class MessagesGetMaskStickersM {
   static _id = 0x65b8c79f;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_hash(): number {
     return this._values[0];
@@ -94945,7 +94316,9 @@ AllStructs.set(MessagesGetMaskStickersM._id, MessagesGetMaskStickersM);
 export class MessagesGetAttachedStickersM {
   static _id = 0xcc5b67cc;
   _method() {}
-  _values = [new InputStickeredMediaT()] as [InputStickeredMediaT];
+  _values = ([
+    (new InputStickeredMediaT() as unknown) as InputStickeredMediaT
+  ] as unknown) as [InputStickeredMediaT];
 
   get_media(): InputStickeredMediaT {
     return this._values[0];
@@ -94996,7 +94369,7 @@ AllStructs.set(MessagesGetAttachedStickersM._id, MessagesGetAttachedStickersM);
 export class AuthDropTempAuthKeysM {
   static _id = 0x8e48a188;
   _method() {}
-  _values = [[]] as [ProtoLong[]];
+  _values = ([[]] as unknown) as [ProtoLong[]];
 
   get_except_auth_keys(): ProtoLong[] {
     return this._values[0];
@@ -95068,15 +94441,15 @@ AllStructs.set(AuthDropTempAuthKeysM._id, AuthDropTempAuthKeysM);
 export class MessagesSetGameScoreM {
   static _id = 0x8ef8ecc0;
   _method() {}
-  _values = [0, true, true, new InputPeerT(), 0, new InputUserT(), 0] as [
-    number,
+  _values = ([
+    0,
     true,
     true,
-    InputPeerT,
-    number,
-    InputUserT,
-    number
-  ];
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    (new InputUserT() as unknown) as InputUserT,
+    0
+  ] as unknown) as [number, true, true, InputPeerT, number, InputUserT, number];
 
   get_flags(): number {
     return this._values[0];
@@ -95264,14 +94637,21 @@ AllStructs.set(MessagesSetGameScoreM._id, MessagesSetGameScoreM);
 export class MessagesSetInlineGameScoreM {
   static _id = 0x15ad9f64;
   _method() {}
-  _values = [
+  _values = ([
     0,
     true,
     true,
-    new InputBotInlineMessageIdT(),
-    new InputUserT(),
+    (new InputBotInlineMessageIdT() as unknown) as InputBotInlineMessageIdT,
+    (new InputUserT() as unknown) as InputUserT,
     0
-  ] as [number, true, true, InputBotInlineMessageIdT, InputUserT, number];
+  ] as unknown) as [
+    number,
+    true,
+    true,
+    InputBotInlineMessageIdT,
+    InputUserT,
+    number
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -95436,11 +94816,11 @@ AllStructs.set(MessagesSetInlineGameScoreM._id, MessagesSetInlineGameScoreM);
 export class MessagesGetGameHighScoresM {
   static _id = 0xe822649d;
   _method() {}
-  _values = [new InputPeerT(), 0, new InputUserT()] as [
-    InputPeerT,
-    number,
-    InputUserT
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    (new InputUserT() as unknown) as InputUserT
+  ] as unknown) as [InputPeerT, number, InputUserT];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -95534,10 +94914,10 @@ AllStructs.set(MessagesGetGameHighScoresM._id, MessagesGetGameHighScoresM);
 export class MessagesGetInlineGameHighScoresM {
   static _id = 0xf635e1b;
   _method() {}
-  _values = [new InputBotInlineMessageIdT(), new InputUserT()] as [
-    InputBotInlineMessageIdT,
-    InputUserT
-  ];
+  _values = ([
+    (new InputBotInlineMessageIdT() as unknown) as InputBotInlineMessageIdT,
+    (new InputUserT() as unknown) as InputUserT
+  ] as unknown) as [InputBotInlineMessageIdT, InputUserT];
 
   get_id(): InputBotInlineMessageIdT {
     return this._values[0];
@@ -95615,7 +94995,11 @@ AllStructs.set(
 export class MessagesGetCommonChatsM {
   static _id = 0xd0a48c4;
   _method() {}
-  _values = [new InputUserT(), 0, 0] as [InputUserT, number, number];
+  _values = ([
+    (new InputUserT() as unknown) as InputUserT,
+    0,
+    0
+  ] as unknown) as [InputUserT, number, number];
 
   get_user_id(): InputUserT {
     return this._values[0];
@@ -95706,7 +95090,7 @@ AllStructs.set(MessagesGetCommonChatsM._id, MessagesGetCommonChatsM);
 export class MessagesGetAllChatsM {
   static _id = 0xeba80ff0;
   _method() {}
-  _values = [[]] as [number[]];
+  _values = ([[]] as unknown) as [number[]];
 
   get_except_ids(): number[] {
     return this._values[0];
@@ -95773,7 +95157,7 @@ AllStructs.set(MessagesGetAllChatsM._id, MessagesGetAllChatsM);
 export class HelpSetBotUpdatesStatusM {
   static _id = 0xec22cfcd;
   _method() {}
-  _values = [0, ""] as [number, string];
+  _values = ([0, ""] as unknown) as [number, string];
 
   get_pending_updates_count(): number {
     return this._values[0];
@@ -95843,7 +95227,7 @@ AllStructs.set(HelpSetBotUpdatesStatusM._id, HelpSetBotUpdatesStatusM);
 export class MessagesGetWebPageM {
   static _id = 0x32ca8f91;
   _method() {}
-  _values = ["", 0] as [string, number];
+  _values = (["", 0] as unknown) as [string, number];
 
   get_url(): string {
     return this._values[0];
@@ -95914,11 +95298,11 @@ AllStructs.set(MessagesGetWebPageM._id, MessagesGetWebPageM);
 export class MessagesToggleDialogPinM {
   static _id = 0xa731e257;
   _method() {}
-  _values = [0, true, new InputDialogPeerT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputDialogPeerT
-  ];
+    (new InputDialogPeerT() as unknown) as InputDialogPeerT
+  ] as unknown) as [number, true, InputDialogPeerT];
 
   get_flags(): number {
     return this._values[0];
@@ -96017,7 +95401,12 @@ AllStructs.set(MessagesToggleDialogPinM._id, MessagesToggleDialogPinM);
 export class MessagesReorderPinnedDialogsM {
   static _id = 0x3b1adf37;
   _method() {}
-  _values = [0, true, 0, []] as [number, true, number, InputDialogPeerT[]];
+  _values = ([0, true, 0, []] as unknown) as [
+    number,
+    true,
+    number,
+    InputDialogPeerT[]
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -96128,7 +95517,7 @@ export class MessagesReorderPinnedDialogsM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputDialogPeerT = new InputDialogPeerT();
+        let val: InputDialogPeerT = (new InputDialogPeerT() as unknown) as InputDialogPeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -96153,7 +95542,7 @@ AllStructs.set(
 export class MessagesGetPinnedDialogsM {
   static _id = 0xd6b94df2;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_folder_id(): number {
     return this._values[0];
@@ -96203,7 +95592,10 @@ AllStructs.set(MessagesGetPinnedDialogsM._id, MessagesGetPinnedDialogsM);
 export class BotsSendCustomRequestM {
   static _id = 0xaa2769ed;
   _method() {}
-  _values = ["", new DataJsonT()] as [string, DataJsonT];
+  _values = (["", (new DataJsonT() as unknown) as DataJsonT] as unknown) as [
+    string,
+    DataJsonT
+  ];
 
   get_custom_method(): string {
     return this._values[0];
@@ -96275,7 +95667,10 @@ AllStructs.set(BotsSendCustomRequestM._id, BotsSendCustomRequestM);
 export class BotsAnswerWebhookJsonQueryM {
   static _id = 0xe6213f4d;
   _method() {}
-  _values = [[0, 0], new DataJsonT()] as [ProtoLong, DataJsonT];
+  _values = ([
+    [0, 0],
+    (new DataJsonT() as unknown) as DataJsonT
+  ] as unknown) as [ProtoLong, DataJsonT];
 
   get_query_id(): ProtoLong {
     return this._values[0];
@@ -96348,11 +95743,11 @@ AllStructs.set(BotsAnswerWebhookJsonQueryM._id, BotsAnswerWebhookJsonQueryM);
 export class UploadGetWebFileM {
   static _id = 0x24e6818d;
   _method() {}
-  _values = [new InputWebFileLocationT(), 0, 0] as [
-    InputWebFileLocationT,
-    number,
-    number
-  ];
+  _values = ([
+    (new InputWebFileLocationT() as unknown) as InputWebFileLocationT,
+    0,
+    0
+  ] as unknown) as [InputWebFileLocationT, number, number];
 
   get_location(): InputWebFileLocationT {
     return this._values[0];
@@ -96443,7 +95838,7 @@ AllStructs.set(UploadGetWebFileM._id, UploadGetWebFileM);
 export class PaymentsGetPaymentFormM {
   static _id = 0x99f09745;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_msg_id(): number {
     return this._values[0];
@@ -96492,7 +95887,7 @@ AllStructs.set(PaymentsGetPaymentFormM._id, PaymentsGetPaymentFormM);
 export class PaymentsGetPaymentReceiptM {
   static _id = 0xa092a980;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_msg_id(): number {
     return this._values[0];
@@ -96544,12 +95939,12 @@ AllStructs.set(PaymentsGetPaymentReceiptM._id, PaymentsGetPaymentReceiptM);
 export class PaymentsValidateRequestedInfoM {
   static _id = 0x770a8e74;
   _method() {}
-  _values = [0, true, 0, new PaymentRequestedInfoT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    number,
-    PaymentRequestedInfoT
-  ];
+    0,
+    (new PaymentRequestedInfoT() as unknown) as PaymentRequestedInfoT
+  ] as unknown) as [number, true, number, PaymentRequestedInfoT];
 
   get_flags(): number {
     return this._values[0];
@@ -96672,13 +96067,13 @@ AllStructs.set(
 export class PaymentsSendPaymentFormM {
   static _id = 0x2b8879b3;
   _method() {}
-  _values = [0, 0, "", "", new InputPaymentCredentialsT()] as [
-    number,
-    number,
-    string,
-    string,
-    InputPaymentCredentialsT
-  ];
+  _values = ([
+    0,
+    0,
+    "",
+    "",
+    (new InputPaymentCredentialsT() as unknown) as InputPaymentCredentialsT
+  ] as unknown) as [number, number, string, string, InputPaymentCredentialsT];
 
   get_flags(): number {
     return this._values[0];
@@ -96822,10 +96217,10 @@ AllStructs.set(PaymentsSendPaymentFormM._id, PaymentsSendPaymentFormM);
 export class AccountGetTmpPasswordM {
   static _id = 0x449e0b51;
   _method() {}
-  _values = [new InputCheckPasswordSrpT(), 0] as [
-    InputCheckPasswordSrpT,
-    number
-  ];
+  _values = ([
+    (new InputCheckPasswordSrpT() as unknown) as InputCheckPasswordSrpT,
+    0
+  ] as unknown) as [InputCheckPasswordSrpT, number];
 
   get_password(): InputCheckPasswordSrpT {
     return this._values[0];
@@ -96896,7 +96291,7 @@ AllStructs.set(AccountGetTmpPasswordM._id, AccountGetTmpPasswordM);
 export class PaymentsGetSavedInfoM {
   static _id = 0x227d824b;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PaymentsGetSavedInfoM._id);
@@ -96924,7 +96319,7 @@ AllStructs.set(PaymentsGetSavedInfoM._id, PaymentsGetSavedInfoM);
 export class PaymentsClearSavedInfoM {
   static _id = 0xd83d70c1;
   _method() {}
-  _values = [0, true, true] as [number, true, true];
+  _values = ([0, true, true] as unknown) as [number, true, true];
 
   get_flags(): number {
     return this._values[0];
@@ -97026,7 +96421,7 @@ AllStructs.set(PaymentsClearSavedInfoM._id, PaymentsClearSavedInfoM);
 export class MessagesSetBotShippingResultsM {
   static _id = 0xe5f672fa;
   _method() {}
-  _values = [0, [0, 0], "", []] as [
+  _values = ([0, [0, 0], "", []] as unknown) as [
     number,
     ProtoLong,
     string,
@@ -97149,7 +96544,7 @@ export class MessagesSetBotShippingResultsM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: ShippingOptionT = new ShippingOptionT();
+        let val: ShippingOptionT = (new ShippingOptionT() as unknown) as ShippingOptionT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -97177,7 +96572,12 @@ AllStructs.set(
 export class MessagesSetBotPrecheckoutResultsM {
   static _id = 0x9c2dd95;
   _method() {}
-  _values = [0, true, [0, 0], ""] as [number, true, ProtoLong, string];
+  _values = ([0, true, [0, 0], ""] as unknown) as [
+    number,
+    true,
+    ProtoLong,
+    string
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -97305,7 +96705,14 @@ AllStructs.set(
 export class StickersCreateStickerSetM {
   static _id = 0x9bd86e6a;
   _method() {}
-  _values = [0, true, new InputUserT(), "", "", []] as [
+  _values = ([
+    0,
+    true,
+    (new InputUserT() as unknown) as InputUserT,
+    "",
+    "",
+    []
+  ] as unknown) as [
     number,
     true,
     InputUserT,
@@ -97465,7 +96872,7 @@ export class StickersCreateStickerSetM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputStickerSetItemS = new InputStickerSetItemS();
+        let val: InputStickerSetItemS = (new InputStickerSetItemS() as unknown) as InputStickerSetItemS;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -97487,7 +96894,9 @@ AllStructs.set(StickersCreateStickerSetM._id, StickersCreateStickerSetM);
 export class StickersRemoveStickerFromSetM {
   static _id = 0xf7760f51;
   _method() {}
-  _values = [new InputDocumentT()] as [InputDocumentT];
+  _values = ([
+    (new InputDocumentT() as unknown) as InputDocumentT
+  ] as unknown) as [InputDocumentT];
 
   get_sticker(): InputDocumentT {
     return this._values[0];
@@ -97542,7 +96951,10 @@ AllStructs.set(
 export class StickersChangeStickerPositionM {
   static _id = 0xffb6d4ca;
   _method() {}
-  _values = [new InputDocumentT(), 0] as [InputDocumentT, number];
+  _values = ([
+    (new InputDocumentT() as unknown) as InputDocumentT,
+    0
+  ] as unknown) as [InputDocumentT, number];
 
   get_sticker(): InputDocumentT {
     return this._values[0];
@@ -97617,10 +97029,10 @@ AllStructs.set(
 export class StickersAddStickerToSetM {
   static _id = 0x8653febe;
   _method() {}
-  _values = [new InputStickerSetT(), new InputStickerSetItemS()] as [
-    InputStickerSetT,
-    InputStickerSetItemS
-  ];
+  _values = ([
+    (new InputStickerSetT() as unknown) as InputStickerSetT,
+    (new InputStickerSetItemS() as unknown) as InputStickerSetItemS
+  ] as unknown) as [InputStickerSetT, InputStickerSetItemS];
 
   get_stickerset(): InputStickerSetT {
     return this._values[0];
@@ -97694,7 +97106,10 @@ AllStructs.set(StickersAddStickerToSetM._id, StickersAddStickerToSetM);
 export class MessagesUploadMediaM {
   static _id = 0x519bc2b1;
   _method() {}
-  _values = [new InputPeerT(), new InputMediaT()] as [InputPeerT, InputMediaT];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    (new InputMediaT() as unknown) as InputMediaT
+  ] as unknown) as [InputPeerT, InputMediaT];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -97767,7 +97182,7 @@ AllStructs.set(MessagesUploadMediaM._id, MessagesUploadMediaM);
 export class PhoneGetCallConfigM {
   static _id = 0x55451fa9;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(PhoneGetCallConfigM._id);
@@ -97798,14 +97213,21 @@ AllStructs.set(PhoneGetCallConfigM._id, PhoneGetCallConfigM);
 export class PhoneRequestCallM {
   static _id = 0x42ff96ed;
   _method() {}
-  _values = [
+  _values = ([
     0,
     true,
-    new InputUserT(),
+    (new InputUserT() as unknown) as InputUserT,
     0,
     new Uint8Array(),
-    new PhoneCallProtocolT()
-  ] as [number, true, InputUserT, number, Uint8Array, PhoneCallProtocolT];
+    (new PhoneCallProtocolT() as unknown) as PhoneCallProtocolT
+  ] as unknown) as [
+    number,
+    true,
+    InputUserT,
+    number,
+    Uint8Array,
+    PhoneCallProtocolT
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -97965,11 +97387,11 @@ AllStructs.set(PhoneRequestCallM._id, PhoneRequestCallM);
 export class PhoneAcceptCallM {
   static _id = 0x3bd2b4a0;
   _method() {}
-  _values = [
-    new InputPhoneCallS(),
+  _values = ([
+    (new InputPhoneCallS() as unknown) as InputPhoneCallS,
     new Uint8Array(),
-    new PhoneCallProtocolT()
-  ] as [InputPhoneCallS, Uint8Array, PhoneCallProtocolT];
+    (new PhoneCallProtocolT() as unknown) as PhoneCallProtocolT
+  ] as unknown) as [InputPhoneCallS, Uint8Array, PhoneCallProtocolT];
 
   get_peer(): InputPhoneCallS {
     return this._values[0];
@@ -98065,12 +97487,12 @@ AllStructs.set(PhoneAcceptCallM._id, PhoneAcceptCallM);
 export class PhoneConfirmCallM {
   static _id = 0x2efe1722;
   _method() {}
-  _values = [
-    new InputPhoneCallS(),
+  _values = ([
+    (new InputPhoneCallS() as unknown) as InputPhoneCallS,
     new Uint8Array(),
     [0, 0],
-    new PhoneCallProtocolT()
-  ] as [InputPhoneCallS, Uint8Array, ProtoLong, PhoneCallProtocolT];
+    (new PhoneCallProtocolT() as unknown) as PhoneCallProtocolT
+  ] as unknown) as [InputPhoneCallS, Uint8Array, ProtoLong, PhoneCallProtocolT];
 
   get_peer(): InputPhoneCallS {
     return this._values[0];
@@ -98183,7 +97605,9 @@ AllStructs.set(PhoneConfirmCallM._id, PhoneConfirmCallM);
 export class PhoneReceivedCallM {
   static _id = 0x17d54f61;
   _method() {}
-  _values = [new InputPhoneCallS()] as [InputPhoneCallS];
+  _values = ([
+    (new InputPhoneCallS() as unknown) as InputPhoneCallS
+  ] as unknown) as [InputPhoneCallS];
 
   get_peer(): InputPhoneCallS {
     return this._values[0];
@@ -98239,14 +97663,14 @@ AllStructs.set(PhoneReceivedCallM._id, PhoneReceivedCallM);
 export class PhoneDiscardCallM {
   static _id = 0xb2cbc1c0;
   _method() {}
-  _values = [
+  _values = ([
     0,
     true,
-    new InputPhoneCallS(),
+    (new InputPhoneCallS() as unknown) as InputPhoneCallS,
     0,
-    new PhoneCallDiscardReasonT(),
+    (new PhoneCallDiscardReasonT() as unknown) as PhoneCallDiscardReasonT,
     [0, 0]
-  ] as [
+  ] as unknown) as [
     number,
     true,
     InputPhoneCallS,
@@ -98415,13 +97839,13 @@ AllStructs.set(PhoneDiscardCallM._id, PhoneDiscardCallM);
 export class PhoneSetCallRatingM {
   static _id = 0x59ead627;
   _method() {}
-  _values = [0, true, new InputPhoneCallS(), 0, ""] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputPhoneCallS,
-    number,
-    string
-  ];
+    (new InputPhoneCallS() as unknown) as InputPhoneCallS,
+    0,
+    ""
+  ] as unknown) as [number, true, InputPhoneCallS, number, string];
 
   get_flags(): number {
     return this._values[0];
@@ -98558,10 +97982,10 @@ AllStructs.set(PhoneSetCallRatingM._id, PhoneSetCallRatingM);
 export class PhoneSaveCallDebugM {
   static _id = 0x277add7e;
   _method() {}
-  _values = [new InputPhoneCallS(), new DataJsonT()] as [
-    InputPhoneCallS,
-    DataJsonT
-  ];
+  _values = ([
+    (new InputPhoneCallS() as unknown) as InputPhoneCallS,
+    (new DataJsonT() as unknown) as DataJsonT
+  ] as unknown) as [InputPhoneCallS, DataJsonT];
 
   get_peer(): InputPhoneCallS {
     return this._values[0];
@@ -98636,7 +98060,11 @@ AllStructs.set(PhoneSaveCallDebugM._id, PhoneSaveCallDebugM);
 export class UploadGetCdnFileM {
   static _id = 0x2000bcc3;
   _method() {}
-  _values = [new Uint8Array(), 0, 0] as [Uint8Array, number, number];
+  _values = ([new Uint8Array(), 0, 0] as unknown) as [
+    Uint8Array,
+    number,
+    number
+  ];
 
   get_file_token(): Uint8Array {
     return this._values[0];
@@ -98726,7 +98154,10 @@ AllStructs.set(UploadGetCdnFileM._id, UploadGetCdnFileM);
 export class UploadReuploadCdnFileM {
   static _id = 0x9b2754a8;
   _method() {}
-  _values = [new Uint8Array(), new Uint8Array()] as [Uint8Array, Uint8Array];
+  _values = ([new Uint8Array(), new Uint8Array()] as unknown) as [
+    Uint8Array,
+    Uint8Array
+  ];
 
   get_file_token(): Uint8Array {
     return this._values[0];
@@ -98795,7 +98226,7 @@ AllStructs.set(UploadReuploadCdnFileM._id, UploadReuploadCdnFileM);
 export class HelpGetCdnConfigM {
   static _id = 0x52029342;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpGetCdnConfigM._id);
@@ -98822,7 +98253,7 @@ AllStructs.set(HelpGetCdnConfigM._id, HelpGetCdnConfigM);
 export class LangpackGetLangPackM {
   static _id = 0xf2f2330a;
   _method() {}
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_lang_pack(): string {
     return this._values[0];
@@ -98893,7 +98324,7 @@ AllStructs.set(LangpackGetLangPackM._id, LangpackGetLangPackM);
 export class LangpackGetStringsM {
   static _id = 0xefea3803;
   _method() {}
-  _values = ["", "", []] as [string, string, string[]];
+  _values = (["", "", []] as unknown) as [string, string, string[]];
 
   get_lang_pack(): string {
     return this._values[0];
@@ -99001,7 +98432,7 @@ AllStructs.set(LangpackGetStringsM._id, LangpackGetStringsM);
 export class LangpackGetDifferenceM {
   static _id = 0xcd984aa5;
   _method() {}
-  _values = ["", "", 0] as [string, string, number];
+  _values = (["", "", 0] as unknown) as [string, string, number];
 
   get_lang_pack(): string {
     return this._values[0];
@@ -99090,7 +98521,7 @@ AllStructs.set(LangpackGetDifferenceM._id, LangpackGetDifferenceM);
 export class LangpackGetLanguagesM {
   static _id = 0x42c6978f;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_lang_pack(): string {
     return this._values[0];
@@ -99141,11 +98572,11 @@ AllStructs.set(LangpackGetLanguagesM._id, LangpackGetLanguagesM);
 export class ChannelsEditBannedM {
   static _id = 0x72796912;
   _method() {}
-  _values = [
-    new InputChannelT(),
-    new InputUserT(),
-    new ChatBannedRightsT()
-  ] as [InputChannelT, InputUserT, ChatBannedRightsT];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new InputUserT() as unknown) as InputUserT,
+    (new ChatBannedRightsT() as unknown) as ChatBannedRightsT
+  ] as unknown) as [InputChannelT, InputUserT, ChatBannedRightsT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -99247,16 +98678,16 @@ AllStructs.set(ChannelsEditBannedM._id, ChannelsEditBannedM);
 export class ChannelsGetAdminLogM {
   static _id = 0x33ddf480;
   _method() {}
-  _values = [
+  _values = ([
     0,
-    new InputChannelT(),
+    (new InputChannelT() as unknown) as InputChannelT,
     "",
-    new ChannelAdminLogEventsFilterS(),
+    (new ChannelAdminLogEventsFilterS() as unknown) as ChannelAdminLogEventsFilterS,
     [],
     [0, 0],
     [0, 0],
     0
-  ] as [
+  ] as unknown) as [
     number,
     InputChannelT,
     string,
@@ -99449,7 +98880,7 @@ export class ChannelsGetAdminLogM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputUserT = new InputUserT();
+        let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -99490,7 +98921,7 @@ AllStructs.set(ChannelsGetAdminLogM._id, ChannelsGetAdminLogM);
 export class UploadGetCdnFileHashesM {
   static _id = 0x4da54231;
   _method() {}
-  _values = [new Uint8Array(), 0] as [Uint8Array, number];
+  _values = ([new Uint8Array(), 0] as unknown) as [Uint8Array, number];
 
   get_file_token(): Uint8Array {
     return this._values[0];
@@ -99561,7 +98992,11 @@ AllStructs.set(UploadGetCdnFileHashesM._id, UploadGetCdnFileHashesM);
 export class MessagesSendScreenshotNotificationM {
   static _id = 0xc97df020;
   _method() {}
-  _values = [new InputPeerT(), 0, [0, 0]] as [InputPeerT, number, ProtoLong];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    [0, 0]
+  ] as unknown) as [InputPeerT, number, ProtoLong];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -99657,10 +99092,10 @@ AllStructs.set(
 export class ChannelsSetStickersM {
   static _id = 0xea8ca4f9;
   _method() {}
-  _values = [new InputChannelT(), new InputStickerSetT()] as [
-    InputChannelT,
-    InputStickerSetT
-  ];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new InputStickerSetT() as unknown) as InputStickerSetT
+  ] as unknown) as [InputChannelT, InputStickerSetT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -99733,7 +99168,7 @@ AllStructs.set(ChannelsSetStickersM._id, ChannelsSetStickersM);
 export class MessagesGetFavedStickersM {
   static _id = 0x21ce0b0e;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_hash(): number {
     return this._values[0];
@@ -99783,7 +99218,10 @@ AllStructs.set(MessagesGetFavedStickersM._id, MessagesGetFavedStickersM);
 export class MessagesFaveStickerM {
   static _id = 0xb9ffc55b;
   _method() {}
-  _values = [new InputDocumentT(), new BoolT()] as [InputDocumentT, BoolT];
+  _values = ([
+    (new InputDocumentT() as unknown) as InputDocumentT,
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [InputDocumentT, BoolT];
 
   get_id(): InputDocumentT {
     return this._values[0];
@@ -99857,7 +99295,10 @@ AllStructs.set(MessagesFaveStickerM._id, MessagesFaveStickerM);
 export class ChannelsReadMessageContentsM {
   static _id = 0xeab5dc38;
   _method() {}
-  _values = [new InputChannelT(), []] as [InputChannelT, number[]];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    []
+  ] as unknown) as [InputChannelT, number[]];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -99945,7 +99386,7 @@ AllStructs.set(ChannelsReadMessageContentsM._id, ChannelsReadMessageContentsM);
 export class ContactsResetSavedM {
   static _id = 0x879537f1;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ContactsResetSavedM._id);
@@ -99976,14 +99417,14 @@ AllStructs.set(ContactsResetSavedM._id, ContactsResetSavedM);
 export class MessagesGetUnreadMentionsM {
   static _id = 0x46578472;
   _method() {}
-  _values = [new InputPeerT(), 0, 0, 0, 0, 0] as [
-    InputPeerT,
-    number,
-    number,
-    number,
-    number,
-    number
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    0,
+    0,
+    0,
+    0
+  ] as unknown) as [InputPeerT, number, number, number, number, number];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -100135,7 +99576,10 @@ AllStructs.set(MessagesGetUnreadMentionsM._id, MessagesGetUnreadMentionsM);
 export class ChannelsDeleteHistoryM {
   static _id = 0xaf369d42;
   _method() {}
-  _values = [new InputChannelT(), 0] as [InputChannelT, number];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    0
+  ] as unknown) as [InputChannelT, number];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -100206,7 +99650,7 @@ AllStructs.set(ChannelsDeleteHistoryM._id, ChannelsDeleteHistoryM);
 export class HelpGetRecentMeUrlsM {
   static _id = 0x3dc0f114;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_referer(): string {
     return this._values[0];
@@ -100256,7 +99700,10 @@ AllStructs.set(HelpGetRecentMeUrlsM._id, HelpGetRecentMeUrlsM);
 export class ChannelsTogglePreHistoryHiddenM {
   static _id = 0xeabbb94c;
   _method() {}
-  _values = [new InputChannelT(), new BoolT()] as [InputChannelT, BoolT];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [InputChannelT, BoolT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -100332,7 +99779,9 @@ AllStructs.set(
 export class MessagesReadMentionsM {
   static _id = 0xf0189d3;
   _method() {}
-  _values = [new InputPeerT()] as [InputPeerT];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT] as unknown) as [
+    InputPeerT
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -100385,7 +99834,11 @@ AllStructs.set(MessagesReadMentionsM._id, MessagesReadMentionsM);
 export class MessagesGetRecentLocationsM {
   static _id = 0xbbc45b09;
   _method() {}
-  _values = [new InputPeerT(), 0, 0] as [InputPeerT, number, number];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    0
+  ] as unknown) as [InputPeerT, number, number];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -100483,7 +99936,16 @@ AllStructs.set(MessagesGetRecentLocationsM._id, MessagesGetRecentLocationsM);
 export class MessagesSendMultiMediaM {
   static _id = 0xcc0110cb;
   _method() {}
-  _values = [0, true, true, true, new InputPeerT(), 0, [], 0] as [
+  _values = ([
+    0,
+    true,
+    true,
+    true,
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    [],
+    0
+  ] as unknown) as [
     number,
     true,
     true,
@@ -100701,7 +100163,7 @@ export class MessagesSendMultiMediaM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputSingleMediaS = new InputSingleMediaS();
+        let val: InputSingleMediaS = (new InputSingleMediaS() as unknown) as InputSingleMediaS;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -100730,10 +100192,10 @@ AllStructs.set(MessagesSendMultiMediaM._id, MessagesSendMultiMediaM);
 export class MessagesUploadEncryptedFileM {
   static _id = 0x5057c497;
   _method() {}
-  _values = [new InputEncryptedChatS(), new InputEncryptedFileT()] as [
-    InputEncryptedChatS,
-    InputEncryptedFileT
-  ];
+  _values = ([
+    (new InputEncryptedChatS() as unknown) as InputEncryptedChatS,
+    (new InputEncryptedFileT() as unknown) as InputEncryptedFileT
+  ] as unknown) as [InputEncryptedChatS, InputEncryptedFileT];
 
   get_peer(): InputEncryptedChatS {
     return this._values[0];
@@ -100806,7 +100268,7 @@ AllStructs.set(MessagesUploadEncryptedFileM._id, MessagesUploadEncryptedFileM);
 export class AccountGetWebAuthorizationsM {
   static _id = 0x182e6d6f;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountGetWebAuthorizationsM._id);
@@ -100832,7 +100294,7 @@ AllStructs.set(AccountGetWebAuthorizationsM._id, AccountGetWebAuthorizationsM);
 export class AccountResetWebAuthorizationM {
   static _id = 0x2d01b9ef;
   _method() {}
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_hash(): ProtoLong {
     return this._values[0];
@@ -100884,7 +100346,7 @@ AllStructs.set(
 export class AccountResetWebAuthorizationsM {
   static _id = 0x682d2594;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountResetWebAuthorizationsM._id);
@@ -100916,7 +100378,7 @@ AllStructs.set(
 export class MessagesSearchStickerSetsM {
   static _id = 0xc2b7d08b;
   _method() {}
-  _values = [0, true, "", 0] as [number, true, string, number];
+  _values = ([0, true, "", 0] as unknown) as [number, true, string, number];
 
   get_flags(): number {
     return this._values[0];
@@ -101031,7 +100493,10 @@ AllStructs.set(MessagesSearchStickerSetsM._id, MessagesSearchStickerSetsM);
 export class UploadGetFileHashesM {
   static _id = 0xc7025931;
   _method() {}
-  _values = [new InputFileLocationT(), 0] as [InputFileLocationT, number];
+  _values = ([
+    (new InputFileLocationT() as unknown) as InputFileLocationT,
+    0
+  ] as unknown) as [InputFileLocationT, number];
 
   get_location(): InputFileLocationT {
     return this._values[0];
@@ -101102,7 +100567,7 @@ AllStructs.set(UploadGetFileHashesM._id, UploadGetFileHashesM);
 export class HelpGetProxyDataM {
   static _id = 0x3d7758e1;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpGetProxyDataM._id);
@@ -101128,7 +100593,7 @@ AllStructs.set(HelpGetProxyDataM._id, HelpGetProxyDataM);
 export class HelpGetTermsOfServiceUpdateM {
   static _id = 0x2ca51fd1;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpGetTermsOfServiceUpdateM._id);
@@ -101154,7 +100619,9 @@ AllStructs.set(HelpGetTermsOfServiceUpdateM._id, HelpGetTermsOfServiceUpdateM);
 export class HelpAcceptTermsOfServiceM {
   static _id = 0xee72f79a;
   _method() {}
-  _values = [new DataJsonT()] as [DataJsonT];
+  _values = ([(new DataJsonT() as unknown) as DataJsonT] as unknown) as [
+    DataJsonT
+  ];
 
   get_id(): DataJsonT {
     return this._values[0];
@@ -101205,7 +100672,7 @@ AllStructs.set(HelpAcceptTermsOfServiceM._id, HelpAcceptTermsOfServiceM);
 export class AccountGetAllSecureValuesM {
   static _id = 0xb288bc7d;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountGetAllSecureValuesM._id);
@@ -101231,7 +100698,7 @@ AllStructs.set(AccountGetAllSecureValuesM._id, AccountGetAllSecureValuesM);
 export class AccountGetSecureValueM {
   static _id = 0x73665bc2;
   _method() {}
-  _values = [[]] as [SecureValueTypeT[]];
+  _values = ([[]] as unknown) as [SecureValueTypeT[]];
 
   get_types(): SecureValueTypeT[] {
     return this._values[0];
@@ -101277,7 +100744,7 @@ export class AccountGetSecureValueM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureValueTypeT = new SecureValueTypeT();
+        let val: SecureValueTypeT = (new SecureValueTypeT() as unknown) as SecureValueTypeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -101300,7 +100767,10 @@ AllStructs.set(AccountGetSecureValueM._id, AccountGetSecureValueM);
 export class AccountSaveSecureValueM {
   static _id = 0x899fe31d;
   _method() {}
-  _values = [new InputSecureValueS(), [0, 0]] as [InputSecureValueS, ProtoLong];
+  _values = ([
+    (new InputSecureValueS() as unknown) as InputSecureValueS,
+    [0, 0]
+  ] as unknown) as [InputSecureValueS, ProtoLong];
 
   get_value(): InputSecureValueS {
     return this._values[0];
@@ -101371,7 +100841,7 @@ AllStructs.set(AccountSaveSecureValueM._id, AccountSaveSecureValueM);
 export class AccountDeleteSecureValueM {
   static _id = 0xb880bc4b;
   _method() {}
-  _values = [[]] as [SecureValueTypeT[]];
+  _values = ([[]] as unknown) as [SecureValueTypeT[]];
 
   get_types(): SecureValueTypeT[] {
     return this._values[0];
@@ -101417,7 +100887,7 @@ export class AccountDeleteSecureValueM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureValueTypeT = new SecureValueTypeT();
+        let val: SecureValueTypeT = (new SecureValueTypeT() as unknown) as SecureValueTypeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -101440,7 +100910,10 @@ AllStructs.set(AccountDeleteSecureValueM._id, AccountDeleteSecureValueM);
 export class UsersSetSecureValueErrorsM {
   static _id = 0x90c894b5;
   _method() {}
-  _values = [new InputUserT(), []] as [InputUserT, SecureValueErrorT[]];
+  _values = ([(new InputUserT() as unknown) as InputUserT, []] as unknown) as [
+    InputUserT,
+    SecureValueErrorT[]
+  ];
 
   get_id(): InputUserT {
     return this._values[0];
@@ -101508,7 +100981,7 @@ export class UsersSetSecureValueErrorsM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureValueErrorT = new SecureValueErrorT();
+        let val: SecureValueErrorT = (new SecureValueErrorT() as unknown) as SecureValueErrorT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -101532,7 +101005,7 @@ AllStructs.set(UsersSetSecureValueErrorsM._id, UsersSetSecureValueErrorsM);
 export class AccountGetAuthorizationFormM {
   static _id = 0xb86ba8e1;
   _method() {}
-  _values = [0, "", ""] as [number, string, string];
+  _values = ([0, "", ""] as unknown) as [number, string, string];
 
   get_bot_id(): number {
     return this._values[0];
@@ -101625,7 +101098,13 @@ AllStructs.set(AccountGetAuthorizationFormM._id, AccountGetAuthorizationFormM);
 export class AccountAcceptAuthorizationM {
   static _id = 0xe7027c94;
   _method() {}
-  _values = [0, "", "", [], new SecureCredentialsEncryptedT()] as [
+  _values = ([
+    0,
+    "",
+    "",
+    [],
+    (new SecureCredentialsEncryptedT() as unknown) as SecureCredentialsEncryptedT
+  ] as unknown) as [
     number,
     string,
     string,
@@ -101751,7 +101230,7 @@ export class AccountAcceptAuthorizationM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: SecureValueHashS = new SecureValueHashS();
+        let val: SecureValueHashS = (new SecureValueHashS() as unknown) as SecureValueHashS;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -101782,7 +101261,10 @@ AllStructs.set(AccountAcceptAuthorizationM._id, AccountAcceptAuthorizationM);
 export class AccountSendVerifyPhoneCodeM {
   static _id = 0xa5a356f9;
   _method() {}
-  _values = ["", new CodeSettingsS()] as [string, CodeSettingsS];
+  _values = ([
+    "",
+    (new CodeSettingsS() as unknown) as CodeSettingsS
+  ] as unknown) as [string, CodeSettingsS];
 
   get_phone_number(): string {
     return this._values[0];
@@ -101855,7 +101337,7 @@ AllStructs.set(AccountSendVerifyPhoneCodeM._id, AccountSendVerifyPhoneCodeM);
 export class AccountVerifyPhoneM {
   static _id = 0x4dd3a7f6;
   _method() {}
-  _values = ["", "", ""] as [string, string, string];
+  _values = (["", "", ""] as unknown) as [string, string, string];
 
   get_phone_number(): string {
     return this._values[0];
@@ -101944,7 +101426,7 @@ AllStructs.set(AccountVerifyPhoneM._id, AccountVerifyPhoneM);
 export class AccountSendVerifyEmailCodeM {
   static _id = 0x7011509f;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_email(): string {
     return this._values[0];
@@ -101994,7 +101476,7 @@ AllStructs.set(AccountSendVerifyEmailCodeM._id, AccountSendVerifyEmailCodeM);
 export class AccountVerifyEmailM {
   static _id = 0xecba39db;
   _method() {}
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_email(): string {
     return this._values[0];
@@ -102063,7 +101545,7 @@ AllStructs.set(AccountVerifyEmailM._id, AccountVerifyEmailM);
 export class HelpGetDeepLinkInfoM {
   static _id = 0x3fedc75f;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_path(): string {
     return this._values[0];
@@ -102112,7 +101594,7 @@ AllStructs.set(HelpGetDeepLinkInfoM._id, HelpGetDeepLinkInfoM);
 export class ContactsGetSavedM {
   static _id = 0x82f1e39f;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ContactsGetSavedM._id);
@@ -102138,7 +101620,7 @@ AllStructs.set(ContactsGetSavedM._id, ContactsGetSavedM);
 export class ChannelsGetLeftChannelsM {
   static _id = 0x8341ecc0;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_offset(): number {
     return this._values[0];
@@ -102194,7 +101676,7 @@ AllStructs.set(ChannelsGetLeftChannelsM._id, ChannelsGetLeftChannelsM);
 export class AccountInitTakeoutSessionM {
   static _id = 0xf05b4804;
   _method() {}
-  _values = [0, true, true, true, true, true, true, 0] as [
+  _values = ([0, true, true, true, true, true, true, 0] as unknown) as [
     number,
     true,
     true,
@@ -102429,7 +101911,7 @@ AllStructs.set(AccountInitTakeoutSessionM._id, AccountInitTakeoutSessionM);
 export class AccountFinishTakeoutSessionM {
   static _id = 0x1d2652ee;
   _method() {}
-  _values = [0, true] as [number, true];
+  _values = ([0, true] as unknown) as [number, true];
 
   get_flags(): number {
     return this._values[0];
@@ -102503,7 +101985,7 @@ AllStructs.set(AccountFinishTakeoutSessionM._id, AccountFinishTakeoutSessionM);
 export class MessagesGetSplitRangesM {
   static _id = 0x1cff7e08;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesGetSplitRangesM._id);
@@ -102530,7 +102012,10 @@ AllStructs.set(MessagesGetSplitRangesM._id, MessagesGetSplitRangesM);
 export class InvokeWithMessagesRangeM {
   static _id = 0x365275f2;
   _method() {}
-  _values = [new MessageRangeT(), new OneOf()] as [MessageRangeT, TMethod];
+  _values = ([
+    (new MessageRangeT() as unknown) as MessageRangeT,
+    new OneOf()
+  ] as unknown) as [MessageRangeT, TMethod];
 
   get_range(): MessageRangeT {
     return this._values[0];
@@ -102604,7 +102089,7 @@ AllStructs.set(InvokeWithMessagesRangeM._id, InvokeWithMessagesRangeM);
 export class InvokeWithTakeoutM {
   static _id = 0xaca9fd2e;
   _method() {}
-  _values = [[0, 0], new OneOf()] as [ProtoLong, TMethod];
+  _values = ([[0, 0], new OneOf()] as unknown) as [ProtoLong, TMethod];
 
   get_takeout_id(): ProtoLong {
     return this._values[0];
@@ -102677,11 +102162,11 @@ AllStructs.set(InvokeWithTakeoutM._id, InvokeWithTakeoutM);
 export class MessagesMarkDialogUnreadM {
   static _id = 0xc286d98f;
   _method() {}
-  _values = [0, true, new InputDialogPeerT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputDialogPeerT
-  ];
+    (new InputDialogPeerT() as unknown) as InputDialogPeerT
+  ] as unknown) as [number, true, InputDialogPeerT];
 
   get_flags(): number {
     return this._values[0];
@@ -102777,7 +102262,7 @@ AllStructs.set(MessagesMarkDialogUnreadM._id, MessagesMarkDialogUnreadM);
 export class MessagesGetDialogUnreadMarksM {
   static _id = 0x22e24e22;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesGetDialogUnreadMarksM._id);
@@ -102806,7 +102291,7 @@ AllStructs.set(
 export class ContactsToggleTopPeersM {
   static _id = 0x8514bdda;
   _method() {}
-  _values = [new BoolT()] as [BoolT];
+  _values = ([(new BoolT() as unknown) as BoolT] as unknown) as [BoolT];
 
   get_enabled(): BoolT {
     return this._values[0];
@@ -102857,7 +102342,7 @@ AllStructs.set(ContactsToggleTopPeersM._id, ContactsToggleTopPeersM);
 export class MessagesClearAllDraftsM {
   static _id = 0x7e58ee9c;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(MessagesClearAllDraftsM._id);
@@ -102883,7 +102368,7 @@ AllStructs.set(MessagesClearAllDraftsM._id, MessagesClearAllDraftsM);
 export class HelpGetAppConfigM {
   static _id = 0x98914110;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpGetAppConfigM._id);
@@ -102909,7 +102394,7 @@ AllStructs.set(HelpGetAppConfigM._id, HelpGetAppConfigM);
 export class HelpSaveAppLogM {
   static _id = 0x6f02f748;
   _method() {}
-  _values = [[]] as [InputAppEventS[]];
+  _values = ([[]] as unknown) as [InputAppEventS[]];
 
   get_events(): InputAppEventS[] {
     return this._values[0];
@@ -102955,7 +102440,7 @@ export class HelpSaveAppLogM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputAppEventS = new InputAppEventS();
+        let val: InputAppEventS = (new InputAppEventS() as unknown) as InputAppEventS;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -102977,7 +102462,7 @@ AllStructs.set(HelpSaveAppLogM._id, HelpSaveAppLogM);
 export class HelpGetPassportConfigM {
   static _id = 0xc661ad08;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_hash(): number {
     return this._values[0];
@@ -103027,7 +102512,7 @@ AllStructs.set(HelpGetPassportConfigM._id, HelpGetPassportConfigM);
 export class LangpackGetLanguageM {
   static _id = 0x6a596502;
   _method() {}
-  _values = ["", ""] as [string, string];
+  _values = (["", ""] as unknown) as [string, string];
 
   get_lang_pack(): string {
     return this._values[0];
@@ -103099,12 +102584,12 @@ AllStructs.set(LangpackGetLanguageM._id, LangpackGetLanguageM);
 export class MessagesUpdatePinnedMessageM {
   static _id = 0xd2aaf7ec;
   _method() {}
-  _values = [0, true, new InputPeerT(), 0] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputPeerT,
-    number
-  ];
+    (new InputPeerT() as unknown) as InputPeerT,
+    0
+  ] as unknown) as [number, true, InputPeerT, number];
 
   get_flags(): number {
     return this._values[0];
@@ -103220,7 +102705,7 @@ AllStructs.set(MessagesUpdatePinnedMessageM._id, MessagesUpdatePinnedMessageM);
 export class AccountConfirmPasswordEmailM {
   static _id = 0x8fdf1920;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_code(): string {
     return this._values[0];
@@ -103269,7 +102754,7 @@ AllStructs.set(AccountConfirmPasswordEmailM._id, AccountConfirmPasswordEmailM);
 export class AccountResendPasswordEmailM {
   static _id = 0x7a7f2a15;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountResendPasswordEmailM._id);
@@ -103295,7 +102780,7 @@ AllStructs.set(AccountResendPasswordEmailM._id, AccountResendPasswordEmailM);
 export class AccountCancelPasswordEmailM {
   static _id = 0xc1cbd5b6;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountCancelPasswordEmailM._id);
@@ -103321,7 +102806,7 @@ AllStructs.set(AccountCancelPasswordEmailM._id, AccountCancelPasswordEmailM);
 export class HelpGetSupportNameM {
   static _id = 0xd360e72c;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(HelpGetSupportNameM._id);
@@ -103347,7 +102832,9 @@ AllStructs.set(HelpGetSupportNameM._id, HelpGetSupportNameM);
 export class HelpGetUserInfoM {
   static _id = 0x38a08d3;
   _method() {}
-  _values = [new InputUserT()] as [InputUserT];
+  _values = ([(new InputUserT() as unknown) as InputUserT] as unknown) as [
+    InputUserT
+  ];
 
   get_user_id(): InputUserT {
     return this._values[0];
@@ -103400,11 +102887,11 @@ AllStructs.set(HelpGetUserInfoM._id, HelpGetUserInfoM);
 export class HelpEditUserInfoM {
   static _id = 0x66b91b70;
   _method() {}
-  _values = [new InputUserT(), "", []] as [
-    InputUserT,
-    string,
-    MessageEntityT[]
-  ];
+  _values = ([
+    (new InputUserT() as unknown) as InputUserT,
+    "",
+    []
+  ] as unknown) as [InputUserT, string, MessageEntityT[]];
 
   get_user_id(): InputUserT {
     return this._values[0];
@@ -103492,7 +102979,7 @@ export class HelpEditUserInfoM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessageEntityT = new MessageEntityT();
+        let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -103514,7 +103001,7 @@ AllStructs.set(HelpEditUserInfoM._id, HelpEditUserInfoM);
 export class AccountGetContactSignUpNotificationM {
   static _id = 0x9f07c728;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountGetContactSignUpNotificationM._id);
@@ -103544,7 +103031,7 @@ AllStructs.set(
 export class AccountSetContactSignUpNotificationM {
   static _id = 0xcff43f61;
   _method() {}
-  _values = [new BoolT()] as [BoolT];
+  _values = ([(new BoolT() as unknown) as BoolT] as unknown) as [BoolT];
 
   get_silent(): BoolT {
     return this._values[0];
@@ -103601,11 +103088,11 @@ AllStructs.set(
 export class AccountGetNotifyExceptionsM {
   static _id = 0x53577479;
   _method() {}
-  _values = [0, true, new InputNotifyPeerT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputNotifyPeerT
-  ];
+    (new InputNotifyPeerT() as unknown) as InputNotifyPeerT
+  ] as unknown) as [number, true, InputNotifyPeerT];
 
   get_flags(): number {
     return this._values[0];
@@ -103709,11 +103196,11 @@ AllStructs.set(AccountGetNotifyExceptionsM._id, AccountGetNotifyExceptionsM);
 export class MessagesSendVoteM {
   static _id = 0x10ea6184;
   _method() {}
-  _values = [new InputPeerT(), 0, []] as [
-    InputPeerT,
-    number,
-    Uint8Array[]
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    []
+  ] as unknown) as [InputPeerT, number, Uint8Array[]];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -103822,7 +103309,10 @@ AllStructs.set(MessagesSendVoteM._id, MessagesSendVoteM);
 export class MessagesGetPollResultsM {
   static _id = 0x73bb643b;
   _method() {}
-  _values = [new InputPeerT(), 0] as [InputPeerT, number];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT, 0] as unknown) as [
+    InputPeerT,
+    number
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -103893,7 +103383,9 @@ AllStructs.set(MessagesGetPollResultsM._id, MessagesGetPollResultsM);
 export class MessagesGetOnlinesM {
   static _id = 0x6e2be050;
   _method() {}
-  _values = [new InputPeerT()] as [InputPeerT];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT] as unknown) as [
+    InputPeerT
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -103947,12 +103439,12 @@ AllStructs.set(MessagesGetOnlinesM._id, MessagesGetOnlinesM);
 export class MessagesGetStatsUrlM {
   static _id = 0x812c2ae6;
   _method() {}
-  _values = [0, true, new InputPeerT(), ""] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputPeerT,
-    string
-  ];
+    (new InputPeerT() as unknown) as InputPeerT,
+    ""
+  ] as unknown) as [number, true, InputPeerT, string];
 
   get_flags(): number {
     return this._values[0];
@@ -104069,7 +103561,10 @@ AllStructs.set(MessagesGetStatsUrlM._id, MessagesGetStatsUrlM);
 export class MessagesEditChatAboutM {
   static _id = 0xdef60797;
   _method() {}
-  _values = [new InputPeerT(), ""] as [InputPeerT, string];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT, ""] as unknown) as [
+    InputPeerT,
+    string
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -104141,10 +103636,10 @@ AllStructs.set(MessagesEditChatAboutM._id, MessagesEditChatAboutM);
 export class MessagesEditChatDefaultBannedRightsM {
   static _id = 0xa5866b41;
   _method() {}
-  _values = [new InputPeerT(), new ChatBannedRightsT()] as [
-    InputPeerT,
-    ChatBannedRightsT
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    (new ChatBannedRightsT() as unknown) as ChatBannedRightsT
+  ] as unknown) as [InputPeerT, ChatBannedRightsT];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -104221,7 +103716,9 @@ AllStructs.set(
 export class AccountGetWallPaperM {
   static _id = 0xfc8ddbea;
   _method() {}
-  _values = [new InputWallPaperT()] as [InputWallPaperT];
+  _values = ([
+    (new InputWallPaperT() as unknown) as InputWallPaperT
+  ] as unknown) as [InputWallPaperT];
 
   get_wallpaper(): InputWallPaperT {
     return this._values[0];
@@ -104274,11 +103771,11 @@ AllStructs.set(AccountGetWallPaperM._id, AccountGetWallPaperM);
 export class AccountUploadWallPaperM {
   static _id = 0xdd853661;
   _method() {}
-  _values = [new InputFileT(), "", new WallPaperSettingsT()] as [
-    InputFileT,
-    string,
-    WallPaperSettingsT
-  ];
+  _values = ([
+    (new InputFileT() as unknown) as InputFileT,
+    "",
+    (new WallPaperSettingsT() as unknown) as WallPaperSettingsT
+  ] as unknown) as [InputFileT, string, WallPaperSettingsT];
 
   get_file(): InputFileT {
     return this._values[0];
@@ -104373,11 +103870,11 @@ AllStructs.set(AccountUploadWallPaperM._id, AccountUploadWallPaperM);
 export class AccountSaveWallPaperM {
   static _id = 0x6c5a5b37;
   _method() {}
-  _values = [new InputWallPaperT(), new BoolT(), new WallPaperSettingsT()] as [
-    InputWallPaperT,
-    BoolT,
-    WallPaperSettingsT
-  ];
+  _values = ([
+    (new InputWallPaperT() as unknown) as InputWallPaperT,
+    (new BoolT() as unknown) as BoolT,
+    (new WallPaperSettingsT() as unknown) as WallPaperSettingsT
+  ] as unknown) as [InputWallPaperT, BoolT, WallPaperSettingsT];
 
   get_wallpaper(): InputWallPaperT {
     return this._values[0];
@@ -104473,10 +103970,10 @@ AllStructs.set(AccountSaveWallPaperM._id, AccountSaveWallPaperM);
 export class AccountInstallWallPaperM {
   static _id = 0xfeed5769;
   _method() {}
-  _values = [new InputWallPaperT(), new WallPaperSettingsT()] as [
-    InputWallPaperT,
-    WallPaperSettingsT
-  ];
+  _values = ([
+    (new InputWallPaperT() as unknown) as InputWallPaperT,
+    (new WallPaperSettingsT() as unknown) as WallPaperSettingsT
+  ] as unknown) as [InputWallPaperT, WallPaperSettingsT];
 
   get_wallpaper(): InputWallPaperT {
     return this._values[0];
@@ -104549,7 +104046,7 @@ AllStructs.set(AccountInstallWallPaperM._id, AccountInstallWallPaperM);
 export class AccountResetWallPapersM {
   static _id = 0xbb3b9804;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountResetWallPapersM._id);
@@ -104575,7 +104072,7 @@ AllStructs.set(AccountResetWallPapersM._id, AccountResetWallPapersM);
 export class AccountGetAutoDownloadSettingsM {
   static _id = 0x56da0b3f;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(AccountGetAutoDownloadSettingsM._id);
@@ -104607,12 +104104,12 @@ AllStructs.set(
 export class AccountSaveAutoDownloadSettingsM {
   static _id = 0x76f36233;
   _method() {}
-  _values = [0, true, true, new AutoDownloadSettingsT()] as [
-    number,
+  _values = ([
+    0,
     true,
     true,
-    AutoDownloadSettingsT
-  ];
+    (new AutoDownloadSettingsT() as unknown) as AutoDownloadSettingsT
+  ] as unknown) as [number, true, true, AutoDownloadSettingsT];
 
   get_flags(): number {
     return this._values[0];
@@ -104736,7 +104233,7 @@ AllStructs.set(
 export class MessagesGetEmojiKeywordsM {
   static _id = 0x35a0e062;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_lang_code(): string {
     return this._values[0];
@@ -104786,7 +104283,7 @@ AllStructs.set(MessagesGetEmojiKeywordsM._id, MessagesGetEmojiKeywordsM);
 export class MessagesGetEmojiKeywordsDifferenceM {
   static _id = 0x1508b6af;
   _method() {}
-  _values = ["", 0] as [string, number];
+  _values = (["", 0] as unknown) as [string, number];
 
   get_lang_code(): string {
     return this._values[0];
@@ -104859,7 +104356,7 @@ AllStructs.set(
 export class MessagesGetEmojiKeywordsLanguagesM {
   static _id = 0x4e9963b2;
   _method() {}
-  _values = [[]] as [string[]];
+  _values = ([[]] as unknown) as [string[]];
 
   get_lang_codes(): string[] {
     return this._values[0];
@@ -104928,7 +104425,7 @@ AllStructs.set(
 export class MessagesGetEmojiUrlM {
   static _id = 0xd5b10c26;
   _method() {}
-  _values = [""] as [string];
+  _values = ([""] as unknown) as [string];
 
   get_lang_code(): string {
     return this._values[0];
@@ -104977,7 +104474,7 @@ AllStructs.set(MessagesGetEmojiUrlM._id, MessagesGetEmojiUrlM);
 export class FoldersEditPeerFoldersM {
   static _id = 0x6847d0ab;
   _method() {}
-  _values = [[]] as [InputFolderPeerS[]];
+  _values = ([[]] as unknown) as [InputFolderPeerS[]];
 
   get_folder_peers(): InputFolderPeerS[] {
     return this._values[0];
@@ -105023,7 +104520,7 @@ export class FoldersEditPeerFoldersM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: InputFolderPeerS = new InputFolderPeerS();
+        let val: InputFolderPeerS = (new InputFolderPeerS() as unknown) as InputFolderPeerS;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -105045,7 +104542,7 @@ AllStructs.set(FoldersEditPeerFoldersM._id, FoldersEditPeerFoldersM);
 export class FoldersDeleteFolderM {
   static _id = 0x1c295881;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_folder_id(): number {
     return this._values[0];
@@ -105095,7 +104592,10 @@ AllStructs.set(FoldersDeleteFolderM._id, FoldersDeleteFolderM);
 export class MessagesGetSearchCountersM {
   static _id = 0x732eef00;
   _method() {}
-  _values = [new InputPeerT(), []] as [InputPeerT, MessagesFilterT[]];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT, []] as unknown) as [
+    InputPeerT,
+    MessagesFilterT[]
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -105163,7 +104663,7 @@ export class MessagesGetSearchCountersM {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: MessagesFilterT = new MessagesFilterT();
+        let val: MessagesFilterT = (new MessagesFilterT() as unknown) as MessagesFilterT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -105185,7 +104685,7 @@ AllStructs.set(MessagesGetSearchCountersM._id, MessagesGetSearchCountersM);
 export class ChannelsGetGroupsForDiscussionM {
   static _id = 0xf5dad378;
   _method() {}
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(ChannelsGetGroupsForDiscussionM._id);
@@ -105215,10 +104715,10 @@ AllStructs.set(
 export class ChannelsSetDiscussionGroupM {
   static _id = 0x40582bb2;
   _method() {}
-  _values = [new InputChannelT(), new InputChannelT()] as [
-    InputChannelT,
-    InputChannelT
-  ];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new InputChannelT() as unknown) as InputChannelT
+  ] as unknown) as [InputChannelT, InputChannelT];
 
   get_broadcast(): InputChannelT {
     return this._values[0];
@@ -105293,7 +104793,11 @@ AllStructs.set(ChannelsSetDiscussionGroupM._id, ChannelsSetDiscussionGroupM);
 export class MessagesRequestUrlAuthM {
   static _id = 0xe33f5613;
   _method() {}
-  _values = [new InputPeerT(), 0, 0] as [InputPeerT, number, number];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    0
+  ] as unknown) as [InputPeerT, number, number];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -105388,13 +104892,13 @@ AllStructs.set(MessagesRequestUrlAuthM._id, MessagesRequestUrlAuthM);
 export class MessagesAcceptUrlAuthM {
   static _id = 0xf729ea98;
   _method() {}
-  _values = [0, true, new InputPeerT(), 0, 0] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputPeerT,
-    number,
-    number
-  ];
+    (new InputPeerT() as unknown) as InputPeerT,
+    0,
+    0
+  ] as unknown) as [number, true, InputPeerT, number, number];
 
   get_flags(): number {
     return this._values[0];
@@ -105530,7 +105034,9 @@ AllStructs.set(MessagesAcceptUrlAuthM._id, MessagesAcceptUrlAuthM);
 export class MessagesHidePeerSettingsBarM {
   static _id = 0x4facb138;
   _method() {}
-  _values = [new InputPeerT()] as [InputPeerT];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT] as unknown) as [
+    InputPeerT
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -105586,14 +105092,14 @@ AllStructs.set(MessagesHidePeerSettingsBarM._id, MessagesHidePeerSettingsBarM);
 export class ContactsAddContactM {
   static _id = 0xe8f463d0;
   _method() {}
-  _values = [0, true, new InputUserT(), "", "", ""] as [
-    number,
+  _values = ([
+    0,
     true,
-    InputUserT,
-    string,
-    string,
-    string
-  ];
+    (new InputUserT() as unknown) as InputUserT,
+    "",
+    "",
+    ""
+  ] as unknown) as [number, true, InputUserT, string, string, string];
 
   get_flags(): number {
     return this._values[0];
@@ -105749,7 +105255,9 @@ AllStructs.set(ContactsAddContactM._id, ContactsAddContactM);
 export class ContactsAcceptContactM {
   static _id = 0xf831a20f;
   _method() {}
-  _values = [new InputUserT()] as [InputUserT];
+  _values = ([(new InputUserT() as unknown) as InputUserT] as unknown) as [
+    InputUserT
+  ];
 
   get_id(): InputUserT {
     return this._values[0];
@@ -105802,11 +105310,11 @@ AllStructs.set(ContactsAcceptContactM._id, ContactsAcceptContactM);
 export class ChannelsEditCreatorM {
   static _id = 0x8f38cd1f;
   _method() {}
-  _values = [
-    new InputChannelT(),
-    new InputUserT(),
-    new InputCheckPasswordSrpT()
-  ] as [InputChannelT, InputUserT, InputCheckPasswordSrpT];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new InputUserT() as unknown) as InputUserT,
+    (new InputCheckPasswordSrpT() as unknown) as InputCheckPasswordSrpT
+  ] as unknown) as [InputChannelT, InputUserT, InputCheckPasswordSrpT];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -105901,7 +105409,9 @@ AllStructs.set(ChannelsEditCreatorM._id, ChannelsEditCreatorM);
 export class ContactsGetLocatedM {
   static _id = 0xa356056;
   _method() {}
-  _values = [new InputGeoPointT()] as [InputGeoPointT];
+  _values = ([
+    (new InputGeoPointT() as unknown) as InputGeoPointT
+  ] as unknown) as [InputGeoPointT];
 
   get_geo_point(): InputGeoPointT {
     return this._values[0];
@@ -105954,11 +105464,11 @@ AllStructs.set(ContactsGetLocatedM._id, ContactsGetLocatedM);
 export class ChannelsEditLocationM {
   static _id = 0x58e63f6d;
   _method() {}
-  _values = [new InputChannelT(), new InputGeoPointT(), ""] as [
-    InputChannelT,
-    InputGeoPointT,
-    string
-  ];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    (new InputGeoPointT() as unknown) as InputGeoPointT,
+    ""
+  ] as unknown) as [InputChannelT, InputGeoPointT, string];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -106052,7 +105562,10 @@ AllStructs.set(ChannelsEditLocationM._id, ChannelsEditLocationM);
 export class ChannelsToggleSlowModeM {
   static _id = 0xedd49ef0;
   _method() {}
-  _values = [new InputChannelT(), 0] as [InputChannelT, number];
+  _values = ([
+    (new InputChannelT() as unknown) as InputChannelT,
+    0
+  ] as unknown) as [InputChannelT, number];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -106124,7 +105637,10 @@ AllStructs.set(ChannelsToggleSlowModeM._id, ChannelsToggleSlowModeM);
 export class MessagesGetScheduledHistoryM {
   static _id = 0xe2c2685b;
   _method() {}
-  _values = [new InputPeerT(), 0] as [InputPeerT, number];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT, 0] as unknown) as [
+    InputPeerT,
+    number
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -106196,7 +105712,10 @@ AllStructs.set(MessagesGetScheduledHistoryM._id, MessagesGetScheduledHistoryM);
 export class MessagesGetScheduledMessagesM {
   static _id = 0xbdbb0464;
   _method() {}
-  _values = [new InputPeerT(), []] as [InputPeerT, number[]];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT, []] as unknown) as [
+    InputPeerT,
+    number[]
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -106288,7 +105807,10 @@ AllStructs.set(
 export class MessagesSendScheduledMessagesM {
   static _id = 0xbd38850a;
   _method() {}
-  _values = [new InputPeerT(), []] as [InputPeerT, number[]];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT, []] as unknown) as [
+    InputPeerT,
+    number[]
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -106380,7 +105902,10 @@ AllStructs.set(
 export class MessagesDeleteScheduledMessagesM {
   static _id = 0x59ae2b16;
   _method() {}
-  _values = [new InputPeerT(), []] as [InputPeerT, number[]];
+  _values = ([(new InputPeerT() as unknown) as InputPeerT, []] as unknown) as [
+    InputPeerT,
+    number[]
+  ];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -106475,13 +106000,13 @@ AllStructs.set(
 export class AccountUploadThemeM {
   static _id = 0x1c3db333;
   _method() {}
-  _values = [0, new InputFileT(), new InputFileT(), "", ""] as [
-    number,
-    InputFileT,
-    InputFileT,
-    string,
-    string
-  ];
+  _values = ([
+    0,
+    (new InputFileT() as unknown) as InputFileT,
+    (new InputFileT() as unknown) as InputFileT,
+    "",
+    ""
+  ] as unknown) as [number, InputFileT, InputFileT, string, string];
 
   get_flags(): number {
     return this._values[0];
@@ -106622,7 +106147,11 @@ AllStructs.set(AccountUploadThemeM._id, AccountUploadThemeM);
 export class AccountCreateThemeM {
   static _id = 0x2b7ffd7f;
   _method() {}
-  _values = ["", "", new InputDocumentT()] as [string, string, InputDocumentT];
+  _values = ([
+    "",
+    "",
+    (new InputDocumentT() as unknown) as InputDocumentT
+  ] as unknown) as [string, string, InputDocumentT];
 
   get_slug(): string {
     return this._values[0];
@@ -106718,7 +106247,14 @@ AllStructs.set(AccountCreateThemeM._id, AccountCreateThemeM);
 export class AccountUpdateThemeM {
   static _id = 0x3b8ea202;
   _method() {}
-  _values = [0, "", new InputThemeT(), "", "", new InputDocumentT()] as [
+  _values = ([
+    0,
+    "",
+    (new InputThemeT() as unknown) as InputThemeT,
+    "",
+    "",
+    (new InputDocumentT() as unknown) as InputDocumentT
+  ] as unknown) as [
     number,
     string,
     InputThemeT,
@@ -106897,7 +106433,10 @@ AllStructs.set(AccountUpdateThemeM._id, AccountUpdateThemeM);
 export class AccountSaveThemeM {
   static _id = 0xf257106c;
   _method() {}
-  _values = [new InputThemeT(), new BoolT()] as [InputThemeT, BoolT];
+  _values = ([
+    (new InputThemeT() as unknown) as InputThemeT,
+    (new BoolT() as unknown) as BoolT
+  ] as unknown) as [InputThemeT, BoolT];
 
   get_theme(): InputThemeT {
     return this._values[0];
@@ -106973,12 +106512,12 @@ AllStructs.set(AccountSaveThemeM._id, AccountSaveThemeM);
 export class AccountInstallThemeM {
   static _id = 0x7ae43737;
   _method() {}
-  _values = [0, true, "", new InputThemeT()] as [
-    number,
+  _values = ([
+    0,
     true,
-    string,
-    InputThemeT
-  ];
+    "",
+    (new InputThemeT() as unknown) as InputThemeT
+  ] as unknown) as [number, true, string, InputThemeT];
 
   get_flags(): number {
     return this._values[0];
@@ -107108,7 +106647,11 @@ AllStructs.set(AccountInstallThemeM._id, AccountInstallThemeM);
 export class AccountGetThemeM {
   static _id = 0x8d9d742b;
   _method() {}
-  _values = ["", new InputThemeT(), [0, 0]] as [string, InputThemeT, ProtoLong];
+  _values = ([
+    "",
+    (new InputThemeT() as unknown) as InputThemeT,
+    [0, 0]
+  ] as unknown) as [string, InputThemeT, ProtoLong];
 
   get_format(): string {
     return this._values[0];
@@ -107200,7 +106743,7 @@ AllStructs.set(AccountGetThemeM._id, AccountGetThemeM);
 export class AccountGetThemesM {
   static _id = 0x285946f8;
   _method() {}
-  _values = ["", 0] as [string, number];
+  _values = (["", 0] as unknown) as [string, number];
 
   get_format(): string {
     return this._values[0];

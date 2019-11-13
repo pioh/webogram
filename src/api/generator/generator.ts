@@ -214,7 +214,7 @@ function mapType(type: string, isType = false): TypeDesc {
   let t = toName(type, isType ? "T" : "T");
   usedTypes.add(t);
   return {
-    value: `new ${t}()`,
+    value: `new ${t}() as unknown as ${t}`,
     type: `${t}`,
     read: `
     val = val._read(buf);
@@ -253,10 +253,7 @@ async function processFile(json: typeof jsonApi, output: string) {
       used.add(t);
       usedTypes.add(t);
       l(`
-      export type ${t} = ${p.map(v => `${v}`).join(" | ")} | OneOf<${p
-        .map(v => `typeof ${v}`)
-        .join(" | ")}, ${p.map(v => `${v}`).join(" | ")}>;
-
+      export type ${t} = ${p.map(v => `${v}`).join(" | ")};
       export const ${t} = OneOf;
       `);
     } else if (
@@ -370,7 +367,7 @@ function AddConstructor(
         ${c.returnType ? `_method() {}` : ""}
         _values = [${c.params
           .map(pr => mapType(pr.type).value)
-          .join(", ")}] as ${
+          .join(", ")}] as unknown as ${
     isVector && !c.params.length ? "any" : ""
   }[${c.params.map(pr => mapType(pr.type).type).join(", ")}];
         ${

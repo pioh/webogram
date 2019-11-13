@@ -14,7 +14,7 @@ const __PROD__ = process.env.NODE_ENV === "production";
 const tsLoader = {
   loader: "awesome-typescript-loader",
   options: {
-    extensions: [".ts"],
+    extensions: [".ts", ".js"],
     configFileName: "tsconfig.json",
     usePrecompiledFiles: true,
     logLevel: "info",
@@ -207,7 +207,7 @@ module.exports = {
   resolve: {
     cacheWithContext: true,
     mainFields: ["module", "browser", "main"],
-    extensions: [".tsx", ".ts", ".css"],
+    extensions: [".js", ".tsx", ".ts", ".css"],
     modules: ["./src", "./node_modules"]
   },
   optimization: __PROD__

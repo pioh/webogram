@@ -17,7 +17,7 @@ import {
 export class VectorS {
   static _id = 0x1cb5c415;
 
-  _values = [] as any[];
+  _values = ([] as unknown) as any[];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(VectorS._id);
@@ -57,12 +57,12 @@ AllStructs.set(VectorS._id, VectorS);
 export class ResPqS {
   static _id = 0x5162463;
 
-  _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array(), []] as [
-    Uint8Array,
-    Uint8Array,
-    Uint8Array,
-    ProtoLong[]
-  ];
+  _values = ([
+    new Uint8Array(16),
+    new Uint8Array(16),
+    new Uint8Array(),
+    []
+  ] as unknown) as [Uint8Array, Uint8Array, Uint8Array, ProtoLong[]];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -193,14 +193,21 @@ AllStructs.set(ResPqS._id, ResPqS);
 export class PQInnerDataS {
   static _id = 0x83c95aec;
 
-  _values = [
+  _values = ([
     new Uint8Array(),
     new Uint8Array(),
     new Uint8Array(),
     new Uint8Array(16),
     new Uint8Array(16),
     new Uint8Array(32)
-  ] as [Uint8Array, Uint8Array, Uint8Array, Uint8Array, Uint8Array, Uint8Array];
+  ] as unknown) as [
+    Uint8Array,
+    Uint8Array,
+    Uint8Array,
+    Uint8Array,
+    Uint8Array,
+    Uint8Array
+  ];
 
   get_pq(): Uint8Array {
     return this._values[0];
@@ -355,7 +362,7 @@ AllStructs.set(PQInnerDataS._id, PQInnerDataS);
 export class PQInnerDataTempS {
   static _id = 0x3c6a84d4;
 
-  _values = [
+  _values = ([
     new Uint8Array(),
     new Uint8Array(),
     new Uint8Array(),
@@ -363,7 +370,7 @@ export class PQInnerDataTempS {
     new Uint8Array(16),
     new Uint8Array(32),
     0
-  ] as [
+  ] as unknown) as [
     Uint8Array,
     Uint8Array,
     Uint8Array,
@@ -542,11 +549,11 @@ AllStructs.set(PQInnerDataTempS._id, PQInnerDataTempS);
 export class ServerDhParamsFailS {
   static _id = 0x79cb045d;
 
-  _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array(16)] as [
-    Uint8Array,
-    Uint8Array,
-    Uint8Array
-  ];
+  _values = ([
+    new Uint8Array(16),
+    new Uint8Array(16),
+    new Uint8Array(16)
+  ] as unknown) as [Uint8Array, Uint8Array, Uint8Array];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -637,11 +644,11 @@ AllStructs.set(ServerDhParamsFailS._id, ServerDhParamsFailS);
 export class ServerDhParamsOkS {
   static _id = 0xd0e8075c;
 
-  _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array()] as [
-    Uint8Array,
-    Uint8Array,
-    Uint8Array
-  ];
+  _values = ([
+    new Uint8Array(16),
+    new Uint8Array(16),
+    new Uint8Array()
+  ] as unknown) as [Uint8Array, Uint8Array, Uint8Array];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -735,14 +742,21 @@ AllStructs.set(ServerDhParamsOkS._id, ServerDhParamsOkS);
 export class ServerDhInnerDataS {
   static _id = 0xb5890dba;
 
-  _values = [
+  _values = ([
     new Uint8Array(16),
     new Uint8Array(16),
     0,
     new Uint8Array(),
     new Uint8Array(),
     0
-  ] as [Uint8Array, Uint8Array, number, Uint8Array, Uint8Array, number];
+  ] as unknown) as [
+    Uint8Array,
+    Uint8Array,
+    number,
+    Uint8Array,
+    Uint8Array,
+    number
+  ];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -894,12 +908,12 @@ AllStructs.set(ServerDhInnerDataS._id, ServerDhInnerDataS);
 export class ClientDhInnerDataS {
   static _id = 0x6643b654;
 
-  _values = [
+  _values = ([
     new Uint8Array(16),
     new Uint8Array(16),
     [0, 0],
     new Uint8Array()
-  ] as [Uint8Array, Uint8Array, ProtoLong, Uint8Array];
+  ] as unknown) as [Uint8Array, Uint8Array, ProtoLong, Uint8Array];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -1010,11 +1024,11 @@ AllStructs.set(ClientDhInnerDataS._id, ClientDhInnerDataS);
 export class DhGenOkS {
   static _id = 0x3bcbf734;
 
-  _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array(16)] as [
-    Uint8Array,
-    Uint8Array,
-    Uint8Array
-  ];
+  _values = ([
+    new Uint8Array(16),
+    new Uint8Array(16),
+    new Uint8Array(16)
+  ] as unknown) as [Uint8Array, Uint8Array, Uint8Array];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -1105,11 +1119,11 @@ AllStructs.set(DhGenOkS._id, DhGenOkS);
 export class DhGenRetryS {
   static _id = 0x46dc1fb9;
 
-  _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array(16)] as [
-    Uint8Array,
-    Uint8Array,
-    Uint8Array
-  ];
+  _values = ([
+    new Uint8Array(16),
+    new Uint8Array(16),
+    new Uint8Array(16)
+  ] as unknown) as [Uint8Array, Uint8Array, Uint8Array];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -1200,11 +1214,11 @@ AllStructs.set(DhGenRetryS._id, DhGenRetryS);
 export class DhGenFailS {
   static _id = 0xa69dae02;
 
-  _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array(16)] as [
-    Uint8Array,
-    Uint8Array,
-    Uint8Array
-  ];
+  _values = ([
+    new Uint8Array(16),
+    new Uint8Array(16),
+    new Uint8Array(16)
+  ] as unknown) as [Uint8Array, Uint8Array, Uint8Array];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -1294,7 +1308,7 @@ AllStructs.set(DhGenFailS._id, DhGenFailS);
 export class RpcResultS {
   static _id = 0xf35c6d01;
 
-  _values = [[0, 0], new OneOf()] as [ProtoLong, OneOf | IStruct];
+  _values = ([[0, 0], new OneOf()] as unknown) as [ProtoLong, OneOf | IStruct];
 
   get_req_msg_id(): ProtoLong {
     return this._values[0];
@@ -1366,7 +1380,7 @@ AllStructs.set(RpcResultS._id, RpcResultS);
 export class RpcErrorS {
   static _id = 0x2144ca19;
 
-  _values = [0, ""] as [number, string];
+  _values = ([0, ""] as unknown) as [number, string];
 
   get_error_code(): number {
     return this._values[0];
@@ -1435,7 +1449,7 @@ AllStructs.set(RpcErrorS._id, RpcErrorS);
 export class RpcAnswerUnknownS {
   static _id = 0x5e2ad36e;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(RpcAnswerUnknownS._id);
@@ -1461,7 +1475,7 @@ AllStructs.set(RpcAnswerUnknownS._id, RpcAnswerUnknownS);
 export class RpcAnswerDroppedRunningS {
   static _id = 0xcd78e586;
 
-  _values = [] as [];
+  _values = ([] as unknown) as [];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(RpcAnswerDroppedRunningS._id);
@@ -1489,7 +1503,7 @@ AllStructs.set(RpcAnswerDroppedRunningS._id, RpcAnswerDroppedRunningS);
 export class RpcAnswerDroppedS {
   static _id = 0xa43ad8b7;
 
-  _values = [[0, 0], 0, 0] as [ProtoLong, number, number];
+  _values = ([[0, 0], 0, 0] as unknown) as [ProtoLong, number, number];
 
   get_msg_id(): ProtoLong {
     return this._values[0];
@@ -1580,7 +1594,7 @@ AllStructs.set(RpcAnswerDroppedS._id, RpcAnswerDroppedS);
 export class FutureSaltS {
   static _id = 0x949d9dc;
 
-  _values = [0, 0, [0, 0]] as [number, number, ProtoLong];
+  _values = ([0, 0, [0, 0]] as unknown) as [number, number, ProtoLong];
 
   get_valid_since(): number {
     return this._values[0];
@@ -1671,7 +1685,11 @@ AllStructs.set(FutureSaltS._id, FutureSaltS);
 export class FutureSaltsS {
   static _id = 0xae500895;
 
-  _values = [[0, 0], 0, []] as [ProtoLong, number, FutureSaltT[]];
+  _values = ([[0, 0], 0, []] as unknown) as [
+    ProtoLong,
+    number,
+    FutureSaltT[]
+  ];
 
   get_req_msg_id(): ProtoLong {
     return this._values[0];
@@ -1754,7 +1772,7 @@ export class FutureSaltsS {
       val.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
-        let val: FutureSaltT = new FutureSaltT();
+        let val: FutureSaltT = (new FutureSaltT() as unknown) as FutureSaltT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
@@ -1777,7 +1795,7 @@ AllStructs.set(FutureSaltsS._id, FutureSaltsS);
 export class PongS {
   static _id = 0x347773c5;
 
-  _values = [[0, 0], [0, 0]] as [ProtoLong, ProtoLong];
+  _values = ([[0, 0], [0, 0]] as unknown) as [ProtoLong, ProtoLong];
 
   get_msg_id(): ProtoLong {
     return this._values[0];
@@ -1846,7 +1864,7 @@ AllStructs.set(PongS._id, PongS);
 export class DestroySessionOkS {
   static _id = 0xe22045fc;
 
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_session_id(): ProtoLong {
     return this._values[0];
@@ -1895,7 +1913,7 @@ AllStructs.set(DestroySessionOkS._id, DestroySessionOkS);
 export class DestroySessionNoneS {
   static _id = 0x62d350c9;
 
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_session_id(): ProtoLong {
     return this._values[0];
@@ -1946,7 +1964,11 @@ AllStructs.set(DestroySessionNoneS._id, DestroySessionNoneS);
 export class NewSessionCreatedS {
   static _id = 0x9ec20908;
 
-  _values = [[0, 0], [0, 0], [0, 0]] as [ProtoLong, ProtoLong, ProtoLong];
+  _values = ([[0, 0], [0, 0], [0, 0]] as unknown) as [
+    ProtoLong,
+    ProtoLong,
+    ProtoLong
+  ];
 
   get_first_msg_id(): ProtoLong {
     return this._values[0];
@@ -2035,7 +2057,7 @@ AllStructs.set(NewSessionCreatedS._id, NewSessionCreatedS);
 export class MsgContainerS {
   static _id = 0x73f1f8dc;
 
-  _values = [[]] as [MessageS[]];
+  _values = ([[]] as unknown) as [MessageS[]];
 
   get_messages(): MessageS[] {
     return this._values[0];
@@ -2102,7 +2124,7 @@ AllStructs.set(MsgContainerS._id, MsgContainerS);
 export class MessageS {
   static _id = 0x5bb8e511;
 
-  _values = [[0, 0], 0, 0, new OneOf()] as [
+  _values = ([[0, 0], 0, 0, new OneOf()] as unknown) as [
     ProtoLong,
     number,
     number,
@@ -2232,7 +2254,9 @@ AllStructs.set(MessageS._id, MessageS);
 export class MsgCopyS {
   static _id = 0xe06046b2;
 
-  _values = [new MessageT()] as [MessageT];
+  _values = ([(new MessageT() as unknown) as MessageT] as unknown) as [
+    MessageT
+  ];
 
   get_orig_message(): MessageT {
     return this._values[0];
@@ -2283,7 +2307,7 @@ AllStructs.set(MsgCopyS._id, MsgCopyS);
 export class GzipPackedS {
   static _id = 0x3072cfa1;
 
-  _values = [new Uint8Array()] as [Uint8Array];
+  _values = ([new Uint8Array()] as unknown) as [Uint8Array];
 
   get_packed_data(): Uint8Array {
     return this._values[0];
@@ -2332,7 +2356,7 @@ AllStructs.set(GzipPackedS._id, GzipPackedS);
 export class MsgsAckS {
   static _id = 0x62d6b459;
 
-  _values = [[]] as [ProtoLong[]];
+  _values = ([[]] as unknown) as [ProtoLong[]];
 
   get_msg_ids(): ProtoLong[] {
     return this._values[0];
@@ -2400,7 +2424,7 @@ AllStructs.set(MsgsAckS._id, MsgsAckS);
 export class BadMsgNotificationS {
   static _id = 0xa7eff811;
 
-  _values = [[0, 0], 0, 0] as [ProtoLong, number, number];
+  _values = ([[0, 0], 0, 0] as unknown) as [ProtoLong, number, number];
 
   get_bad_msg_id(): ProtoLong {
     return this._values[0];
@@ -2492,7 +2516,12 @@ AllStructs.set(BadMsgNotificationS._id, BadMsgNotificationS);
 export class BadServerSaltS {
   static _id = 0xedab447b;
 
-  _values = [[0, 0], 0, 0, [0, 0]] as [ProtoLong, number, number, ProtoLong];
+  _values = ([[0, 0], 0, 0, [0, 0]] as unknown) as [
+    ProtoLong,
+    number,
+    number,
+    ProtoLong
+  ];
 
   get_bad_msg_id(): ProtoLong {
     return this._values[0];
@@ -2601,7 +2630,7 @@ AllStructs.set(BadServerSaltS._id, BadServerSaltS);
 export class MsgResendReqS {
   static _id = 0x7d861a08;
 
-  _values = [[]] as [ProtoLong[]];
+  _values = ([[]] as unknown) as [ProtoLong[]];
 
   get_msg_ids(): ProtoLong[] {
     return this._values[0];
@@ -2667,7 +2696,7 @@ AllStructs.set(MsgResendReqS._id, MsgResendReqS);
 export class MsgsStateReqS {
   static _id = 0xda69fb52;
 
-  _values = [[]] as [ProtoLong[]];
+  _values = ([[]] as unknown) as [ProtoLong[]];
 
   get_msg_ids(): ProtoLong[] {
     return this._values[0];
@@ -2734,7 +2763,7 @@ AllStructs.set(MsgsStateReqS._id, MsgsStateReqS);
 export class MsgsStateInfoS {
   static _id = 0x4deb57d;
 
-  _values = [[0, 0], new Uint8Array()] as [ProtoLong, Uint8Array];
+  _values = ([[0, 0], new Uint8Array()] as unknown) as [ProtoLong, Uint8Array];
 
   get_req_msg_id(): ProtoLong {
     return this._values[0];
@@ -2804,7 +2833,10 @@ AllStructs.set(MsgsStateInfoS._id, MsgsStateInfoS);
 export class MsgsAllInfoS {
   static _id = 0x8cc0d131;
 
-  _values = [[], new Uint8Array()] as [ProtoLong[], Uint8Array];
+  _values = ([[], new Uint8Array()] as unknown) as [
+    ProtoLong[],
+    Uint8Array
+  ];
 
   get_msg_ids(): ProtoLong[] {
     return this._values[0];
@@ -2893,7 +2925,12 @@ AllStructs.set(MsgsAllInfoS._id, MsgsAllInfoS);
 export class MsgDetailedInfoS {
   static _id = 0x276d3ec6;
 
-  _values = [[0, 0], [0, 0], 0, 0] as [ProtoLong, ProtoLong, number, number];
+  _values = ([[0, 0], [0, 0], 0, 0] as unknown) as [
+    ProtoLong,
+    ProtoLong,
+    number,
+    number
+  ];
 
   get_msg_id(): ProtoLong {
     return this._values[0];
@@ -3004,7 +3041,7 @@ AllStructs.set(MsgDetailedInfoS._id, MsgDetailedInfoS);
 export class MsgNewDetailedInfoS {
   static _id = 0x809db6df;
 
-  _values = [[0, 0], 0, 0] as [ProtoLong, number, number];
+  _values = ([[0, 0], 0, 0] as unknown) as [ProtoLong, number, number];
 
   get_answer_msg_id(): ProtoLong {
     return this._values[0];
@@ -3097,7 +3134,7 @@ AllStructs.set(MsgNewDetailedInfoS._id, MsgNewDetailedInfoS);
 export class BindAuthKeyInnerS {
   static _id = 0x75a3f765;
 
-  _values = [[0, 0], [0, 0], [0, 0], [0, 0], 0] as [
+  _values = ([[0, 0], [0, 0], [0, 0], [0, 0], 0] as unknown) as [
     ProtoLong,
     ProtoLong,
     ProtoLong,
@@ -3227,61 +3264,25 @@ AllStructs.set(BindAuthKeyInnerS._id, BindAuthKeyInnerS);
 export const VectorTT = VectorS;
 export type VectorTT = VectorS;
 
-export type PQInnerDataT =
-  | PQInnerDataS
-  | PQInnerDataTempS
-  | OneOf<
-      typeof PQInnerDataS | typeof PQInnerDataTempS,
-      PQInnerDataS | PQInnerDataTempS
-    >;
-
+export type PQInnerDataT = PQInnerDataS | PQInnerDataTempS;
 export const PQInnerDataT = OneOf;
 
-export type ServerDhParamsT =
-  | ServerDhParamsFailS
-  | ServerDhParamsOkS
-  | OneOf<
-      typeof ServerDhParamsFailS | typeof ServerDhParamsOkS,
-      ServerDhParamsFailS | ServerDhParamsOkS
-    >;
-
+export type ServerDhParamsT = ServerDhParamsFailS | ServerDhParamsOkS;
 export const ServerDhParamsT = OneOf;
 
-export type SetClientDhParamsAnswerT =
-  | DhGenOkS
-  | DhGenRetryS
-  | DhGenFailS
-  | OneOf<
-      typeof DhGenOkS | typeof DhGenRetryS | typeof DhGenFailS,
-      DhGenOkS | DhGenRetryS | DhGenFailS
-    >;
-
+export type SetClientDhParamsAnswerT = DhGenOkS | DhGenRetryS | DhGenFailS;
 export const SetClientDhParamsAnswerT = OneOf;
 
 export type RpcDropAnswerT =
   | RpcAnswerUnknownS
   | RpcAnswerDroppedRunningS
-  | RpcAnswerDroppedS
-  | OneOf<
-      | typeof RpcAnswerUnknownS
-      | typeof RpcAnswerDroppedRunningS
-      | typeof RpcAnswerDroppedS,
-      RpcAnswerUnknownS | RpcAnswerDroppedRunningS | RpcAnswerDroppedS
-    >;
-
+  | RpcAnswerDroppedS;
 export const RpcDropAnswerT = OneOf;
 
 export const FutureSaltT = FutureSaltS;
 export type FutureSaltT = FutureSaltS;
 
-export type DestroySessionResT =
-  | DestroySessionOkS
-  | DestroySessionNoneS
-  | OneOf<
-      typeof DestroySessionOkS | typeof DestroySessionNoneS,
-      DestroySessionOkS | DestroySessionNoneS
-    >;
-
+export type DestroySessionResT = DestroySessionOkS | DestroySessionNoneS;
 export const DestroySessionResT = OneOf;
 
 export const NewSessionT = NewSessionCreatedS;
@@ -3299,24 +3300,10 @@ export type MessageCopyT = MsgCopyS;
 export const ObjectT = GzipPackedS;
 export type ObjectT = GzipPackedS;
 
-export type BadMsgNotificationT =
-  | BadMsgNotificationS
-  | BadServerSaltS
-  | OneOf<
-      typeof BadMsgNotificationS | typeof BadServerSaltS,
-      BadMsgNotificationS | BadServerSaltS
-    >;
-
+export type BadMsgNotificationT = BadMsgNotificationS | BadServerSaltS;
 export const BadMsgNotificationT = OneOf;
 
-export type MsgDetailedInfoT =
-  | MsgDetailedInfoS
-  | MsgNewDetailedInfoS
-  | OneOf<
-      typeof MsgDetailedInfoS | typeof MsgNewDetailedInfoS,
-      MsgDetailedInfoS | MsgNewDetailedInfoS
-    >;
-
+export type MsgDetailedInfoT = MsgDetailedInfoS | MsgNewDetailedInfoS;
 export const MsgDetailedInfoT = OneOf;
 
 /**
@@ -3327,7 +3314,7 @@ export const MsgDetailedInfoT = OneOf;
 export class ReqPqM {
   static _id = 0x60469778;
   _method() {}
-  _values = [new Uint8Array(16)] as [Uint8Array];
+  _values = ([new Uint8Array(16)] as unknown) as [Uint8Array];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -3381,14 +3368,21 @@ AllStructs.set(ReqPqM._id, ReqPqM);
 export class ReqDhParamsM {
   static _id = 0xd712e4be;
   _method() {}
-  _values = [
+  _values = ([
     new Uint8Array(16),
     new Uint8Array(16),
     new Uint8Array(),
     new Uint8Array(),
     [0, 0],
     new Uint8Array()
-  ] as [Uint8Array, Uint8Array, Uint8Array, Uint8Array, ProtoLong, Uint8Array];
+  ] as unknown) as [
+    Uint8Array,
+    Uint8Array,
+    Uint8Array,
+    Uint8Array,
+    ProtoLong,
+    Uint8Array
+  ];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -3539,11 +3533,11 @@ AllStructs.set(ReqDhParamsM._id, ReqDhParamsM);
 export class SetClientDhParamsM {
   static _id = 0xf5045f1f;
   _method() {}
-  _values = [new Uint8Array(16), new Uint8Array(16), new Uint8Array()] as [
-    Uint8Array,
-    Uint8Array,
-    Uint8Array
-  ];
+  _values = ([
+    new Uint8Array(16),
+    new Uint8Array(16),
+    new Uint8Array()
+  ] as unknown) as [Uint8Array, Uint8Array, Uint8Array];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -3632,7 +3626,7 @@ AllStructs.set(SetClientDhParamsM._id, SetClientDhParamsM);
 export class RpcDropAnswerM {
   static _id = 0x58e4a740;
   _method() {}
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_req_msg_id(): ProtoLong {
     return this._values[0];
@@ -3681,7 +3675,7 @@ AllStructs.set(RpcDropAnswerM._id, RpcDropAnswerM);
 export class GetFutureSaltsM {
   static _id = 0xb921bd04;
   _method() {}
-  _values = [0] as [number];
+  _values = ([0] as unknown) as [number];
 
   get_num(): number {
     return this._values[0];
@@ -3730,7 +3724,7 @@ AllStructs.set(GetFutureSaltsM._id, GetFutureSaltsM);
 export class PingM {
   static _id = 0x7abe77ec;
   _method() {}
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_ping_id(): ProtoLong {
     return this._values[0];
@@ -3780,7 +3774,7 @@ AllStructs.set(PingM._id, PingM);
 export class PingDelayDisconnectM {
   static _id = 0xf3427b8c;
   _method() {}
-  _values = [[0, 0], 0] as [ProtoLong, number];
+  _values = ([[0, 0], 0] as unknown) as [ProtoLong, number];
 
   get_ping_id(): ProtoLong {
     return this._values[0];
@@ -3849,7 +3843,7 @@ AllStructs.set(PingDelayDisconnectM._id, PingDelayDisconnectM);
 export class DestroySessionM {
   static _id = 0xe7512126;
   _method() {}
-  _values = [[0, 0]] as [ProtoLong];
+  _values = ([[0, 0]] as unknown) as [ProtoLong];
 
   get_session_id(): ProtoLong {
     return this._values[0];
@@ -3900,7 +3894,7 @@ AllStructs.set(DestroySessionM._id, DestroySessionM);
 export class HttpWaitM {
   static _id = 0x9299359f;
   _method() {}
-  _values = [0, 0, 0] as [number, number, number];
+  _values = ([0, 0, 0] as unknown) as [number, number, number];
 
   get_max_delay(): number {
     return this._values[0];

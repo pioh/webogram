@@ -52,7 +52,9 @@
     "jsencrypt": "travist/jsencrypt",
     "leemon": "^6.2.0",
     "pako": "^1.0.10",
+    "pbkdf2": "^3.0.17",
     "rusha": "^0.8.13",
+    "sjcl": "^1.0.8",
     "ts-node": "^8.4.1",
     "tsickle-loader": "^0.5.0",
     "worker-loader": "^2.0.0"

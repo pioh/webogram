@@ -1,4 +1,6 @@
-export const Country: Array<[string, string, string, string?, string?]> = [
+import { ICountry } from "dictionary";
+
+export const Country: ICountry[] = [
   ["+7 840", "Abkhazia", "AB"],
   ["+7 940", "Abkhazia", "AB"],
   ["+995 44", "Abkhazia", "AB"],

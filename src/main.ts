@@ -8,9 +8,9 @@ import "./main.scss";
 (window as any).self = window;
 
 const timeStore = new TimeStore();
-const api = new ApiInvoker({ timeStore });
+const apiInvoker = new ApiInvoker({ timeStore });
 
-const layout = new Layout({});
+const layout = new Layout({ apiInvoker });
 document.body.appendChild(layout.mount());
 
-requestAnimationFrame(() => api.init());
+requestAnimationFrame(() => apiInvoker.init());

@@ -1,7 +1,10 @@
 import * as h from "lib/html";
 
+import * as s from "./Tag.scss";
+
 export interface ITagProps<T extends HTMLElement> {
-  tag?: T | Tag<T>;
+  tag?: T | Tag<T, any>;
+  hide?: boolean;
 }
 
 export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
@@ -20,21 +23,43 @@ export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
 
     this.class = new Set(
       (this.tag.getAttribute("class") || "")
-        .split(/\s+/)
+        .split(" ")
         .filter(v => v && v !== "undefined")
     );
+    if (this.props.hide) {
+      this.addClass(s.hide);
+    }
+  }
+  hide() {
+    this.addClass(s.hide);
+  }
+  show() {
+    this.removeClass(s.hide);
+  }
+  isHidden() {
+    return this.class.has(s.hide);
   }
   addClass(...s: string[]) {
+    let changed = false;
     for (let c of s) {
-      this.class.add(c.trim());
+      c = c.trim();
+      if (this.class.has(c)) continue;
+      changed = true;
+      this.class.add(c);
     }
-    this.tag.setAttribute("class", [...this.class].join());
+    if (!changed) return;
+    this.tag.setAttribute("class", [...this.class].join(" "));
   }
   removeClass(...s: string[]) {
+    let changed = false;
     for (let c of s) {
-      this.class.delete(c.trim());
+      c = c.trim();
+      if (!this.class.has(c)) continue;
+      changed = true;
+      this.class.delete(c);
     }
-    this.tag.setAttribute("class", [...this.class].join());
+    if (!changed) return;
+    this.tag.setAttribute("class", [...this.class].join(" "));
   }
   mount(): T {
     return this.tag;
@@ -44,7 +69,7 @@ export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
     this.unlisten(...this.listeners);
   }
 
-  listen(...listeners: Array<h.Listener<keyof HTMLElementEventMap, T>>) {
+  listen(...listeners: Array<h.Listener<any, T>>) {
     for (let l of listeners) {
       this.listeners.push(l);
       this.tag.addEventListener(l.n, l.c, l.o);
@@ -52,20 +77,16 @@ export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
   }
   unlisten(...listeners: Array<h.Listener<keyof HTMLElementEventMap, T>>) {
     this.listeners = this.listeners.filter(l => {
-      if (
-        listeners.find(
-          r => r === l || (r.c === l.c && r.n === l.n && r.o === l.o)
-        )
-      ) {
+      if (listeners.find(r => r === l || (r.c === l.c && r.n === l.n))) {
         return false;
       }
       return true;
     });
     for (let l of listeners) {
-      this.tag.removeEventListener(l.n, l.c, l.o);
+      this.tag.removeEventListener(l.n, l.c);
     }
   }
-  append<X extends HTMLElement>(...tags: Array<Node | string | Tag<X>>) {
+  append(...tags: Array<Node | string | Tag<any>>) {
     this.tag.append(
       ...tags.map(v => {
         if (v instanceof Tag) {

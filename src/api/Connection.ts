@@ -1,5 +1,6 @@
 import { config } from "const/config";
 import { GetDcHref } from "const/dc";
+import { errors } from "const/errors";
 import { GetKeyByFingerPrints, GetPublicKeyByDc } from "const/PublicKyes";
 import { assertEquals } from "lib/assertEquals";
 import { bytesFromHex } from "lib/BytesFromHex";
@@ -8,17 +9,25 @@ import { GetRandomValues } from "lib/GetRandomValues";
 import { ILong } from "lib/ILong";
 import { nextRandomInt } from "lib/nextRandomInt";
 import { ungzip } from "lib/pako.js";
-import { Sha1 } from "lib/Sha1";
+import { Sha1 } from "lib/Sha";
 import { WorkerClient } from "lib/WorkerClient";
 
+import { HelpGetNearestDc } from "./api";
+import { ApiInvoker } from "./ApiInvoker";
 import { ByteBuffer } from "./ByteBuffer";
 import {
+  AuthAuthorizationS,
   HelpGetConfigM,
+  HelpGetNearestDcM,
   InitConnectionM,
-  InvokeWithLayerM
+  InvokeWithLayerM,
+  NearestDcS,
+  UserEmptyS,
+  UserS
 } from "./generator/ApiShema.gen";
 import {
   BadServerSaltS,
+  CallPingM,
   GzipPackedS,
   HttpWaitM,
   MessageT,
@@ -27,6 +36,8 @@ import {
   MsgNewDetailedInfoS,
   MsgsAckS,
   NewSessionCreatedS,
+  PingM,
+  PongS,
   RpcErrorS,
   RpcResultS
 } from "./generator/MTprotoShema.gen";
@@ -48,6 +59,7 @@ import { TimeStore } from "./TimeStore";
 
 export interface IConnectionProps {
   timeStore: TimeStore;
+  apiInvoker: ApiInvoker;
 }
 
 const ID = (id: ILong) =>
@@ -56,6 +68,18 @@ const ID = (id: ILong) =>
     .toUpperCase()
     .slice(-6, -2);
 
+export interface MethodWrap {
+  cb?: (response: IStruct) => void;
+  method: TMethod;
+  name: string;
+}
+
+export interface IWaiter extends MethodWrap {
+  time: number;
+  retry: number;
+  rpcError?: RpcErrorS;
+}
+
 export class Connection {
   private props: IConnectionProps;
   private worker = new WorkerClient();
@@ -63,6 +87,7 @@ export class Connection {
   private callbacks: Array<() => Promise<void> | void> = [];
 
   private dc = config.dc;
+  private nearestDc = this.dc;
   private publicKey = GetPublicKeyByDc(this.dc);
   private retry = 0;
   private nonce = NewNonce();
@@ -86,22 +111,24 @@ export class Connection {
   private inited = false;
   private initing = false;
   private seq_no = 0;
+  private user = new UserS();
   connectionInited = false;
   isDebug = true;
   acks: ILong[] = [];
   sentAcks = new Set<string>();
 
-  private sending = new Map<
-    string,
-    {
-      responseReader: (instance: IStruct) => void;
-      request: IStruct;
-      name: string;
-    }
-  >();
+  private sending = new Map<string, IWaiter>();
 
   constructor(props: IConnectionProps) {
     this.props = props;
+  }
+  setAuthorization(a: AuthAuthorizationS) {
+    let u = a.get_user();
+    if (u instanceof OneOf) u = u.unwrap();
+    if (u instanceof UserEmptyS) this.user = new UserS().set_id(u.get_id());
+    else this.user = u;
+
+    this.writeSessionToStorage();
   }
   async init() {
     if (this.initing || this.inited) return;
@@ -145,11 +172,27 @@ export class Connection {
     return responseBuffer;
   }
 
-  async send(
-    name: string,
-    request: TMethod,
-    responseReader?: (instance: IStruct) => void
-  ) {
+  async send(requestWrap: MethodWrap | IWaiter) {
+    let wrap = requestWrap as IWaiter;
+
+    wrap = {
+      ...requestWrap,
+      time: wrap.time || Date.now(),
+      retry: wrap.retry !== void 0 ? wrap.retry : 2
+    };
+    if (wrap.retry <= 0) {
+      if (wrap.cb) {
+        wrap.cb(
+          wrap.rpcError ||
+            new RpcErrorS()
+              .set_error_message(errors.INTERNAL)
+              .set_error_code(500)
+        );
+      }
+      return;
+    }
+
+    let request = wrap.method;
     if (!this.connectionInited) {
       if (this.isDebug) console.log("send initConnection");
       request = new InvokeWithLayerM().set_layer(config.apiLayer).set_query(
@@ -164,11 +207,24 @@ export class Connection {
           .set_query(request)
       );
     }
-    let messages = [this.nextMsg(name).set_body(request)];
-    if (responseReader) {
-      let waiter = { request, responseReader, name };
-      this.sending.set(messages[0].get_msg_id().join(), waiter);
+    let messages = [this.nextMsg(wrap.name).set_body(request)];
+    let wrapID = messages[0].get_msg_id().join();
+    if (wrap.cb) {
+      this.sending.set(wrapID, wrap);
     }
+    setTimeout(() => {
+      let w = this.sending.get(wrapID);
+      if (!w) return;
+      this.sending.delete(wrapID);
+      console.error("request timeout", w);
+      if (w.cb) {
+        w.cb(
+          new RpcErrorS()
+            .set_error_message(errors.MSG_WAIT_FAILED)
+            .set_error_code(504)
+        );
+      }
+    }, 30000);
     if (this.acks.length) {
       messages.push(
         this.nextMsg("acks", false).set_body(
@@ -185,8 +241,8 @@ export class Connection {
             new MsgContainerS().set_messages(messages)
           );
 
-    if (this.isDebug) console.log("send " + name);
-    await this.sendMessage(name, message);
+    if (this.isDebug) console.log("send " + wrap.name);
+    await this.sendMessage(wrap.name, message);
   }
   async sendMessage(name: string, m: MessageT) {
     let req = new ByteBuffer();
@@ -280,10 +336,12 @@ export class Connection {
       await this.processMessage(next);
     } else if (body instanceof NewSessionCreatedS) {
       if (this.isDebug) console.log("XNewTSessionTCreated");
+      this.connectionInited = false;
       this.serverSalt = new Uint8Array(
         new Uint32Array(body.get_server_salt()).buffer
       );
     } else if (body instanceof BadServerSaltS) {
+      this.connectionInited = false;
       this.serverSalt = new Uint8Array(
         new Uint32Array(body.get_new_server_salt()).buffer
       );
@@ -301,7 +359,7 @@ export class Connection {
               Object.getPrototypeOf(body).constructor.name,
               body
             );
-          w.responseReader(body);
+          if (w.cb) w.cb(body);
           return;
         }
       }
@@ -321,9 +379,20 @@ export class Connection {
       instance = new OneOf()._read(buf);
     }
     if (instance instanceof OneOf) instance = instance.unwrap();
-    if (this.sending.has(id.join())) {
-      let w = this.sending.get(id.join())!;
+    let w = this.sending.get(id.join());
+    if (w) {
       this.sending.delete(id.join());
+      if (!instance) {
+        this.connectionInited = false;
+        this.send({
+          ...w,
+          retry: w.retry - 1,
+          rpcError: new RpcErrorS()
+            .set_error_message(errors.API_ID_INVALID)
+            .set_error_code(400)
+        });
+        return;
+      }
       if (this.isDebug)
         console.log(
           "receive " + w.name,
@@ -338,7 +407,7 @@ export class Connection {
             instance.get_error_message()
           );
       }
-      w.responseReader(instance);
+      if (w.cb) w.cb(instance);
       return;
     }
     if (instance instanceof RpcErrorS) {
@@ -400,40 +469,137 @@ export class Connection {
   private writeTempHeader(requestBuf: ByteBuffer) {
     requestBuf.padding(5);
   }
-  private async initConnection() {
-    for (let i = 0; i < 4; i++) {
-      try {
-        await this.fetchPQ();
-        await this.fetchDHParams();
-        await this.mtpSendSetClientDhParams();
-        await this.send("start get config", new HelpGetConfigM(), () => {});
-        this.longPool();
-        this.inited = true;
+  readSessionFromStorage() {
+    try {
+      // let sessionS = localStorage.getItem("session");
+      let dc = localStorage.getItem("dc");
+      let nearestDc = localStorage.getItem("nearestDc");
+      if (dc) this.dc = JSON.parse(dc);
+      if (nearestDc) this.nearestDc = JSON.parse(nearestDc);
+      this.dc = this.dc || this.nearestDc || config.dc;
+      this.nearestDc = this.nearestDc || this.dc || config.dc;
 
-        while (this.callbacks.length) {
-          if (!this.inited) return;
-          await this.callbacks.pop()!();
-        }
-        break;
-      } catch (e) {
-        console.error(e.stack);
-        continue;
+      let authKeyIDS = localStorage.getItem(`authKeyID${this.dc}`);
+      let authKeyS = localStorage.getItem(`authKey${this.dc}`);
+      let serverSaltS = localStorage.getItem(`serverSalt${this.dc}`);
+      if (serverSaltS && authKeyIDS && authKeyS) {
+        // this.session = new Uint8Array(JSON.parse(sessionS));
+        this.authKeyID = new Uint8Array(JSON.parse(authKeyIDS));
+        this.authKey = new Uint8Array(JSON.parse(authKeyS));
+        this.serverSalt = new Uint8Array(JSON.parse(serverSaltS));
+        console.log("read session from storage");
+        return true;
       }
+    } catch (e) {
+      console.error("failed read session from local storage", e.stack);
+    }
+    return false;
+  }
+  writeSessionToStorage() {
+    localStorage.setItem("dc", JSON.stringify(this.dc));
+    localStorage.setItem("nearestDc", JSON.stringify(this.nearestDc));
+    // localStorage.setItem("session", JSON.stringify([...this.session]));
+    localStorage.setItem(
+      `authKeyID${this.dc}`,
+      JSON.stringify([...this.authKeyID])
+    );
+    localStorage.setItem(
+      `authKey${this.dc}`,
+      JSON.stringify([...this.authKey])
+    );
+    localStorage.setItem(
+      `serverSalt${this.dc}`,
+      JSON.stringify([...this.serverSalt])
+    );
+    localStorage.setItem(`userID`, JSON.stringify(this.user.get_id()));
+    console.log("write session from storage");
+  }
+  async ping() {
+    let id = [...GetRandomValues(new Int32Array(2))] as ILong;
+    let pong = await new Promise(r =>
+      this.send({ name: "ping", method: new PingM().set_ping_id(id), cb: r })
+    );
+    if (pong instanceof PongS && pong.get_ping_id().join() === id.join()) {
+      return true;
+    }
+    return false;
+  }
+  async getNearestDC() {
+    let dc = await new Promise(r =>
+      this.send({ name: "nearest dc", method: new HelpGetNearestDcM(), cb: r })
+    );
+    if (dc instanceof NearestDcS) {
+      this.nearestDc = dc.get_nearest_dc();
+      this.writeSessionToStorage();
+      return dc.get_nearest_dc();
+    }
+    return 0;
+  }
+  private async initConnection() {
+    let readSession = this.readSessionFromStorage();
+    this.longPool();
+    if (!readSession || !(await this.getNearestDC())) {
+      for (let i = 0; i < 4; i++) {
+        try {
+          await this.fetchPQ();
+          await this.fetchDHParams();
+          await this.mtpSendSetClientDhParams();
+          let dc = await this.getNearestDC();
+          if (!dc) continue;
+          this.writeSessionToStorage();
+          if (dc !== this.dc) {
+            this.dc = dc;
+            await this.initConnection();
+            return;
+          }
+          this.inited = true;
+          break;
+        } catch (e) {
+          console.error(e.stack);
+          continue;
+        }
+      }
+    } else {
+      this.inited = true;
+    }
+    if (!this.inited) {
+      throw new Error("failed init connection");
+    }
+
+    while (this.callbacks.length) {
+      if (!this.inited) return;
+      await this.callbacks.pop()!();
     }
   }
   // longPoolID = "";
-  private async longPool() {
+  longPoolSent = false;
+  longPoolTime = 0;
+  longPoolDelay = 1000;
+  private async longPool(force = false) {
+    if (this.longPoolSent && !force) return;
+    this.longPoolSent = true;
+    this.longPoolTime = Date.now();
     // if (!force && this.longPoolID) return;
     // let m =
-    this.send(
-      "http_wait",
-      new HttpWaitM()
-        .set_max_delay(500)
-        .set_max_wait(25000)
-        .set_wait_after(150)
-    ).then(() => this.longPool());
-    // this.longPoolID = m.get_msg_id().join();
-    // this.sendMessage("long pool", m)
+    try {
+      await this.sendMessage(
+        "http_wait",
+        this.nextMsg("http_wait", false).set_body(
+          new HttpWaitM()
+            .set_max_delay(500)
+            .set_max_wait(25000)
+            .set_wait_after(150)
+        )
+      );
+      // this.longPoolDelay = 100;
+    } catch (e) {
+      this.longPoolDelay *= 2;
+      console.error(e.stack);
+    } finally {
+      setTimeout(() => {
+        this.longPool(true);
+      }, Math.max(this.longPoolDelay - (Date.now() - this.longPoolTime), 0));
+    }
   }
   private async fetchPQ() {
     if (this.isDebug) console.log("fetch pq");
