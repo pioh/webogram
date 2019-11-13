@@ -153,8 +153,8 @@ async function AssertPandGAreGood(p: number[], g: number[]) {
       throw new Error("INTERNAL");
   }
 }
-function xor(a: number[], b: number[]): number[] {
-  let m = [...b];
+function xor(a: number[] | Uint8Array, b: number[] | Uint8Array): Uint8Array {
+  let m = new Uint8Array([...b]);
   for (let i = 0; i < a.length; i++) {
     m[i] ^= a[i];
   }
@@ -172,7 +172,7 @@ async function M1(
   // let h1 = await H(p);
   return H(
     new Uint8Array([
-      ...U(xor(B(await H(p)), B(await H(g_padded)))),
+      ...xor(await H(p), await H(g_padded)),
       ...(await H(p)),
       ...(await H(salt1)),
       ...(await H(salt2)),
