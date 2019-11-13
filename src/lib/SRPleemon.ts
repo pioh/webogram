@@ -37,36 +37,38 @@ export async function SRPLeemon(
   p: Uint8Array,
   salt1: Uint8Array,
   salt2: Uint8Array,
-  srp_B: Uint8Array
+  g_b: Uint8Array
 ): Promise<[Uint8Array, Uint8Array]> {
   let g = new Uint8Array([g_number]);
   let g_padded = new Uint8Array(256);
   g_padded[0] = g_number;
-  let bp = B(p);
-  let bg = B(g);
-  await AssertPandGAreGood(bp, bg);
+  let p_big = B(p);
+  let g_big = B(g);
+  await AssertPandGAreGood(p_big, g_big);
   let a = new Uint8Array(2048 / 8);
 
   a = GetRandomValues(a);
 
-  let ba = B(a);
+  let a_big = B(a);
 
-  let g_a = padded(U(powMod(bg, ba, bp)), 256);
-  let bx = B(await PH2(password, salt1, salt2));
-  let bv = powMod(bg, bx, bp);
-  let bk = B(await H(new Uint8Array([...p, ...g_padded])));
-  let k_v = multMod(bk, bv, bp);
-  let g_b = srp_B;
-  let bu = B(await H(new Uint8Array([...g_a, ...g_b])));
-  let bt = sub(B(g_b), k_v); // mod(, bp);
-  if (greater(zero, bt)) bt = add(bt, bp);
+  let g_a = padded(U(powMod(g_big, a_big, p_big)), 256);
+  let x_big = B(await PH2(password, salt1, salt2));
+  let v_big = powMod(g_big, x_big, p_big);
+  let k_big = B(await H(new Uint8Array([...p, ...g_padded])));
+  let k_v_big = multMod(k_big, v_big, p_big);
+  let u_big = B(await H(new Uint8Array([...g_a, ...g_b])));
+  let t_big = sub(B(g_b), k_v_big); // mod(, bp);
+  if (greater(zero, t_big)) t_big = add(t_big, p_big);
 
-  let s_a = padded(U(powMod(bt, add(ba, mult(bu, bx)), bp)), 256);
+  let s_a = padded(
+    U(powMod(t_big, add(a_big, mult(u_big, x_big)), p_big)),
+    256
+  );
   let k_a = await H(s_a);
   return [await M1(p, g_padded, salt1, salt2, g_a, g_b, k_a), g_a];
 }
-function U(v: number[]) {
-  return bytesFromLeemonBigInt(v);
+function U(v_big: number[]) {
+  return bytesFromLeemonBigInt(v_big);
 }
 function B(v: Uint8Array | number[]) {
   if (Array.isArray(v)) v = new Uint8Array(v);
