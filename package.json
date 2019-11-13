@@ -8,6 +8,7 @@
   "scripts": {
     "gh-pages": "yarn prod && \\cp -r ./dist/* ./",
     "prod": "rm -rf dist && NODE_ENV=production yarn webpack",
+    "fix": "node ./node_modules/.bin/prettier \"./**/*.{ts,js,json,scss,css,jsx,tsx,html}\" --write && node ./node_modules/.bin/tslint --project . --fix",
     "start": "yarn webpack --watch"
   },
   "devDependencies": {
