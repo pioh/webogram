@@ -1,162 +1,120 @@
+import { Input } from "components/Input/Input";
+import { ITagProps, Tag } from "components/Tag/Tag";
+import { GetCountry, GetEmoji, ICountry } from "dictionary";
 import { emojiSupport } from "lib/emojiSupport";
 import * as h from "lib/html";
 import { throttle } from "lib/throttle";
 
 import * as s from "./CountrySelect.scss";
 
-let Country: Promise<
-  typeof import("/home/tema/webogram/src/dictionary/Country.en")
-> | null = null;
-
-let Emoji: Promise<
-  typeof import("/home/tema/webogram/src/dictionary/Emoji")
-> | null = null;
-
 const MIN_SELECT_HEIGHT = 220;
 const LI_HEIGHT = 56;
 
-export class CountrySelect {
-  domRoot: HTMLDivElement | null = null;
-  domInput: HTMLInputElement | null = null;
-  domUL: HTMLUListElement | null = null;
-  options: Array<[string, string, string, string?, string?]> = [];
-  class = new Set([s.root]);
+interface ICountrySelectProps extends ITagProps<HTMLDivElement> {}
+
+export class CountrySelect extends Tag<HTMLDivElement> {
+  input: Input;
+  ul: Tag<HTMLUListElement> | null = null;
+
+  _onChange: Array<(code: string, country: string) => void> = [];
+
+  options: ICountry[] = [];
   scroll = 0;
   offset = 0;
-  emoji: Map<string, string> = new Map();
-  country: Array<[string, string, string, string?, string?]> = [];
+  emoji = new Map<string, string>();
+  country = GetCountry();
   itemsCount = 0;
   code = "";
   value = "";
 
-  constructor() {
-    this.loadCountry();
-  }
-  get className() {
-    return [...this.class].join(" ");
-  }
-  mount(): HTMLElement {
-    this.domRoot = h.div(
-      h.className(this.className),
-      h.label(h.htmlFor("country-input"), "Country"),
-      h.input(
-        h.id("country-input"),
-        h.className(s.input),
-        h.autocapitalizeOff,
-        h.autocompleteOff,
-        h.autocorrectOff,
-        h.spellcheckOff,
-        h.cb(i => (this.domInput = i)),
-        h.onClick(this.onInputClick, { passive: true }),
-        h.onFocus(this.onFocus, { passive: true }),
-        h.onInput(this.onInput, { passive: true }),
-        h.onBlur(this.onBlur, { passive: true })
-      ),
-      h.i()
-    );
+  constructor(props: ICountrySelectProps) {
+    super({
+      ...props,
+      tag: h.div(h.className(s.root)).tag
+    });
 
-    return this.domRoot;
+    this.input = new Input({
+      forInput: [h.onFocus(this.mountSelect), h.onClick(this.mountSelect)],
+      forLabel: ["Country"],
+      iconRight: h.i(h.className(s.icon))
+    });
+    this.input.onChange(this.onInputChange);
+    this.append(this.input.tag);
+    GetEmoji().then(e => (this.emoji = e));
+    this.autoSetCountry();
   }
-  unmount() {
-    if (this.domRoot) {
-      this.domRoot.remove();
-      this.domRoot = null;
-    }
-    this.domInput = null;
-    this.domUL = null;
-    window.removeEventListener("click", this.onClickOutside);
-    window.removeEventListener("resize", this.onResize);
+  onChange(cb: (code: string, country: string) => void) {
+    this._onChange.push(cb);
   }
-  loadCountry() {
-    if (!Country) {
-      Country = new Promise(r =>
-        requestAnimationFrame(() =>
-          import("../../dictionary/Country.en").then(r)
-        )
-      );
-    }
-    if (!Emoji && emojiSupport()) {
-      Emoji = new Promise(r =>
-        requestAnimationFrame(() => import("../../dictionary/Emoji").then(r))
-      ).then((e: any) => (this.emoji = e.Emoji));
-    }
-    Country.then(c => (this.country = c.Country));
+  remove() {
+    super.remove();
+    this.close();
   }
-  onInputClick = () => {
-    this.mountSelect();
-  };
-  onFocus = () => {
-    this.mountSelect();
-  };
-  onBlur = () => {};
-  onInput = async () => {
-    if (!this.domInput) return;
-    await Country;
-    let val = this.domInput.value;
-    this.options = this.country
+
+  async autoSetCountry() {
+    let country = await this.country;
+    if (this.code || this.class.has(s.open)) return;
+    let code = (navigator.language || "").toLowerCase().split("-");
+    let found = country.filter(v => {
+      if (v[2].toLowerCase() === code[1]) return true;
+      if (v.slice(3).find(c => c && c.toLowerCase() === code[1])) return true;
+      return false;
+    });
+    if (found.length === 1) {
+      this.setValue(found[0][1], found[0][0]);
+    }
+  }
+
+  onInputChange = async (value: string | number | null) => {
+    let country = await this.country;
+    this.options = country
       .map(
-        o =>
-          [this.rate(val, o), o] as [
-            string,
-            [string, string, string, string?, string?]
-          ]
+        o => [this.rate(value ? String(value) : "", o), o] as [string, ICountry]
       )
       .filter(o => !!o[0])
       .sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
       .map(o => o[1]);
     this.renderOptions();
   };
-
-  onClickOutside = (e: MouseEvent) => {
-    this.close(e);
-  };
   close = (e?: MouseEvent) => {
-    if (!this.domUL) return;
-    if (!this.domRoot) return;
-    if (e && this.domRoot.contains(e.target as Node)) return;
-    window.removeEventListener("click", this.onClickOutside);
-    window.removeEventListener("resize", this.onResize);
-    this.domUL.remove();
-    this.domUL = null;
-    this.class.delete(s.open);
-    this.class.delete(s.upperSelect);
-    this.domRoot.setAttribute("class", [...this.class].join(" "));
-    if (this.domInput) {
-      this.domInput.value = this.value;
-    }
+    if (e && this.tag.contains(e.target as Node)) return;
+    window.removeEventListener("click", this.close);
+    window.removeEventListener("resize", this.onWindowResize);
+    if (!this.ul) return;
+    this.ul.remove();
+    this.ul = null;
+    this.removeClass(s.open, s.upperSelect);
+    this.input.removeForceFocus();
+    this.input.value = this.value;
   };
   setValue(value: string, code: string) {
+    if (this.input.value !== value) {
+      this.input.value = value;
+    }
+    if (value === this.value && code === this.code) return;
     this.value = value;
     this.code = code;
-    if (this.domInput) this.domInput.value = value;
-    if (this.domRoot) {
-      this.class.add(s.withLabel);
-      this.domRoot.setAttribute("class", [...this.class].join(" "));
-    }
+    this._onChange.map(cb => cb(code, value));
   }
-  onResize = () => {
+  onWindowResize = () => {
     this.matchUpOrDown();
     this.rerenderListItems();
-    if (this.domInput) {
-      this.domInput.scrollIntoView();
-    }
+    this.input.tag.scrollIntoView();
   };
   matchUpOrDown = () => {
-    if (!this.domUL || !this.domInput || !this.domRoot) return;
-    let inputRect = this.domInput.getBoundingClientRect();
+    if (!this.ul) return;
+    let inputRect = this.input.getBoundingClientRect();
     let maxHeight = window.innerHeight - inputRect.height - inputRect.top - 16;
     let maxHeightUp = inputRect.top - 16;
     if (maxHeight < MIN_SELECT_HEIGHT) {
       maxHeight = Math.max(MIN_SELECT_HEIGHT, maxHeightUp);
-      this.class.add(s.upperSelect);
-      this.domRoot.setAttribute("class", [...this.class].join(" "));
+      this.addClass(s.upperSelect);
     } else {
-      this.class.delete(s.upperSelect);
-      this.domRoot.setAttribute("class", [...this.class].join(" "));
+      this.removeClass(s.upperSelect);
     }
-    this.domUL.style.maxHeight = `${maxHeight}px`;
+    this.ul.tag.style.maxHeight = `${maxHeight}px`;
   };
-  rate(val: string, o: [string, string, string, string?, string?]): string {
+  rate(val: string, o: ICountry): string {
     val = this.strip(val);
     let o0 = this.strip(o[0]).indexOf(val);
     let o1 = this.strip(o[1]).indexOf(val);
@@ -178,50 +136,46 @@ export class CountrySelect {
       .trim()
       .replace(/[^\w\d]/g, "");
   }
-  async mountSelect() {
-    await Country;
-    if (!this.domInput) return;
-    if (!this.domRoot) return;
-    if (this.domUL) return;
-    this.options = this.country;
-    this.domUL = h.ul(
+  mountSelect = async () => {
+    let country = await this.country;
+    if (this.ul) return;
+    this.options = country;
+    this.ul = h.ul(
       h.className(s.list),
       h.onScroll(this.onScroll, { passive: true })
     );
     this.matchUpOrDown();
-    window.addEventListener("resize", this.onResize, { passive: true });
     this.renderOptions();
 
-    this.domRoot.appendChild(this.domUL);
-    this.class.add(s.open);
-    this.domRoot.setAttribute("class", [...this.class].join(" "));
-    window.addEventListener("click", this.onClickOutside, { passive: true });
-    // if (this.domUL.style.maxHeight === `${MIN_SELECT_HEIGHT}px`) {
-    this.domInput.scrollIntoView();
-    // }
-  }
+    this.append(this.ul.tag);
+    this.addClass(s.open);
+    this.input.addForceFocus();
+    window.addEventListener("resize", this.onWindowResize, { passive: true });
+    window.addEventListener("click", this.close, { passive: true });
+    this.input.scrollIntoView();
+  };
   onScroll = () => {
     this.rerenderListItems();
   };
   rerenderListItems = throttle(10, async () => {
-    if (!this.domUL) return;
+    if (!this.ul) return;
     let offset = this.offset;
     let itemsCount = this.itemsCount;
 
-    this.scroll = this.domUL.scrollTop;
+    this.scroll = this.ul.tag.scrollTop;
     if (this.class.has(s.upperSelect)) {
       this.scroll =
-        -this.domUL.scrollTop +
-        this.domUL.scrollHeight -
-        this.domUL.clientHeight;
+        -this.ul.tag.scrollTop +
+        this.ul.tag.scrollHeight -
+        this.ul.tag.clientHeight;
     }
 
     this.matchListPaddings();
     let divs = [
-      this.domUL.firstChild,
-      this.domUL.lastChild
+      this.ul.tag.firstChild,
+      this.ul.tag.lastChild
     ] as HTMLDivElement[];
-    let lis = Array.prototype.slice.call(this.domUL.querySelectorAll("li"));
+    let lis = Array.prototype.slice.call(this.ul.tag.querySelectorAll("li"));
     if (this.offset > offset) {
       let count = this.offset - offset;
       if (count > itemsCount) count = itemsCount;
@@ -242,7 +196,7 @@ export class CountrySelect {
     if (this.offset < offset) {
       let count = Math.min(offset - this.offset, this.itemsCount - itemsCount);
       for (let i = this.offset; i < this.offset + count; i++) {
-        unshift.push(this.renderLi(i));
+        unshift.push(this.renderLi(i).tag);
       }
       itemsCount += count;
       offset = this.offset;
@@ -253,7 +207,7 @@ export class CountrySelect {
         i < this.itemsCount + this.offset;
         i++
       ) {
-        push.push(this.renderLi(i));
+        push.push(this.renderLi(i).tag);
       }
       itemsCount = this.itemsCount;
     }
@@ -266,16 +220,16 @@ export class CountrySelect {
       this.itemsCount) *
       LI_HEIGHT}px`;
     if (!this.class.has(s.upperSelect)) {
-      this.domUL.scrollTop = this.scroll;
+      this.ul.tag.scrollTop = this.scroll;
     } else {
-      this.domUL.scrollTop =
-        -this.scroll + this.domUL.scrollHeight - this.domUL.clientHeight;
+      this.ul.tag.scrollTop =
+        -this.scroll + this.ul.tag.scrollHeight - this.ul.tag.clientHeight;
     }
   });
 
   matchListPaddings() {
-    if (!this.domUL) return;
-    let H = this.domUL.clientHeight;
+    if (!this.ul) return;
+    let H = this.ul.tag.clientHeight;
     if (H < MIN_SELECT_HEIGHT) H = window.innerHeight;
     else H += LI_HEIGHT * 2;
     this.itemsCount = Math.ceil(H / LI_HEIGHT);
@@ -289,23 +243,24 @@ export class CountrySelect {
     }
   }
   renderOptions() {
-    if (!this.domUL) return;
-    this.domUL.innerHTML = "";
+    if (!this.ul) return;
+    this.ul.tag.innerHTML = "";
     this.scroll = 0;
     this.matchListPaddings();
-    this.domUL.append(h.div(h.style(`height: ${this.offset * LI_HEIGHT}px;`)));
-
+    this.ul.append(h.div(h.style(`height: ${this.offset * LI_HEIGHT}px;`)).tag);
+    if (this.itemsCount === 0) this.addClass(s.noItems);
+    else this.removeClass(s.noItems);
     for (let i = 0; i < this.itemsCount; i++) {
       if (i + this.offset >= this.options.length) break;
-      this.domUL.appendChild(this.renderLi(i));
+      this.ul.append(this.renderLi(i).tag);
     }
-    this.domUL.append(
+    this.ul.append(
       h.div(
         h.style(
           `height: ${(this.options.length - this.offset - this.itemsCount) *
             LI_HEIGHT}px;`
         )
-      )
+      ).tag
     );
   }
   renderLi(index: number) {
@@ -313,19 +268,18 @@ export class CountrySelect {
     let emoji = this.emoji.get(`:flag_${c[2].toLowerCase()}:`);
 
     let icon = emoji
-      ? h.i(emoji)
+      ? h.i(emoji).tag
       : h.i(
           h.style(`background-image: url('flags/${c[2].toLowerCase()}.png');`)
-        );
+        ).tag;
     let li = h.li(
       h.role("group"),
       h.tabindex("-1"),
       icon,
-      h.div(c[1]),
-      h.span(c[0]),
+      h.div(c[1]).tag,
+      h.span(c[0]).tag,
       h.onClick(
         () => {
-          if (!this.domInput) return;
           this.setValue(c[1], c[0]);
           this.close();
         },

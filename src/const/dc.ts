@@ -1,3 +1,5 @@
+import { config } from "./config";
+
 export interface IDC {
   id: number;
   host: string;
@@ -17,12 +19,11 @@ export const AllDc: IDC[] = [
   { id: 2, host: "149.154.167.40", port: 80, domain: "venus", isTest: true },
   { id: 3, host: "149.154.175.117", port: 80, domain: "aurora", isTest: true }
 ];
-let isTest = true;
 export function GetDcHref(dcID: number) {
-  let dc = AllDc.find(d => d.id === dcID && isTest === d.isTest);
-  if (!dc) throw new Error(`unknown dc with id ${dcID} isTest:${isTest}`);
+  let dc = AllDc.find(d => d.id === dcID && config.test === d.isTest);
+  if (!dc) throw new Error(`unknown dc with id ${dcID} isTest:${config.test}`);
 
   return (
-    `https://${dc.domain}-1.web.telegram.org/apiw1` + (isTest ? "_test" : "")
+    `https://${dc.domain}.web.telegram.org/apiw1` + (config.test ? "_test" : "")
   );
 }

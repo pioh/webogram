@@ -1,56 +1,19 @@
 .root {
-  max-width: 360px;
   width: 100%;
   position: relative;
-  > label {
-    display: none;
-    font-size: 12px;
-    line-height: 14px;
-    padding: 0 4px;
-    background: #fff;
-    position: absolute;
-    color: #666666;
-    left: 12px;
-    top: 0;
-    margin-top: -5px;
-  }
 }
-.root.withLabel > label {
-  display: block;
-}
-.root.open > label {
-  color: #4ea4f6;
-}
-.input {
-  width: 100%;
-  border: 1px solid #dadce0;
-  border-radius: 10px;
-  padding: 0 16px;
-  height: 54px;
-  outline: none;
-}
-.open .input {
-  border-width: 2px;
-  padding: 0 15px;
-  border-color: #4ea4f6;
-}
-.root > i {
-  width: 16px;
-  height: 16px;
-  position: absolute;
-  top: 50%;
-  margin-top: -8px;
-  right: 17px;
+
+.icon {
   background-image: url("~static/down.svg");
-  pointer-events: none;
 }
-.root.open > i,
-.root.upperSelect > i {
+.root.open > .icon,
+.root.upperSelect > .icon {
   transform: rotate(180deg);
 }
-.root.upperSelect.open > i {
+.root.upperSelect.open > .icon {
   transform: rotate(0deg);
 }
+
 ul.list > li {
   display: flex;
   align-items: center;
@@ -70,8 +33,9 @@ ul.list > li {
   display: flex;
   flex-shrink: 0;
 }
-
-.input,
+.noItems > ul.list {
+  display: none;
+}
 ul.list > li {
   font-size: 16px;
   line-height: 21px;
@@ -84,8 +48,10 @@ ul.list > li {
 
 ul.list {
   position: absolute;
+  z-index: 100;
   top: 100%;
   margin: 8px 0;
+  margin-top: (8px - 24px);
   background: #fff;
   width: 100%;
   max-height: 376px;
@@ -100,6 +66,7 @@ ul.list {
 
 .upperSelect ul.list {
   bottom: 100%;
+  margin-top: 8px;
   top: auto;
   flex-direction: column-reverse;
 }

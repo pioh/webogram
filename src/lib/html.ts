@@ -1,3 +1,5 @@
+import { Tag } from "components/Tag/Tag";
+
 export function html<T>(html: TemplateStringsArray, ...keys: any) {
   let template = document.createElement("template");
   template.innerHTML = html
@@ -5,31 +7,58 @@ export function html<T>(html: TemplateStringsArray, ...keys: any) {
     .trim();
   return (template.content.firstChild as unknown) as T;
 }
+export type TagProp<T extends HTMLElement> =
+  | Attribute
+  | Callback<Tag<T>>
+  | string
+  | Node
+  | Tag<any>
+  | Listener<any, T>;
 
-export function Tag<T extends HTMLElement>(name: string) {
+export function HtmlTag<K extends keyof HTMLElementTagNameMap>(name: K) {
   return (
-    ...props: Array<
-      Attribute | Callback<T> | string | Node | EvenListener<any, T>
+    ..._props: Array<
+      | TagProp<HTMLElementTagNameMap[K]>
+      | Array<TagProp<HTMLElementTagNameMap[K]>>
+      | undefined
+      | null
     >
-  ): T => {
-    let el = document.createElement(name)!;
+  ): Tag<HTMLElementTagNameMap[K]> => {
+    let el = document.createElement<K>(name)!;
+    let props: Array<TagProp<HTMLElementTagNameMap[K]>> = _props
+      .reduce((a: any, b: any) => [...a, ...(Array.isArray(b) ? b : [b])], [])
+      .filter(v => v);
+
     let children = [];
     for (let i = 0; i < props.length; i++) {
       let p = props[i];
       if (p instanceof Attribute) {
+        let v = p.v;
+        if (p.n === "class")
+          v = [...(p.n || "").split(" "), v].filter(v => v).join(" ");
+        if (p.n === "style")
+          v = [...(p.n || "").split(";"), v].filter(v => v).join(";");
         el.setAttribute(p.n, String(p.v));
       } else if (p instanceof Callback) {
-        p.c(el as T);
-      } else if (p instanceof EvenListener) {
+      } else if (p instanceof Listener) {
         el.addEventListener(p.n, p.c, p.o);
       } else {
         children.push(p);
       }
     }
-    if (children.length > 0) {
-      el.append(...children);
+    let tag = new Tag<HTMLElementTagNameMap[K]>({
+      tag: el as HTMLElementTagNameMap[K]
+    });
+    tag.append(...children);
+
+    for (let i = 0; i < props.length; i++) {
+      let p = props[i];
+      if (p instanceof Callback) {
+        p.c(tag);
+      }
     }
-    return el as T;
+
+    return tag;
   };
 }
 
@@ -49,7 +78,7 @@ export class Callback<T> {
   }
 }
 
-export class EvenListener<K extends keyof HTMLElementEventMap, E> {
+export class Listener<K extends keyof HTMLElementEventMap, E> {
   n: K;
   c: (this: E, ev: HTMLElementEventMap[K]) => any;
   o?: boolean | AddEventListenerOptions;
@@ -60,16 +89,17 @@ export class EvenListener<K extends keyof HTMLElementEventMap, E> {
   ) {
     this.n = n;
     this.c = c;
+    if (typeof o === "object" && o.passive === void 0) o.passive = true;
     this.o = o;
   }
 }
 
 function NewEvenListener<K extends keyof HTMLElementEventMap>(n: K) {
-  return function onClick<E>(
+  return function listener<E>(
     c: (this: E, ev: HTMLElementEventMap[K]) => any,
     o?: AddEventListenerOptions
   ) {
-    return new EvenListener(n, c, o);
+    return new Listener<K, E>(n, c, o);
   };
 }
 
@@ -81,18 +111,19 @@ export function cb<T>(cb: (el: T) => void) {
   return new Callback<T>(cb);
 }
 
-export const input = Tag<HTMLInputElement>("input");
-export const div = Tag<HTMLDivElement>("div");
-export const a = Tag<HTMLLinkElement>("a");
-export const i = Tag<HTMLDivElement>("i");
-export const img = Tag<HTMLImageElement>("img");
-export const span = Tag<HTMLSpanElement>("span");
-export const ul = Tag<HTMLUListElement>("ul");
-export const li = Tag<HTMLLIElement>("li");
-export const h1 = Tag<HTMLDivElement>("h1");
-export const p = Tag<HTMLDivElement>("p");
-export const br = Tag<HTMLBRElement>("br");
-export const label = Tag<HTMLLabelElement>("label");
+export const input = HtmlTag("input");
+export const div = HtmlTag("div");
+export const a = HtmlTag("a");
+export const i = HtmlTag("i");
+export const img = HtmlTag("img");
+export const span = HtmlTag("span");
+export const ul = HtmlTag("ul");
+export const li = HtmlTag("li");
+export const h1 = HtmlTag("h1");
+export const p = HtmlTag("p");
+export const br = HtmlTag("br");
+export const label = HtmlTag("label");
+export const button = HtmlTag("button");
 
 export const id = Attr("id");
 export const className = Attr("class");
@@ -102,6 +133,8 @@ export const value = Attr("value");
 export const htmlFor = Attr("for");
 export const role = Attr("role");
 export const tabindex = Attr("tabindex");
+export const type = Attr("type");
+export const src = Attr("src");
 
 export const autocomplete = Attr("autocomplete");
 export const autocorrect = Attr("autocorrect");

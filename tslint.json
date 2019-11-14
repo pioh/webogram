@@ -8,8 +8,19 @@
     "severity": "error"
   },
   "linterOptions": {
-    "exclude": ["node_modules", "dist"]
+    "exclude": [
+      "node_modules",
+      "dist",
+      "src/lib/pako.js",
+      "src/lib/pbkdf2/lib/async.js",
+      "terserPlugin.js",
+      "webpack.config.js",
+      "*.js",
+      "src/lib/pbkdf2/lib/sync-browser.js",
+      "src/lib/aes.js"
+    ]
   },
+  "no-unsafe-finally": [false],
   "rulesDirectory": [
     "node_modules/tslint-eslint-rules/dist/rules",
     "node_modules/tslint-microsoft-contrib"

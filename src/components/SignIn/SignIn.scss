@@ -3,6 +3,14 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  padding: 8px;
+}
+.content {
+  display: flex;
+  max-width: 360px;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
 }
 
 .logo {
@@ -13,17 +21,40 @@
   margin-bottom: 50px;
 }
 
-.root > h1 {
+.content > h1 {
   font-weight: 500;
   font-size: 32px;
   line-height: 38px;
   margin-bottom: 13px;
 }
 
-.root > p {
+.content > p {
   font-size: 16px;
   line-height: 21px;
   text-align: center;
   color: #73787c;
   margin-bottom: 50px;
+}
+
+.error {
+  color: #e53935;
+  margin-bottom: 24px;
+}
+.hide {
+  display: none;
+}
+
+.passwordHint {
+  height: 35px;
+  width: 100%;
+  margin-top: -24px;
+  line-height: 34px;
+  padding-bottom: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+}
+
+.action {
+  white-space: pre;
 }

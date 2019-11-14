@@ -1,0 +1,93 @@
+.root {
+  width: 100%;
+  position: relative;
+  margin-bottom: 24px;
+}
+.root > label {
+  position: absolute;
+  color: #666666;
+  top: 50%;
+  margin-top: -11px;
+  left: 16px;
+  font-size: 16px;
+  line-height: 21px;
+  background: transparent;
+  transition: all ease-out 0.2s;
+  pointer-events: none;
+}
+.withValue,
+.focus,
+.forceFocus,
+.hasError {
+  > label {
+    pointer-events: initial;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 0 4px;
+    background: #fff;
+    left: 12px;
+    top: 0;
+    margin-top: -5px;
+  }
+}
+
+.root > input {
+  width: 100%;
+  border: 1px solid #dadce0;
+  border-radius: 10px;
+  padding: 0 16px;
+  outline: none;
+
+  height: 54px;
+  font-size: 16px;
+  line-height: 21px;
+
+  outline: none;
+}
+
+.iconRight {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 50%;
+  margin-top: -8px;
+  right: 17px;
+  pointer-events: none;
+}
+
+.focus,
+.forceFocus {
+  > input {
+    border-width: 2px;
+    padding: 0 15px;
+    border-color: #4ea4f6;
+  }
+  > label {
+    color: #4ea4f6;
+  }
+}
+
+.hasError {
+  > input {
+    border-color: #e53935;
+    caret-color: #e53935;
+  }
+  > label {
+    color: #e53935;
+    font-weight: 500;
+  }
+}
+label.error {
+  display: none;
+}
+.hasError label.error {
+  display: block;
+}
+.hasError label:not(.error) {
+  display: none;
+}
+
+.input[type="password"] {
+  letter-spacing: 1px;
+  font-size: 30px;
+}
