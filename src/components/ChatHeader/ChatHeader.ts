@@ -9,12 +9,15 @@ interface IChatHeaderProps extends ITagProps<HTMLDivElement> {
 }
 
 export class ChatHeader extends Tag<HTMLDivElement, IChatHeaderProps> {
-  defer = () => {};
-
   constructor(props: IChatHeaderProps) {
     super({
       ...props,
       tag: h.div(h.className(s.root))
     });
+  }
+  defer: Array<() => void> = [];
+  destroy() {
+    this.defer.map(v => v());
+    this.defer = [];
   }
 }

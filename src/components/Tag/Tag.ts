@@ -32,6 +32,7 @@ export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
   }
   hide() {
     this.addClass(s.hide);
+    return this;
   }
   show() {
     this.removeClass(s.hide);

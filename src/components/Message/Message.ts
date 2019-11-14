@@ -9,12 +9,15 @@ interface IMessageProps extends ITagProps<HTMLDivElement> {
 }
 
 export class Message extends Tag<HTMLDivElement, IMessageProps> {
-  defer = () => {};
-
   constructor(props: IMessageProps) {
     super({
       ...props,
       tag: h.div(h.className(s.root))
     });
+  }
+  defer: Array<() => void> = [];
+  destroy() {
+    this.defer.map(v => v());
+    this.defer = [];
   }
 }

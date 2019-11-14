@@ -1,43 +1,44 @@
 import { ApiInvoker } from "api/ApiInvoker";
-import { Button } from "components/Button/Button";
-import { CountrySelect } from "components/CountrySelect/CountrySelect";
-import { ITagProps, Tag } from "components/Tag/Tag";
-import * as h from "lib/html";
-
-import * as s from "./SignIn.scss";
 import {
-  CallAuthSendCodeM,
+  AccountGetPasswordM,
+  AccountPasswordS,
+  AuthAuthorizationS,
+  AuthAuthorizationSignUpRequiredS,
+  AuthCheckPasswordM,
   AuthSendCodeM,
   AuthSentCodeS,
   AuthSentCodeTypeAppS,
   AuthSentCodeTypeCallS,
   AuthSentCodeTypeSmsS,
-  CallAuthSignInM,
   AuthSignInM,
-  AuthAuthorizationS,
-  AuthAuthorizationSignUpRequiredS,
+  AuthSignUpM,
   CallAccountGetPasswordM,
-  AccountGetPasswordM,
-  AccountPasswordS,
   CallAuthCheckPasswordM,
-  AuthCheckPasswordM,
-  PasswordKdfAlgoSha256Sha256Pbkdf2Hmacsha512Iter100000Sha256ModPowS,
-  InputCheckPasswordSrpS,
+  CallAuthSendCodeM,
+  CallAuthSignInM,
   CallAuthSignUpM,
-  AuthSignUpM
+  InputCheckPasswordSrpS,
+  PasswordKdfAlgoSha256Sha256Pbkdf2Hmacsha512Iter100000Sha256ModPowS
 } from "api/generator/ApiShema.gen";
-import { config } from "const/config";
 import { RpcErrorS } from "api/generator/MTprotoShema.gen";
-import { findError } from "const/errors";
+import { Button } from "components/Button/Button";
+import { CountrySelect } from "components/CountrySelect/CountrySelect";
 import { Input } from "components/Input/Input";
+import { ITagProps, Tag } from "components/Tag/Tag";
+import { config } from "const/config";
+import { findError } from "const/errors";
+import * as h from "lib/html";
 import { SRP } from "lib/SRP";
 import { SRPLeemon } from "lib/SRPleemon";
+
+import * as s from "./SignIn.scss";
 
 interface ISignInProps extends ITagProps<HTMLDivElement> {
   apiInoker: ApiInvoker;
 }
 
 export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
+  defer: Array<() => void> = [];
   heder = h.h1("Sign in to Telegram");
   action = h.p(
     h.className(s.action),
@@ -140,12 +141,15 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
       case "sign-up":
         this.goToSignUp();
         break;
-      case "done":
-        this.finish();
-        break;
       default:
         this.goToSignIn();
     }
+  }
+  destroy() {
+    this.deferStep();
+    this.deferStep = () => {};
+    this.defer.map(v => v());
+    this.defer = [];
   }
   phoneOnChange = () => {
     this.clearErrors();
@@ -172,8 +176,8 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     if (this.countrySelect.code) {
       if (!this.phone.value) this.phone.value = this.countrySelect.code;
       this.phone.show();
-      this.phoneOnChange();
     }
+    this.phoneOnChange();
     this.deferStep = () => {
       this.countrySelect.hide();
       this.phone.hide();

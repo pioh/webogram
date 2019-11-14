@@ -9,12 +9,15 @@ interface IRightPanelProps extends ITagProps<HTMLDivElement> {
 }
 
 export class RightPanel extends Tag<HTMLDivElement, IRightPanelProps> {
-  defer = () => {};
-
   constructor(props: IRightPanelProps) {
     super({
       ...props,
       tag: h.div(h.className(s.root))
     });
+  }
+  defer: Array<() => void> = [];
+  destroy() {
+    this.defer.map(v => v());
+    this.defer = [];
   }
 }

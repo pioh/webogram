@@ -9,9 +9,11 @@ import "./main.scss";
 (window as any).self = window;
 
 const timeStore = new TimeStore();
-const apiInvoker = new ApiInvoker({ timeStore });
+let userStore: UserStore;
 
-const userStore = new UserStore({
+const apiInvoker = new ApiInvoker({ timeStore, userStore: () => userStore });
+
+userStore = new UserStore({
   apiInvoker
 });
 

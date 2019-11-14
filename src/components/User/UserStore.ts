@@ -2,11 +2,15 @@ import { ApiInvoker } from "api/ApiInvoker";
 import {
   CallUsersGetUsersM,
   InputUserSelfS,
+  InputUserT,
   UserEmptyS,
   UserS,
-  UsersGetUsersM
+  UsersGetUsersM,
+  UserT,
+  VectorS
 } from "api/generator/ApiShema.gen";
 import { RpcErrorS } from "api/generator/MTprotoShema.gen";
+import { findError } from "const/errors";
 
 export interface IUserStoreProps {
   apiInvoker: ApiInvoker;
@@ -15,6 +19,7 @@ export class UserStore {
   props: IUserStoreProps;
 
   user = new UserS();
+  userDC = Number(localStorage.userDC || 0);
   isLoggedIn = false;
 
   private _onLogout: Set<() => void> = new Set();
@@ -25,6 +30,8 @@ export class UserStore {
     this.props = props;
     this.initUser();
     if (!this.isLoggedIn) this.runCallbacks();
+    this.loadUser();
+    for (let cb of this._onUpdate) cb();
   }
   onLogout(foo: () => void) {
     this._onLogout.add(foo);
@@ -47,32 +54,52 @@ export class UserStore {
     this.setIsLoggedIn(!!id);
   }
 
-  async loadUser() {
-    let response = await CallUsersGetUsersM(
-      this.props.apiInvoker,
-      new UsersGetUsersM().set_id([new InputUserSelfS()])
-    );
-
-    if (response instanceof RpcErrorS || response.length !== 1) {
+  setUser(user: UserT) {
+    if (user instanceof RpcErrorS) {
       this.setIsLoggedIn(false);
       return;
     }
-    let user = response[0];
     if (user instanceof UserEmptyS) user = new UserS().set_id(user.get_id());
     let isLoggedIn = !!user.get_id();
     if (this.isLoggedIn && isLoggedIn && this.user.get_id() !== user.get_id()) {
       this.setIsLoggedIn(false);
     }
     this.user = user;
+    localStorage.userID = user.get_id();
     this.setIsLoggedIn(isLoggedIn);
-    if (isLoggedIn) for (let cb of this._onUpdate) cb();
+    for (let cb of this._onUpdate) cb();
+  }
+  async loadUser() {
+    this.userDC = this.userDC || this.props.apiInvoker.dc;
+    let conn = this.props.apiInvoker.connection();
+    let response = await CallUsersGetUsersM(
+      conn,
+      new UsersGetUsersM().set_id(
+        new VectorS<InputUserT>().set_values([new InputUserSelfS()])
+      )
+    );
+    if (response instanceof RpcErrorS || response.get_values().length !== 1) {
+      if (response instanceof RpcErrorS) {
+        let err = findError(response.get_error_message());
+        if (err.type === "USER_MIGRATE" && Number(err.id)) {
+          this.userDC = Number(err.id);
+          localStorage.userDC = this.userDC;
+          await this.loadUser();
+          return;
+        }
+      }
+      this.setUser(new UserEmptyS());
+      return;
+    }
+    localStorage.userDC = conn.props.dc;
+    this.setUser(response.get_values()[0]);
   }
   setIsLoggedIn(is: boolean) {
     if (this.isLoggedIn === is) return;
     this.isLoggedIn = is;
     if (!is) {
       this.user = new UserS();
-      delete localStorage.userID;
+      localStorage.userID = 0;
     } else {
       localStorage.userID = this.user.get_id();
     }

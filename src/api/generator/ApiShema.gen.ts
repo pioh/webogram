@@ -1,5 +1,6 @@
 import { ApiInvoker } from "../ApiInvoker";
 import { ByteBuffer } from "../ByteBuffer";
+import { Connection } from "../Connection";
 import {
   AllStructs,
   IStruct,
@@ -94,17 +95,22 @@ AllStructs.set(TrueS._id, TrueS);
  * #1cb5c415:481674261:481674261
  *
  */
-export class VectorS {
+export class VectorS<T = unknown> {
   static _id = 0x1cb5c415;
 
-  _values = ([] as unknown) as any[];
+  _values = ([] as unknown) as T[];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(VectorS._id);
 
     buf.writeInt(this._values.length);
     for (let i = 0; i < this._values.length; i++) {
-      this._values[i]._write(buf);
+      let val = this._values[i] as any;
+      if (Array.isArray(val)) buf.writeLong(val as ProtoLong);
+      else if (typeof val === "number") buf.writeInt(val);
+      else if (val instanceof Uint8Array) buf.writeBytes(val);
+      else if (typeof val === "string") buf.writeString(val);
+      else val._write(buf);
     }
 
     return this;
@@ -118,10 +124,18 @@ export class VectorS {
     let len = buf.readInt();
     for (let i = 0; i < len; i++) {
       let item = new OneOf()._read(buf);
-      this._values.push(item);
+      this._values.push(item as any);
     }
 
     return this;
+  }
+
+  set_values(v: T[]): this {
+    this._values = v as any;
+    return this;
+  }
+  get_values(): T[] {
+    return (this._values as unknown) as T[];
   }
 }
 AllStructs.set(VectorS._id, VectorS);
@@ -649,9 +663,9 @@ export class InputMediaUploadedPhotoS {
   _values = ([
     0,
     (new InputFileT() as unknown) as InputFileT,
-    [],
+    new VectorS<InputDocumentT>(),
     0
-  ] as unknown) as [number, InputFileT, InputDocumentT[], number];
+  ] as unknown) as [number, InputFileT, VectorS<InputDocumentT>, number];
 
   get_flags(): number {
     return this._values[0];
@@ -671,10 +685,10 @@ export class InputMediaUploadedPhotoS {
     return this;
   }
 
-  get_stickers(): InputDocumentT[] {
+  get_stickers(): VectorS<InputDocumentT> {
     return this._values[2];
   }
-  set_stickers(val: InputDocumentT[]): this {
+  set_stickers(val: VectorS<InputDocumentT>): this {
     this._values[2] = val;
 
     this.set_flags(this.get_flags() | (1 << 0));
@@ -717,13 +731,13 @@ export class InputMediaUploadedPhotoS {
     }
 
     if (this.has_stickers()) {
-      let val = values[2] as InputDocumentT[];
+      let val = values[2] as VectorS<InputDocumentT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -757,19 +771,19 @@ export class InputMediaUploadedPhotoS {
     }
 
     if (this.has_stickers()) {
-      let val = values[2] as InputDocumentT[];
+      let val = values[2] as VectorS<InputDocumentT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputDocumentT = (new InputDocumentT() as unknown) as InputDocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -2743,7 +2757,7 @@ export class ChatFullS {
     (new PhotoT() as unknown) as PhotoT,
     (new PeerNotifySettingsT() as unknown) as PeerNotifySettingsT,
     (new ExportedChatInviteT() as unknown) as ExportedChatInviteT,
-    [],
+    new VectorS<BotInfoT>(),
     0,
     0
   ] as unknown) as [
@@ -2756,7 +2770,7 @@ export class ChatFullS {
     PhotoT,
     PeerNotifySettingsT,
     ExportedChatInviteT,
-    BotInfoT[],
+    VectorS<BotInfoT>,
     number,
     number
   ];
@@ -2860,10 +2874,10 @@ export class ChatFullS {
     return this;
   }
 
-  get_bot_info(): BotInfoT[] {
+  get_bot_info(): VectorS<BotInfoT> {
     return this._values[9];
   }
-  set_bot_info(val: BotInfoT[]): this {
+  set_bot_info(val: VectorS<BotInfoT>): this {
     this._values[9] = val;
 
     this.set_flags(this.get_flags() | (1 << 3));
@@ -2954,13 +2968,13 @@ export class ChatFullS {
     }
 
     if (this.has_bot_info()) {
-      let val = values[9] as BotInfoT[];
+      let val = values[9] as VectorS<BotInfoT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -3047,19 +3061,19 @@ export class ChatFullS {
     }
 
     if (this.has_bot_info()) {
-      let val = values[9] as BotInfoT[];
+      let val = values[9] as VectorS<BotInfoT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: BotInfoT = (new BotInfoT() as unknown) as BotInfoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[9] = val;
     }
@@ -3285,9 +3299,9 @@ AllStructs.set(ChatParticipantsForbiddenS._id, ChatParticipantsForbiddenS);
 export class ChatParticipantsS {
   static _id = 0x3f460fed;
 
-  _values = ([0, [], 0] as unknown) as [
+  _values = ([0, new VectorS<ChatParticipantT>(), 0] as unknown) as [
     number,
-    ChatParticipantT[],
+    VectorS<ChatParticipantT>,
     number
   ];
 
@@ -3300,10 +3314,10 @@ export class ChatParticipantsS {
     return this;
   }
 
-  get_participants(): ChatParticipantT[] {
+  get_participants(): VectorS<ChatParticipantT> {
     return this._values[1];
   }
-  set_participants(val: ChatParticipantT[]): this {
+  set_participants(val: VectorS<ChatParticipantT>): this {
     this._values[1] = val;
 
     return this;
@@ -3329,13 +3343,13 @@ export class ChatParticipantsS {
     }
 
     {
-      let val = values[1] as ChatParticipantT[];
+      let val = values[1] as VectorS<ChatParticipantT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -3361,19 +3375,19 @@ export class ChatParticipantsS {
     }
 
     {
-      let val = values[1] as ChatParticipantT[];
+      let val = values[1] as VectorS<ChatParticipantT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatParticipantT = (new ChatParticipantT() as unknown) as ChatParticipantT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -3615,12 +3629,12 @@ export class MessageS {
     "",
     (new MessageMediaT() as unknown) as MessageMediaT,
     (new ReplyMarkupT() as unknown) as ReplyMarkupT,
-    [],
+    new VectorS<MessageEntityT>(),
     0,
     0,
     "",
     [0, 0],
-    []
+    new VectorS<RestrictionReasonT>()
   ] as unknown) as [
     number,
     true,
@@ -3641,12 +3655,12 @@ export class MessageS {
     string,
     MessageMediaT,
     ReplyMarkupT,
-    MessageEntityT[],
+    VectorS<MessageEntityT>,
     number,
     number,
     string,
     ProtoLong,
-    RestrictionReasonT[]
+    VectorS<RestrictionReasonT>
   ];
 
   get_flags(): number {
@@ -3904,10 +3918,10 @@ export class MessageS {
     return !!(this.get_flags() & (1 << 6));
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[19];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[19] = val;
 
     this.set_flags(this.get_flags() | (1 << 7));
@@ -3979,10 +3993,10 @@ export class MessageS {
     return !!(this.get_flags() & (1 << 17));
   }
 
-  get_restriction_reason(): RestrictionReasonT[] {
+  get_restriction_reason(): VectorS<RestrictionReasonT> {
     return this._values[24];
   }
-  set_restriction_reason(val: RestrictionReasonT[]): this {
+  set_restriction_reason(val: VectorS<RestrictionReasonT>): this {
     this._values[24] = val;
 
     this.set_flags(this.get_flags() | (1 << 22));
@@ -4087,13 +4101,13 @@ export class MessageS {
     }
 
     if (this.has_entities()) {
-      let val = values[19] as MessageEntityT[];
+      let val = values[19] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -4119,13 +4133,13 @@ export class MessageS {
     }
 
     if (this.has_restriction_reason()) {
-      let val = values[24] as RestrictionReasonT[];
+      let val = values[24] as VectorS<RestrictionReasonT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -4262,19 +4276,19 @@ export class MessageS {
     }
 
     if (this.has_entities()) {
-      let val = values[19] as MessageEntityT[];
+      let val = values[19] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[19] = val;
     }
@@ -4304,19 +4318,19 @@ export class MessageS {
     }
 
     if (this.has_restriction_reason()) {
-      let val = values[24] as RestrictionReasonT[];
+      let val = values[24] as VectorS<RestrictionReasonT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: RestrictionReasonT = (new RestrictionReasonT() as unknown) as RestrictionReasonT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[24] = val;
     }
@@ -5089,7 +5103,10 @@ AllStructs.set(MessageActionEmptyS._id, MessageActionEmptyS);
 export class MessageActionChatCreateS {
   static _id = 0xa6638b9a;
 
-  _values = (["", []] as unknown) as [string, number[]];
+  _values = (["", new VectorS<number>()] as unknown) as [
+    string,
+    VectorS<number>
+  ];
 
   get_title(): string {
     return this._values[0];
@@ -5100,10 +5117,10 @@ export class MessageActionChatCreateS {
     return this;
   }
 
-  get_users(): number[] {
+  get_users(): VectorS<number> {
     return this._values[1];
   }
-  set_users(val: number[]): this {
+  set_users(val: VectorS<number>): this {
     this._values[1] = val;
 
     return this;
@@ -5120,13 +5137,13 @@ export class MessageActionChatCreateS {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -5147,17 +5164,17 @@ export class MessageActionChatCreateS {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -5304,12 +5321,12 @@ AllStructs.set(
 export class MessageActionChatAddUserS {
   static _id = 0x488a7337;
 
-  _values = ([[]] as unknown) as [number[]];
+  _values = ([new VectorS<number>()] as unknown) as [VectorS<number>];
 
-  get_users(): number[] {
+  get_users(): VectorS<number> {
     return this._values[0];
   }
-  set_users(val: number[]): this {
+  set_users(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -5321,13 +5338,13 @@ export class MessageActionChatAddUserS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -5342,17 +5359,17 @@ export class MessageActionChatAddUserS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -5845,7 +5862,7 @@ export class PhotoS {
     [0, 0],
     new Uint8Array(),
     0,
-    [],
+    new VectorS<PhotoSizeT>(),
     0
   ] as unknown) as [
     number,
@@ -5854,7 +5871,7 @@ export class PhotoS {
     ProtoLong,
     Uint8Array,
     number,
-    PhotoSizeT[],
+    VectorS<PhotoSizeT>,
     number
   ];
 
@@ -5918,10 +5935,10 @@ export class PhotoS {
     return this;
   }
 
-  get_sizes(): PhotoSizeT[] {
+  get_sizes(): VectorS<PhotoSizeT> {
     return this._values[6];
   }
-  set_sizes(val: PhotoSizeT[]): this {
+  set_sizes(val: VectorS<PhotoSizeT>): this {
     this._values[6] = val;
 
     return this;
@@ -5971,13 +5988,13 @@ export class PhotoS {
     }
 
     {
-      let val = values[6] as PhotoSizeT[];
+      let val = values[6] as VectorS<PhotoSizeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -6033,19 +6050,19 @@ export class PhotoS {
     }
 
     {
-      let val = values[6] as PhotoSizeT[];
+      let val = values[6] as VectorS<PhotoSizeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PhotoSizeT = (new PhotoSizeT() as unknown) as PhotoSizeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
@@ -8701,12 +8718,16 @@ AllStructs.set(ContactsContactsNotModifiedS._id, ContactsContactsNotModifiedS);
 export class ContactsContactsS {
   static _id = 0xeae87e42;
 
-  _values = ([[], 0, []] as unknown) as [ContactT[], number, UserT[]];
+  _values = ([new VectorS<ContactT>(), 0, new VectorS<UserT>()] as unknown) as [
+    VectorS<ContactT>,
+    number,
+    VectorS<UserT>
+  ];
 
-  get_contacts(): ContactT[] {
+  get_contacts(): VectorS<ContactT> {
     return this._values[0];
   }
-  set_contacts(val: ContactT[]): this {
+  set_contacts(val: VectorS<ContactT>): this {
     this._values[0] = val;
 
     return this;
@@ -8721,10 +8742,10 @@ export class ContactsContactsS {
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[2];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[2] = val;
 
     return this;
@@ -8736,13 +8757,13 @@ export class ContactsContactsS {
     let values = this._values;
 
     {
-      let val = values[0] as ContactT[];
+      let val = values[0] as VectorS<ContactT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -8753,13 +8774,13 @@ export class ContactsContactsS {
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -8774,19 +8795,19 @@ export class ContactsContactsS {
     let values = this._values;
 
     {
-      let val = values[0] as ContactT[];
+      let val = values[0] as VectorS<ContactT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ContactT = (new ContactT() as unknown) as ContactT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -8798,19 +8819,19 @@ export class ContactsContactsS {
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -8831,44 +8852,49 @@ AllStructs.set(ContactsContactsS._id, ContactsContactsS);
 export class ContactsImportedContactsS {
   static _id = 0x77d01c3b;
 
-  _values = ([[], [], [], []] as unknown) as [
-    ImportedContactT[],
-    PopularContactT[],
-    ProtoLong[],
-    UserT[]
+  _values = ([
+    new VectorS<ImportedContactT>(),
+    new VectorS<PopularContactT>(),
+    new VectorS<ProtoLong>(),
+    new VectorS<UserT>()
+  ] as unknown) as [
+    VectorS<ImportedContactT>,
+    VectorS<PopularContactT>,
+    VectorS<ProtoLong>,
+    VectorS<UserT>
   ];
 
-  get_imported(): ImportedContactT[] {
+  get_imported(): VectorS<ImportedContactT> {
     return this._values[0];
   }
-  set_imported(val: ImportedContactT[]): this {
+  set_imported(val: VectorS<ImportedContactT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_popular_invites(): PopularContactT[] {
+  get_popular_invites(): VectorS<PopularContactT> {
     return this._values[1];
   }
-  set_popular_invites(val: PopularContactT[]): this {
+  set_popular_invites(val: VectorS<PopularContactT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_retry_contacts(): ProtoLong[] {
+  get_retry_contacts(): VectorS<ProtoLong> {
     return this._values[2];
   }
-  set_retry_contacts(val: ProtoLong[]): this {
+  set_retry_contacts(val: VectorS<ProtoLong>): this {
     this._values[2] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[3];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[3] = val;
 
     return this;
@@ -8880,49 +8906,49 @@ export class ContactsImportedContactsS {
     let values = this._values;
 
     {
-      let val = values[0] as ImportedContactT[];
+      let val = values[0] as VectorS<ImportedContactT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as PopularContactT[];
+      let val = values[1] as VectorS<PopularContactT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as ProtoLong[];
+      let val = values[2] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
 
     {
-      let val = values[3] as UserT[];
+      let val = values[3] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -8937,71 +8963,71 @@ export class ContactsImportedContactsS {
     let values = this._values;
 
     {
-      let val = values[0] as ImportedContactT[];
+      let val = values[0] as VectorS<ImportedContactT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ImportedContactT = (new ImportedContactT() as unknown) as ImportedContactT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as PopularContactT[];
+      let val = values[1] as VectorS<PopularContactT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PopularContactT = (new PopularContactT() as unknown) as PopularContactT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as ProtoLong[];
+      let val = values[2] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
 
     {
-      let val = values[3] as UserT[];
+      let val = values[3] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -9020,21 +9046,24 @@ AllStructs.set(ContactsImportedContactsS._id, ContactsImportedContactsS);
 export class ContactsBlockedS {
   static _id = 0x1c138d15;
 
-  _values = ([[], []] as unknown) as [ContactBlockedT[], UserT[]];
+  _values = ([
+    new VectorS<ContactBlockedT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [VectorS<ContactBlockedT>, VectorS<UserT>];
 
-  get_blocked(): ContactBlockedT[] {
+  get_blocked(): VectorS<ContactBlockedT> {
     return this._values[0];
   }
-  set_blocked(val: ContactBlockedT[]): this {
+  set_blocked(val: VectorS<ContactBlockedT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[1];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[1] = val;
 
     return this;
@@ -9046,25 +9075,25 @@ export class ContactsBlockedS {
     let values = this._values;
 
     {
-      let val = values[0] as ContactBlockedT[];
+      let val = values[0] as VectorS<ContactBlockedT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -9079,37 +9108,37 @@ export class ContactsBlockedS {
     let values = this._values;
 
     {
-      let val = values[0] as ContactBlockedT[];
+      let val = values[0] as VectorS<ContactBlockedT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ContactBlockedT = (new ContactBlockedT() as unknown) as ContactBlockedT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -9129,11 +9158,11 @@ AllStructs.set(ContactsBlockedS._id, ContactsBlockedS);
 export class ContactsBlockedSliceS {
   static _id = 0x900802a1;
 
-  _values = ([0, [], []] as unknown) as [
-    number,
-    ContactBlockedT[],
-    UserT[]
-  ];
+  _values = ([
+    0,
+    new VectorS<ContactBlockedT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [number, VectorS<ContactBlockedT>, VectorS<UserT>];
 
   get_count(): number {
     return this._values[0];
@@ -9144,19 +9173,19 @@ export class ContactsBlockedSliceS {
     return this;
   }
 
-  get_blocked(): ContactBlockedT[] {
+  get_blocked(): VectorS<ContactBlockedT> {
     return this._values[1];
   }
-  set_blocked(val: ContactBlockedT[]): this {
+  set_blocked(val: VectorS<ContactBlockedT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[2];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[2] = val;
 
     return this;
@@ -9173,25 +9202,25 @@ export class ContactsBlockedSliceS {
     }
 
     {
-      let val = values[1] as ContactBlockedT[];
+      let val = values[1] as VectorS<ContactBlockedT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -9212,37 +9241,37 @@ export class ContactsBlockedSliceS {
     }
 
     {
-      let val = values[1] as ContactBlockedT[];
+      let val = values[1] as VectorS<ContactBlockedT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ContactBlockedT = (new ContactBlockedT() as unknown) as ContactBlockedT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -9263,44 +9292,49 @@ AllStructs.set(ContactsBlockedSliceS._id, ContactsBlockedSliceS);
 export class MessagesDialogsS {
   static _id = 0x15ba6c40;
 
-  _values = ([[], [], [], []] as unknown) as [
-    DialogT[],
-    MessageT[],
-    ChatT[],
-    UserT[]
+  _values = ([
+    new VectorS<DialogT>(),
+    new VectorS<MessageT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [
+    VectorS<DialogT>,
+    VectorS<MessageT>,
+    VectorS<ChatT>,
+    VectorS<UserT>
   ];
 
-  get_dialogs(): DialogT[] {
+  get_dialogs(): VectorS<DialogT> {
     return this._values[0];
   }
-  set_dialogs(val: DialogT[]): this {
+  set_dialogs(val: VectorS<DialogT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_messages(): MessageT[] {
+  get_messages(): VectorS<MessageT> {
     return this._values[1];
   }
-  set_messages(val: MessageT[]): this {
+  set_messages(val: VectorS<MessageT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[2];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[2] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[3];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[3] = val;
 
     return this;
@@ -9312,49 +9346,49 @@ export class MessagesDialogsS {
     let values = this._values;
 
     {
-      let val = values[0] as DialogT[];
+      let val = values[0] as VectorS<DialogT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as MessageT[];
+      let val = values[1] as VectorS<MessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[3] as UserT[];
+      let val = values[3] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -9369,73 +9403,73 @@ export class MessagesDialogsS {
     let values = this._values;
 
     {
-      let val = values[0] as DialogT[];
+      let val = values[0] as VectorS<DialogT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DialogT = (new DialogT() as unknown) as DialogT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as MessageT[];
+      let val = values[1] as VectorS<MessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
 
     {
-      let val = values[3] as UserT[];
+      let val = values[3] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -9457,12 +9491,18 @@ AllStructs.set(MessagesDialogsS._id, MessagesDialogsS);
 export class MessagesDialogsSliceS {
   static _id = 0x71e094f3;
 
-  _values = ([0, [], [], [], []] as unknown) as [
+  _values = ([
+    0,
+    new VectorS<DialogT>(),
+    new VectorS<MessageT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [
     number,
-    DialogT[],
-    MessageT[],
-    ChatT[],
-    UserT[]
+    VectorS<DialogT>,
+    VectorS<MessageT>,
+    VectorS<ChatT>,
+    VectorS<UserT>
   ];
 
   get_count(): number {
@@ -9474,37 +9514,37 @@ export class MessagesDialogsSliceS {
     return this;
   }
 
-  get_dialogs(): DialogT[] {
+  get_dialogs(): VectorS<DialogT> {
     return this._values[1];
   }
-  set_dialogs(val: DialogT[]): this {
+  set_dialogs(val: VectorS<DialogT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_messages(): MessageT[] {
+  get_messages(): VectorS<MessageT> {
     return this._values[2];
   }
-  set_messages(val: MessageT[]): this {
+  set_messages(val: VectorS<MessageT>): this {
     this._values[2] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[3];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[3] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[4];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[4] = val;
 
     return this;
@@ -9521,49 +9561,49 @@ export class MessagesDialogsSliceS {
     }
 
     {
-      let val = values[1] as DialogT[];
+      let val = values[1] as VectorS<DialogT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as MessageT[];
+      let val = values[2] as VectorS<MessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[3] as ChatT[];
+      let val = values[3] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[4] as UserT[];
+      let val = values[4] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -9584,73 +9624,73 @@ export class MessagesDialogsSliceS {
     }
 
     {
-      let val = values[1] as DialogT[];
+      let val = values[1] as VectorS<DialogT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DialogT = (new DialogT() as unknown) as DialogT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as MessageT[];
+      let val = values[2] as VectorS<MessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
 
     {
-      let val = values[3] as ChatT[];
+      let val = values[3] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
 
     {
-      let val = values[4] as UserT[];
+      let val = values[4] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -9670,34 +9710,34 @@ AllStructs.set(MessagesDialogsSliceS._id, MessagesDialogsSliceS);
 export class MessagesMessagesS {
   static _id = 0x8c718e87;
 
-  _values = ([[], [], []] as unknown) as [
-    MessageT[],
-    ChatT[],
-    UserT[]
-  ];
+  _values = ([
+    new VectorS<MessageT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [VectorS<MessageT>, VectorS<ChatT>, VectorS<UserT>];
 
-  get_messages(): MessageT[] {
+  get_messages(): VectorS<MessageT> {
     return this._values[0];
   }
-  set_messages(val: MessageT[]): this {
+  set_messages(val: VectorS<MessageT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[1];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[2];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[2] = val;
 
     return this;
@@ -9709,37 +9749,37 @@ export class MessagesMessagesS {
     let values = this._values;
 
     {
-      let val = values[0] as MessageT[];
+      let val = values[0] as VectorS<MessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -9754,55 +9794,55 @@ export class MessagesMessagesS {
     let values = this._values;
 
     {
-      let val = values[0] as MessageT[];
+      let val = values[0] as VectorS<MessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -9826,14 +9866,22 @@ AllStructs.set(MessagesMessagesS._id, MessagesMessagesS);
 export class MessagesMessagesSliceS {
   static _id = 0xc8edce1e;
 
-  _values = ([0, true, 0, 0, [], [], []] as unknown) as [
+  _values = ([
+    0,
+    true,
+    0,
+    0,
+    new VectorS<MessageT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [
     number,
     true,
     number,
     number,
-    MessageT[],
-    ChatT[],
-    UserT[]
+    VectorS<MessageT>,
+    VectorS<ChatT>,
+    VectorS<UserT>
   ];
 
   get_flags(): number {
@@ -9884,28 +9932,28 @@ export class MessagesMessagesSliceS {
     return !!(this.get_flags() & (1 << 0));
   }
 
-  get_messages(): MessageT[] {
+  get_messages(): VectorS<MessageT> {
     return this._values[4];
   }
-  set_messages(val: MessageT[]): this {
+  set_messages(val: VectorS<MessageT>): this {
     this._values[4] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[5];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[5] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[6];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[6] = val;
 
     return this;
@@ -9936,37 +9984,37 @@ export class MessagesMessagesSliceS {
     }
 
     {
-      let val = values[4] as MessageT[];
+      let val = values[4] as VectorS<MessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[5] as ChatT[];
+      let val = values[5] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[6] as UserT[];
+      let val = values[6] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -10005,55 +10053,55 @@ export class MessagesMessagesSliceS {
     }
 
     {
-      let val = values[4] as MessageT[];
+      let val = values[4] as VectorS<MessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
 
     {
-      let val = values[5] as ChatT[];
+      let val = values[5] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[5] = val;
     }
 
     {
-      let val = values[6] as UserT[];
+      let val = values[6] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
@@ -10071,12 +10119,12 @@ AllStructs.set(MessagesMessagesSliceS._id, MessagesMessagesSliceS);
 export class MessagesChatsS {
   static _id = 0x64ff9fd5;
 
-  _values = ([[]] as unknown) as [ChatT[]];
+  _values = ([new VectorS<ChatT>()] as unknown) as [VectorS<ChatT>];
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[0];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[0] = val;
 
     return this;
@@ -10088,13 +10136,13 @@ export class MessagesChatsS {
     let values = this._values;
 
     {
-      let val = values[0] as ChatT[];
+      let val = values[0] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -10109,19 +10157,19 @@ export class MessagesChatsS {
     let values = this._values;
 
     {
-      let val = values[0] as ChatT[];
+      let val = values[0] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -10143,9 +10191,9 @@ export class MessagesChatFullS {
 
   _values = ([
     (new ChatFullT() as unknown) as ChatFullT,
-    [],
-    []
-  ] as unknown) as [ChatFullT, ChatT[], UserT[]];
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [ChatFullT, VectorS<ChatT>, VectorS<UserT>];
 
   get_full_chat(): ChatFullT {
     return this._values[0];
@@ -10156,19 +10204,19 @@ export class MessagesChatFullS {
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[1];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[2];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[2] = val;
 
     return this;
@@ -10185,25 +10233,25 @@ export class MessagesChatFullS {
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -10226,37 +10274,37 @@ export class MessagesChatFullS {
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -10719,12 +10767,16 @@ AllStructs.set(UpdateMessageIdS._id, UpdateMessageIdS);
 export class UpdateDeleteMessagesS {
   static _id = 0xa20db0e5;
 
-  _values = ([[], 0, 0] as unknown) as [number[], number, number];
+  _values = ([new VectorS<number>(), 0, 0] as unknown) as [
+    VectorS<number>,
+    number,
+    number
+  ];
 
-  get_messages(): number[] {
+  get_messages(): VectorS<number> {
     return this._values[0];
   }
-  set_messages(val: number[]): this {
+  set_messages(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -10754,13 +10806,13 @@ export class UpdateDeleteMessagesS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -10785,17 +10837,17 @@ export class UpdateDeleteMessagesS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -11573,61 +11625,61 @@ export class UpdatesDifferenceS {
   static _id = 0xf49ca0;
 
   _values = ([
-    [],
-    [],
-    [],
-    [],
-    [],
+    new VectorS<MessageT>(),
+    new VectorS<EncryptedMessageT>(),
+    new VectorS<UpdateT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>(),
     (new UpdatesStateT() as unknown) as UpdatesStateT
   ] as unknown) as [
-    MessageT[],
-    EncryptedMessageT[],
-    UpdateT[],
-    ChatT[],
-    UserT[],
+    VectorS<MessageT>,
+    VectorS<EncryptedMessageT>,
+    VectorS<UpdateT>,
+    VectorS<ChatT>,
+    VectorS<UserT>,
     UpdatesStateT
   ];
 
-  get_new_messages(): MessageT[] {
+  get_new_messages(): VectorS<MessageT> {
     return this._values[0];
   }
-  set_new_messages(val: MessageT[]): this {
+  set_new_messages(val: VectorS<MessageT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_new_encrypted_messages(): EncryptedMessageT[] {
+  get_new_encrypted_messages(): VectorS<EncryptedMessageT> {
     return this._values[1];
   }
-  set_new_encrypted_messages(val: EncryptedMessageT[]): this {
+  set_new_encrypted_messages(val: VectorS<EncryptedMessageT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_other_updates(): UpdateT[] {
+  get_other_updates(): VectorS<UpdateT> {
     return this._values[2];
   }
-  set_other_updates(val: UpdateT[]): this {
+  set_other_updates(val: VectorS<UpdateT>): this {
     this._values[2] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[3];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[3] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[4];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[4] = val;
 
     return this;
@@ -11648,61 +11700,61 @@ export class UpdatesDifferenceS {
     let values = this._values;
 
     {
-      let val = values[0] as MessageT[];
+      let val = values[0] as VectorS<MessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as EncryptedMessageT[];
+      let val = values[1] as VectorS<EncryptedMessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UpdateT[];
+      let val = values[2] as VectorS<UpdateT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[3] as ChatT[];
+      let val = values[3] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[4] as UserT[];
+      let val = values[4] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -11722,91 +11774,91 @@ export class UpdatesDifferenceS {
     let values = this._values;
 
     {
-      let val = values[0] as MessageT[];
+      let val = values[0] as VectorS<MessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as EncryptedMessageT[];
+      let val = values[1] as VectorS<EncryptedMessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: EncryptedMessageT = (new EncryptedMessageT() as unknown) as EncryptedMessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UpdateT[];
+      let val = values[2] as VectorS<UpdateT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UpdateT = (new UpdateT() as unknown) as UpdateT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
 
     {
-      let val = values[3] as ChatT[];
+      let val = values[3] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
 
     {
-      let val = values[4] as UserT[];
+      let val = values[4] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -11838,61 +11890,61 @@ export class UpdatesDifferenceSliceS {
   static _id = 0xa8fb1981;
 
   _values = ([
-    [],
-    [],
-    [],
-    [],
-    [],
+    new VectorS<MessageT>(),
+    new VectorS<EncryptedMessageT>(),
+    new VectorS<UpdateT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>(),
     (new UpdatesStateT() as unknown) as UpdatesStateT
   ] as unknown) as [
-    MessageT[],
-    EncryptedMessageT[],
-    UpdateT[],
-    ChatT[],
-    UserT[],
+    VectorS<MessageT>,
+    VectorS<EncryptedMessageT>,
+    VectorS<UpdateT>,
+    VectorS<ChatT>,
+    VectorS<UserT>,
     UpdatesStateT
   ];
 
-  get_new_messages(): MessageT[] {
+  get_new_messages(): VectorS<MessageT> {
     return this._values[0];
   }
-  set_new_messages(val: MessageT[]): this {
+  set_new_messages(val: VectorS<MessageT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_new_encrypted_messages(): EncryptedMessageT[] {
+  get_new_encrypted_messages(): VectorS<EncryptedMessageT> {
     return this._values[1];
   }
-  set_new_encrypted_messages(val: EncryptedMessageT[]): this {
+  set_new_encrypted_messages(val: VectorS<EncryptedMessageT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_other_updates(): UpdateT[] {
+  get_other_updates(): VectorS<UpdateT> {
     return this._values[2];
   }
-  set_other_updates(val: UpdateT[]): this {
+  set_other_updates(val: VectorS<UpdateT>): this {
     this._values[2] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[3];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[3] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[4];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[4] = val;
 
     return this;
@@ -11913,61 +11965,61 @@ export class UpdatesDifferenceSliceS {
     let values = this._values;
 
     {
-      let val = values[0] as MessageT[];
+      let val = values[0] as VectorS<MessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as EncryptedMessageT[];
+      let val = values[1] as VectorS<EncryptedMessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UpdateT[];
+      let val = values[2] as VectorS<UpdateT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[3] as ChatT[];
+      let val = values[3] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[4] as UserT[];
+      let val = values[4] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -11987,91 +12039,91 @@ export class UpdatesDifferenceSliceS {
     let values = this._values;
 
     {
-      let val = values[0] as MessageT[];
+      let val = values[0] as VectorS<MessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as EncryptedMessageT[];
+      let val = values[1] as VectorS<EncryptedMessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: EncryptedMessageT = (new EncryptedMessageT() as unknown) as EncryptedMessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UpdateT[];
+      let val = values[2] as VectorS<UpdateT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UpdateT = (new UpdateT() as unknown) as UpdateT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
 
     {
-      let val = values[3] as ChatT[];
+      let val = values[3] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
 
     {
-      let val = values[4] as UserT[];
+      let val = values[4] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -12152,7 +12204,7 @@ export class UpdateShortMessageS {
     (new MessageFwdHeaderT() as unknown) as MessageFwdHeaderT,
     0,
     0,
-    []
+    new VectorS<MessageEntityT>()
   ] as unknown) as [
     number,
     true,
@@ -12168,7 +12220,7 @@ export class UpdateShortMessageS {
     MessageFwdHeaderT,
     number,
     number,
-    MessageEntityT[]
+    VectorS<MessageEntityT>
   ];
 
   get_flags(): number {
@@ -12339,10 +12391,10 @@ export class UpdateShortMessageS {
     return !!(this.get_flags() & (1 << 3));
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[14];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[14] = val;
 
     this.set_flags(this.get_flags() | (1 << 7));
@@ -12426,13 +12478,13 @@ export class UpdateShortMessageS {
     }
 
     if (this.has_entities()) {
-      let val = values[14] as MessageEntityT[];
+      let val = values[14] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -12533,19 +12585,19 @@ export class UpdateShortMessageS {
     }
 
     if (this.has_entities()) {
-      let val = values[14] as MessageEntityT[];
+      let val = values[14] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[14] = val;
     }
@@ -12594,7 +12646,7 @@ export class UpdateShortChatMessageS {
     (new MessageFwdHeaderT() as unknown) as MessageFwdHeaderT,
     0,
     0,
-    []
+    new VectorS<MessageEntityT>()
   ] as unknown) as [
     number,
     true,
@@ -12611,7 +12663,7 @@ export class UpdateShortChatMessageS {
     MessageFwdHeaderT,
     number,
     number,
-    MessageEntityT[]
+    VectorS<MessageEntityT>
   ];
 
   get_flags(): number {
@@ -12791,10 +12843,10 @@ export class UpdateShortChatMessageS {
     return !!(this.get_flags() & (1 << 3));
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[15];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[15] = val;
 
     this.set_flags(this.get_flags() | (1 << 7));
@@ -12883,13 +12935,13 @@ export class UpdateShortChatMessageS {
     }
 
     if (this.has_entities()) {
-      let val = values[15] as MessageEntityT[];
+      let val = values[15] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -12996,19 +13048,19 @@ export class UpdateShortChatMessageS {
     }
 
     if (this.has_entities()) {
-      let val = values[15] as MessageEntityT[];
+      let val = values[15] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[15] = val;
     }
@@ -13106,37 +13158,44 @@ AllStructs.set(UpdateShortS._id, UpdateShortS);
 export class UpdatesCombinedS {
   static _id = 0x725b04c3;
 
-  _values = ([[], [], [], 0, 0, 0] as unknown) as [
-    UpdateT[],
-    UserT[],
-    ChatT[],
+  _values = ([
+    new VectorS<UpdateT>(),
+    new VectorS<UserT>(),
+    new VectorS<ChatT>(),
+    0,
+    0,
+    0
+  ] as unknown) as [
+    VectorS<UpdateT>,
+    VectorS<UserT>,
+    VectorS<ChatT>,
     number,
     number,
     number
   ];
 
-  get_updates(): UpdateT[] {
+  get_updates(): VectorS<UpdateT> {
     return this._values[0];
   }
-  set_updates(val: UpdateT[]): this {
+  set_updates(val: VectorS<UpdateT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[1];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[2];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[2] = val;
 
     return this;
@@ -13175,37 +13234,37 @@ export class UpdatesCombinedS {
     let values = this._values;
 
     {
-      let val = values[0] as UpdateT[];
+      let val = values[0] as VectorS<UpdateT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -13235,55 +13294,55 @@ export class UpdatesCombinedS {
     let values = this._values;
 
     {
-      let val = values[0] as UpdateT[];
+      let val = values[0] as VectorS<UpdateT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UpdateT = (new UpdateT() as unknown) as UpdateT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -13323,36 +13382,42 @@ AllStructs.set(UpdatesCombinedS._id, UpdatesCombinedS);
 export class UpdatesS {
   static _id = 0x74ae4240;
 
-  _values = ([[], [], [], 0, 0] as unknown) as [
-    UpdateT[],
-    UserT[],
-    ChatT[],
+  _values = ([
+    new VectorS<UpdateT>(),
+    new VectorS<UserT>(),
+    new VectorS<ChatT>(),
+    0,
+    0
+  ] as unknown) as [
+    VectorS<UpdateT>,
+    VectorS<UserT>,
+    VectorS<ChatT>,
     number,
     number
   ];
 
-  get_updates(): UpdateT[] {
+  get_updates(): VectorS<UpdateT> {
     return this._values[0];
   }
-  set_updates(val: UpdateT[]): this {
+  set_updates(val: VectorS<UpdateT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[1];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[2];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[2] = val;
 
     return this;
@@ -13382,37 +13447,37 @@ export class UpdatesS {
     let values = this._values;
 
     {
-      let val = values[0] as UpdateT[];
+      let val = values[0] as VectorS<UpdateT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -13437,55 +13502,55 @@ export class UpdatesS {
     let values = this._values;
 
     {
-      let val = values[0] as UpdateT[];
+      let val = values[0] as VectorS<UpdateT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UpdateT = (new UpdateT() as unknown) as UpdateT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -13516,21 +13581,24 @@ AllStructs.set(UpdatesS._id, UpdatesS);
 export class PhotosPhotosS {
   static _id = 0x8dca6aa5;
 
-  _values = ([[], []] as unknown) as [PhotoT[], UserT[]];
+  _values = ([new VectorS<PhotoT>(), new VectorS<UserT>()] as unknown) as [
+    VectorS<PhotoT>,
+    VectorS<UserT>
+  ];
 
-  get_photos(): PhotoT[] {
+  get_photos(): VectorS<PhotoT> {
     return this._values[0];
   }
-  set_photos(val: PhotoT[]): this {
+  set_photos(val: VectorS<PhotoT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[1];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[1] = val;
 
     return this;
@@ -13542,25 +13610,25 @@ export class PhotosPhotosS {
     let values = this._values;
 
     {
-      let val = values[0] as PhotoT[];
+      let val = values[0] as VectorS<PhotoT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -13575,37 +13643,37 @@ export class PhotosPhotosS {
     let values = this._values;
 
     {
-      let val = values[0] as PhotoT[];
+      let val = values[0] as VectorS<PhotoT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PhotoT = (new PhotoT() as unknown) as PhotoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -13625,7 +13693,11 @@ AllStructs.set(PhotosPhotosS._id, PhotosPhotosS);
 export class PhotosPhotosSliceS {
   static _id = 0x15051f54;
 
-  _values = ([0, [], []] as unknown) as [number, PhotoT[], UserT[]];
+  _values = ([0, new VectorS<PhotoT>(), new VectorS<UserT>()] as unknown) as [
+    number,
+    VectorS<PhotoT>,
+    VectorS<UserT>
+  ];
 
   get_count(): number {
     return this._values[0];
@@ -13636,19 +13708,19 @@ export class PhotosPhotosSliceS {
     return this;
   }
 
-  get_photos(): PhotoT[] {
+  get_photos(): VectorS<PhotoT> {
     return this._values[1];
   }
-  set_photos(val: PhotoT[]): this {
+  set_photos(val: VectorS<PhotoT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[2];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[2] = val;
 
     return this;
@@ -13665,25 +13737,25 @@ export class PhotosPhotosSliceS {
     }
 
     {
-      let val = values[1] as PhotoT[];
+      let val = values[1] as VectorS<PhotoT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -13704,37 +13776,37 @@ export class PhotosPhotosSliceS {
     }
 
     {
-      let val = values[1] as PhotoT[];
+      let val = values[1] as VectorS<PhotoT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PhotoT = (new PhotoT() as unknown) as PhotoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -13753,10 +13825,10 @@ AllStructs.set(PhotosPhotosSliceS._id, PhotosPhotosSliceS);
 export class PhotosPhotoS {
   static _id = 0x20212ca8;
 
-  _values = ([(new PhotoT() as unknown) as PhotoT, []] as unknown) as [
-    PhotoT,
-    UserT[]
-  ];
+  _values = ([
+    (new PhotoT() as unknown) as PhotoT,
+    new VectorS<UserT>()
+  ] as unknown) as [PhotoT, VectorS<UserT>];
 
   get_photo(): PhotoT {
     return this._values[0];
@@ -13767,10 +13839,10 @@ export class PhotosPhotoS {
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[1];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[1] = val;
 
     return this;
@@ -13787,13 +13859,13 @@ export class PhotosPhotoS {
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -13816,19 +13888,19 @@ export class PhotosPhotoS {
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -14298,7 +14370,7 @@ export class ConfigS {
     0,
     (new BoolT() as unknown) as BoolT,
     0,
-    [],
+    new VectorS<DcOptionT>(),
     "",
     0,
     0,
@@ -14351,7 +14423,7 @@ export class ConfigS {
     number,
     BoolT,
     number,
-    DcOptionT[],
+    VectorS<DcOptionT>,
     string,
     number,
     number,
@@ -14543,10 +14615,10 @@ export class ConfigS {
     return this;
   }
 
-  get_dc_options(): DcOptionT[] {
+  get_dc_options(): VectorS<DcOptionT> {
     return this._values[12];
   }
-  set_dc_options(val: DcOptionT[]): this {
+  set_dc_options(val: VectorS<DcOptionT>): this {
     this._values[12] = val;
 
     return this;
@@ -15016,13 +15088,13 @@ export class ConfigS {
     }
 
     {
-      let val = values[12] as DcOptionT[];
+      let val = values[12] as VectorS<DcOptionT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -15306,19 +15378,19 @@ export class ConfigS {
     }
 
     {
-      let val = values[12] as DcOptionT[];
+      let val = values[12] as VectorS<DcOptionT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DcOptionT = (new DcOptionT() as unknown) as DcOptionT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[12] = val;
     }
@@ -15674,7 +15746,7 @@ export class HelpAppUpdateS {
     0,
     "",
     "",
-    [],
+    new VectorS<MessageEntityT>(),
     (new DocumentT() as unknown) as DocumentT,
     ""
   ] as unknown) as [
@@ -15683,7 +15755,7 @@ export class HelpAppUpdateS {
     number,
     string,
     string,
-    MessageEntityT[],
+    VectorS<MessageEntityT>,
     DocumentT,
     string
   ];
@@ -15739,10 +15811,10 @@ export class HelpAppUpdateS {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[5];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[5] = val;
 
     return this;
@@ -15808,13 +15880,13 @@ export class HelpAppUpdateS {
     }
 
     {
-      let val = values[5] as MessageEntityT[];
+      let val = values[5] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -15869,19 +15941,19 @@ export class HelpAppUpdateS {
     }
 
     {
-      let val = values[5] as MessageEntityT[];
+      let val = values[5] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[5] = val;
     }
@@ -18343,12 +18415,12 @@ AllStructs.set(UpdateChatParticipantDeleteS._id, UpdateChatParticipantDeleteS);
 export class UpdateDcOptionsS {
   static _id = 0x8e5e9873;
 
-  _values = ([[]] as unknown) as [DcOptionT[]];
+  _values = ([new VectorS<DcOptionT>()] as unknown) as [VectorS<DcOptionT>];
 
-  get_dc_options(): DcOptionT[] {
+  get_dc_options(): VectorS<DcOptionT> {
     return this._values[0];
   }
-  set_dc_options(val: DcOptionT[]): this {
+  set_dc_options(val: VectorS<DcOptionT>): this {
     this._values[0] = val;
 
     return this;
@@ -18360,13 +18432,13 @@ export class UpdateDcOptionsS {
     let values = this._values;
 
     {
-      let val = values[0] as DcOptionT[];
+      let val = values[0] as VectorS<DcOptionT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -18381,19 +18453,19 @@ export class UpdateDcOptionsS {
     let values = this._values;
 
     {
-      let val = values[0] as DcOptionT[];
+      let val = values[0] as VectorS<DcOptionT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DcOptionT = (new DcOptionT() as unknown) as DcOptionT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -18424,8 +18496,8 @@ export class InputMediaUploadedDocumentS {
     (new InputFileT() as unknown) as InputFileT,
     (new InputFileT() as unknown) as InputFileT,
     "",
-    [],
-    [],
+    new VectorS<DocumentAttributeT>(),
+    new VectorS<InputDocumentT>(),
     0
   ] as unknown) as [
     number,
@@ -18433,8 +18505,8 @@ export class InputMediaUploadedDocumentS {
     InputFileT,
     InputFileT,
     string,
-    DocumentAttributeT[],
-    InputDocumentT[],
+    VectorS<DocumentAttributeT>,
+    VectorS<InputDocumentT>,
     number
   ];
 
@@ -18495,19 +18567,19 @@ export class InputMediaUploadedDocumentS {
     return this;
   }
 
-  get_attributes(): DocumentAttributeT[] {
+  get_attributes(): VectorS<DocumentAttributeT> {
     return this._values[5];
   }
-  set_attributes(val: DocumentAttributeT[]): this {
+  set_attributes(val: VectorS<DocumentAttributeT>): this {
     this._values[5] = val;
 
     return this;
   }
 
-  get_stickers(): InputDocumentT[] {
+  get_stickers(): VectorS<InputDocumentT> {
     return this._values[6];
   }
-  set_stickers(val: InputDocumentT[]): this {
+  set_stickers(val: VectorS<InputDocumentT>): this {
     this._values[6] = val;
 
     this.set_flags(this.get_flags() | (1 << 0));
@@ -18564,25 +18636,25 @@ export class InputMediaUploadedDocumentS {
     }
 
     {
-      let val = values[5] as DocumentAttributeT[];
+      let val = values[5] as VectorS<DocumentAttributeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     if (this.has_stickers()) {
-      let val = values[6] as InputDocumentT[];
+      let val = values[6] as VectorS<InputDocumentT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -18636,37 +18708,37 @@ export class InputMediaUploadedDocumentS {
     }
 
     {
-      let val = values[5] as DocumentAttributeT[];
+      let val = values[5] as VectorS<DocumentAttributeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentAttributeT = (new DocumentAttributeT() as unknown) as DocumentAttributeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[5] = val;
     }
 
     if (this.has_stickers()) {
-      let val = values[6] as InputDocumentT[];
+      let val = values[6] as VectorS<InputDocumentT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputDocumentT = (new InputDocumentT() as unknown) as InputDocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
@@ -19206,9 +19278,9 @@ export class DocumentS {
     0,
     "",
     0,
-    [],
+    new VectorS<PhotoSizeT>(),
     0,
-    []
+    new VectorS<DocumentAttributeT>()
   ] as unknown) as [
     number,
     ProtoLong,
@@ -19217,9 +19289,9 @@ export class DocumentS {
     number,
     string,
     number,
-    PhotoSizeT[],
+    VectorS<PhotoSizeT>,
     number,
-    DocumentAttributeT[]
+    VectorS<DocumentAttributeT>
   ];
 
   get_flags(): number {
@@ -19285,10 +19357,10 @@ export class DocumentS {
     return this;
   }
 
-  get_thumbs(): PhotoSizeT[] {
+  get_thumbs(): VectorS<PhotoSizeT> {
     return this._values[7];
   }
-  set_thumbs(val: PhotoSizeT[]): this {
+  set_thumbs(val: VectorS<PhotoSizeT>): this {
     this._values[7] = val;
 
     this.set_flags(this.get_flags() | (1 << 0));
@@ -19309,10 +19381,10 @@ export class DocumentS {
     return this;
   }
 
-  get_attributes(): DocumentAttributeT[] {
+  get_attributes(): VectorS<DocumentAttributeT> {
     return this._values[9];
   }
-  set_attributes(val: DocumentAttributeT[]): this {
+  set_attributes(val: VectorS<DocumentAttributeT>): this {
     this._values[9] = val;
 
     return this;
@@ -19359,13 +19431,13 @@ export class DocumentS {
     }
 
     if (this.has_thumbs()) {
-      let val = values[7] as PhotoSizeT[];
+      let val = values[7] as VectorS<PhotoSizeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -19376,13 +19448,13 @@ export class DocumentS {
     }
 
     {
-      let val = values[9] as DocumentAttributeT[];
+      let val = values[9] as VectorS<DocumentAttributeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -19439,19 +19511,19 @@ export class DocumentS {
     }
 
     if (this.has_thumbs()) {
-      let val = values[7] as PhotoSizeT[];
+      let val = values[7] as VectorS<PhotoSizeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PhotoSizeT = (new PhotoSizeT() as unknown) as PhotoSizeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[7] = val;
     }
@@ -19463,19 +19535,19 @@ export class DocumentS {
     }
 
     {
-      let val = values[9] as DocumentAttributeT[];
+      let val = values[9] as VectorS<DocumentAttributeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentAttributeT = (new DocumentAttributeT() as unknown) as DocumentAttributeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[9] = val;
     }
@@ -20202,44 +20274,49 @@ AllStructs.set(
 export class ContactsFoundS {
   static _id = 0xb3134d9d;
 
-  _values = ([[], [], [], []] as unknown) as [
-    PeerT[],
-    PeerT[],
-    ChatT[],
-    UserT[]
+  _values = ([
+    new VectorS<PeerT>(),
+    new VectorS<PeerT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [
+    VectorS<PeerT>,
+    VectorS<PeerT>,
+    VectorS<ChatT>,
+    VectorS<UserT>
   ];
 
-  get_my_results(): PeerT[] {
+  get_my_results(): VectorS<PeerT> {
     return this._values[0];
   }
-  set_my_results(val: PeerT[]): this {
+  set_my_results(val: VectorS<PeerT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_results(): PeerT[] {
+  get_results(): VectorS<PeerT> {
     return this._values[1];
   }
-  set_results(val: PeerT[]): this {
+  set_results(val: VectorS<PeerT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[2];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[2] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[3];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[3] = val;
 
     return this;
@@ -20251,49 +20328,49 @@ export class ContactsFoundS {
     let values = this._values;
 
     {
-      let val = values[0] as PeerT[];
+      let val = values[0] as VectorS<PeerT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as PeerT[];
+      let val = values[1] as VectorS<PeerT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[3] as UserT[];
+      let val = values[3] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -20308,73 +20385,73 @@ export class ContactsFoundS {
     let values = this._values;
 
     {
-      let val = values[0] as PeerT[];
+      let val = values[0] as VectorS<PeerT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PeerT = (new PeerT() as unknown) as PeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as PeerT[];
+      let val = values[1] as VectorS<PeerT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PeerT = (new PeerT() as unknown) as PeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
 
     {
-      let val = values[3] as UserT[];
+      let val = values[3] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -20405,7 +20482,7 @@ export class UpdateServiceNotificationS {
     "",
     "",
     (new MessageMediaT() as unknown) as MessageMediaT,
-    []
+    new VectorS<MessageEntityT>()
   ] as unknown) as [
     number,
     true,
@@ -20413,7 +20490,7 @@ export class UpdateServiceNotificationS {
     string,
     string,
     MessageMediaT,
-    MessageEntityT[]
+    VectorS<MessageEntityT>
   ];
 
   get_flags(): number {
@@ -20482,10 +20559,10 @@ export class UpdateServiceNotificationS {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[6];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[6] = val;
 
     return this;
@@ -20526,13 +20603,13 @@ export class UpdateServiceNotificationS {
     }
 
     {
-      let val = values[6] as MessageEntityT[];
+      let val = values[6] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -20585,19 +20662,19 @@ export class UpdateServiceNotificationS {
     }
 
     {
-      let val = values[6] as MessageEntityT[];
+      let val = values[6] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
@@ -20696,8 +20773,8 @@ export class UpdatePrivacyS {
 
   _values = ([
     (new PrivacyKeyT() as unknown) as PrivacyKeyT,
-    []
-  ] as unknown) as [PrivacyKeyT, PrivacyRuleT[]];
+    new VectorS<PrivacyRuleT>()
+  ] as unknown) as [PrivacyKeyT, VectorS<PrivacyRuleT>];
 
   get_key(): PrivacyKeyT {
     return this._values[0];
@@ -20708,10 +20785,10 @@ export class UpdatePrivacyS {
     return this;
   }
 
-  get_rules(): PrivacyRuleT[] {
+  get_rules(): VectorS<PrivacyRuleT> {
     return this._values[1];
   }
-  set_rules(val: PrivacyRuleT[]): this {
+  set_rules(val: VectorS<PrivacyRuleT>): this {
     this._values[1] = val;
 
     return this;
@@ -20728,13 +20805,13 @@ export class UpdatePrivacyS {
     }
 
     {
-      let val = values[1] as PrivacyRuleT[];
+      let val = values[1] as VectorS<PrivacyRuleT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -20757,19 +20834,19 @@ export class UpdatePrivacyS {
     }
 
     {
-      let val = values[1] as PrivacyRuleT[];
+      let val = values[1] as VectorS<PrivacyRuleT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PrivacyRuleT = (new PrivacyRuleT() as unknown) as PrivacyRuleT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -20897,12 +20974,12 @@ AllStructs.set(InputPrivacyValueAllowAllS._id, InputPrivacyValueAllowAllS);
 export class InputPrivacyValueAllowUsersS {
   static _id = 0x131cc67f;
 
-  _values = ([[]] as unknown) as [InputUserT[]];
+  _values = ([new VectorS<InputUserT>()] as unknown) as [VectorS<InputUserT>];
 
-  get_users(): InputUserT[] {
+  get_users(): VectorS<InputUserT> {
     return this._values[0];
   }
-  set_users(val: InputUserT[]): this {
+  set_users(val: VectorS<InputUserT>): this {
     this._values[0] = val;
 
     return this;
@@ -20914,13 +20991,13 @@ export class InputPrivacyValueAllowUsersS {
     let values = this._values;
 
     {
-      let val = values[0] as InputUserT[];
+      let val = values[0] as VectorS<InputUserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -20935,19 +21012,19 @@ export class InputPrivacyValueAllowUsersS {
     let values = this._values;
 
     {
-      let val = values[0] as InputUserT[];
+      let val = values[0] as VectorS<InputUserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -21023,12 +21100,12 @@ AllStructs.set(
 export class InputPrivacyValueDisallowUsersS {
   static _id = 0x90110467;
 
-  _values = ([[]] as unknown) as [InputUserT[]];
+  _values = ([new VectorS<InputUserT>()] as unknown) as [VectorS<InputUserT>];
 
-  get_users(): InputUserT[] {
+  get_users(): VectorS<InputUserT> {
     return this._values[0];
   }
-  set_users(val: InputUserT[]): this {
+  set_users(val: VectorS<InputUserT>): this {
     this._values[0] = val;
 
     return this;
@@ -21040,13 +21117,13 @@ export class InputPrivacyValueDisallowUsersS {
     let values = this._values;
 
     {
-      let val = values[0] as InputUserT[];
+      let val = values[0] as VectorS<InputUserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -21061,19 +21138,19 @@ export class InputPrivacyValueDisallowUsersS {
     let values = this._values;
 
     {
-      let val = values[0] as InputUserT[];
+      let val = values[0] as VectorS<InputUserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -21146,12 +21223,12 @@ AllStructs.set(PrivacyValueAllowAllS._id, PrivacyValueAllowAllS);
 export class PrivacyValueAllowUsersS {
   static _id = 0x4d5bbe0c;
 
-  _values = ([[]] as unknown) as [number[]];
+  _values = ([new VectorS<number>()] as unknown) as [VectorS<number>];
 
-  get_users(): number[] {
+  get_users(): VectorS<number> {
     return this._values[0];
   }
-  set_users(val: number[]): this {
+  set_users(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -21163,13 +21240,13 @@ export class PrivacyValueAllowUsersS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -21184,17 +21261,17 @@ export class PrivacyValueAllowUsersS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -21267,12 +21344,12 @@ AllStructs.set(PrivacyValueDisallowAllS._id, PrivacyValueDisallowAllS);
 export class PrivacyValueDisallowUsersS {
   static _id = 0xc7f49b7;
 
-  _values = ([[]] as unknown) as [number[]];
+  _values = ([new VectorS<number>()] as unknown) as [VectorS<number>];
 
-  get_users(): number[] {
+  get_users(): VectorS<number> {
     return this._values[0];
   }
-  set_users(val: number[]): this {
+  set_users(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -21284,13 +21361,13 @@ export class PrivacyValueDisallowUsersS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -21305,17 +21382,17 @@ export class PrivacyValueDisallowUsersS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -21335,34 +21412,34 @@ AllStructs.set(PrivacyValueDisallowUsersS._id, PrivacyValueDisallowUsersS);
 export class AccountPrivacyRulesS {
   static _id = 0x50a04e45;
 
-  _values = ([[], [], []] as unknown) as [
-    PrivacyRuleT[],
-    ChatT[],
-    UserT[]
-  ];
+  _values = ([
+    new VectorS<PrivacyRuleT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [VectorS<PrivacyRuleT>, VectorS<ChatT>, VectorS<UserT>];
 
-  get_rules(): PrivacyRuleT[] {
+  get_rules(): VectorS<PrivacyRuleT> {
     return this._values[0];
   }
-  set_rules(val: PrivacyRuleT[]): this {
+  set_rules(val: VectorS<PrivacyRuleT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[1];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[2];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[2] = val;
 
     return this;
@@ -21374,37 +21451,37 @@ export class AccountPrivacyRulesS {
     let values = this._values;
 
     {
-      let val = values[0] as PrivacyRuleT[];
+      let val = values[0] as VectorS<PrivacyRuleT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -21419,55 +21496,55 @@ export class AccountPrivacyRulesS {
     let values = this._values;
 
     {
-      let val = values[0] as PrivacyRuleT[];
+      let val = values[0] as VectorS<PrivacyRuleT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PrivacyRuleT = (new PrivacyRuleT() as unknown) as PrivacyRuleT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -22285,7 +22362,10 @@ AllStructs.set(MessagesStickersNotModifiedS._id, MessagesStickersNotModifiedS);
 export class MessagesStickersS {
   static _id = 0xe4599bbd;
 
-  _values = ([0, []] as unknown) as [number, DocumentT[]];
+  _values = ([0, new VectorS<DocumentT>()] as unknown) as [
+    number,
+    VectorS<DocumentT>
+  ];
 
   get_hash(): number {
     return this._values[0];
@@ -22296,10 +22376,10 @@ export class MessagesStickersS {
     return this;
   }
 
-  get_stickers(): DocumentT[] {
+  get_stickers(): VectorS<DocumentT> {
     return this._values[1];
   }
-  set_stickers(val: DocumentT[]): this {
+  set_stickers(val: VectorS<DocumentT>): this {
     this._values[1] = val;
 
     return this;
@@ -22316,13 +22396,13 @@ export class MessagesStickersS {
     }
 
     {
-      let val = values[1] as DocumentT[];
+      let val = values[1] as VectorS<DocumentT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -22343,19 +22423,19 @@ export class MessagesStickersS {
     }
 
     {
-      let val = values[1] as DocumentT[];
+      let val = values[1] as VectorS<DocumentT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -22374,7 +22454,10 @@ AllStructs.set(MessagesStickersS._id, MessagesStickersS);
 export class StickerPackS {
   static _id = 0x12b299d4;
 
-  _values = (["", []] as unknown) as [string, ProtoLong[]];
+  _values = (["", new VectorS<ProtoLong>()] as unknown) as [
+    string,
+    VectorS<ProtoLong>
+  ];
 
   get_emoticon(): string {
     return this._values[0];
@@ -22385,10 +22468,10 @@ export class StickerPackS {
     return this;
   }
 
-  get_documents(): ProtoLong[] {
+  get_documents(): VectorS<ProtoLong> {
     return this._values[1];
   }
-  set_documents(val: ProtoLong[]): this {
+  set_documents(val: VectorS<ProtoLong>): this {
     this._values[1] = val;
 
     return this;
@@ -22405,13 +22488,13 @@ export class StickerPackS {
     }
 
     {
-      let val = values[1] as ProtoLong[];
+      let val = values[1] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -22432,17 +22515,17 @@ export class StickerPackS {
     }
 
     {
-      let val = values[1] as ProtoLong[];
+      let val = values[1] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -22490,7 +22573,10 @@ AllStructs.set(
 export class MessagesAllStickersS {
   static _id = 0xedfd405f;
 
-  _values = ([0, []] as unknown) as [number, StickerSetT[]];
+  _values = ([0, new VectorS<StickerSetT>()] as unknown) as [
+    number,
+    VectorS<StickerSetT>
+  ];
 
   get_hash(): number {
     return this._values[0];
@@ -22501,10 +22587,10 @@ export class MessagesAllStickersS {
     return this;
   }
 
-  get_sets(): StickerSetT[] {
+  get_sets(): VectorS<StickerSetT> {
     return this._values[1];
   }
-  set_sets(val: StickerSetT[]): this {
+  set_sets(val: VectorS<StickerSetT>): this {
     this._values[1] = val;
 
     return this;
@@ -22521,13 +22607,13 @@ export class MessagesAllStickersS {
     }
 
     {
-      let val = values[1] as StickerSetT[];
+      let val = values[1] as VectorS<StickerSetT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -22548,19 +22634,19 @@ export class MessagesAllStickersS {
     }
 
     {
-      let val = values[1] as StickerSetT[];
+      let val = values[1] as VectorS<StickerSetT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: StickerSetT = (new StickerSetT() as unknown) as StickerSetT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -23210,7 +23296,7 @@ export class WebPageS {
     0,
     "",
     (new DocumentT() as unknown) as DocumentT,
-    [],
+    new VectorS<DocumentT>(),
     (new PageT() as unknown) as PageT
   ] as unknown) as [
     number,
@@ -23230,7 +23316,7 @@ export class WebPageS {
     number,
     string,
     DocumentT,
-    DocumentT[],
+    VectorS<DocumentT>,
     PageT
   ];
 
@@ -23459,10 +23545,10 @@ export class WebPageS {
     return !!(this.get_flags() & (1 << 9));
   }
 
-  get_documents(): DocumentT[] {
+  get_documents(): VectorS<DocumentT> {
     return this._values[17];
   }
-  set_documents(val: DocumentT[]): this {
+  set_documents(val: VectorS<DocumentT>): this {
     this._values[17] = val;
 
     this.set_flags(this.get_flags() | (1 << 11));
@@ -23580,13 +23666,13 @@ export class WebPageS {
     }
 
     if (this.has_documents()) {
-      let val = values[17] as DocumentT[];
+      let val = values[17] as VectorS<DocumentT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -23712,19 +23798,19 @@ export class WebPageS {
     }
 
     if (this.has_documents()) {
-      let val = values[17] as DocumentT[];
+      let val = values[17] as VectorS<DocumentT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[17] = val;
     }
@@ -24216,12 +24302,14 @@ AllStructs.set(AuthorizationS._id, AuthorizationS);
 export class AccountAuthorizationsS {
   static _id = 0x1250abde;
 
-  _values = ([[]] as unknown) as [AuthorizationT[]];
+  _values = ([new VectorS<AuthorizationT>()] as unknown) as [
+    VectorS<AuthorizationT>
+  ];
 
-  get_authorizations(): AuthorizationT[] {
+  get_authorizations(): VectorS<AuthorizationT> {
     return this._values[0];
   }
-  set_authorizations(val: AuthorizationT[]): this {
+  set_authorizations(val: VectorS<AuthorizationT>): this {
     this._values[0] = val;
 
     return this;
@@ -24233,13 +24321,13 @@ export class AccountAuthorizationsS {
     let values = this._values;
 
     {
-      let val = values[0] as AuthorizationT[];
+      let val = values[0] as VectorS<AuthorizationT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -24254,19 +24342,19 @@ export class AccountAuthorizationsS {
     let values = this._values;
 
     {
-      let val = values[0] as AuthorizationT[];
+      let val = values[0] as VectorS<AuthorizationT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: AuthorizationT = (new AuthorizationT() as unknown) as AuthorizationT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -25543,7 +25631,7 @@ export class ChatInviteS {
     "",
     (new PhotoT() as unknown) as PhotoT,
     0,
-    []
+    new VectorS<UserT>()
   ] as unknown) as [
     number,
     true,
@@ -25553,7 +25641,7 @@ export class ChatInviteS {
     string,
     PhotoT,
     number,
-    UserT[]
+    VectorS<UserT>
   ];
 
   get_flags(): number {
@@ -25652,10 +25740,10 @@ export class ChatInviteS {
     return this;
   }
 
-  get_participants(): UserT[] {
+  get_participants(): VectorS<UserT> {
     return this._values[8];
   }
-  set_participants(val: UserT[]): this {
+  set_participants(val: VectorS<UserT>): this {
     this._values[8] = val;
 
     this.set_flags(this.get_flags() | (1 << 4));
@@ -25709,13 +25797,13 @@ export class ChatInviteS {
     }
 
     if (this.has_participants()) {
-      let val = values[8] as UserT[];
+      let val = values[8] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -25780,19 +25868,19 @@ export class ChatInviteS {
     }
 
     if (this.has_participants()) {
-      let val = values[8] as UserT[];
+      let val = values[8] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[8] = val;
     }
@@ -25864,12 +25952,16 @@ AllStructs.set(
 export class UpdateReadMessagesContentsS {
   static _id = 0x68c13933;
 
-  _values = ([[], 0, 0] as unknown) as [number[], number, number];
+  _values = ([new VectorS<number>(), 0, 0] as unknown) as [
+    VectorS<number>,
+    number,
+    number
+  ];
 
-  get_messages(): number[] {
+  get_messages(): VectorS<number> {
     return this._values[0];
   }
-  set_messages(val: number[]): this {
+  set_messages(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -25899,13 +25991,13 @@ export class UpdateReadMessagesContentsS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -25930,17 +26022,17 @@ export class UpdateReadMessagesContentsS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -26511,9 +26603,9 @@ export class MessagesStickerSetS {
 
   _values = ([
     (new StickerSetT() as unknown) as StickerSetT,
-    [],
-    []
-  ] as unknown) as [StickerSetT, StickerPackT[], DocumentT[]];
+    new VectorS<StickerPackT>(),
+    new VectorS<DocumentT>()
+  ] as unknown) as [StickerSetT, VectorS<StickerPackT>, VectorS<DocumentT>];
 
   get_set(): StickerSetT {
     return this._values[0];
@@ -26524,19 +26616,19 @@ export class MessagesStickerSetS {
     return this;
   }
 
-  get_packs(): StickerPackT[] {
+  get_packs(): VectorS<StickerPackT> {
     return this._values[1];
   }
-  set_packs(val: StickerPackT[]): this {
+  set_packs(val: VectorS<StickerPackT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_documents(): DocumentT[] {
+  get_documents(): VectorS<DocumentT> {
     return this._values[2];
   }
-  set_documents(val: DocumentT[]): this {
+  set_documents(val: VectorS<DocumentT>): this {
     this._values[2] = val;
 
     return this;
@@ -26553,25 +26645,25 @@ export class MessagesStickerSetS {
     }
 
     {
-      let val = values[1] as StickerPackT[];
+      let val = values[1] as VectorS<StickerPackT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as DocumentT[];
+      let val = values[2] as VectorS<DocumentT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -26594,37 +26686,37 @@ export class MessagesStickerSetS {
     }
 
     {
-      let val = values[1] as StickerPackT[];
+      let val = values[1] as VectorS<StickerPackT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: StickerPackT = (new StickerPackT() as unknown) as StickerPackT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as DocumentT[];
+      let val = values[2] as VectorS<DocumentT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -26691,7 +26783,7 @@ export class UserS {
     (new UserProfilePhotoT() as unknown) as UserProfilePhotoT,
     (new UserStatusT() as unknown) as UserStatusT,
     0,
-    [],
+    new VectorS<RestrictionReasonT>(),
     "",
     ""
   ] as unknown) as [
@@ -26718,7 +26810,7 @@ export class UserS {
     UserProfilePhotoT,
     UserStatusT,
     number,
-    RestrictionReasonT[],
+    VectorS<RestrictionReasonT>,
     string,
     string
   ];
@@ -27056,10 +27148,10 @@ export class UserS {
     return !!(this.get_flags() & (1 << 14));
   }
 
-  get_restriction_reason(): RestrictionReasonT[] {
+  get_restriction_reason(): VectorS<RestrictionReasonT> {
     return this._values[23];
   }
-  set_restriction_reason(val: RestrictionReasonT[]): this {
+  set_restriction_reason(val: VectorS<RestrictionReasonT>): this {
     this._values[23] = val;
 
     this.set_flags(this.get_flags() | (1 << 18));
@@ -27209,13 +27301,13 @@ export class UserS {
     }
 
     if (this.has_restriction_reason()) {
-      let val = values[23] as RestrictionReasonT[];
+      let val = values[23] as VectorS<RestrictionReasonT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -27382,19 +27474,19 @@ export class UserS {
     }
 
     if (this.has_restriction_reason()) {
-      let val = values[23] as RestrictionReasonT[];
+      let val = values[23] as VectorS<RestrictionReasonT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: RestrictionReasonT = (new RestrictionReasonT() as unknown) as RestrictionReasonT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[23] = val;
     }
@@ -27496,7 +27588,11 @@ AllStructs.set(BotCommandS._id, BotCommandS);
 export class BotInfoS {
   static _id = 0x98e81d3a;
 
-  _values = ([0, "", []] as unknown) as [number, string, BotCommandT[]];
+  _values = ([0, "", new VectorS<BotCommandT>()] as unknown) as [
+    number,
+    string,
+    VectorS<BotCommandT>
+  ];
 
   get_user_id(): number {
     return this._values[0];
@@ -27516,10 +27612,10 @@ export class BotInfoS {
     return this;
   }
 
-  get_commands(): BotCommandT[] {
+  get_commands(): VectorS<BotCommandT> {
     return this._values[2];
   }
-  set_commands(val: BotCommandT[]): this {
+  set_commands(val: VectorS<BotCommandT>): this {
     this._values[2] = val;
 
     return this;
@@ -27541,13 +27637,13 @@ export class BotInfoS {
     }
 
     {
-      let val = values[2] as BotCommandT[];
+      let val = values[2] as VectorS<BotCommandT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -27574,19 +27670,19 @@ export class BotInfoS {
     }
 
     {
-      let val = values[2] as BotCommandT[];
+      let val = values[2] as VectorS<BotCommandT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: BotCommandT = (new BotCommandT() as unknown) as BotCommandT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -27653,12 +27749,14 @@ AllStructs.set(KeyboardButtonS._id, KeyboardButtonS);
 export class KeyboardButtonRowS {
   static _id = 0x77608b83;
 
-  _values = ([[]] as unknown) as [KeyboardButtonT[]];
+  _values = ([new VectorS<KeyboardButtonT>()] as unknown) as [
+    VectorS<KeyboardButtonT>
+  ];
 
-  get_buttons(): KeyboardButtonT[] {
+  get_buttons(): VectorS<KeyboardButtonT> {
     return this._values[0];
   }
-  set_buttons(val: KeyboardButtonT[]): this {
+  set_buttons(val: VectorS<KeyboardButtonT>): this {
     this._values[0] = val;
 
     return this;
@@ -27670,13 +27768,13 @@ export class KeyboardButtonRowS {
     let values = this._values;
 
     {
-      let val = values[0] as KeyboardButtonT[];
+      let val = values[0] as VectorS<KeyboardButtonT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -27691,19 +27789,19 @@ export class KeyboardButtonRowS {
     let values = this._values;
 
     {
-      let val = values[0] as KeyboardButtonT[];
+      let val = values[0] as VectorS<KeyboardButtonT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: KeyboardButtonT = (new KeyboardButtonT() as unknown) as KeyboardButtonT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -27901,13 +27999,13 @@ AllStructs.set(ReplyKeyboardForceReplyS._id, ReplyKeyboardForceReplyS);
 export class ReplyKeyboardMarkupS {
   static _id = 0x3502758c;
 
-  _values = ([0, true, true, true, []] as unknown) as [
-    number,
+  _values = ([
+    0,
     true,
     true,
     true,
-    KeyboardButtonRowT[]
-  ];
+    new VectorS<KeyboardButtonRowT>()
+  ] as unknown) as [number, true, true, true, VectorS<KeyboardButtonRowT>];
 
   get_flags(): number {
     return this._values[0];
@@ -27963,10 +28061,10 @@ export class ReplyKeyboardMarkupS {
     return !!(this.get_flags() & (1 << 2));
   }
 
-  get_rows(): KeyboardButtonRowT[] {
+  get_rows(): VectorS<KeyboardButtonRowT> {
     return this._values[4];
   }
-  set_rows(val: KeyboardButtonRowT[]): this {
+  set_rows(val: VectorS<KeyboardButtonRowT>): this {
     this._values[4] = val;
 
     return this;
@@ -27995,13 +28093,13 @@ export class ReplyKeyboardMarkupS {
     }
 
     {
-      let val = values[4] as KeyboardButtonRowT[];
+      let val = values[4] as VectorS<KeyboardButtonRowT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -28040,19 +28138,19 @@ export class ReplyKeyboardMarkupS {
     }
 
     {
-      let val = values[4] as KeyboardButtonRowT[];
+      let val = values[4] as VectorS<KeyboardButtonRowT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: KeyboardButtonRowT = (new KeyboardButtonRowT() as unknown) as KeyboardButtonRowT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -29037,7 +29135,7 @@ export class UpdateShortSentMessageS {
     0,
     0,
     (new MessageMediaT() as unknown) as MessageMediaT,
-    []
+    new VectorS<MessageEntityT>()
   ] as unknown) as [
     number,
     true,
@@ -29046,7 +29144,7 @@ export class UpdateShortSentMessageS {
     number,
     number,
     MessageMediaT,
-    MessageEntityT[]
+    VectorS<MessageEntityT>
   ];
 
   get_flags(): number {
@@ -29124,10 +29222,10 @@ export class UpdateShortSentMessageS {
     return !!(this.get_flags() & (1 << 9));
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[7];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[7] = val;
 
     this.set_flags(this.get_flags() | (1 << 7));
@@ -29179,13 +29277,13 @@ export class UpdateShortSentMessageS {
     }
 
     if (this.has_entities()) {
-      let val = values[7] as MessageEntityT[];
+      let val = values[7] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -29244,19 +29342,19 @@ export class UpdateShortSentMessageS {
     }
 
     if (this.has_entities()) {
-      let val = values[7] as MessageEntityT[];
+      let val = values[7] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[7] = val;
     }
@@ -29534,7 +29632,7 @@ export class ChannelS {
     (new ChatPhotoT() as unknown) as ChatPhotoT,
     0,
     0,
-    [],
+    new VectorS<RestrictionReasonT>(),
     (new ChatAdminRightsT() as unknown) as ChatAdminRightsT,
     (new ChatBannedRightsT() as unknown) as ChatBannedRightsT,
     (new ChatBannedRightsT() as unknown) as ChatBannedRightsT,
@@ -29560,7 +29658,7 @@ export class ChannelS {
     ChatPhotoT,
     number,
     number,
-    RestrictionReasonT[],
+    VectorS<RestrictionReasonT>,
     ChatAdminRightsT,
     ChatBannedRightsT,
     ChatBannedRightsT,
@@ -29831,10 +29929,10 @@ export class ChannelS {
     return this;
   }
 
-  get_restriction_reason(): RestrictionReasonT[] {
+  get_restriction_reason(): VectorS<RestrictionReasonT> {
     return this._values[20];
   }
-  set_restriction_reason(val: RestrictionReasonT[]): this {
+  set_restriction_reason(val: VectorS<RestrictionReasonT>): this {
     this._values[20] = val;
 
     this.set_flags(this.get_flags() | (1 << 9));
@@ -30000,13 +30098,13 @@ export class ChannelS {
     }
 
     if (this.has_restriction_reason()) {
-      let val = values[20] as RestrictionReasonT[];
+      let val = values[20] as VectorS<RestrictionReasonT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -30163,19 +30261,19 @@ export class ChannelS {
     }
 
     if (this.has_restriction_reason()) {
-      let val = values[20] as RestrictionReasonT[];
+      let val = values[20] as VectorS<RestrictionReasonT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: RestrictionReasonT = (new RestrictionReasonT() as unknown) as RestrictionReasonT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[20] = val;
     }
@@ -30424,11 +30522,11 @@ AllStructs.set(ChannelForbiddenS._id, ChannelForbiddenS);
 export class ContactsResolvedPeerS {
   static _id = 0x7f077ad9;
 
-  _values = ([(new PeerT() as unknown) as PeerT, [], []] as unknown) as [
-    PeerT,
-    ChatT[],
-    UserT[]
-  ];
+  _values = ([
+    (new PeerT() as unknown) as PeerT,
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [PeerT, VectorS<ChatT>, VectorS<UserT>];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -30439,19 +30537,19 @@ export class ContactsResolvedPeerS {
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[1];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[2];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[2] = val;
 
     return this;
@@ -30468,25 +30566,25 @@ export class ContactsResolvedPeerS {
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -30509,37 +30607,37 @@ export class ContactsResolvedPeerS {
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -30611,7 +30709,7 @@ export class ChannelFullS {
     (new PhotoT() as unknown) as PhotoT,
     (new PeerNotifySettingsT() as unknown) as PeerNotifySettingsT,
     (new ExportedChatInviteT() as unknown) as ExportedChatInviteT,
-    [],
+    new VectorS<BotInfoT>(),
     0,
     0,
     0,
@@ -30645,7 +30743,7 @@ export class ChannelFullS {
     PhotoT,
     PeerNotifySettingsT,
     ExportedChatInviteT,
-    BotInfoT[],
+    VectorS<BotInfoT>,
     number,
     number,
     number,
@@ -30920,10 +31018,10 @@ export class ChannelFullS {
     return this;
   }
 
-  get_bot_info(): BotInfoT[] {
+  get_bot_info(): VectorS<BotInfoT> {
     return this._values[21];
   }
-  set_bot_info(val: BotInfoT[]): this {
+  set_bot_info(val: VectorS<BotInfoT>): this {
     this._values[21] = val;
 
     return this;
@@ -31192,13 +31290,13 @@ export class ChannelFullS {
     }
 
     {
-      let val = values[21] as BotInfoT[];
+      let val = values[21] as VectorS<BotInfoT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -31400,19 +31498,19 @@ export class ChannelFullS {
     }
 
     {
-      let val = values[21] as BotInfoT[];
+      let val = values[21] as VectorS<BotInfoT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: BotInfoT = (new BotInfoT() as unknown) as BotInfoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[21] = val;
     }
@@ -31576,14 +31674,22 @@ AllStructs.set(MessageRangeS._id, MessageRangeS);
 export class MessagesChannelMessagesS {
   static _id = 0x99262e37;
 
-  _values = ([0, true, 0, 0, [], [], []] as unknown) as [
+  _values = ([
+    0,
+    true,
+    0,
+    0,
+    new VectorS<MessageT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [
     number,
     true,
     number,
     number,
-    MessageT[],
-    ChatT[],
-    UserT[]
+    VectorS<MessageT>,
+    VectorS<ChatT>,
+    VectorS<UserT>
   ];
 
   get_flags(): number {
@@ -31628,28 +31734,28 @@ export class MessagesChannelMessagesS {
     return this;
   }
 
-  get_messages(): MessageT[] {
+  get_messages(): VectorS<MessageT> {
     return this._values[4];
   }
-  set_messages(val: MessageT[]): this {
+  set_messages(val: VectorS<MessageT>): this {
     this._values[4] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[5];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[5] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[6];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[6] = val;
 
     return this;
@@ -31680,37 +31786,37 @@ export class MessagesChannelMessagesS {
     }
 
     {
-      let val = values[4] as MessageT[];
+      let val = values[4] as VectorS<MessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[5] as ChatT[];
+      let val = values[5] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[6] as UserT[];
+      let val = values[6] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -31749,55 +31855,55 @@ export class MessagesChannelMessagesS {
     }
 
     {
-      let val = values[4] as MessageT[];
+      let val = values[4] as VectorS<MessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
 
     {
-      let val = values[5] as ChatT[];
+      let val = values[5] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[5] = val;
     }
 
     {
-      let val = values[6] as UserT[];
+      let val = values[6] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
@@ -32277,9 +32383,9 @@ AllStructs.set(UpdateReadChannelInboxS._id, UpdateReadChannelInboxS);
 export class UpdateDeleteChannelMessagesS {
   static _id = 0xc37521c9;
 
-  _values = ([0, [], 0, 0] as unknown) as [
+  _values = ([0, new VectorS<number>(), 0, 0] as unknown) as [
     number,
-    number[],
+    VectorS<number>,
     number,
     number
   ];
@@ -32293,10 +32399,10 @@ export class UpdateDeleteChannelMessagesS {
     return this;
   }
 
-  get_messages(): number[] {
+  get_messages(): VectorS<number> {
     return this._values[1];
   }
-  set_messages(val: number[]): this {
+  set_messages(val: VectorS<number>): this {
     this._values[1] = val;
 
     return this;
@@ -32331,13 +32437,13 @@ export class UpdateDeleteChannelMessagesS {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -32368,17 +32474,17 @@ export class UpdateDeleteChannelMessagesS {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -32636,17 +32742,17 @@ export class UpdatesChannelDifferenceTooLongS {
     true,
     0,
     (new DialogT() as unknown) as DialogT,
-    [],
-    [],
-    []
+    new VectorS<MessageT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
   ] as unknown) as [
     number,
     true,
     number,
     DialogT,
-    MessageT[],
-    ChatT[],
-    UserT[]
+    VectorS<MessageT>,
+    VectorS<ChatT>,
+    VectorS<UserT>
   ];
 
   get_flags(): number {
@@ -32697,28 +32803,28 @@ export class UpdatesChannelDifferenceTooLongS {
     return this;
   }
 
-  get_messages(): MessageT[] {
+  get_messages(): VectorS<MessageT> {
     return this._values[4];
   }
-  set_messages(val: MessageT[]): this {
+  set_messages(val: VectorS<MessageT>): this {
     this._values[4] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[5];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[5] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[6];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[6] = val;
 
     return this;
@@ -32749,37 +32855,37 @@ export class UpdatesChannelDifferenceTooLongS {
     }
 
     {
-      let val = values[4] as MessageT[];
+      let val = values[4] as VectorS<MessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[5] as ChatT[];
+      let val = values[5] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[6] as UserT[];
+      let val = values[6] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -32820,55 +32926,55 @@ export class UpdatesChannelDifferenceTooLongS {
     }
 
     {
-      let val = values[4] as MessageT[];
+      let val = values[4] as VectorS<MessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
 
     {
-      let val = values[5] as ChatT[];
+      let val = values[5] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[5] = val;
     }
 
     {
-      let val = values[6] as UserT[];
+      let val = values[6] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
@@ -32896,15 +33002,24 @@ AllStructs.set(
 export class UpdatesChannelDifferenceS {
   static _id = 0x2064674e;
 
-  _values = ([0, true, 0, 0, [], [], [], []] as unknown) as [
+  _values = ([
+    0,
+    true,
+    0,
+    0,
+    new VectorS<MessageT>(),
+    new VectorS<UpdateT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [
     number,
     true,
     number,
     number,
-    MessageT[],
-    UpdateT[],
-    ChatT[],
-    UserT[]
+    VectorS<MessageT>,
+    VectorS<UpdateT>,
+    VectorS<ChatT>,
+    VectorS<UserT>
   ];
 
   get_flags(): number {
@@ -32955,37 +33070,37 @@ export class UpdatesChannelDifferenceS {
     return !!(this.get_flags() & (1 << 1));
   }
 
-  get_new_messages(): MessageT[] {
+  get_new_messages(): VectorS<MessageT> {
     return this._values[4];
   }
-  set_new_messages(val: MessageT[]): this {
+  set_new_messages(val: VectorS<MessageT>): this {
     this._values[4] = val;
 
     return this;
   }
 
-  get_other_updates(): UpdateT[] {
+  get_other_updates(): VectorS<UpdateT> {
     return this._values[5];
   }
-  set_other_updates(val: UpdateT[]): this {
+  set_other_updates(val: VectorS<UpdateT>): this {
     this._values[5] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[6];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[6] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[7];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[7] = val;
 
     return this;
@@ -33016,49 +33131,49 @@ export class UpdatesChannelDifferenceS {
     }
 
     {
-      let val = values[4] as MessageT[];
+      let val = values[4] as VectorS<MessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[5] as UpdateT[];
+      let val = values[5] as VectorS<UpdateT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[6] as ChatT[];
+      let val = values[6] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[7] as UserT[];
+      let val = values[7] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -33097,73 +33212,73 @@ export class UpdatesChannelDifferenceS {
     }
 
     {
-      let val = values[4] as MessageT[];
+      let val = values[4] as VectorS<MessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
 
     {
-      let val = values[5] as UpdateT[];
+      let val = values[5] as VectorS<UpdateT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UpdateT = (new UpdateT() as unknown) as UpdateT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[5] = val;
     }
 
     {
-      let val = values[6] as ChatT[];
+      let val = values[6] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
 
     {
-      let val = values[7] as UserT[];
+      let val = values[7] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[7] = val;
     }
@@ -33209,7 +33324,11 @@ AllStructs.set(ChannelMessagesFilterEmptyS._id, ChannelMessagesFilterEmptyS);
 export class ChannelMessagesFilterS {
   static _id = 0xcd77d957;
 
-  _values = ([0, true, []] as unknown) as [number, true, MessageRangeT[]];
+  _values = ([0, true, new VectorS<MessageRangeT>()] as unknown) as [
+    number,
+    true,
+    VectorS<MessageRangeT>
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -33235,10 +33354,10 @@ export class ChannelMessagesFilterS {
     return !!(this.get_flags() & (1 << 1));
   }
 
-  get_ranges(): MessageRangeT[] {
+  get_ranges(): VectorS<MessageRangeT> {
     return this._values[2];
   }
-  set_ranges(val: MessageRangeT[]): this {
+  set_ranges(val: VectorS<MessageRangeT>): this {
     this._values[2] = val;
 
     return this;
@@ -33259,13 +33378,13 @@ export class ChannelMessagesFilterS {
     }
 
     {
-      let val = values[2] as MessageRangeT[];
+      let val = values[2] as VectorS<MessageRangeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -33292,19 +33411,19 @@ export class ChannelMessagesFilterS {
     }
 
     {
-      let val = values[2] as MessageRangeT[];
+      let val = values[2] as VectorS<MessageRangeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageRangeT = (new MessageRangeT() as unknown) as MessageRangeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -33683,11 +33802,11 @@ AllStructs.set(ChannelParticipantsKickedS._id, ChannelParticipantsKickedS);
 export class ChannelsChannelParticipantsS {
   static _id = 0xf56ee2a8;
 
-  _values = ([0, [], []] as unknown) as [
-    number,
-    ChannelParticipantT[],
-    UserT[]
-  ];
+  _values = ([
+    0,
+    new VectorS<ChannelParticipantT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [number, VectorS<ChannelParticipantT>, VectorS<UserT>];
 
   get_count(): number {
     return this._values[0];
@@ -33698,19 +33817,19 @@ export class ChannelsChannelParticipantsS {
     return this;
   }
 
-  get_participants(): ChannelParticipantT[] {
+  get_participants(): VectorS<ChannelParticipantT> {
     return this._values[1];
   }
-  set_participants(val: ChannelParticipantT[]): this {
+  set_participants(val: VectorS<ChannelParticipantT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[2];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[2] = val;
 
     return this;
@@ -33727,25 +33846,25 @@ export class ChannelsChannelParticipantsS {
     }
 
     {
-      let val = values[1] as ChannelParticipantT[];
+      let val = values[1] as VectorS<ChannelParticipantT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -33766,37 +33885,37 @@ export class ChannelsChannelParticipantsS {
     }
 
     {
-      let val = values[1] as ChannelParticipantT[];
+      let val = values[1] as VectorS<ChannelParticipantT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChannelParticipantT = (new ChannelParticipantT() as unknown) as ChannelParticipantT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -33817,8 +33936,8 @@ export class ChannelsChannelParticipantS {
 
   _values = ([
     (new ChannelParticipantT() as unknown) as ChannelParticipantT,
-    []
-  ] as unknown) as [ChannelParticipantT, UserT[]];
+    new VectorS<UserT>()
+  ] as unknown) as [ChannelParticipantT, VectorS<UserT>];
 
   get_participant(): ChannelParticipantT {
     return this._values[0];
@@ -33829,10 +33948,10 @@ export class ChannelsChannelParticipantS {
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[1];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[1] = val;
 
     return this;
@@ -33849,13 +33968,13 @@ export class ChannelsChannelParticipantS {
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -33878,19 +33997,19 @@ export class ChannelsChannelParticipantS {
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -34325,14 +34444,14 @@ export class HelpTermsOfServiceS {
     true,
     (new DataJsonT() as unknown) as DataJsonT,
     "",
-    [],
+    new VectorS<MessageEntityT>(),
     0
   ] as unknown) as [
     number,
     true,
     DataJsonT,
     string,
-    MessageEntityT[],
+    VectorS<MessageEntityT>,
     number
   ];
 
@@ -34378,10 +34497,10 @@ export class HelpTermsOfServiceS {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[4];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[4] = val;
 
     return this;
@@ -34427,13 +34546,13 @@ export class HelpTermsOfServiceS {
     }
 
     {
-      let val = values[4] as MessageEntityT[];
+      let val = values[4] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -34479,19 +34598,19 @@ export class HelpTermsOfServiceS {
     }
 
     {
-      let val = values[4] as MessageEntityT[];
+      let val = values[4] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -34570,7 +34689,11 @@ AllStructs.set(UpdateNewStickerSetS._id, UpdateNewStickerSetS);
 export class UpdateStickerSetsOrderS {
   static _id = 0xbb2d201;
 
-  _values = ([0, true, []] as unknown) as [number, true, ProtoLong[]];
+  _values = ([0, true, new VectorS<ProtoLong>()] as unknown) as [
+    number,
+    true,
+    VectorS<ProtoLong>
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -34596,10 +34719,10 @@ export class UpdateStickerSetsOrderS {
     return !!(this.get_flags() & (1 << 0));
   }
 
-  get_order(): ProtoLong[] {
+  get_order(): VectorS<ProtoLong> {
     return this._values[2];
   }
-  set_order(val: ProtoLong[]): this {
+  set_order(val: VectorS<ProtoLong>): this {
     this._values[2] = val;
 
     return this;
@@ -34620,13 +34743,13 @@ export class UpdateStickerSetsOrderS {
     }
 
     {
-      let val = values[2] as ProtoLong[];
+      let val = values[2] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -34653,17 +34776,17 @@ export class UpdateStickerSetsOrderS {
     }
 
     {
-      let val = values[2] as ProtoLong[];
+      let val = values[2] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -35038,7 +35161,10 @@ AllStructs.set(InputMediaGifExternalS._id, InputMediaGifExternalS);
 export class MessagesFoundGifsS {
   static _id = 0x450a1c0a;
 
-  _values = ([0, []] as unknown) as [number, FoundGifT[]];
+  _values = ([0, new VectorS<FoundGifT>()] as unknown) as [
+    number,
+    VectorS<FoundGifT>
+  ];
 
   get_next_offset(): number {
     return this._values[0];
@@ -35049,10 +35175,10 @@ export class MessagesFoundGifsS {
     return this;
   }
 
-  get_results(): FoundGifT[] {
+  get_results(): VectorS<FoundGifT> {
     return this._values[1];
   }
-  set_results(val: FoundGifT[]): this {
+  set_results(val: VectorS<FoundGifT>): this {
     this._values[1] = val;
 
     return this;
@@ -35069,13 +35195,13 @@ export class MessagesFoundGifsS {
     }
 
     {
-      let val = values[1] as FoundGifT[];
+      let val = values[1] as VectorS<FoundGifT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -35096,19 +35222,19 @@ export class MessagesFoundGifsS {
     }
 
     {
-      let val = values[1] as FoundGifT[];
+      let val = values[1] as VectorS<FoundGifT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: FoundGifT = (new FoundGifT() as unknown) as FoundGifT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -35156,7 +35282,10 @@ AllStructs.set(
 export class MessagesSavedGifsS {
   static _id = 0x2e0709a5;
 
-  _values = ([0, []] as unknown) as [number, DocumentT[]];
+  _values = ([0, new VectorS<DocumentT>()] as unknown) as [
+    number,
+    VectorS<DocumentT>
+  ];
 
   get_hash(): number {
     return this._values[0];
@@ -35167,10 +35296,10 @@ export class MessagesSavedGifsS {
     return this;
   }
 
-  get_gifs(): DocumentT[] {
+  get_gifs(): VectorS<DocumentT> {
     return this._values[1];
   }
-  set_gifs(val: DocumentT[]): this {
+  set_gifs(val: VectorS<DocumentT>): this {
     this._values[1] = val;
 
     return this;
@@ -35187,13 +35316,13 @@ export class MessagesSavedGifsS {
     }
 
     {
-      let val = values[1] as DocumentT[];
+      let val = values[1] as VectorS<DocumentT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -35214,19 +35343,19 @@ export class MessagesSavedGifsS {
     }
 
     {
-      let val = values[1] as DocumentT[];
+      let val = values[1] as VectorS<DocumentT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -35276,9 +35405,9 @@ export class InputBotInlineMessageMediaAutoS {
   _values = ([
     0,
     "",
-    [],
+    new VectorS<MessageEntityT>(),
     (new ReplyMarkupT() as unknown) as ReplyMarkupT
-  ] as unknown) as [number, string, MessageEntityT[], ReplyMarkupT];
+  ] as unknown) as [number, string, VectorS<MessageEntityT>, ReplyMarkupT];
 
   get_flags(): number {
     return this._values[0];
@@ -35298,10 +35427,10 @@ export class InputBotInlineMessageMediaAutoS {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[2];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[2] = val;
 
     this.set_flags(this.get_flags() | (1 << 1));
@@ -35344,13 +35473,13 @@ export class InputBotInlineMessageMediaAutoS {
     }
 
     if (this.has_entities()) {
-      let val = values[2] as MessageEntityT[];
+      let val = values[2] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -35382,19 +35511,19 @@ export class InputBotInlineMessageMediaAutoS {
     }
 
     if (this.has_entities()) {
-      let val = values[2] as MessageEntityT[];
+      let val = values[2] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -35431,9 +35560,15 @@ export class InputBotInlineMessageTextS {
     0,
     true,
     "",
-    [],
+    new VectorS<MessageEntityT>(),
     (new ReplyMarkupT() as unknown) as ReplyMarkupT
-  ] as unknown) as [number, true, string, MessageEntityT[], ReplyMarkupT];
+  ] as unknown) as [
+    number,
+    true,
+    string,
+    VectorS<MessageEntityT>,
+    ReplyMarkupT
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -35468,10 +35603,10 @@ export class InputBotInlineMessageTextS {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[3];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[3] = val;
 
     this.set_flags(this.get_flags() | (1 << 1));
@@ -35518,13 +35653,13 @@ export class InputBotInlineMessageTextS {
     }
 
     if (this.has_entities()) {
-      let val = values[3] as MessageEntityT[];
+      let val = values[3] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -35562,19 +35697,19 @@ export class InputBotInlineMessageTextS {
     }
 
     if (this.has_entities()) {
-      let val = values[3] as MessageEntityT[];
+      let val = values[3] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -35879,9 +36014,9 @@ export class BotInlineMessageMediaAutoS {
   _values = ([
     0,
     "",
-    [],
+    new VectorS<MessageEntityT>(),
     (new ReplyMarkupT() as unknown) as ReplyMarkupT
-  ] as unknown) as [number, string, MessageEntityT[], ReplyMarkupT];
+  ] as unknown) as [number, string, VectorS<MessageEntityT>, ReplyMarkupT];
 
   get_flags(): number {
     return this._values[0];
@@ -35901,10 +36036,10 @@ export class BotInlineMessageMediaAutoS {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[2];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[2] = val;
 
     this.set_flags(this.get_flags() | (1 << 1));
@@ -35947,13 +36082,13 @@ export class BotInlineMessageMediaAutoS {
     }
 
     if (this.has_entities()) {
-      let val = values[2] as MessageEntityT[];
+      let val = values[2] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -35985,19 +36120,19 @@ export class BotInlineMessageMediaAutoS {
     }
 
     if (this.has_entities()) {
-      let val = values[2] as MessageEntityT[];
+      let val = values[2] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -36031,9 +36166,15 @@ export class BotInlineMessageTextS {
     0,
     true,
     "",
-    [],
+    new VectorS<MessageEntityT>(),
     (new ReplyMarkupT() as unknown) as ReplyMarkupT
-  ] as unknown) as [number, true, string, MessageEntityT[], ReplyMarkupT];
+  ] as unknown) as [
+    number,
+    true,
+    string,
+    VectorS<MessageEntityT>,
+    ReplyMarkupT
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -36068,10 +36209,10 @@ export class BotInlineMessageTextS {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[3];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[3] = val;
 
     this.set_flags(this.get_flags() | (1 << 1));
@@ -36118,13 +36259,13 @@ export class BotInlineMessageTextS {
     }
 
     if (this.has_entities()) {
-      let val = values[3] as MessageEntityT[];
+      let val = values[3] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -36162,19 +36303,19 @@ export class BotInlineMessageTextS {
     }
 
     if (this.has_entities()) {
-      let val = values[3] as MessageEntityT[];
+      let val = values[3] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -36486,18 +36627,18 @@ export class MessagesBotResultsS {
     [0, 0],
     "",
     (new InlineBotSwitchPmT() as unknown) as InlineBotSwitchPmT,
-    [],
+    new VectorS<BotInlineResultT>(),
     0,
-    []
+    new VectorS<UserT>()
   ] as unknown) as [
     number,
     true,
     ProtoLong,
     string,
     InlineBotSwitchPmT,
-    BotInlineResultT[],
+    VectorS<BotInlineResultT>,
     number,
-    UserT[]
+    VectorS<UserT>
   ];
 
   get_flags(): number {
@@ -36563,10 +36704,10 @@ export class MessagesBotResultsS {
     return !!(this.get_flags() & (1 << 2));
   }
 
-  get_results(): BotInlineResultT[] {
+  get_results(): VectorS<BotInlineResultT> {
     return this._values[5];
   }
-  set_results(val: BotInlineResultT[]): this {
+  set_results(val: VectorS<BotInlineResultT>): this {
     this._values[5] = val;
 
     return this;
@@ -36581,10 +36722,10 @@ export class MessagesBotResultsS {
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[7];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[7] = val;
 
     return this;
@@ -36620,13 +36761,13 @@ export class MessagesBotResultsS {
     }
 
     {
-      let val = values[5] as BotInlineResultT[];
+      let val = values[5] as VectorS<BotInlineResultT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -36637,13 +36778,13 @@ export class MessagesBotResultsS {
     }
 
     {
-      let val = values[7] as UserT[];
+      let val = values[7] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -36690,19 +36831,19 @@ export class MessagesBotResultsS {
     }
 
     {
-      let val = values[5] as BotInlineResultT[];
+      let val = values[5] as VectorS<BotInlineResultT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: BotInlineResultT = (new BotInlineResultT() as unknown) as BotInlineResultT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[5] = val;
     }
@@ -36714,19 +36855,19 @@ export class MessagesBotResultsS {
     }
 
     {
-      let val = values[7] as UserT[];
+      let val = values[7] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[7] = val;
     }
@@ -38377,12 +38518,14 @@ AllStructs.set(KeyboardButtonSwitchInlineS._id, KeyboardButtonSwitchInlineS);
 export class ReplyInlineMarkupS {
   static _id = 0x48a30254;
 
-  _values = ([[]] as unknown) as [KeyboardButtonRowT[]];
+  _values = ([new VectorS<KeyboardButtonRowT>()] as unknown) as [
+    VectorS<KeyboardButtonRowT>
+  ];
 
-  get_rows(): KeyboardButtonRowT[] {
+  get_rows(): VectorS<KeyboardButtonRowT> {
     return this._values[0];
   }
-  set_rows(val: KeyboardButtonRowT[]): this {
+  set_rows(val: VectorS<KeyboardButtonRowT>): this {
     this._values[0] = val;
 
     return this;
@@ -38394,13 +38537,13 @@ export class ReplyInlineMarkupS {
     let values = this._values;
 
     {
-      let val = values[0] as KeyboardButtonRowT[];
+      let val = values[0] as VectorS<KeyboardButtonRowT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -38415,19 +38558,19 @@ export class ReplyInlineMarkupS {
     let values = this._values;
 
     {
-      let val = values[0] as KeyboardButtonRowT[];
+      let val = values[0] as VectorS<KeyboardButtonRowT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: KeyboardButtonRowT = (new KeyboardButtonRowT() as unknown) as KeyboardButtonRowT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -41056,50 +41199,50 @@ export class MessagesPeerDialogsS {
   static _id = 0x3371c354;
 
   _values = ([
-    [],
-    [],
-    [],
-    [],
+    new VectorS<DialogT>(),
+    new VectorS<MessageT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>(),
     (new UpdatesStateT() as unknown) as UpdatesStateT
   ] as unknown) as [
-    DialogT[],
-    MessageT[],
-    ChatT[],
-    UserT[],
+    VectorS<DialogT>,
+    VectorS<MessageT>,
+    VectorS<ChatT>,
+    VectorS<UserT>,
     UpdatesStateT
   ];
 
-  get_dialogs(): DialogT[] {
+  get_dialogs(): VectorS<DialogT> {
     return this._values[0];
   }
-  set_dialogs(val: DialogT[]): this {
+  set_dialogs(val: VectorS<DialogT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_messages(): MessageT[] {
+  get_messages(): VectorS<MessageT> {
     return this._values[1];
   }
-  set_messages(val: MessageT[]): this {
+  set_messages(val: VectorS<MessageT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[2];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[2] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[3];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[3] = val;
 
     return this;
@@ -41120,49 +41263,49 @@ export class MessagesPeerDialogsS {
     let values = this._values;
 
     {
-      let val = values[0] as DialogT[];
+      let val = values[0] as VectorS<DialogT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as MessageT[];
+      let val = values[1] as VectorS<MessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[3] as UserT[];
+      let val = values[3] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -41182,73 +41325,73 @@ export class MessagesPeerDialogsS {
     let values = this._values;
 
     {
-      let val = values[0] as DialogT[];
+      let val = values[0] as VectorS<DialogT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DialogT = (new DialogT() as unknown) as DialogT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as MessageT[];
+      let val = values[1] as VectorS<MessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageT = (new MessageT() as unknown) as MessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
 
     {
-      let val = values[3] as UserT[];
+      let val = values[3] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -41487,8 +41630,8 @@ export class TopPeerCategoryPeersS {
   _values = ([
     (new TopPeerCategoryT() as unknown) as TopPeerCategoryT,
     0,
-    []
-  ] as unknown) as [TopPeerCategoryT, number, TopPeerT[]];
+    new VectorS<TopPeerT>()
+  ] as unknown) as [TopPeerCategoryT, number, VectorS<TopPeerT>];
 
   get_category(): TopPeerCategoryT {
     return this._values[0];
@@ -41508,10 +41651,10 @@ export class TopPeerCategoryPeersS {
     return this;
   }
 
-  get_peers(): TopPeerT[] {
+  get_peers(): VectorS<TopPeerT> {
     return this._values[2];
   }
-  set_peers(val: TopPeerT[]): this {
+  set_peers(val: VectorS<TopPeerT>): this {
     this._values[2] = val;
 
     return this;
@@ -41533,13 +41676,13 @@ export class TopPeerCategoryPeersS {
     }
 
     {
-      let val = values[2] as TopPeerT[];
+      let val = values[2] as VectorS<TopPeerT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -41568,19 +41711,19 @@ export class TopPeerCategoryPeersS {
     }
 
     {
-      let val = values[2] as TopPeerT[];
+      let val = values[2] as VectorS<TopPeerT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: TopPeerT = (new TopPeerT() as unknown) as TopPeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -41626,34 +41769,38 @@ AllStructs.set(ContactsTopPeersNotModifiedS._id, ContactsTopPeersNotModifiedS);
 export class ContactsTopPeersS {
   static _id = 0x70b772a8;
 
-  _values = ([[], [], []] as unknown) as [
-    TopPeerCategoryPeersT[],
-    ChatT[],
-    UserT[]
+  _values = ([
+    new VectorS<TopPeerCategoryPeersT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [
+    VectorS<TopPeerCategoryPeersT>,
+    VectorS<ChatT>,
+    VectorS<UserT>
   ];
 
-  get_categories(): TopPeerCategoryPeersT[] {
+  get_categories(): VectorS<TopPeerCategoryPeersT> {
     return this._values[0];
   }
-  set_categories(val: TopPeerCategoryPeersT[]): this {
+  set_categories(val: VectorS<TopPeerCategoryPeersT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[1];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[2];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[2] = val;
 
     return this;
@@ -41665,37 +41812,37 @@ export class ContactsTopPeersS {
     let values = this._values;
 
     {
-      let val = values[0] as TopPeerCategoryPeersT[];
+      let val = values[0] as VectorS<TopPeerCategoryPeersT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -41710,55 +41857,55 @@ export class ContactsTopPeersS {
     let values = this._values;
 
     {
-      let val = values[0] as TopPeerCategoryPeersT[];
+      let val = values[0] as VectorS<TopPeerCategoryPeersT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: TopPeerCategoryPeersT = (new TopPeerCategoryPeersT() as unknown) as TopPeerCategoryPeersT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -42224,12 +42371,12 @@ AllStructs.set(DraftMessageEmptyS._id, DraftMessageEmptyS);
 export class DraftMessageS {
   static _id = 0xfd8e711f;
 
-  _values = ([0, true, 0, "", [], 0] as unknown) as [
+  _values = ([0, true, 0, "", new VectorS<MessageEntityT>(), 0] as unknown) as [
     number,
     true,
     number,
     string,
-    MessageEntityT[],
+    VectorS<MessageEntityT>,
     number
   ];
 
@@ -42281,10 +42428,10 @@ export class DraftMessageS {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[4];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[4] = val;
 
     this.set_flags(this.get_flags() | (1 << 3));
@@ -42330,13 +42477,13 @@ export class DraftMessageS {
     }
 
     if (this.has_entities()) {
-      let val = values[4] as MessageEntityT[];
+      let val = values[4] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -42380,19 +42527,19 @@ export class DraftMessageS {
     }
 
     if (this.has_entities()) {
-      let val = values[4] as MessageEntityT[];
+      let val = values[4] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -42474,11 +42621,11 @@ AllStructs.set(
 export class MessagesFeaturedStickersS {
   static _id = 0xf89d88e5;
 
-  _values = ([0, [], []] as unknown) as [
-    number,
-    StickerSetCoveredT[],
-    ProtoLong[]
-  ];
+  _values = ([
+    0,
+    new VectorS<StickerSetCoveredT>(),
+    new VectorS<ProtoLong>()
+  ] as unknown) as [number, VectorS<StickerSetCoveredT>, VectorS<ProtoLong>];
 
   get_hash(): number {
     return this._values[0];
@@ -42489,19 +42636,19 @@ export class MessagesFeaturedStickersS {
     return this;
   }
 
-  get_sets(): StickerSetCoveredT[] {
+  get_sets(): VectorS<StickerSetCoveredT> {
     return this._values[1];
   }
-  set_sets(val: StickerSetCoveredT[]): this {
+  set_sets(val: VectorS<StickerSetCoveredT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_unread(): ProtoLong[] {
+  get_unread(): VectorS<ProtoLong> {
     return this._values[2];
   }
-  set_unread(val: ProtoLong[]): this {
+  set_unread(val: VectorS<ProtoLong>): this {
     this._values[2] = val;
 
     return this;
@@ -42518,25 +42665,25 @@ export class MessagesFeaturedStickersS {
     }
 
     {
-      let val = values[1] as StickerSetCoveredT[];
+      let val = values[1] as VectorS<StickerSetCoveredT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as ProtoLong[];
+      let val = values[2] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -42557,35 +42704,35 @@ export class MessagesFeaturedStickersS {
     }
 
     {
-      let val = values[1] as StickerSetCoveredT[];
+      let val = values[1] as VectorS<StickerSetCoveredT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: StickerSetCoveredT = (new StickerSetCoveredT() as unknown) as StickerSetCoveredT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as ProtoLong[];
+      let val = values[2] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -42661,11 +42808,16 @@ AllStructs.set(
 export class MessagesRecentStickersS {
   static _id = 0x22f3afb3;
 
-  _values = ([0, [], [], []] as unknown) as [
+  _values = ([
+    0,
+    new VectorS<StickerPackT>(),
+    new VectorS<DocumentT>(),
+    new VectorS<number>()
+  ] as unknown) as [
     number,
-    StickerPackT[],
-    DocumentT[],
-    number[]
+    VectorS<StickerPackT>,
+    VectorS<DocumentT>,
+    VectorS<number>
   ];
 
   get_hash(): number {
@@ -42677,28 +42829,28 @@ export class MessagesRecentStickersS {
     return this;
   }
 
-  get_packs(): StickerPackT[] {
+  get_packs(): VectorS<StickerPackT> {
     return this._values[1];
   }
-  set_packs(val: StickerPackT[]): this {
+  set_packs(val: VectorS<StickerPackT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_stickers(): DocumentT[] {
+  get_stickers(): VectorS<DocumentT> {
     return this._values[2];
   }
-  set_stickers(val: DocumentT[]): this {
+  set_stickers(val: VectorS<DocumentT>): this {
     this._values[2] = val;
 
     return this;
   }
 
-  get_dates(): number[] {
+  get_dates(): VectorS<number> {
     return this._values[3];
   }
-  set_dates(val: number[]): this {
+  set_dates(val: VectorS<number>): this {
     this._values[3] = val;
 
     return this;
@@ -42715,37 +42867,37 @@ export class MessagesRecentStickersS {
     }
 
     {
-      let val = values[1] as StickerPackT[];
+      let val = values[1] as VectorS<StickerPackT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as DocumentT[];
+      let val = values[2] as VectorS<DocumentT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[3] as number[];
+      let val = values[3] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -42766,53 +42918,53 @@ export class MessagesRecentStickersS {
     }
 
     {
-      let val = values[1] as StickerPackT[];
+      let val = values[1] as VectorS<StickerPackT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: StickerPackT = (new StickerPackT() as unknown) as StickerPackT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as DocumentT[];
+      let val = values[2] as VectorS<DocumentT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
 
     {
-      let val = values[3] as number[];
+      let val = values[3] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -42857,7 +43009,10 @@ AllStructs.set(UpdateRecentStickersS._id, UpdateRecentStickersS);
 export class MessagesArchivedStickersS {
   static _id = 0x4fcba9c8;
 
-  _values = ([0, []] as unknown) as [number, StickerSetCoveredT[]];
+  _values = ([0, new VectorS<StickerSetCoveredT>()] as unknown) as [
+    number,
+    VectorS<StickerSetCoveredT>
+  ];
 
   get_count(): number {
     return this._values[0];
@@ -42868,10 +43023,10 @@ export class MessagesArchivedStickersS {
     return this;
   }
 
-  get_sets(): StickerSetCoveredT[] {
+  get_sets(): VectorS<StickerSetCoveredT> {
     return this._values[1];
   }
-  set_sets(val: StickerSetCoveredT[]): this {
+  set_sets(val: VectorS<StickerSetCoveredT>): this {
     this._values[1] = val;
 
     return this;
@@ -42888,13 +43043,13 @@ export class MessagesArchivedStickersS {
     }
 
     {
-      let val = values[1] as StickerSetCoveredT[];
+      let val = values[1] as VectorS<StickerSetCoveredT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -42915,19 +43070,19 @@ export class MessagesArchivedStickersS {
     }
 
     {
-      let val = values[1] as StickerSetCoveredT[];
+      let val = values[1] as VectorS<StickerSetCoveredT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: StickerSetCoveredT = (new StickerSetCoveredT() as unknown) as StickerSetCoveredT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -42975,12 +43130,14 @@ AllStructs.set(
 export class MessagesStickerSetInstallResultArchiveS {
   static _id = 0x35e410a8;
 
-  _values = ([[]] as unknown) as [StickerSetCoveredT[]];
+  _values = ([new VectorS<StickerSetCoveredT>()] as unknown) as [
+    VectorS<StickerSetCoveredT>
+  ];
 
-  get_sets(): StickerSetCoveredT[] {
+  get_sets(): VectorS<StickerSetCoveredT> {
     return this._values[0];
   }
-  set_sets(val: StickerSetCoveredT[]): this {
+  set_sets(val: VectorS<StickerSetCoveredT>): this {
     this._values[0] = val;
 
     return this;
@@ -42992,13 +43149,13 @@ export class MessagesStickerSetInstallResultArchiveS {
     let values = this._values;
 
     {
-      let val = values[0] as StickerSetCoveredT[];
+      let val = values[0] as VectorS<StickerSetCoveredT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -43014,19 +43171,19 @@ export class MessagesStickerSetInstallResultArchiveS {
     let values = this._values;
 
     {
-      let val = values[0] as StickerSetCoveredT[];
+      let val = values[0] as VectorS<StickerSetCoveredT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: StickerSetCoveredT = (new StickerSetCoveredT() as unknown) as StickerSetCoveredT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -43373,8 +43530,8 @@ export class StickerSetMultiCoveredS {
 
   _values = ([
     (new StickerSetT() as unknown) as StickerSetT,
-    []
-  ] as unknown) as [StickerSetT, DocumentT[]];
+    new VectorS<DocumentT>()
+  ] as unknown) as [StickerSetT, VectorS<DocumentT>];
 
   get_set(): StickerSetT {
     return this._values[0];
@@ -43385,10 +43542,10 @@ export class StickerSetMultiCoveredS {
     return this;
   }
 
-  get_covers(): DocumentT[] {
+  get_covers(): VectorS<DocumentT> {
     return this._values[1];
   }
-  set_covers(val: DocumentT[]): this {
+  set_covers(val: VectorS<DocumentT>): this {
     this._values[1] = val;
 
     return this;
@@ -43405,13 +43562,13 @@ export class StickerSetMultiCoveredS {
     }
 
     {
-      let val = values[1] as DocumentT[];
+      let val = values[1] as VectorS<DocumentT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -43434,19 +43591,19 @@ export class StickerSetMultiCoveredS {
     }
 
     {
-      let val = values[1] as DocumentT[];
+      let val = values[1] as VectorS<DocumentT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -44573,21 +44730,24 @@ AllStructs.set(HighScoreS._id, HighScoreS);
 export class MessagesHighScoresS {
   static _id = 0x9a3bfd99;
 
-  _values = ([[], []] as unknown) as [HighScoreT[], UserT[]];
+  _values = ([new VectorS<HighScoreT>(), new VectorS<UserT>()] as unknown) as [
+    VectorS<HighScoreT>,
+    VectorS<UserT>
+  ];
 
-  get_scores(): HighScoreT[] {
+  get_scores(): VectorS<HighScoreT> {
     return this._values[0];
   }
-  set_scores(val: HighScoreT[]): this {
+  set_scores(val: VectorS<HighScoreT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[1];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[1] = val;
 
     return this;
@@ -44599,25 +44759,25 @@ export class MessagesHighScoresS {
     let values = this._values;
 
     {
-      let val = values[0] as HighScoreT[];
+      let val = values[0] as VectorS<HighScoreT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -44632,37 +44792,37 @@ export class MessagesHighScoresS {
     let values = this._values;
 
     {
-      let val = values[0] as HighScoreT[];
+      let val = values[0] as VectorS<HighScoreT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: HighScoreT = (new HighScoreT() as unknown) as HighScoreT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -44849,7 +45009,7 @@ AllStructs.set(UpdateChannelWebPageS._id, UpdateChannelWebPageS);
 export class MessagesChatsSliceS {
   static _id = 0x9cd81144;
 
-  _values = ([0, []] as unknown) as [number, ChatT[]];
+  _values = ([0, new VectorS<ChatT>()] as unknown) as [number, VectorS<ChatT>];
 
   get_count(): number {
     return this._values[0];
@@ -44860,10 +45020,10 @@ export class MessagesChatsSliceS {
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[1];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[1] = val;
 
     return this;
@@ -44880,13 +45040,13 @@ export class MessagesChatsSliceS {
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -44907,19 +45067,19 @@ export class MessagesChatsSliceS {
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -45449,12 +45609,12 @@ AllStructs.set(TextEmailS._id, TextEmailS);
 export class TextConcatS {
   static _id = 0x7e6260d7;
 
-  _values = ([[]] as unknown) as [RichTextT[]];
+  _values = ([new VectorS<RichTextT>()] as unknown) as [VectorS<RichTextT>];
 
-  get_texts(): RichTextT[] {
+  get_texts(): VectorS<RichTextT> {
     return this._values[0];
   }
-  set_texts(val: RichTextT[]): this {
+  set_texts(val: VectorS<RichTextT>): this {
     this._values[0] = val;
 
     return this;
@@ -45466,13 +45626,13 @@ export class TextConcatS {
     let values = this._values;
 
     {
-      let val = values[0] as RichTextT[];
+      let val = values[0] as VectorS<RichTextT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -45487,19 +45647,19 @@ export class TextConcatS {
     let values = this._values;
 
     {
-      let val = values[0] as RichTextT[];
+      let val = values[0] as VectorS<RichTextT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: RichTextT = (new RichTextT() as unknown) as RichTextT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -46086,12 +46246,14 @@ AllStructs.set(PageBlockAnchorS._id, PageBlockAnchorS);
 export class PageBlockListS {
   static _id = 0xe4e88011;
 
-  _values = ([[]] as unknown) as [PageListItemT[]];
+  _values = ([new VectorS<PageListItemT>()] as unknown) as [
+    VectorS<PageListItemT>
+  ];
 
-  get_items(): PageListItemT[] {
+  get_items(): VectorS<PageListItemT> {
     return this._values[0];
   }
-  set_items(val: PageListItemT[]): this {
+  set_items(val: VectorS<PageListItemT>): this {
     this._values[0] = val;
 
     return this;
@@ -46103,13 +46265,13 @@ export class PageBlockListS {
     let values = this._values;
 
     {
-      let val = values[0] as PageListItemT[];
+      let val = values[0] as VectorS<PageListItemT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -46124,19 +46286,19 @@ export class PageBlockListS {
     let values = this._values;
 
     {
-      let val = values[0] as PageListItemT[];
+      let val = values[0] as VectorS<PageListItemT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageListItemT = (new PageListItemT() as unknown) as PageListItemT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -46956,7 +47118,7 @@ export class PageBlockEmbedPostS {
     [0, 0],
     "",
     0,
-    [],
+    new VectorS<PageBlockT>(),
     (new PageCaptionT() as unknown) as PageCaptionT
   ] as unknown) as [
     string,
@@ -46964,7 +47126,7 @@ export class PageBlockEmbedPostS {
     ProtoLong,
     string,
     number,
-    PageBlockT[],
+    VectorS<PageBlockT>,
     PageCaptionT
   ];
 
@@ -47013,10 +47175,10 @@ export class PageBlockEmbedPostS {
     return this;
   }
 
-  get_blocks(): PageBlockT[] {
+  get_blocks(): VectorS<PageBlockT> {
     return this._values[5];
   }
-  set_blocks(val: PageBlockT[]): this {
+  set_blocks(val: VectorS<PageBlockT>): this {
     this._values[5] = val;
 
     return this;
@@ -47062,13 +47224,13 @@ export class PageBlockEmbedPostS {
     }
 
     {
-      let val = values[5] as PageBlockT[];
+      let val = values[5] as VectorS<PageBlockT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -47118,19 +47280,19 @@ export class PageBlockEmbedPostS {
     }
 
     {
-      let val = values[5] as PageBlockT[];
+      let val = values[5] as VectorS<PageBlockT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[5] = val;
     }
@@ -47158,14 +47320,14 @@ export class PageBlockCollageS {
   static _id = 0x65a0fa4d;
 
   _values = ([
-    [],
+    new VectorS<PageBlockT>(),
     (new PageCaptionT() as unknown) as PageCaptionT
-  ] as unknown) as [PageBlockT[], PageCaptionT];
+  ] as unknown) as [VectorS<PageBlockT>, PageCaptionT];
 
-  get_items(): PageBlockT[] {
+  get_items(): VectorS<PageBlockT> {
     return this._values[0];
   }
-  set_items(val: PageBlockT[]): this {
+  set_items(val: VectorS<PageBlockT>): this {
     this._values[0] = val;
 
     return this;
@@ -47186,13 +47348,13 @@ export class PageBlockCollageS {
     let values = this._values;
 
     {
-      let val = values[0] as PageBlockT[];
+      let val = values[0] as VectorS<PageBlockT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -47212,19 +47374,19 @@ export class PageBlockCollageS {
     let values = this._values;
 
     {
-      let val = values[0] as PageBlockT[];
+      let val = values[0] as VectorS<PageBlockT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -47252,14 +47414,14 @@ export class PageBlockSlideshowS {
   static _id = 0x31f9590;
 
   _values = ([
-    [],
+    new VectorS<PageBlockT>(),
     (new PageCaptionT() as unknown) as PageCaptionT
-  ] as unknown) as [PageBlockT[], PageCaptionT];
+  ] as unknown) as [VectorS<PageBlockT>, PageCaptionT];
 
-  get_items(): PageBlockT[] {
+  get_items(): VectorS<PageBlockT> {
     return this._values[0];
   }
-  set_items(val: PageBlockT[]): this {
+  set_items(val: VectorS<PageBlockT>): this {
     this._values[0] = val;
 
     return this;
@@ -47280,13 +47442,13 @@ export class PageBlockSlideshowS {
     let values = this._values;
 
     {
-      let val = values[0] as PageBlockT[];
+      let val = values[0] as VectorS<PageBlockT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -47306,19 +47468,19 @@ export class PageBlockSlideshowS {
     let values = this._values;
 
     {
-      let val = values[0] as PageBlockT[];
+      let val = values[0] as VectorS<PageBlockT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -47693,7 +47855,11 @@ AllStructs.set(UpdateDialogPinnedS._id, UpdateDialogPinnedS);
 export class UpdatePinnedDialogsS {
   static _id = 0xfa0f3ca2;
 
-  _values = ([0, 0, []] as unknown) as [number, number, DialogPeerT[]];
+  _values = ([0, 0, new VectorS<DialogPeerT>()] as unknown) as [
+    number,
+    number,
+    VectorS<DialogPeerT>
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -47719,10 +47885,10 @@ export class UpdatePinnedDialogsS {
     return !!(this.get_flags() & (1 << 1));
   }
 
-  get_order(): DialogPeerT[] {
+  get_order(): VectorS<DialogPeerT> {
     return this._values[2];
   }
-  set_order(val: DialogPeerT[]): this {
+  set_order(val: VectorS<DialogPeerT>): this {
     this._values[2] = val;
 
     this.set_flags(this.get_flags() | (1 << 0));
@@ -47750,13 +47916,13 @@ export class UpdatePinnedDialogsS {
     }
 
     if (this.has_order()) {
-      let val = values[2] as DialogPeerT[];
+      let val = values[2] as VectorS<DialogPeerT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -47783,19 +47949,19 @@ export class UpdatePinnedDialogsS {
     }
 
     if (this.has_order()) {
-      let val = values[2] as DialogPeerT[];
+      let val = values[2] as VectorS<DialogPeerT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DialogPeerT = (new DialogPeerT() as unknown) as DialogPeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -48103,7 +48269,7 @@ export class InvoiceS {
     true,
     true,
     "",
-    []
+    new VectorS<LabeledPriceT>()
   ] as unknown) as [
     number,
     true,
@@ -48115,7 +48281,7 @@ export class InvoiceS {
     true,
     true,
     string,
-    LabeledPriceT[]
+    VectorS<LabeledPriceT>
   ];
 
   get_flags(): number {
@@ -48256,10 +48422,10 @@ export class InvoiceS {
     return this;
   }
 
-  get_prices(): LabeledPriceT[] {
+  get_prices(): VectorS<LabeledPriceT> {
     return this._values[10];
   }
-  set_prices(val: LabeledPriceT[]): this {
+  set_prices(val: VectorS<LabeledPriceT>): this {
     this._values[10] = val;
 
     return this;
@@ -48313,13 +48479,13 @@ export class InvoiceS {
     }
 
     {
-      let val = values[10] as LabeledPriceT[];
+      let val = values[10] as VectorS<LabeledPriceT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -48394,19 +48560,19 @@ export class InvoiceS {
     }
 
     {
-      let val = values[10] as LabeledPriceT[];
+      let val = values[10] as VectorS<LabeledPriceT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: LabeledPriceT = (new LabeledPriceT() as unknown) as LabeledPriceT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[10] = val;
     }
@@ -49753,12 +49919,18 @@ AllStructs.set(PaymentSavedCredentialsCardS._id, PaymentSavedCredentialsCardS);
 export class WebDocumentS {
   static _id = 0x1c570ed1;
 
-  _values = (["", [0, 0], 0, "", []] as unknown) as [
+  _values = ([
+    "",
+    [0, 0],
+    0,
+    "",
+    new VectorS<DocumentAttributeT>()
+  ] as unknown) as [
     string,
     ProtoLong,
     number,
     string,
-    DocumentAttributeT[]
+    VectorS<DocumentAttributeT>
   ];
 
   get_url(): string {
@@ -49797,10 +49969,10 @@ export class WebDocumentS {
     return this;
   }
 
-  get_attributes(): DocumentAttributeT[] {
+  get_attributes(): VectorS<DocumentAttributeT> {
     return this._values[4];
   }
-  set_attributes(val: DocumentAttributeT[]): this {
+  set_attributes(val: VectorS<DocumentAttributeT>): this {
     this._values[4] = val;
 
     return this;
@@ -49832,13 +50004,13 @@ export class WebDocumentS {
     }
 
     {
-      let val = values[4] as DocumentAttributeT[];
+      let val = values[4] as VectorS<DocumentAttributeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -49877,19 +50049,19 @@ export class WebDocumentS {
     }
 
     {
-      let val = values[4] as DocumentAttributeT[];
+      let val = values[4] as VectorS<DocumentAttributeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentAttributeT = (new DocumentAttributeT() as unknown) as DocumentAttributeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -49910,11 +50082,11 @@ AllStructs.set(WebDocumentS._id, WebDocumentS);
 export class InputWebDocumentS {
   static _id = 0x9bed434d;
 
-  _values = (["", 0, "", []] as unknown) as [
+  _values = (["", 0, "", new VectorS<DocumentAttributeT>()] as unknown) as [
     string,
     number,
     string,
-    DocumentAttributeT[]
+    VectorS<DocumentAttributeT>
   ];
 
   get_url(): string {
@@ -49944,10 +50116,10 @@ export class InputWebDocumentS {
     return this;
   }
 
-  get_attributes(): DocumentAttributeT[] {
+  get_attributes(): VectorS<DocumentAttributeT> {
     return this._values[3];
   }
-  set_attributes(val: DocumentAttributeT[]): this {
+  set_attributes(val: VectorS<DocumentAttributeT>): this {
     this._values[3] = val;
 
     return this;
@@ -49974,13 +50146,13 @@ export class InputWebDocumentS {
     }
 
     {
-      let val = values[3] as DocumentAttributeT[];
+      let val = values[3] as VectorS<DocumentAttributeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -50013,19 +50185,19 @@ export class InputWebDocumentS {
     }
 
     {
-      let val = values[3] as DocumentAttributeT[];
+      let val = values[3] as VectorS<DocumentAttributeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentAttributeT = (new DocumentAttributeT() as unknown) as DocumentAttributeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -50277,7 +50449,7 @@ export class PaymentsPaymentFormS {
     (new DataJsonT() as unknown) as DataJsonT,
     (new PaymentRequestedInfoT() as unknown) as PaymentRequestedInfoT,
     (new PaymentSavedCredentialsT() as unknown) as PaymentSavedCredentialsT,
-    []
+    new VectorS<UserT>()
   ] as unknown) as [
     number,
     true,
@@ -50290,7 +50462,7 @@ export class PaymentsPaymentFormS {
     DataJsonT,
     PaymentRequestedInfoT,
     PaymentSavedCredentialsT,
-    UserT[]
+    VectorS<UserT>
   ];
 
   get_flags(): number {
@@ -50428,10 +50600,10 @@ export class PaymentsPaymentFormS {
     return !!(this.get_flags() & (1 << 1));
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[11];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[11] = val;
 
     return this;
@@ -50496,13 +50668,13 @@ export class PaymentsPaymentFormS {
     }
 
     {
-      let val = values[11] as UserT[];
+      let val = values[11] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -50591,19 +50763,19 @@ export class PaymentsPaymentFormS {
     }
 
     {
-      let val = values[11] as UserT[];
+      let val = values[11] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[11] = val;
     }
@@ -50623,10 +50795,10 @@ AllStructs.set(PaymentsPaymentFormS._id, PaymentsPaymentFormS);
 export class PaymentsValidatedRequestedInfoS {
   static _id = 0xd1451883;
 
-  _values = ([0, "", []] as unknown) as [
+  _values = ([0, "", new VectorS<ShippingOptionT>()] as unknown) as [
     number,
     string,
-    ShippingOptionT[]
+    VectorS<ShippingOptionT>
   ];
 
   get_flags(): number {
@@ -50653,10 +50825,10 @@ export class PaymentsValidatedRequestedInfoS {
     return !!(this.get_flags() & (1 << 0));
   }
 
-  get_shipping_options(): ShippingOptionT[] {
+  get_shipping_options(): VectorS<ShippingOptionT> {
     return this._values[2];
   }
-  set_shipping_options(val: ShippingOptionT[]): this {
+  set_shipping_options(val: VectorS<ShippingOptionT>): this {
     this._values[2] = val;
 
     this.set_flags(this.get_flags() | (1 << 1));
@@ -50684,13 +50856,13 @@ export class PaymentsValidatedRequestedInfoS {
     }
 
     if (this.has_shipping_options()) {
-      let val = values[2] as ShippingOptionT[];
+      let val = values[2] as VectorS<ShippingOptionT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -50717,19 +50889,19 @@ export class PaymentsValidatedRequestedInfoS {
     }
 
     if (this.has_shipping_options()) {
-      let val = values[2] as ShippingOptionT[];
+      let val = values[2] as VectorS<ShippingOptionT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ShippingOptionT = (new ShippingOptionT() as unknown) as ShippingOptionT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -50824,7 +50996,7 @@ export class PaymentsPaymentReceiptS {
     "",
     [0, 0],
     "",
-    []
+    new VectorS<UserT>()
   ] as unknown) as [
     number,
     number,
@@ -50836,7 +51008,7 @@ export class PaymentsPaymentReceiptS {
     string,
     ProtoLong,
     string,
-    UserT[]
+    VectorS<UserT>
   ];
 
   get_flags(): number {
@@ -50941,10 +51113,10 @@ export class PaymentsPaymentReceiptS {
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[10];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[10] = val;
 
     return this;
@@ -51006,13 +51178,13 @@ export class PaymentsPaymentReceiptS {
     }
 
     {
-      let val = values[10] as UserT[];
+      let val = values[10] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -51093,19 +51265,19 @@ export class PaymentsPaymentReceiptS {
     }
 
     {
-      let val = values[10] as UserT[];
+      let val = values[10] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[10] = val;
     }
@@ -51478,7 +51650,11 @@ AllStructs.set(AccountTmpPasswordS._id, AccountTmpPasswordS);
 export class ShippingOptionS {
   static _id = 0xb6213cdf;
 
-  _values = (["", "", []] as unknown) as [string, string, LabeledPriceT[]];
+  _values = (["", "", new VectorS<LabeledPriceT>()] as unknown) as [
+    string,
+    string,
+    VectorS<LabeledPriceT>
+  ];
 
   get_id(): string {
     return this._values[0];
@@ -51498,10 +51674,10 @@ export class ShippingOptionS {
     return this;
   }
 
-  get_prices(): LabeledPriceT[] {
+  get_prices(): VectorS<LabeledPriceT> {
     return this._values[2];
   }
-  set_prices(val: LabeledPriceT[]): this {
+  set_prices(val: VectorS<LabeledPriceT>): this {
     this._values[2] = val;
 
     return this;
@@ -51523,13 +51699,13 @@ export class ShippingOptionS {
     }
 
     {
-      let val = values[2] as LabeledPriceT[];
+      let val = values[2] as VectorS<LabeledPriceT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -51556,19 +51732,19 @@ export class ShippingOptionS {
     }
 
     {
-      let val = values[2] as LabeledPriceT[];
+      let val = values[2] as VectorS<LabeledPriceT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: LabeledPriceT = (new LabeledPriceT() as unknown) as LabeledPriceT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -52992,7 +53168,7 @@ export class PhoneCallS {
     new Uint8Array(),
     [0, 0],
     (new PhoneCallProtocolT() as unknown) as PhoneCallProtocolT,
-    [],
+    new VectorS<PhoneConnectionT>(),
     0
   ] as unknown) as [
     number,
@@ -53005,7 +53181,7 @@ export class PhoneCallS {
     Uint8Array,
     ProtoLong,
     PhoneCallProtocolT,
-    PhoneConnectionT[],
+    VectorS<PhoneConnectionT>,
     number
   ];
 
@@ -53105,10 +53281,10 @@ export class PhoneCallS {
     return this;
   }
 
-  get_connections(): PhoneConnectionT[] {
+  get_connections(): VectorS<PhoneConnectionT> {
     return this._values[10];
   }
-  set_connections(val: PhoneConnectionT[]): this {
+  set_connections(val: VectorS<PhoneConnectionT>): this {
     this._values[10] = val;
 
     return this;
@@ -53178,13 +53354,13 @@ export class PhoneCallS {
     }
 
     {
-      let val = values[10] as PhoneConnectionT[];
+      let val = values[10] as VectorS<PhoneConnectionT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -53266,19 +53442,19 @@ export class PhoneCallS {
     }
 
     {
-      let val = values[10] as PhoneConnectionT[];
+      let val = values[10] as VectorS<PhoneConnectionT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PhoneConnectionT = (new PhoneConnectionT() as unknown) as PhoneConnectionT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[10] = val;
     }
@@ -53811,10 +53987,10 @@ AllStructs.set(PhoneCallProtocolS._id, PhoneCallProtocolS);
 export class PhonePhoneCallS {
   static _id = 0xec82e140;
 
-  _values = ([(new PhoneCallT() as unknown) as PhoneCallT, []] as unknown) as [
-    PhoneCallT,
-    UserT[]
-  ];
+  _values = ([
+    (new PhoneCallT() as unknown) as PhoneCallT,
+    new VectorS<UserT>()
+  ] as unknown) as [PhoneCallT, VectorS<UserT>];
 
   get_phone_call(): PhoneCallT {
     return this._values[0];
@@ -53825,10 +54001,10 @@ export class PhonePhoneCallS {
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[1];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[1] = val;
 
     return this;
@@ -53845,13 +54021,13 @@ export class PhonePhoneCallS {
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -53874,19 +54050,19 @@ export class PhonePhoneCallS {
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -54288,13 +54464,13 @@ export class UploadFileCdnRedirectS {
     new Uint8Array(),
     new Uint8Array(),
     new Uint8Array(),
-    []
+    new VectorS<FileHashT>()
   ] as unknown) as [
     number,
     Uint8Array,
     Uint8Array,
     Uint8Array,
-    FileHashT[]
+    VectorS<FileHashT>
   ];
 
   get_dc_id(): number {
@@ -54333,10 +54509,10 @@ export class UploadFileCdnRedirectS {
     return this;
   }
 
-  get_file_hashes(): FileHashT[] {
+  get_file_hashes(): VectorS<FileHashT> {
     return this._values[4];
   }
-  set_file_hashes(val: FileHashT[]): this {
+  set_file_hashes(val: VectorS<FileHashT>): this {
     this._values[4] = val;
 
     return this;
@@ -54368,13 +54544,13 @@ export class UploadFileCdnRedirectS {
     }
 
     {
-      let val = values[4] as FileHashT[];
+      let val = values[4] as VectorS<FileHashT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -54413,19 +54589,19 @@ export class UploadFileCdnRedirectS {
     }
 
     {
-      let val = values[4] as FileHashT[];
+      let val = values[4] as VectorS<FileHashT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: FileHashT = (new FileHashT() as unknown) as FileHashT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -54611,12 +54787,14 @@ AllStructs.set(CdnPublicKeyS._id, CdnPublicKeyS);
 export class CdnConfigS {
   static _id = 0x5725e40a;
 
-  _values = ([[]] as unknown) as [CdnPublicKeyT[]];
+  _values = ([new VectorS<CdnPublicKeyT>()] as unknown) as [
+    VectorS<CdnPublicKeyT>
+  ];
 
-  get_public_keys(): CdnPublicKeyT[] {
+  get_public_keys(): VectorS<CdnPublicKeyT> {
     return this._values[0];
   }
-  set_public_keys(val: CdnPublicKeyT[]): this {
+  set_public_keys(val: VectorS<CdnPublicKeyT>): this {
     this._values[0] = val;
 
     return this;
@@ -54628,13 +54806,13 @@ export class CdnConfigS {
     let values = this._values;
 
     {
-      let val = values[0] as CdnPublicKeyT[];
+      let val = values[0] as VectorS<CdnPublicKeyT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -54649,19 +54827,19 @@ export class CdnConfigS {
     let values = this._values;
 
     {
-      let val = values[0] as CdnPublicKeyT[];
+      let val = values[0] as VectorS<CdnPublicKeyT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: CdnPublicKeyT = (new CdnPublicKeyT() as unknown) as CdnPublicKeyT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -55087,11 +55265,11 @@ AllStructs.set(LangPackStringDeletedS._id, LangPackStringDeletedS);
 export class LangPackDifferenceS {
   static _id = 0xf385c1f6;
 
-  _values = (["", 0, 0, []] as unknown) as [
+  _values = (["", 0, 0, new VectorS<LangPackStringT>()] as unknown) as [
     string,
     number,
     number,
-    LangPackStringT[]
+    VectorS<LangPackStringT>
   ];
 
   get_lang_code(): string {
@@ -55121,10 +55299,10 @@ export class LangPackDifferenceS {
     return this;
   }
 
-  get_strings(): LangPackStringT[] {
+  get_strings(): VectorS<LangPackStringT> {
     return this._values[3];
   }
-  set_strings(val: LangPackStringT[]): this {
+  set_strings(val: VectorS<LangPackStringT>): this {
     this._values[3] = val;
 
     return this;
@@ -55151,13 +55329,13 @@ export class LangPackDifferenceS {
     }
 
     {
-      let val = values[3] as LangPackStringT[];
+      let val = values[3] as VectorS<LangPackStringT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -55190,19 +55368,19 @@ export class LangPackDifferenceS {
     }
 
     {
-      let val = values[3] as LangPackStringT[];
+      let val = values[3] as VectorS<LangPackStringT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: LangPackStringT = (new LangPackStringT() as unknown) as LangPackStringT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -57186,34 +57364,38 @@ AllStructs.set(ChannelAdminLogEventS._id, ChannelAdminLogEventS);
 export class ChannelsAdminLogResultsS {
   static _id = 0xed8af74d;
 
-  _values = ([[], [], []] as unknown) as [
-    ChannelAdminLogEventT[],
-    ChatT[],
-    UserT[]
+  _values = ([
+    new VectorS<ChannelAdminLogEventT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [
+    VectorS<ChannelAdminLogEventT>,
+    VectorS<ChatT>,
+    VectorS<UserT>
   ];
 
-  get_events(): ChannelAdminLogEventT[] {
+  get_events(): VectorS<ChannelAdminLogEventT> {
     return this._values[0];
   }
-  set_events(val: ChannelAdminLogEventT[]): this {
+  set_events(val: VectorS<ChannelAdminLogEventT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[1];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[2];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[2] = val;
 
     return this;
@@ -57225,37 +57407,37 @@ export class ChannelsAdminLogResultsS {
     let values = this._values;
 
     {
-      let val = values[0] as ChannelAdminLogEventT[];
+      let val = values[0] as VectorS<ChannelAdminLogEventT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -57270,55 +57452,55 @@ export class ChannelsAdminLogResultsS {
     let values = this._values;
 
     {
-      let val = values[0] as ChannelAdminLogEventT[];
+      let val = values[0] as VectorS<ChannelAdminLogEventT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChannelAdminLogEventT = (new ChannelAdminLogEventT() as unknown) as ChannelAdminLogEventT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -58012,11 +58194,11 @@ AllStructs.set(
 export class MessagesFavedStickersS {
   static _id = 0xf37f2f16;
 
-  _values = ([0, [], []] as unknown) as [
-    number,
-    StickerPackT[],
-    DocumentT[]
-  ];
+  _values = ([
+    0,
+    new VectorS<StickerPackT>(),
+    new VectorS<DocumentT>()
+  ] as unknown) as [number, VectorS<StickerPackT>, VectorS<DocumentT>];
 
   get_hash(): number {
     return this._values[0];
@@ -58027,19 +58209,19 @@ export class MessagesFavedStickersS {
     return this;
   }
 
-  get_packs(): StickerPackT[] {
+  get_packs(): VectorS<StickerPackT> {
     return this._values[1];
   }
-  set_packs(val: StickerPackT[]): this {
+  set_packs(val: VectorS<StickerPackT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_stickers(): DocumentT[] {
+  get_stickers(): VectorS<DocumentT> {
     return this._values[2];
   }
-  set_stickers(val: DocumentT[]): this {
+  set_stickers(val: VectorS<DocumentT>): this {
     this._values[2] = val;
 
     return this;
@@ -58056,25 +58238,25 @@ export class MessagesFavedStickersS {
     }
 
     {
-      let val = values[1] as StickerPackT[];
+      let val = values[1] as VectorS<StickerPackT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as DocumentT[];
+      let val = values[2] as VectorS<DocumentT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -58095,37 +58277,37 @@ export class MessagesFavedStickersS {
     }
 
     {
-      let val = values[1] as StickerPackT[];
+      let val = values[1] as VectorS<StickerPackT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: StickerPackT = (new StickerPackT() as unknown) as StickerPackT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as DocumentT[];
+      let val = values[2] as VectorS<DocumentT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -58170,7 +58352,10 @@ AllStructs.set(UpdateFavedStickersS._id, UpdateFavedStickersS);
 export class UpdateChannelReadMessagesContentsS {
   static _id = 0x89893b45;
 
-  _values = ([0, []] as unknown) as [number, number[]];
+  _values = ([0, new VectorS<number>()] as unknown) as [
+    number,
+    VectorS<number>
+  ];
 
   get_channel_id(): number {
     return this._values[0];
@@ -58181,10 +58366,10 @@ export class UpdateChannelReadMessagesContentsS {
     return this;
   }
 
-  get_messages(): number[] {
+  get_messages(): VectorS<number> {
     return this._values[1];
   }
-  set_messages(val: number[]): this {
+  set_messages(val: VectorS<number>): this {
     this._values[1] = val;
 
     return this;
@@ -58201,13 +58386,13 @@ export class UpdateChannelReadMessagesContentsS {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -58228,17 +58413,17 @@ export class UpdateChannelReadMessagesContentsS {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -59305,34 +59490,34 @@ AllStructs.set(RecentMeUrlStickerSetS._id, RecentMeUrlStickerSetS);
 export class HelpRecentMeUrlsS {
   static _id = 0xe0310d7;
 
-  _values = ([[], [], []] as unknown) as [
-    RecentMeUrlT[],
-    ChatT[],
-    UserT[]
-  ];
+  _values = ([
+    new VectorS<RecentMeUrlT>(),
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [VectorS<RecentMeUrlT>, VectorS<ChatT>, VectorS<UserT>];
 
-  get_urls(): RecentMeUrlT[] {
+  get_urls(): VectorS<RecentMeUrlT> {
     return this._values[0];
   }
-  set_urls(val: RecentMeUrlT[]): this {
+  set_urls(val: VectorS<RecentMeUrlT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[1];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[2];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[2] = val;
 
     return this;
@@ -59344,37 +59529,37 @@ export class HelpRecentMeUrlsS {
     let values = this._values;
 
     {
-      let val = values[0] as RecentMeUrlT[];
+      let val = values[0] as VectorS<RecentMeUrlT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -59389,55 +59574,55 @@ export class HelpRecentMeUrlsS {
     let values = this._values;
 
     {
-      let val = values[0] as RecentMeUrlT[];
+      let val = values[0] as VectorS<RecentMeUrlT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: RecentMeUrlT = (new RecentMeUrlT() as unknown) as RecentMeUrlT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as ChatT[];
+      let val = values[1] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as UserT[];
+      let val = values[2] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -59543,13 +59728,13 @@ export class InputSingleMediaS {
     (new InputMediaT() as unknown) as InputMediaT,
     [0, 0],
     "",
-    []
+    new VectorS<MessageEntityT>()
   ] as unknown) as [
     number,
     InputMediaT,
     ProtoLong,
     string,
-    MessageEntityT[]
+    VectorS<MessageEntityT>
   ];
 
   get_flags(): number {
@@ -59588,10 +59773,10 @@ export class InputSingleMediaS {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[4];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[4] = val;
 
     this.set_flags(this.get_flags() | (1 << 0));
@@ -59629,13 +59814,13 @@ export class InputSingleMediaS {
     }
 
     if (this.has_entities()) {
-      let val = values[4] as MessageEntityT[];
+      let val = values[4] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -59676,19 +59861,19 @@ export class InputSingleMediaS {
     }
 
     if (this.has_entities()) {
-      let val = values[4] as MessageEntityT[];
+      let val = values[4] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -59934,21 +60119,24 @@ AllStructs.set(WebAuthorizationS._id, WebAuthorizationS);
 export class AccountWebAuthorizationsS {
   static _id = 0xed56c9fc;
 
-  _values = ([[], []] as unknown) as [WebAuthorizationT[], UserT[]];
+  _values = ([
+    new VectorS<WebAuthorizationT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [VectorS<WebAuthorizationT>, VectorS<UserT>];
 
-  get_authorizations(): WebAuthorizationT[] {
+  get_authorizations(): VectorS<WebAuthorizationT> {
     return this._values[0];
   }
-  set_authorizations(val: WebAuthorizationT[]): this {
+  set_authorizations(val: VectorS<WebAuthorizationT>): this {
     this._values[0] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[1];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[1] = val;
 
     return this;
@@ -59960,25 +60148,25 @@ export class AccountWebAuthorizationsS {
     let values = this._values;
 
     {
-      let val = values[0] as WebAuthorizationT[];
+      let val = values[0] as VectorS<WebAuthorizationT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -59993,37 +60181,37 @@ export class AccountWebAuthorizationsS {
     let values = this._values;
 
     {
-      let val = values[0] as WebAuthorizationT[];
+      let val = values[0] as VectorS<WebAuthorizationT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: WebAuthorizationT = (new WebAuthorizationT() as unknown) as WebAuthorizationT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
 
     {
-      let val = values[1] as UserT[];
+      let val = values[1] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -60489,7 +60677,10 @@ AllStructs.set(
 export class MessagesFoundStickerSetsS {
   static _id = 0x5108d648;
 
-  _values = ([0, []] as unknown) as [number, StickerSetCoveredT[]];
+  _values = ([0, new VectorS<StickerSetCoveredT>()] as unknown) as [
+    number,
+    VectorS<StickerSetCoveredT>
+  ];
 
   get_hash(): number {
     return this._values[0];
@@ -60500,10 +60691,10 @@ export class MessagesFoundStickerSetsS {
     return this;
   }
 
-  get_sets(): StickerSetCoveredT[] {
+  get_sets(): VectorS<StickerSetCoveredT> {
     return this._values[1];
   }
-  set_sets(val: StickerSetCoveredT[]): this {
+  set_sets(val: VectorS<StickerSetCoveredT>): this {
     this._values[1] = val;
 
     return this;
@@ -60520,13 +60711,13 @@ export class MessagesFoundStickerSetsS {
     }
 
     {
-      let val = values[1] as StickerSetCoveredT[];
+      let val = values[1] as VectorS<StickerSetCoveredT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -60547,19 +60738,19 @@ export class MessagesFoundStickerSetsS {
     }
 
     {
-      let val = values[1] as StickerSetCoveredT[];
+      let val = values[1] as VectorS<StickerSetCoveredT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: StickerSetCoveredT = (new StickerSetCoveredT() as unknown) as StickerSetCoveredT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -60675,11 +60866,11 @@ AllStructs.set(FileHashS._id, FileHashS);
 export class WebDocumentNoProxyS {
   static _id = 0xf9c8bcc6;
 
-  _values = (["", 0, "", []] as unknown) as [
+  _values = (["", 0, "", new VectorS<DocumentAttributeT>()] as unknown) as [
     string,
     number,
     string,
-    DocumentAttributeT[]
+    VectorS<DocumentAttributeT>
   ];
 
   get_url(): string {
@@ -60709,10 +60900,10 @@ export class WebDocumentNoProxyS {
     return this;
   }
 
-  get_attributes(): DocumentAttributeT[] {
+  get_attributes(): VectorS<DocumentAttributeT> {
     return this._values[3];
   }
-  set_attributes(val: DocumentAttributeT[]): this {
+  set_attributes(val: VectorS<DocumentAttributeT>): this {
     this._values[3] = val;
 
     return this;
@@ -60739,13 +60930,13 @@ export class WebDocumentNoProxyS {
     }
 
     {
-      let val = values[3] as DocumentAttributeT[];
+      let val = values[3] as VectorS<DocumentAttributeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -60778,19 +60969,19 @@ export class WebDocumentNoProxyS {
     }
 
     {
-      let val = values[3] as DocumentAttributeT[];
+      let val = values[3] as VectorS<DocumentAttributeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentAttributeT = (new DocumentAttributeT() as unknown) as DocumentAttributeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -60930,12 +61121,12 @@ AllStructs.set(HelpProxyDataEmptyS._id, HelpProxyDataEmptyS);
 export class HelpProxyDataPromoS {
   static _id = 0x2bf7ee23;
 
-  _values = ([0, (new PeerT() as unknown) as PeerT, [], []] as unknown) as [
-    number,
-    PeerT,
-    ChatT[],
-    UserT[]
-  ];
+  _values = ([
+    0,
+    (new PeerT() as unknown) as PeerT,
+    new VectorS<ChatT>(),
+    new VectorS<UserT>()
+  ] as unknown) as [number, PeerT, VectorS<ChatT>, VectorS<UserT>];
 
   get_expires(): number {
     return this._values[0];
@@ -60955,19 +61146,19 @@ export class HelpProxyDataPromoS {
     return this;
   }
 
-  get_chats(): ChatT[] {
+  get_chats(): VectorS<ChatT> {
     return this._values[2];
   }
-  set_chats(val: ChatT[]): this {
+  set_chats(val: VectorS<ChatT>): this {
     this._values[2] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[3];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[3] = val;
 
     return this;
@@ -60989,25 +61180,25 @@ export class HelpProxyDataPromoS {
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[3] as UserT[];
+      let val = values[3] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -61036,37 +61227,37 @@ export class HelpProxyDataPromoS {
     }
 
     {
-      let val = values[2] as ChatT[];
+      let val = values[2] as VectorS<ChatT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ChatT = (new ChatT() as unknown) as ChatT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
 
     {
-      let val = values[3] as UserT[];
+      let val = values[3] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -62277,8 +62468,8 @@ export class SecureValueS {
     (new SecureFileT() as unknown) as SecureFileT,
     (new SecureFileT() as unknown) as SecureFileT,
     (new SecureFileT() as unknown) as SecureFileT,
-    [],
-    [],
+    new VectorS<SecureFileT>(),
+    new VectorS<SecureFileT>(),
     (new SecurePlainDataT() as unknown) as SecurePlainDataT,
     new Uint8Array()
   ] as unknown) as [
@@ -62288,8 +62479,8 @@ export class SecureValueS {
     SecureFileT,
     SecureFileT,
     SecureFileT,
-    SecureFileT[],
-    SecureFileT[],
+    VectorS<SecureFileT>,
+    VectorS<SecureFileT>,
     SecurePlainDataT,
     Uint8Array
   ];
@@ -62372,10 +62563,10 @@ export class SecureValueS {
     return !!(this.get_flags() & (1 << 3));
   }
 
-  get_translation(): SecureFileT[] {
+  get_translation(): VectorS<SecureFileT> {
     return this._values[6];
   }
-  set_translation(val: SecureFileT[]): this {
+  set_translation(val: VectorS<SecureFileT>): this {
     this._values[6] = val;
 
     this.set_flags(this.get_flags() | (1 << 6));
@@ -62387,10 +62578,10 @@ export class SecureValueS {
     return !!(this.get_flags() & (1 << 6));
   }
 
-  get_files(): SecureFileT[] {
+  get_files(): VectorS<SecureFileT> {
     return this._values[7];
   }
-  set_files(val: SecureFileT[]): this {
+  set_files(val: VectorS<SecureFileT>): this {
     this._values[7] = val;
 
     this.set_flags(this.get_flags() | (1 << 4));
@@ -62462,25 +62653,25 @@ export class SecureValueS {
     }
 
     if (this.has_translation()) {
-      let val = values[6] as SecureFileT[];
+      let val = values[6] as VectorS<SecureFileT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     if (this.has_files()) {
-      let val = values[7] as SecureFileT[];
+      let val = values[7] as VectorS<SecureFileT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -62551,37 +62742,37 @@ export class SecureValueS {
     }
 
     if (this.has_translation()) {
-      let val = values[6] as SecureFileT[];
+      let val = values[6] as VectorS<SecureFileT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureFileT = (new SecureFileT() as unknown) as SecureFileT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
 
     if (this.has_files()) {
-      let val = values[7] as SecureFileT[];
+      let val = values[7] as VectorS<SecureFileT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureFileT = (new SecureFileT() as unknown) as SecureFileT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[7] = val;
     }
@@ -62628,8 +62819,8 @@ export class InputSecureValueS {
     (new InputSecureFileT() as unknown) as InputSecureFileT,
     (new InputSecureFileT() as unknown) as InputSecureFileT,
     (new InputSecureFileT() as unknown) as InputSecureFileT,
-    [],
-    [],
+    new VectorS<InputSecureFileT>(),
+    new VectorS<InputSecureFileT>(),
     (new SecurePlainDataT() as unknown) as SecurePlainDataT
   ] as unknown) as [
     number,
@@ -62638,8 +62829,8 @@ export class InputSecureValueS {
     InputSecureFileT,
     InputSecureFileT,
     InputSecureFileT,
-    InputSecureFileT[],
-    InputSecureFileT[],
+    VectorS<InputSecureFileT>,
+    VectorS<InputSecureFileT>,
     SecurePlainDataT
   ];
 
@@ -62721,10 +62912,10 @@ export class InputSecureValueS {
     return !!(this.get_flags() & (1 << 3));
   }
 
-  get_translation(): InputSecureFileT[] {
+  get_translation(): VectorS<InputSecureFileT> {
     return this._values[6];
   }
-  set_translation(val: InputSecureFileT[]): this {
+  set_translation(val: VectorS<InputSecureFileT>): this {
     this._values[6] = val;
 
     this.set_flags(this.get_flags() | (1 << 6));
@@ -62736,10 +62927,10 @@ export class InputSecureValueS {
     return !!(this.get_flags() & (1 << 6));
   }
 
-  get_files(): InputSecureFileT[] {
+  get_files(): VectorS<InputSecureFileT> {
     return this._values[7];
   }
-  set_files(val: InputSecureFileT[]): this {
+  set_files(val: VectorS<InputSecureFileT>): this {
     this._values[7] = val;
 
     this.set_flags(this.get_flags() | (1 << 4));
@@ -62802,25 +62993,25 @@ export class InputSecureValueS {
     }
 
     if (this.has_translation()) {
-      let val = values[6] as InputSecureFileT[];
+      let val = values[6] as VectorS<InputSecureFileT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     if (this.has_files()) {
-      let val = values[7] as InputSecureFileT[];
+      let val = values[7] as VectorS<InputSecureFileT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -62886,37 +63077,37 @@ export class InputSecureValueS {
     }
 
     if (this.has_translation()) {
-      let val = values[6] as InputSecureFileT[];
+      let val = values[6] as VectorS<InputSecureFileT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputSecureFileT = (new InputSecureFileT() as unknown) as InputSecureFileT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
 
     if (this.has_files()) {
-      let val = values[7] as InputSecureFileT[];
+      let val = values[7] as VectorS<InputSecureFileT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputSecureFileT = (new InputSecureFileT() as unknown) as InputSecureFileT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[7] = val;
     }
@@ -63528,9 +63719,9 @@ export class SecureValueErrorFilesS {
 
   _values = ([
     (new SecureValueTypeT() as unknown) as SecureValueTypeT,
-    [],
+    new VectorS<Uint8Array>(),
     ""
-  ] as unknown) as [SecureValueTypeT, Uint8Array[], string];
+  ] as unknown) as [SecureValueTypeT, VectorS<Uint8Array>, string];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -63541,10 +63732,10 @@ export class SecureValueErrorFilesS {
     return this;
   }
 
-  get_file_hash(): Uint8Array[] {
+  get_file_hash(): VectorS<Uint8Array> {
     return this._values[1];
   }
-  set_file_hash(val: Uint8Array[]): this {
+  set_file_hash(val: VectorS<Uint8Array>): this {
     this._values[1] = val;
 
     return this;
@@ -63570,13 +63761,13 @@ export class SecureValueErrorFilesS {
     }
 
     {
-      let val = values[1] as Uint8Array[];
+      let val = values[1] as VectorS<Uint8Array>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeBytes(val);
       }
     }
@@ -63604,17 +63795,17 @@ export class SecureValueErrorFilesS {
     }
 
     {
-      let val = values[1] as Uint8Array[];
+      let val = values[1] as VectorS<Uint8Array>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: Uint8Array = new Uint8Array();
         val = buf.readBytes();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -63738,12 +63929,19 @@ AllStructs.set(SecureCredentialsEncryptedS._id, SecureCredentialsEncryptedS);
 export class AccountAuthorizationFormS {
   static _id = 0xad2e1cd8;
 
-  _values = ([0, [], [], [], [], ""] as unknown) as [
+  _values = ([
+    0,
+    new VectorS<SecureRequiredTypeT>(),
+    new VectorS<SecureValueT>(),
+    new VectorS<SecureValueErrorT>(),
+    new VectorS<UserT>(),
+    ""
+  ] as unknown) as [
     number,
-    SecureRequiredTypeT[],
-    SecureValueT[],
-    SecureValueErrorT[],
-    UserT[],
+    VectorS<SecureRequiredTypeT>,
+    VectorS<SecureValueT>,
+    VectorS<SecureValueErrorT>,
+    VectorS<UserT>,
     string
   ];
 
@@ -63756,37 +63954,37 @@ export class AccountAuthorizationFormS {
     return this;
   }
 
-  get_required_types(): SecureRequiredTypeT[] {
+  get_required_types(): VectorS<SecureRequiredTypeT> {
     return this._values[1];
   }
-  set_required_types(val: SecureRequiredTypeT[]): this {
+  set_required_types(val: VectorS<SecureRequiredTypeT>): this {
     this._values[1] = val;
 
     return this;
   }
 
-  get_values(): SecureValueT[] {
+  get_values(): VectorS<SecureValueT> {
     return this._values[2];
   }
-  set_values(val: SecureValueT[]): this {
+  set_values(val: VectorS<SecureValueT>): this {
     this._values[2] = val;
 
     return this;
   }
 
-  get_errors(): SecureValueErrorT[] {
+  get_errors(): VectorS<SecureValueErrorT> {
     return this._values[3];
   }
-  set_errors(val: SecureValueErrorT[]): this {
+  set_errors(val: VectorS<SecureValueErrorT>): this {
     this._values[3] = val;
 
     return this;
   }
 
-  get_users(): UserT[] {
+  get_users(): VectorS<UserT> {
     return this._values[4];
   }
-  set_users(val: UserT[]): this {
+  set_users(val: VectorS<UserT>): this {
     this._values[4] = val;
 
     return this;
@@ -63818,49 +64016,49 @@ export class AccountAuthorizationFormS {
     }
 
     {
-      let val = values[1] as SecureRequiredTypeT[];
+      let val = values[1] as VectorS<SecureRequiredTypeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[2] as SecureValueT[];
+      let val = values[2] as VectorS<SecureValueT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[3] as SecureValueErrorT[];
+      let val = values[3] as VectorS<SecureValueErrorT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[4] as UserT[];
+      let val = values[4] as VectorS<UserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -63886,73 +64084,73 @@ export class AccountAuthorizationFormS {
     }
 
     {
-      let val = values[1] as SecureRequiredTypeT[];
+      let val = values[1] as VectorS<SecureRequiredTypeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureRequiredTypeT = (new SecureRequiredTypeT() as unknown) as SecureRequiredTypeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
 
     {
-      let val = values[2] as SecureValueT[];
+      let val = values[2] as VectorS<SecureValueT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureValueT = (new SecureValueT() as unknown) as SecureValueT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
 
     {
-      let val = values[3] as SecureValueErrorT[];
+      let val = values[3] as VectorS<SecureValueErrorT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureValueErrorT = (new SecureValueErrorT() as unknown) as SecureValueErrorT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
 
     {
-      let val = values[4] as UserT[];
+      let val = values[4] as VectorS<UserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: UserT = (new UserT() as unknown) as UserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -64048,14 +64246,14 @@ export class MessageActionSecureValuesSentMeS {
   static _id = 0x1b287353;
 
   _values = ([
-    [],
+    new VectorS<SecureValueT>(),
     (new SecureCredentialsEncryptedT() as unknown) as SecureCredentialsEncryptedT
-  ] as unknown) as [SecureValueT[], SecureCredentialsEncryptedT];
+  ] as unknown) as [VectorS<SecureValueT>, SecureCredentialsEncryptedT];
 
-  get_values(): SecureValueT[] {
+  get_values(): VectorS<SecureValueT> {
     return this._values[0];
   }
-  set_values(val: SecureValueT[]): this {
+  set_values(val: VectorS<SecureValueT>): this {
     this._values[0] = val;
 
     return this;
@@ -64076,13 +64274,13 @@ export class MessageActionSecureValuesSentMeS {
     let values = this._values;
 
     {
-      let val = values[0] as SecureValueT[];
+      let val = values[0] as VectorS<SecureValueT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -64102,19 +64300,19 @@ export class MessageActionSecureValuesSentMeS {
     let values = this._values;
 
     {
-      let val = values[0] as SecureValueT[];
+      let val = values[0] as VectorS<SecureValueT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureValueT = (new SecureValueT() as unknown) as SecureValueT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -64143,12 +64341,14 @@ AllStructs.set(
 export class MessageActionSecureValuesSentS {
   static _id = 0xd95c6154;
 
-  _values = ([[]] as unknown) as [SecureValueTypeT[]];
+  _values = ([new VectorS<SecureValueTypeT>()] as unknown) as [
+    VectorS<SecureValueTypeT>
+  ];
 
-  get_types(): SecureValueTypeT[] {
+  get_types(): VectorS<SecureValueTypeT> {
     return this._values[0];
   }
-  set_types(val: SecureValueTypeT[]): this {
+  set_types(val: VectorS<SecureValueTypeT>): this {
     this._values[0] = val;
 
     return this;
@@ -64160,13 +64360,13 @@ export class MessageActionSecureValuesSentS {
     let values = this._values;
 
     {
-      let val = values[0] as SecureValueTypeT[];
+      let val = values[0] as VectorS<SecureValueTypeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -64181,19 +64381,19 @@ export class MessageActionSecureValuesSentS {
     let values = this._values;
 
     {
-      let val = values[0] as SecureValueTypeT[];
+      let val = values[0] as VectorS<SecureValueTypeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureValueTypeT = (new SecureValueTypeT() as unknown) as SecureValueTypeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -64243,11 +64443,11 @@ AllStructs.set(HelpDeepLinkInfoEmptyS._id, HelpDeepLinkInfoEmptyS);
 export class HelpDeepLinkInfoS {
   static _id = 0x6a4ee832;
 
-  _values = ([0, true, "", []] as unknown) as [
+  _values = ([0, true, "", new VectorS<MessageEntityT>()] as unknown) as [
     number,
     true,
     string,
-    MessageEntityT[]
+    VectorS<MessageEntityT>
   ];
 
   get_flags(): number {
@@ -64283,10 +64483,10 @@ export class HelpDeepLinkInfoS {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[3];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[3] = val;
 
     this.set_flags(this.get_flags() | (1 << 1));
@@ -64318,13 +64518,13 @@ export class HelpDeepLinkInfoS {
     }
 
     if (this.has_entities()) {
-      let val = values[3] as MessageEntityT[];
+      let val = values[3] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -64357,19 +64557,19 @@ export class HelpDeepLinkInfoS {
     }
 
     if (this.has_entities()) {
-      let val = values[3] as MessageEntityT[];
+      let val = values[3] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -65647,9 +65847,9 @@ export class SecureValueErrorTranslationFilesS {
 
   _values = ([
     (new SecureValueTypeT() as unknown) as SecureValueTypeT,
-    [],
+    new VectorS<Uint8Array>(),
     ""
-  ] as unknown) as [SecureValueTypeT, Uint8Array[], string];
+  ] as unknown) as [SecureValueTypeT, VectorS<Uint8Array>, string];
 
   get_type(): SecureValueTypeT {
     return this._values[0];
@@ -65660,10 +65860,10 @@ export class SecureValueErrorTranslationFilesS {
     return this;
   }
 
-  get_file_hash(): Uint8Array[] {
+  get_file_hash(): VectorS<Uint8Array> {
     return this._values[1];
   }
-  set_file_hash(val: Uint8Array[]): this {
+  set_file_hash(val: VectorS<Uint8Array>): this {
     this._values[1] = val;
 
     return this;
@@ -65689,13 +65889,13 @@ export class SecureValueErrorTranslationFilesS {
     }
 
     {
-      let val = values[1] as Uint8Array[];
+      let val = values[1] as VectorS<Uint8Array>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeBytes(val);
       }
     }
@@ -65723,17 +65923,17 @@ export class SecureValueErrorTranslationFilesS {
     }
 
     {
-      let val = values[1] as Uint8Array[];
+      let val = values[1] as VectorS<Uint8Array>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: Uint8Array = new Uint8Array();
         val = buf.readBytes();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -65916,12 +66116,14 @@ AllStructs.set(SecureRequiredTypeS._id, SecureRequiredTypeS);
 export class SecureRequiredTypeOneOfS {
   static _id = 0x27477b4;
 
-  _values = ([[]] as unknown) as [SecureRequiredTypeT[]];
+  _values = ([new VectorS<SecureRequiredTypeT>()] as unknown) as [
+    VectorS<SecureRequiredTypeT>
+  ];
 
-  get_types(): SecureRequiredTypeT[] {
+  get_types(): VectorS<SecureRequiredTypeT> {
     return this._values[0];
   }
-  set_types(val: SecureRequiredTypeT[]): this {
+  set_types(val: VectorS<SecureRequiredTypeT>): this {
     this._values[0] = val;
 
     return this;
@@ -65933,13 +66135,13 @@ export class SecureRequiredTypeOneOfS {
     let values = this._values;
 
     {
-      let val = values[0] as SecureRequiredTypeT[];
+      let val = values[0] as VectorS<SecureRequiredTypeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -65954,19 +66156,19 @@ export class SecureRequiredTypeOneOfS {
     let values = this._values;
 
     {
-      let val = values[0] as SecureRequiredTypeT[];
+      let val = values[0] as VectorS<SecureRequiredTypeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureRequiredTypeT = (new SecureRequiredTypeT() as unknown) as SecureRequiredTypeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -66457,12 +66659,12 @@ AllStructs.set(JsonStringS._id, JsonStringS);
 export class JsonArrayS {
   static _id = 0xf7444763;
 
-  _values = ([[]] as unknown) as [JsonValueT[]];
+  _values = ([new VectorS<JsonValueT>()] as unknown) as [VectorS<JsonValueT>];
 
-  get_value(): JsonValueT[] {
+  get_value(): VectorS<JsonValueT> {
     return this._values[0];
   }
-  set_value(val: JsonValueT[]): this {
+  set_value(val: VectorS<JsonValueT>): this {
     this._values[0] = val;
 
     return this;
@@ -66474,13 +66676,13 @@ export class JsonArrayS {
     let values = this._values;
 
     {
-      let val = values[0] as JsonValueT[];
+      let val = values[0] as VectorS<JsonValueT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -66495,19 +66697,19 @@ export class JsonArrayS {
     let values = this._values;
 
     {
-      let val = values[0] as JsonValueT[];
+      let val = values[0] as VectorS<JsonValueT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: JsonValueT = (new JsonValueT() as unknown) as JsonValueT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -66525,12 +66727,14 @@ AllStructs.set(JsonArrayS._id, JsonArrayS);
 export class JsonObjectS {
   static _id = 0x99c1d49d;
 
-  _values = ([[]] as unknown) as [JsonObjectValueT[]];
+  _values = ([new VectorS<JsonObjectValueT>()] as unknown) as [
+    VectorS<JsonObjectValueT>
+  ];
 
-  get_value(): JsonObjectValueT[] {
+  get_value(): VectorS<JsonObjectValueT> {
     return this._values[0];
   }
-  set_value(val: JsonObjectValueT[]): this {
+  set_value(val: VectorS<JsonObjectValueT>): this {
     this._values[0] = val;
 
     return this;
@@ -66542,13 +66746,13 @@ export class JsonObjectS {
     let values = this._values;
 
     {
-      let val = values[0] as JsonObjectValueT[];
+      let val = values[0] as VectorS<JsonObjectValueT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -66563,19 +66767,19 @@ export class JsonObjectS {
     let values = this._values;
 
     {
-      let val = values[0] as JsonObjectValueT[];
+      let val = values[0] as VectorS<JsonObjectValueT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: JsonObjectValueT = (new JsonObjectValueT() as unknown) as JsonObjectValueT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -67466,12 +67670,14 @@ AllStructs.set(PageTableCellS._id, PageTableCellS);
 export class PageTableRowS {
   static _id = 0xe0c0c5e5;
 
-  _values = ([[]] as unknown) as [PageTableCellT[]];
+  _values = ([new VectorS<PageTableCellT>()] as unknown) as [
+    VectorS<PageTableCellT>
+  ];
 
-  get_cells(): PageTableCellT[] {
+  get_cells(): VectorS<PageTableCellT> {
     return this._values[0];
   }
-  set_cells(val: PageTableCellT[]): this {
+  set_cells(val: VectorS<PageTableCellT>): this {
     this._values[0] = val;
 
     return this;
@@ -67483,13 +67689,13 @@ export class PageTableRowS {
     let values = this._values;
 
     {
-      let val = values[0] as PageTableCellT[];
+      let val = values[0] as VectorS<PageTableCellT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -67504,19 +67710,19 @@ export class PageTableRowS {
     let values = this._values;
 
     {
-      let val = values[0] as PageTableCellT[];
+      let val = values[0] as VectorS<PageTableCellT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageTableCellT = (new PageTableCellT() as unknown) as PageTableCellT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -67543,8 +67749,8 @@ export class PageBlockTableS {
     true,
     true,
     (new RichTextT() as unknown) as RichTextT,
-    []
-  ] as unknown) as [number, true, true, RichTextT, PageTableRowT[]];
+    new VectorS<PageTableRowT>()
+  ] as unknown) as [number, true, true, RichTextT, VectorS<PageTableRowT>];
 
   get_flags(): number {
     return this._values[0];
@@ -67594,10 +67800,10 @@ export class PageBlockTableS {
     return this;
   }
 
-  get_rows(): PageTableRowT[] {
+  get_rows(): VectorS<PageTableRowT> {
     return this._values[4];
   }
-  set_rows(val: PageTableRowT[]): this {
+  set_rows(val: VectorS<PageTableRowT>): this {
     this._values[4] = val;
 
     return this;
@@ -67627,13 +67833,13 @@ export class PageBlockTableS {
     }
 
     {
-      let val = values[4] as PageTableRowT[];
+      let val = values[4] as VectorS<PageTableRowT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -67674,19 +67880,19 @@ export class PageBlockTableS {
     }
 
     {
-      let val = values[4] as PageTableRowT[];
+      let val = values[4] as VectorS<PageTableRowT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageTableRowT = (new PageTableRowT() as unknown) as PageTableRowT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -67834,12 +68040,12 @@ AllStructs.set(PageListItemTextS._id, PageListItemTextS);
 export class PageListItemBlocksS {
   static _id = 0x25e073fc;
 
-  _values = ([[]] as unknown) as [PageBlockT[]];
+  _values = ([new VectorS<PageBlockT>()] as unknown) as [VectorS<PageBlockT>];
 
-  get_blocks(): PageBlockT[] {
+  get_blocks(): VectorS<PageBlockT> {
     return this._values[0];
   }
-  set_blocks(val: PageBlockT[]): this {
+  set_blocks(val: VectorS<PageBlockT>): this {
     this._values[0] = val;
 
     return this;
@@ -67851,13 +68057,13 @@ export class PageListItemBlocksS {
     let values = this._values;
 
     {
-      let val = values[0] as PageBlockT[];
+      let val = values[0] as VectorS<PageBlockT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -67872,19 +68078,19 @@ export class PageListItemBlocksS {
     let values = this._values;
 
     {
-      let val = values[0] as PageBlockT[];
+      let val = values[0] as VectorS<PageBlockT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -67978,7 +68184,10 @@ AllStructs.set(PageListOrderedItemTextS._id, PageListOrderedItemTextS);
 export class PageListOrderedItemBlocksS {
   static _id = 0x98dd8936;
 
-  _values = (["", []] as unknown) as [string, PageBlockT[]];
+  _values = (["", new VectorS<PageBlockT>()] as unknown) as [
+    string,
+    VectorS<PageBlockT>
+  ];
 
   get_num(): string {
     return this._values[0];
@@ -67989,10 +68198,10 @@ export class PageListOrderedItemBlocksS {
     return this;
   }
 
-  get_blocks(): PageBlockT[] {
+  get_blocks(): VectorS<PageBlockT> {
     return this._values[1];
   }
-  set_blocks(val: PageBlockT[]): this {
+  set_blocks(val: VectorS<PageBlockT>): this {
     this._values[1] = val;
 
     return this;
@@ -68009,13 +68218,13 @@ export class PageListOrderedItemBlocksS {
     }
 
     {
-      let val = values[1] as PageBlockT[];
+      let val = values[1] as VectorS<PageBlockT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -68036,19 +68245,19 @@ export class PageListOrderedItemBlocksS {
     }
 
     {
-      let val = values[1] as PageBlockT[];
+      let val = values[1] as VectorS<PageBlockT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -68066,12 +68275,14 @@ AllStructs.set(PageListOrderedItemBlocksS._id, PageListOrderedItemBlocksS);
 export class PageBlockOrderedListS {
   static _id = 0x9a8ae1e1;
 
-  _values = ([[]] as unknown) as [PageListOrderedItemT[]];
+  _values = ([new VectorS<PageListOrderedItemT>()] as unknown) as [
+    VectorS<PageListOrderedItemT>
+  ];
 
-  get_items(): PageListOrderedItemT[] {
+  get_items(): VectorS<PageListOrderedItemT> {
     return this._values[0];
   }
-  set_items(val: PageListOrderedItemT[]): this {
+  set_items(val: VectorS<PageListOrderedItemT>): this {
     this._values[0] = val;
 
     return this;
@@ -68083,13 +68294,13 @@ export class PageBlockOrderedListS {
     let values = this._values;
 
     {
-      let val = values[0] as PageListOrderedItemT[];
+      let val = values[0] as VectorS<PageListOrderedItemT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -68104,19 +68315,19 @@ export class PageBlockOrderedListS {
     let values = this._values;
 
     {
-      let val = values[0] as PageListOrderedItemT[];
+      let val = values[0] as VectorS<PageListOrderedItemT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageListOrderedItemT = (new PageListOrderedItemT() as unknown) as PageListOrderedItemT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -68140,9 +68351,9 @@ export class PageBlockDetailsS {
   _values = ([
     0,
     true,
-    [],
+    new VectorS<PageBlockT>(),
     (new RichTextT() as unknown) as RichTextT
-  ] as unknown) as [number, true, PageBlockT[], RichTextT];
+  ] as unknown) as [number, true, VectorS<PageBlockT>, RichTextT];
 
   get_flags(): number {
     return this._values[0];
@@ -68168,10 +68379,10 @@ export class PageBlockDetailsS {
     return !!(this.get_flags() & (1 << 0));
   }
 
-  get_blocks(): PageBlockT[] {
+  get_blocks(): VectorS<PageBlockT> {
     return this._values[2];
   }
-  set_blocks(val: PageBlockT[]): this {
+  set_blocks(val: VectorS<PageBlockT>): this {
     this._values[2] = val;
 
     return this;
@@ -68201,13 +68412,13 @@ export class PageBlockDetailsS {
     }
 
     {
-      let val = values[2] as PageBlockT[];
+      let val = values[2] as VectorS<PageBlockT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -68239,19 +68450,19 @@ export class PageBlockDetailsS {
     }
 
     {
-      let val = values[2] as PageBlockT[];
+      let val = values[2] as VectorS<PageBlockT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -68513,10 +68724,10 @@ AllStructs.set(PageRelatedArticleS._id, PageRelatedArticleS);
 export class PageBlockRelatedArticlesS {
   static _id = 0x16115a96;
 
-  _values = ([(new RichTextT() as unknown) as RichTextT, []] as unknown) as [
-    RichTextT,
-    PageRelatedArticleT[]
-  ];
+  _values = ([
+    (new RichTextT() as unknown) as RichTextT,
+    new VectorS<PageRelatedArticleT>()
+  ] as unknown) as [RichTextT, VectorS<PageRelatedArticleT>];
 
   get_title(): RichTextT {
     return this._values[0];
@@ -68527,10 +68738,10 @@ export class PageBlockRelatedArticlesS {
     return this;
   }
 
-  get_articles(): PageRelatedArticleT[] {
+  get_articles(): VectorS<PageRelatedArticleT> {
     return this._values[1];
   }
-  set_articles(val: PageRelatedArticleT[]): this {
+  set_articles(val: VectorS<PageRelatedArticleT>): this {
     this._values[1] = val;
 
     return this;
@@ -68547,13 +68758,13 @@ export class PageBlockRelatedArticlesS {
     }
 
     {
-      let val = values[1] as PageRelatedArticleT[];
+      let val = values[1] as VectorS<PageRelatedArticleT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -68576,19 +68787,19 @@ export class PageBlockRelatedArticlesS {
     }
 
     {
-      let val = values[1] as PageRelatedArticleT[];
+      let val = values[1] as VectorS<PageRelatedArticleT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageRelatedArticleT = (new PageRelatedArticleT() as unknown) as PageRelatedArticleT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -68756,15 +68967,24 @@ AllStructs.set(PageBlockMapS._id, PageBlockMapS);
 export class PageS {
   static _id = 0xae891bec;
 
-  _values = ([0, true, true, true, "", [], [], []] as unknown) as [
+  _values = ([
+    0,
+    true,
+    true,
+    true,
+    "",
+    new VectorS<PageBlockT>(),
+    new VectorS<PhotoT>(),
+    new VectorS<DocumentT>()
+  ] as unknown) as [
     number,
     true,
     true,
     true,
     string,
-    PageBlockT[],
-    PhotoT[],
-    DocumentT[]
+    VectorS<PageBlockT>,
+    VectorS<PhotoT>,
+    VectorS<DocumentT>
   ];
 
   get_flags(): number {
@@ -68830,28 +69050,28 @@ export class PageS {
     return this;
   }
 
-  get_blocks(): PageBlockT[] {
+  get_blocks(): VectorS<PageBlockT> {
     return this._values[5];
   }
-  set_blocks(val: PageBlockT[]): this {
+  set_blocks(val: VectorS<PageBlockT>): this {
     this._values[5] = val;
 
     return this;
   }
 
-  get_photos(): PhotoT[] {
+  get_photos(): VectorS<PhotoT> {
     return this._values[6];
   }
-  set_photos(val: PhotoT[]): this {
+  set_photos(val: VectorS<PhotoT>): this {
     this._values[6] = val;
 
     return this;
   }
 
-  get_documents(): DocumentT[] {
+  get_documents(): VectorS<DocumentT> {
     return this._values[7];
   }
-  set_documents(val: DocumentT[]): this {
+  set_documents(val: VectorS<DocumentT>): this {
     this._values[7] = val;
 
     return this;
@@ -68885,37 +69105,37 @@ export class PageS {
     }
 
     {
-      let val = values[5] as PageBlockT[];
+      let val = values[5] as VectorS<PageBlockT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[6] as PhotoT[];
+      let val = values[6] as VectorS<PhotoT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
 
     {
-      let val = values[7] as DocumentT[];
+      let val = values[7] as VectorS<DocumentT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -68960,55 +69180,55 @@ export class PageS {
     }
 
     {
-      let val = values[5] as PageBlockT[];
+      let val = values[5] as VectorS<PageBlockT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PageBlockT = (new PageBlockT() as unknown) as PageBlockT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[5] = val;
     }
 
     {
-      let val = values[6] as PhotoT[];
+      let val = values[6] as VectorS<PhotoT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PhotoT = (new PhotoT() as unknown) as PhotoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
 
     {
-      let val = values[7] as DocumentT[];
+      let val = values[7] as VectorS<DocumentT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: DocumentT = (new DocumentT() as unknown) as DocumentT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[7] = val;
     }
@@ -69231,9 +69451,9 @@ AllStructs.set(HelpUserInfoEmptyS._id, HelpUserInfoEmptyS);
 export class HelpUserInfoS {
   static _id = 0x1eb3758;
 
-  _values = (["", [], "", 0] as unknown) as [
+  _values = (["", new VectorS<MessageEntityT>(), "", 0] as unknown) as [
     string,
-    MessageEntityT[],
+    VectorS<MessageEntityT>,
     string,
     number
   ];
@@ -69247,10 +69467,10 @@ export class HelpUserInfoS {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[1];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[1] = val;
 
     return this;
@@ -69285,13 +69505,13 @@ export class HelpUserInfoS {
     }
 
     {
-      let val = values[1] as MessageEntityT[];
+      let val = values[1] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -69322,19 +69542,19 @@ export class HelpUserInfoS {
     }
 
     {
-      let val = values[1] as MessageEntityT[];
+      let val = values[1] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -69591,12 +69811,12 @@ AllStructs.set(PollAnswerS._id, PollAnswerS);
 export class PollS {
   static _id = 0xd5529d06;
 
-  _values = ([[0, 0], 0, true, "", []] as unknown) as [
+  _values = ([[0, 0], 0, true, "", new VectorS<PollAnswerT>()] as unknown) as [
     ProtoLong,
     number,
     true,
     string,
-    PollAnswerT[]
+    VectorS<PollAnswerT>
   ];
 
   get_id(): ProtoLong {
@@ -69641,10 +69861,10 @@ export class PollS {
     return this;
   }
 
-  get_answers(): PollAnswerT[] {
+  get_answers(): VectorS<PollAnswerT> {
     return this._values[4];
   }
-  set_answers(val: PollAnswerT[]): this {
+  set_answers(val: VectorS<PollAnswerT>): this {
     this._values[4] = val;
 
     return this;
@@ -69675,13 +69895,13 @@ export class PollS {
     }
 
     {
-      let val = values[4] as PollAnswerT[];
+      let val = values[4] as VectorS<PollAnswerT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -69720,19 +69940,19 @@ export class PollS {
     }
 
     {
-      let val = values[4] as PollAnswerT[];
+      let val = values[4] as VectorS<PollAnswerT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PollAnswerT = (new PollAnswerT() as unknown) as PollAnswerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -69875,10 +70095,10 @@ AllStructs.set(PollAnswerVotersS._id, PollAnswerVotersS);
 export class PollResultsS {
   static _id = 0x5755785a;
 
-  _values = ([0, true, [], 0] as unknown) as [
+  _values = ([0, true, new VectorS<PollAnswerVotersT>(), 0] as unknown) as [
     number,
     true,
-    PollAnswerVotersT[],
+    VectorS<PollAnswerVotersT>,
     number
   ];
 
@@ -69906,10 +70126,10 @@ export class PollResultsS {
     return !!(this.get_flags() & (1 << 0));
   }
 
-  get_results(): PollAnswerVotersT[] {
+  get_results(): VectorS<PollAnswerVotersT> {
     return this._values[2];
   }
-  set_results(val: PollAnswerVotersT[]): this {
+  set_results(val: VectorS<PollAnswerVotersT>): this {
     this._values[2] = val;
 
     this.set_flags(this.get_flags() | (1 << 1));
@@ -69951,13 +70171,13 @@ export class PollResultsS {
     }
 
     if (this.has_results()) {
-      let val = values[2] as PollAnswerVotersT[];
+      let val = values[2] as VectorS<PollAnswerVotersT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -69989,19 +70209,19 @@ export class PollResultsS {
     }
 
     if (this.has_results()) {
-      let val = values[2] as PollAnswerVotersT[];
+      let val = values[2] as VectorS<PollAnswerVotersT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PollAnswerVotersT = (new PollAnswerVotersT() as unknown) as PollAnswerVotersT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -71438,7 +71658,10 @@ AllStructs.set(
 export class AccountWallPapersS {
   static _id = 0x702b65a9;
 
-  _values = ([0, []] as unknown) as [number, WallPaperT[]];
+  _values = ([0, new VectorS<WallPaperT>()] as unknown) as [
+    number,
+    VectorS<WallPaperT>
+  ];
 
   get_hash(): number {
     return this._values[0];
@@ -71449,10 +71672,10 @@ export class AccountWallPapersS {
     return this;
   }
 
-  get_wallpapers(): WallPaperT[] {
+  get_wallpapers(): VectorS<WallPaperT> {
     return this._values[1];
   }
-  set_wallpapers(val: WallPaperT[]): this {
+  set_wallpapers(val: VectorS<WallPaperT>): this {
     this._values[1] = val;
 
     return this;
@@ -71469,13 +71692,13 @@ export class AccountWallPapersS {
     }
 
     {
-      let val = values[1] as WallPaperT[];
+      let val = values[1] as VectorS<WallPaperT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -71496,19 +71719,19 @@ export class AccountWallPapersS {
     }
 
     {
-      let val = values[1] as WallPaperT[];
+      let val = values[1] as VectorS<WallPaperT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: WallPaperT = (new WallPaperT() as unknown) as WallPaperT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -72145,7 +72368,10 @@ AllStructs.set(AccountAutoDownloadSettingsS._id, AccountAutoDownloadSettingsS);
 export class EmojiKeywordS {
   static _id = 0xd5b3b9f9;
 
-  _values = (["", []] as unknown) as [string, string[]];
+  _values = (["", new VectorS<string>()] as unknown) as [
+    string,
+    VectorS<string>
+  ];
 
   get_keyword(): string {
     return this._values[0];
@@ -72156,10 +72382,10 @@ export class EmojiKeywordS {
     return this;
   }
 
-  get_emoticons(): string[] {
+  get_emoticons(): VectorS<string> {
     return this._values[1];
   }
-  set_emoticons(val: string[]): this {
+  set_emoticons(val: VectorS<string>): this {
     this._values[1] = val;
 
     return this;
@@ -72176,13 +72402,13 @@ export class EmojiKeywordS {
     }
 
     {
-      let val = values[1] as string[];
+      let val = values[1] as VectorS<string>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeString(val);
       }
     }
@@ -72203,17 +72429,17 @@ export class EmojiKeywordS {
     }
 
     {
-      let val = values[1] as string[];
+      let val = values[1] as VectorS<string>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: string = "";
         val = buf.readString();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -72232,7 +72458,10 @@ AllStructs.set(EmojiKeywordS._id, EmojiKeywordS);
 export class EmojiKeywordDeletedS {
   static _id = 0x236df622;
 
-  _values = (["", []] as unknown) as [string, string[]];
+  _values = (["", new VectorS<string>()] as unknown) as [
+    string,
+    VectorS<string>
+  ];
 
   get_keyword(): string {
     return this._values[0];
@@ -72243,10 +72472,10 @@ export class EmojiKeywordDeletedS {
     return this;
   }
 
-  get_emoticons(): string[] {
+  get_emoticons(): VectorS<string> {
     return this._values[1];
   }
-  set_emoticons(val: string[]): this {
+  set_emoticons(val: VectorS<string>): this {
     this._values[1] = val;
 
     return this;
@@ -72263,13 +72492,13 @@ export class EmojiKeywordDeletedS {
     }
 
     {
-      let val = values[1] as string[];
+      let val = values[1] as VectorS<string>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeString(val);
       }
     }
@@ -72290,17 +72519,17 @@ export class EmojiKeywordDeletedS {
     }
 
     {
-      let val = values[1] as string[];
+      let val = values[1] as VectorS<string>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: string = "";
         val = buf.readString();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -72321,11 +72550,11 @@ AllStructs.set(EmojiKeywordDeletedS._id, EmojiKeywordDeletedS);
 export class EmojiKeywordsDifferenceS {
   static _id = 0x5cc761bd;
 
-  _values = (["", 0, 0, []] as unknown) as [
+  _values = (["", 0, 0, new VectorS<EmojiKeywordT>()] as unknown) as [
     string,
     number,
     number,
-    EmojiKeywordT[]
+    VectorS<EmojiKeywordT>
   ];
 
   get_lang_code(): string {
@@ -72355,10 +72584,10 @@ export class EmojiKeywordsDifferenceS {
     return this;
   }
 
-  get_keywords(): EmojiKeywordT[] {
+  get_keywords(): VectorS<EmojiKeywordT> {
     return this._values[3];
   }
-  set_keywords(val: EmojiKeywordT[]): this {
+  set_keywords(val: VectorS<EmojiKeywordT>): this {
     this._values[3] = val;
 
     return this;
@@ -72385,13 +72614,13 @@ export class EmojiKeywordsDifferenceS {
     }
 
     {
-      let val = values[3] as EmojiKeywordT[];
+      let val = values[3] as VectorS<EmojiKeywordT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -72424,19 +72653,19 @@ export class EmojiKeywordsDifferenceS {
     }
 
     {
-      let val = values[3] as EmojiKeywordT[];
+      let val = values[3] as VectorS<EmojiKeywordT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: EmojiKeywordT = (new EmojiKeywordT() as unknown) as EmojiKeywordT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -73959,12 +74188,16 @@ AllStructs.set(FolderPeerS._id, FolderPeerS);
 export class UpdateFolderPeersS {
   static _id = 0x19360dc0;
 
-  _values = ([[], 0, 0] as unknown) as [FolderPeerT[], number, number];
+  _values = ([new VectorS<FolderPeerT>(), 0, 0] as unknown) as [
+    VectorS<FolderPeerT>,
+    number,
+    number
+  ];
 
-  get_folder_peers(): FolderPeerT[] {
+  get_folder_peers(): VectorS<FolderPeerT> {
     return this._values[0];
   }
-  set_folder_peers(val: FolderPeerT[]): this {
+  set_folder_peers(val: VectorS<FolderPeerT>): this {
     this._values[0] = val;
 
     return this;
@@ -73994,13 +74227,13 @@ export class UpdateFolderPeersS {
     let values = this._values;
 
     {
-      let val = values[0] as FolderPeerT[];
+      let val = values[0] as VectorS<FolderPeerT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -74025,19 +74258,19 @@ export class UpdateFolderPeersS {
     let values = this._values;
 
     {
-      let val = values[0] as FolderPeerT[];
+      let val = values[0] as VectorS<FolderPeerT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: FolderPeerT = (new FolderPeerT() as unknown) as FolderPeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -75275,12 +75508,12 @@ AllStructs.set(UrlAuthResultDefaultS._id, UrlAuthResultDefaultS);
 export class InputPrivacyValueAllowChatParticipantsS {
   static _id = 0x4c81c1ba;
 
-  _values = ([[]] as unknown) as [number[]];
+  _values = ([new VectorS<number>()] as unknown) as [VectorS<number>];
 
-  get_chats(): number[] {
+  get_chats(): VectorS<number> {
     return this._values[0];
   }
-  set_chats(val: number[]): this {
+  set_chats(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -75292,13 +75525,13 @@ export class InputPrivacyValueAllowChatParticipantsS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -75314,17 +75547,17 @@ export class InputPrivacyValueAllowChatParticipantsS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -75345,12 +75578,12 @@ AllStructs.set(
 export class InputPrivacyValueDisallowChatParticipantsS {
   static _id = 0xd82363af;
 
-  _values = ([[]] as unknown) as [number[]];
+  _values = ([new VectorS<number>()] as unknown) as [VectorS<number>];
 
-  get_chats(): number[] {
+  get_chats(): VectorS<number> {
     return this._values[0];
   }
-  set_chats(val: number[]): this {
+  set_chats(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -75362,13 +75595,13 @@ export class InputPrivacyValueDisallowChatParticipantsS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -75384,17 +75617,17 @@ export class InputPrivacyValueDisallowChatParticipantsS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -75415,12 +75648,12 @@ AllStructs.set(
 export class PrivacyValueAllowChatParticipantsS {
   static _id = 0x18be796b;
 
-  _values = ([[]] as unknown) as [number[]];
+  _values = ([new VectorS<number>()] as unknown) as [VectorS<number>];
 
-  get_chats(): number[] {
+  get_chats(): VectorS<number> {
     return this._values[0];
   }
-  set_chats(val: number[]): this {
+  set_chats(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -75432,13 +75665,13 @@ export class PrivacyValueAllowChatParticipantsS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -75453,17 +75686,17 @@ export class PrivacyValueAllowChatParticipantsS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -75484,12 +75717,12 @@ AllStructs.set(
 export class PrivacyValueDisallowChatParticipantsS {
   static _id = 0xacae0690;
 
-  _values = ([[]] as unknown) as [number[]];
+  _values = ([new VectorS<number>()] as unknown) as [VectorS<number>];
 
-  get_chats(): number[] {
+  get_chats(): VectorS<number> {
     return this._values[0];
   }
-  set_chats(val: number[]): this {
+  set_chats(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -75501,13 +75734,13 @@ export class PrivacyValueDisallowChatParticipantsS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -75523,17 +75756,17 @@ export class PrivacyValueDisallowChatParticipantsS {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -76039,12 +76272,14 @@ AllStructs.set(PeerLocatedS._id, PeerLocatedS);
 export class UpdatePeerLocatedS {
   static _id = 0xb4afcfb0;
 
-  _values = ([[]] as unknown) as [PeerLocatedT[]];
+  _values = ([new VectorS<PeerLocatedT>()] as unknown) as [
+    VectorS<PeerLocatedT>
+  ];
 
-  get_peers(): PeerLocatedT[] {
+  get_peers(): VectorS<PeerLocatedT> {
     return this._values[0];
   }
-  set_peers(val: PeerLocatedT[]): this {
+  set_peers(val: VectorS<PeerLocatedT>): this {
     this._values[0] = val;
 
     return this;
@@ -76056,13 +76291,13 @@ export class UpdatePeerLocatedS {
     let values = this._values;
 
     {
-      let val = values[0] as PeerLocatedT[];
+      let val = values[0] as VectorS<PeerLocatedT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -76077,19 +76312,19 @@ export class UpdatePeerLocatedS {
     let values = this._values;
 
     {
-      let val = values[0] as PeerLocatedT[];
+      let val = values[0] as VectorS<PeerLocatedT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: PeerLocatedT = (new PeerLocatedT() as unknown) as PeerLocatedT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -76510,10 +76745,10 @@ AllStructs.set(UpdateNewScheduledMessageS._id, UpdateNewScheduledMessageS);
 export class UpdateDeleteScheduledMessagesS {
   static _id = 0x90866cee;
 
-  _values = ([(new PeerT() as unknown) as PeerT, []] as unknown) as [
-    PeerT,
-    number[]
-  ];
+  _values = ([
+    (new PeerT() as unknown) as PeerT,
+    new VectorS<number>()
+  ] as unknown) as [PeerT, VectorS<number>];
 
   get_peer(): PeerT {
     return this._values[0];
@@ -76524,10 +76759,10 @@ export class UpdateDeleteScheduledMessagesS {
     return this;
   }
 
-  get_messages(): number[] {
+  get_messages(): VectorS<number> {
     return this._values[1];
   }
-  set_messages(val: number[]): this {
+  set_messages(val: VectorS<number>): this {
     this._values[1] = val;
 
     return this;
@@ -76544,13 +76779,13 @@ export class UpdateDeleteScheduledMessagesS {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -76573,17 +76808,17 @@ export class UpdateDeleteScheduledMessagesS {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -77122,7 +77357,10 @@ AllStructs.set(AccountThemesNotModifiedS._id, AccountThemesNotModifiedS);
 export class AccountThemesS {
   static _id = 0x7f676421;
 
-  _values = ([0, []] as unknown) as [number, ThemeT[]];
+  _values = ([0, new VectorS<ThemeT>()] as unknown) as [
+    number,
+    VectorS<ThemeT>
+  ];
 
   get_hash(): number {
     return this._values[0];
@@ -77133,10 +77371,10 @@ export class AccountThemesS {
     return this;
   }
 
-  get_themes(): ThemeT[] {
+  get_themes(): VectorS<ThemeT> {
     return this._values[1];
   }
-  set_themes(val: ThemeT[]): this {
+  set_themes(val: VectorS<ThemeT>): this {
     this._values[1] = val;
 
     return this;
@@ -77153,13 +77391,13 @@ export class AccountThemesS {
     }
 
     {
-      let val = values[1] as ThemeT[];
+      let val = values[1] as VectorS<ThemeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -77180,19 +77418,19 @@ export class AccountThemesS {
     }
 
     {
-      let val = values[1] as ThemeT[];
+      let val = values[1] as VectorS<ThemeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ThemeT = (new ThemeT() as unknown) as ThemeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -78529,12 +78767,15 @@ AllStructs.set(InvokeAfterMsgM._id, InvokeAfterMsgM);
 export class InvokeAfterMsgsM {
   static _id = 0x3dc4b4f0;
   _method() {}
-  _values = ([[], new OneOf()] as unknown) as [ProtoLong[], TMethod];
+  _values = ([new VectorS<ProtoLong>(), new OneOf()] as unknown) as [
+    VectorS<ProtoLong>,
+    TMethod
+  ];
 
-  get_msg_ids(): ProtoLong[] {
+  get_msg_ids(): VectorS<ProtoLong> {
     return this._values[0];
   }
-  set_msg_ids(val: ProtoLong[]): this {
+  set_msg_ids(val: VectorS<ProtoLong>): this {
     this._values[0] = val;
 
     return this;
@@ -78555,13 +78796,13 @@ export class InvokeAfterMsgsM {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -78581,17 +78822,17 @@ export class InvokeAfterMsgsM {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -79240,7 +79481,7 @@ export class AccountRegisterDeviceM {
     "",
     (new BoolT() as unknown) as BoolT,
     new Uint8Array(),
-    []
+    new VectorS<number>()
   ] as unknown) as [
     number,
     true,
@@ -79248,7 +79489,7 @@ export class AccountRegisterDeviceM {
     string,
     BoolT,
     Uint8Array,
-    number[]
+    VectorS<number>
   ];
 
   get_flags(): number {
@@ -79311,10 +79552,10 @@ export class AccountRegisterDeviceM {
     return this;
   }
 
-  get_other_uids(): number[] {
+  get_other_uids(): VectorS<number> {
     return this._values[6];
   }
-  set_other_uids(val: number[]): this {
+  set_other_uids(val: VectorS<number>): this {
     this._values[6] = val;
 
     return this;
@@ -79355,13 +79596,13 @@ export class AccountRegisterDeviceM {
     }
 
     {
-      let val = values[6] as number[];
+      let val = values[6] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -79414,17 +79655,17 @@ export class AccountRegisterDeviceM {
     }
 
     {
-      let val = values[6] as number[];
+      let val = values[6] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
@@ -79444,7 +79685,11 @@ AllStructs.set(AccountRegisterDeviceM._id, AccountRegisterDeviceM);
 export class AccountUnregisterDeviceM {
   static _id = 0x3076c4bf;
   _method() {}
-  _values = ([0, "", []] as unknown) as [number, string, number[]];
+  _values = ([0, "", new VectorS<number>()] as unknown) as [
+    number,
+    string,
+    VectorS<number>
+  ];
 
   get_token_type(): number {
     return this._values[0];
@@ -79464,10 +79709,10 @@ export class AccountUnregisterDeviceM {
     return this;
   }
 
-  get_other_uids(): number[] {
+  get_other_uids(): VectorS<number> {
     return this._values[2];
   }
-  set_other_uids(val: number[]): this {
+  set_other_uids(val: VectorS<number>): this {
     this._values[2] = val;
 
     return this;
@@ -79489,13 +79734,13 @@ export class AccountUnregisterDeviceM {
     }
 
     {
-      let val = values[2] as number[];
+      let val = values[2] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -79522,17 +79767,17 @@ export class AccountUnregisterDeviceM {
     }
 
     {
-      let val = values[2] as number[];
+      let val = values[2] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -80013,12 +80258,12 @@ AllStructs.set(AccountReportPeerM._id, AccountReportPeerM);
 export class UsersGetUsersM {
   static _id = 0xd91a548;
   _method() {}
-  _values = ([[]] as unknown) as [InputUserT[]];
+  _values = ([new VectorS<InputUserT>()] as unknown) as [VectorS<InputUserT>];
 
-  get_id(): InputUserT[] {
+  get_id(): VectorS<InputUserT> {
     return this._values[0];
   }
-  set_id(val: InputUserT[]): this {
+  set_id(val: VectorS<InputUserT>): this {
     this._values[0] = val;
 
     return this;
@@ -80030,13 +80275,13 @@ export class UsersGetUsersM {
     let values = this._values;
 
     {
-      let val = values[0] as InputUserT[];
+      let val = values[0] as VectorS<InputUserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -80051,19 +80296,19 @@ export class UsersGetUsersM {
     let values = this._values;
 
     {
-      let val = values[0] as InputUserT[];
+      let val = values[0] as VectorS<InputUserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -80258,12 +80503,14 @@ AllStructs.set(ContactsGetContactsM._id, ContactsGetContactsM);
 export class ContactsImportContactsM {
   static _id = 0x2c800be5;
   _method() {}
-  _values = ([[]] as unknown) as [InputContactT[]];
+  _values = ([new VectorS<InputContactT>()] as unknown) as [
+    VectorS<InputContactT>
+  ];
 
-  get_contacts(): InputContactT[] {
+  get_contacts(): VectorS<InputContactT> {
     return this._values[0];
   }
-  set_contacts(val: InputContactT[]): this {
+  set_contacts(val: VectorS<InputContactT>): this {
     this._values[0] = val;
 
     return this;
@@ -80275,13 +80522,13 @@ export class ContactsImportContactsM {
     let values = this._values;
 
     {
-      let val = values[0] as InputContactT[];
+      let val = values[0] as VectorS<InputContactT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -80296,19 +80543,19 @@ export class ContactsImportContactsM {
     let values = this._values;
 
     {
-      let val = values[0] as InputContactT[];
+      let val = values[0] as VectorS<InputContactT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputContactT = (new InputContactT() as unknown) as InputContactT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -80326,12 +80573,12 @@ AllStructs.set(ContactsImportContactsM._id, ContactsImportContactsM);
 export class ContactsDeleteContactsM {
   static _id = 0x96a0e00;
   _method() {}
-  _values = ([[]] as unknown) as [InputUserT[]];
+  _values = ([new VectorS<InputUserT>()] as unknown) as [VectorS<InputUserT>];
 
-  get_id(): InputUserT[] {
+  get_id(): VectorS<InputUserT> {
     return this._values[0];
   }
-  set_id(val: InputUserT[]): this {
+  set_id(val: VectorS<InputUserT>): this {
     this._values[0] = val;
 
     return this;
@@ -80343,13 +80590,13 @@ export class ContactsDeleteContactsM {
     let values = this._values;
 
     {
-      let val = values[0] as InputUserT[];
+      let val = values[0] as VectorS<InputUserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -80364,19 +80611,19 @@ export class ContactsDeleteContactsM {
     let values = this._values;
 
     {
-      let val = values[0] as InputUserT[];
+      let val = values[0] as VectorS<InputUserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -80394,12 +80641,12 @@ AllStructs.set(ContactsDeleteContactsM._id, ContactsDeleteContactsM);
 export class ContactsDeleteByPhonesM {
   static _id = 0x1013fd9e;
   _method() {}
-  _values = ([[]] as unknown) as [string[]];
+  _values = ([new VectorS<string>()] as unknown) as [VectorS<string>];
 
-  get_phones(): string[] {
+  get_phones(): VectorS<string> {
     return this._values[0];
   }
-  set_phones(val: string[]): this {
+  set_phones(val: VectorS<string>): this {
     this._values[0] = val;
 
     return this;
@@ -80411,13 +80658,13 @@ export class ContactsDeleteByPhonesM {
     let values = this._values;
 
     {
-      let val = values[0] as string[];
+      let val = values[0] as VectorS<string>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeString(val);
       }
     }
@@ -80432,17 +80679,17 @@ export class ContactsDeleteByPhonesM {
     let values = this._values;
 
     {
-      let val = values[0] as string[];
+      let val = values[0] as VectorS<string>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: string = "";
         val = buf.readString();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -80636,12 +80883,14 @@ AllStructs.set(ContactsGetBlockedM._id, ContactsGetBlockedM);
 export class MessagesGetMessagesM {
   static _id = 0x63c66506;
   _method() {}
-  _values = ([[]] as unknown) as [InputMessageT[]];
+  _values = ([new VectorS<InputMessageT>()] as unknown) as [
+    VectorS<InputMessageT>
+  ];
 
-  get_id(): InputMessageT[] {
+  get_id(): VectorS<InputMessageT> {
     return this._values[0];
   }
-  set_id(val: InputMessageT[]): this {
+  set_id(val: VectorS<InputMessageT>): this {
     this._values[0] = val;
 
     return this;
@@ -80653,13 +80902,13 @@ export class MessagesGetMessagesM {
     let values = this._values;
 
     {
-      let val = values[0] as InputMessageT[];
+      let val = values[0] as VectorS<InputMessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -80674,19 +80923,19 @@ export class MessagesGetMessagesM {
     let values = this._values;
 
     {
-      let val = values[0] as InputMessageT[];
+      let val = values[0] as VectorS<InputMessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputMessageT = (new InputMessageT() as unknown) as InputMessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -81716,7 +81965,11 @@ AllStructs.set(MessagesDeleteHistoryM._id, MessagesDeleteHistoryM);
 export class MessagesDeleteMessagesM {
   static _id = 0xe58e95d2;
   _method() {}
-  _values = ([0, true, []] as unknown) as [number, true, number[]];
+  _values = ([0, true, new VectorS<number>()] as unknown) as [
+    number,
+    true,
+    VectorS<number>
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -81742,10 +81995,10 @@ export class MessagesDeleteMessagesM {
     return !!(this.get_flags() & (1 << 0));
   }
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[2];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[2] = val;
 
     return this;
@@ -81766,13 +82019,13 @@ export class MessagesDeleteMessagesM {
     }
 
     {
-      let val = values[2] as number[];
+      let val = values[2] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -81799,17 +82052,17 @@ export class MessagesDeleteMessagesM {
     }
 
     {
-      let val = values[2] as number[];
+      let val = values[2] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -81975,7 +82228,7 @@ export class MessagesSendMessageM {
     "",
     [0, 0],
     (new ReplyMarkupT() as unknown) as ReplyMarkupT,
-    [],
+    new VectorS<MessageEntityT>(),
     0
   ] as unknown) as [
     number,
@@ -81988,7 +82241,7 @@ export class MessagesSendMessageM {
     string,
     ProtoLong,
     ReplyMarkupT,
-    MessageEntityT[],
+    VectorS<MessageEntityT>,
     number
   ];
 
@@ -82118,10 +82371,10 @@ export class MessagesSendMessageM {
     return !!(this.get_flags() & (1 << 2));
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[10];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[10] = val;
 
     this.set_flags(this.get_flags() | (1 << 3));
@@ -82200,13 +82453,13 @@ export class MessagesSendMessageM {
     }
 
     if (this.has_entities()) {
-      let val = values[10] as MessageEntityT[];
+      let val = values[10] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -82290,19 +82543,19 @@ export class MessagesSendMessageM {
     }
 
     if (this.has_entities()) {
-      let val = values[10] as MessageEntityT[];
+      let val = values[10] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[10] = val;
     }
@@ -82348,7 +82601,7 @@ export class MessagesSendMediaM {
     "",
     [0, 0],
     (new ReplyMarkupT() as unknown) as ReplyMarkupT,
-    [],
+    new VectorS<MessageEntityT>(),
     0
   ] as unknown) as [
     number,
@@ -82361,7 +82614,7 @@ export class MessagesSendMediaM {
     string,
     ProtoLong,
     ReplyMarkupT,
-    MessageEntityT[],
+    VectorS<MessageEntityT>,
     number
   ];
 
@@ -82485,10 +82738,10 @@ export class MessagesSendMediaM {
     return !!(this.get_flags() & (1 << 2));
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[10];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[10] = val;
 
     this.set_flags(this.get_flags() | (1 << 3));
@@ -82568,13 +82821,13 @@ export class MessagesSendMediaM {
     }
 
     if (this.has_entities()) {
-      let val = values[10] as MessageEntityT[];
+      let val = values[10] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -82660,19 +82913,19 @@ export class MessagesSendMediaM {
     }
 
     if (this.has_entities()) {
-      let val = values[10] as MessageEntityT[];
+      let val = values[10] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[10] = val;
     }
@@ -82712,8 +82965,8 @@ export class MessagesForwardMessagesM {
     true,
     true,
     (new InputPeerT() as unknown) as InputPeerT,
-    [],
-    [],
+    new VectorS<number>(),
+    new VectorS<ProtoLong>(),
     (new InputPeerT() as unknown) as InputPeerT,
     0
   ] as unknown) as [
@@ -82723,8 +82976,8 @@ export class MessagesForwardMessagesM {
     true,
     true,
     InputPeerT,
-    number[],
-    ProtoLong[],
+    VectorS<number>,
+    VectorS<ProtoLong>,
     InputPeerT,
     number
   ];
@@ -82807,19 +83060,19 @@ export class MessagesForwardMessagesM {
     return this;
   }
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[6];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[6] = val;
 
     return this;
   }
 
-  get_random_id(): ProtoLong[] {
+  get_random_id(): VectorS<ProtoLong> {
     return this._values[7];
   }
-  set_random_id(val: ProtoLong[]): this {
+  set_random_id(val: VectorS<ProtoLong>): this {
     this._values[7] = val;
 
     return this;
@@ -82881,25 +83134,25 @@ export class MessagesForwardMessagesM {
     }
 
     {
-      let val = values[6] as number[];
+      let val = values[6] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
 
     {
-      let val = values[7] as ProtoLong[];
+      let val = values[7] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -82962,33 +83215,33 @@ export class MessagesForwardMessagesM {
     }
 
     {
-      let val = values[6] as number[];
+      let val = values[6] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
 
     {
-      let val = values[7] as ProtoLong[];
+      let val = values[7] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[7] = val;
     }
@@ -83130,9 +83383,9 @@ export class MessagesReportM {
   _method() {}
   _values = ([
     (new InputPeerT() as unknown) as InputPeerT,
-    [],
+    new VectorS<number>(),
     (new ReportReasonT() as unknown) as ReportReasonT
-  ] as unknown) as [InputPeerT, number[], ReportReasonT];
+  ] as unknown) as [InputPeerT, VectorS<number>, ReportReasonT];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -83143,10 +83396,10 @@ export class MessagesReportM {
     return this;
   }
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[1];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[1] = val;
 
     return this;
@@ -83172,13 +83425,13 @@ export class MessagesReportM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -83206,17 +83459,17 @@ export class MessagesReportM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -83242,12 +83495,12 @@ AllStructs.set(MessagesReportM._id, MessagesReportM);
 export class MessagesGetChatsM {
   static _id = 0x3c6aa187;
   _method() {}
-  _values = ([[]] as unknown) as [number[]];
+  _values = ([new VectorS<number>()] as unknown) as [VectorS<number>];
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[0];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -83259,13 +83512,13 @@ export class MessagesGetChatsM {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -83280,17 +83533,17 @@ export class MessagesGetChatsM {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -83675,12 +83928,15 @@ AllStructs.set(MessagesDeleteChatUserM._id, MessagesDeleteChatUserM);
 export class MessagesCreateChatM {
   static _id = 0x9cb126e;
   _method() {}
-  _values = ([[], ""] as unknown) as [InputUserT[], string];
+  _values = ([new VectorS<InputUserT>(), ""] as unknown) as [
+    VectorS<InputUserT>,
+    string
+  ];
 
-  get_users(): InputUserT[] {
+  get_users(): VectorS<InputUserT> {
     return this._values[0];
   }
-  set_users(val: InputUserT[]): this {
+  set_users(val: VectorS<InputUserT>): this {
     this._values[0] = val;
 
     return this;
@@ -83701,13 +83957,13 @@ export class MessagesCreateChatM {
     let values = this._values;
 
     {
-      let val = values[0] as InputUserT[];
+      let val = values[0] as VectorS<InputUserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -83727,19 +83983,19 @@ export class MessagesCreateChatM {
     let values = this._values;
 
     {
-      let val = values[0] as InputUserT[];
+      let val = values[0] as VectorS<InputUserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -84040,12 +84296,12 @@ AllStructs.set(PhotosUploadProfilePhotoM._id, PhotosUploadProfilePhotoM);
 export class PhotosDeletePhotosM {
   static _id = 0x87cf7f2f;
   _method() {}
-  _values = ([[]] as unknown) as [InputPhotoT[]];
+  _values = ([new VectorS<InputPhotoT>()] as unknown) as [VectorS<InputPhotoT>];
 
-  get_id(): InputPhotoT[] {
+  get_id(): VectorS<InputPhotoT> {
     return this._values[0];
   }
-  set_id(val: InputPhotoT[]): this {
+  set_id(val: VectorS<InputPhotoT>): this {
     this._values[0] = val;
 
     return this;
@@ -84057,13 +84313,13 @@ export class PhotosDeletePhotosM {
     let values = this._values;
 
     {
-      let val = values[0] as InputPhotoT[];
+      let val = values[0] as VectorS<InputPhotoT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -84078,19 +84334,19 @@ export class PhotosDeletePhotosM {
     let values = this._values;
 
     {
-      let val = values[0] as InputPhotoT[];
+      let val = values[0] as VectorS<InputPhotoT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputPhotoT = (new InputPhotoT() as unknown) as InputPhotoT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -85901,12 +86157,12 @@ AllStructs.set(HelpGetSupportM._id, HelpGetSupportM);
 export class MessagesReadMessageContentsM {
   static _id = 0x36a73f77;
   _method() {}
-  _values = ([[]] as unknown) as [number[]];
+  _values = ([new VectorS<number>()] as unknown) as [VectorS<number>];
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[0];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -85918,13 +86174,13 @@ export class MessagesReadMessageContentsM {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -85939,17 +86195,17 @@ export class MessagesReadMessageContentsM {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -86191,8 +86447,8 @@ export class AccountSetPrivacyM {
   _method() {}
   _values = ([
     (new InputPrivacyKeyT() as unknown) as InputPrivacyKeyT,
-    []
-  ] as unknown) as [InputPrivacyKeyT, InputPrivacyRuleT[]];
+    new VectorS<InputPrivacyRuleT>()
+  ] as unknown) as [InputPrivacyKeyT, VectorS<InputPrivacyRuleT>];
 
   get_key(): InputPrivacyKeyT {
     return this._values[0];
@@ -86203,10 +86459,10 @@ export class AccountSetPrivacyM {
     return this;
   }
 
-  get_rules(): InputPrivacyRuleT[] {
+  get_rules(): VectorS<InputPrivacyRuleT> {
     return this._values[1];
   }
-  set_rules(val: InputPrivacyRuleT[]): this {
+  set_rules(val: VectorS<InputPrivacyRuleT>): this {
     this._values[1] = val;
 
     return this;
@@ -86223,13 +86479,13 @@ export class AccountSetPrivacyM {
     }
 
     {
-      let val = values[1] as InputPrivacyRuleT[];
+      let val = values[1] as VectorS<InputPrivacyRuleT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -86252,19 +86508,19 @@ export class AccountSetPrivacyM {
     }
 
     {
-      let val = values[1] as InputPrivacyRuleT[];
+      let val = values[1] as VectorS<InputPrivacyRuleT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputPrivacyRuleT = (new InputPrivacyRuleT() as unknown) as InputPrivacyRuleT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -86979,7 +87235,11 @@ AllStructs.set(AuthImportBotAuthorizationM._id, AuthImportBotAuthorizationM);
 export class MessagesGetWebPagePreviewM {
   static _id = 0x8b68b0cc;
   _method() {}
-  _values = ([0, "", []] as unknown) as [number, string, MessageEntityT[]];
+  _values = ([0, "", new VectorS<MessageEntityT>()] as unknown) as [
+    number,
+    string,
+    VectorS<MessageEntityT>
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -86999,10 +87259,10 @@ export class MessagesGetWebPagePreviewM {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[2];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[2] = val;
 
     this.set_flags(this.get_flags() | (1 << 3));
@@ -87030,13 +87290,13 @@ export class MessagesGetWebPagePreviewM {
     }
 
     if (this.has_entities()) {
-      let val = values[2] as MessageEntityT[];
+      let val = values[2] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -87063,19 +87323,19 @@ export class MessagesGetWebPagePreviewM {
     }
 
     if (this.has_entities()) {
-      let val = values[2] as MessageEntityT[];
+      let val = values[2] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -88014,9 +88274,9 @@ export class MessagesGetMessagesViewsM {
   _method() {}
   _values = ([
     (new InputPeerT() as unknown) as InputPeerT,
-    [],
+    new VectorS<number>(),
     (new BoolT() as unknown) as BoolT
-  ] as unknown) as [InputPeerT, number[], BoolT];
+  ] as unknown) as [InputPeerT, VectorS<number>, BoolT];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -88027,10 +88287,10 @@ export class MessagesGetMessagesViewsM {
     return this;
   }
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[1];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[1] = val;
 
     return this;
@@ -88056,13 +88316,13 @@ export class MessagesGetMessagesViewsM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -88090,17 +88350,17 @@ export class MessagesGetMessagesViewsM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -88204,8 +88464,8 @@ export class ChannelsDeleteMessagesM {
   _method() {}
   _values = ([
     (new InputChannelT() as unknown) as InputChannelT,
-    []
-  ] as unknown) as [InputChannelT, number[]];
+    new VectorS<number>()
+  ] as unknown) as [InputChannelT, VectorS<number>];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -88216,10 +88476,10 @@ export class ChannelsDeleteMessagesM {
     return this;
   }
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[1];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[1] = val;
 
     return this;
@@ -88236,13 +88496,13 @@ export class ChannelsDeleteMessagesM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -88265,17 +88525,17 @@ export class ChannelsDeleteMessagesM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -88375,8 +88635,8 @@ export class ChannelsReportSpamM {
   _values = ([
     (new InputChannelT() as unknown) as InputChannelT,
     (new InputUserT() as unknown) as InputUserT,
-    []
-  ] as unknown) as [InputChannelT, InputUserT, number[]];
+    new VectorS<number>()
+  ] as unknown) as [InputChannelT, InputUserT, VectorS<number>];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -88396,10 +88656,10 @@ export class ChannelsReportSpamM {
     return this;
   }
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[2];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[2] = val;
 
     return this;
@@ -88421,13 +88681,13 @@ export class ChannelsReportSpamM {
     }
 
     {
-      let val = values[2] as number[];
+      let val = values[2] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -88458,17 +88718,17 @@ export class ChannelsReportSpamM {
     }
 
     {
-      let val = values[2] as number[];
+      let val = values[2] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -88489,8 +88749,8 @@ export class ChannelsGetMessagesM {
   _method() {}
   _values = ([
     (new InputChannelT() as unknown) as InputChannelT,
-    []
-  ] as unknown) as [InputChannelT, InputMessageT[]];
+    new VectorS<InputMessageT>()
+  ] as unknown) as [InputChannelT, VectorS<InputMessageT>];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -88501,10 +88761,10 @@ export class ChannelsGetMessagesM {
     return this;
   }
 
-  get_id(): InputMessageT[] {
+  get_id(): VectorS<InputMessageT> {
     return this._values[1];
   }
-  set_id(val: InputMessageT[]): this {
+  set_id(val: VectorS<InputMessageT>): this {
     this._values[1] = val;
 
     return this;
@@ -88521,13 +88781,13 @@ export class ChannelsGetMessagesM {
     }
 
     {
-      let val = values[1] as InputMessageT[];
+      let val = values[1] as VectorS<InputMessageT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -88550,19 +88810,19 @@ export class ChannelsGetMessagesM {
     }
 
     {
-      let val = values[1] as InputMessageT[];
+      let val = values[1] as VectorS<InputMessageT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputMessageT = (new InputMessageT() as unknown) as InputMessageT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -88806,12 +89066,14 @@ AllStructs.set(ChannelsGetParticipantM._id, ChannelsGetParticipantM);
 export class ChannelsGetChannelsM {
   static _id = 0xa7f6bbb;
   _method() {}
-  _values = ([[]] as unknown) as [InputChannelT[]];
+  _values = ([new VectorS<InputChannelT>()] as unknown) as [
+    VectorS<InputChannelT>
+  ];
 
-  get_id(): InputChannelT[] {
+  get_id(): VectorS<InputChannelT> {
     return this._values[0];
   }
-  set_id(val: InputChannelT[]): this {
+  set_id(val: VectorS<InputChannelT>): this {
     this._values[0] = val;
 
     return this;
@@ -88823,13 +89085,13 @@ export class ChannelsGetChannelsM {
     let values = this._values;
 
     {
-      let val = values[0] as InputChannelT[];
+      let val = values[0] as VectorS<InputChannelT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -88844,19 +89106,19 @@ export class ChannelsGetChannelsM {
     let values = this._values;
 
     {
-      let val = values[0] as InputChannelT[];
+      let val = values[0] as VectorS<InputChannelT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputChannelT = (new InputChannelT() as unknown) as InputChannelT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -89668,8 +89930,8 @@ export class ChannelsInviteToChannelM {
   _method() {}
   _values = ([
     (new InputChannelT() as unknown) as InputChannelT,
-    []
-  ] as unknown) as [InputChannelT, InputUserT[]];
+    new VectorS<InputUserT>()
+  ] as unknown) as [InputChannelT, VectorS<InputUserT>];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -89680,10 +89942,10 @@ export class ChannelsInviteToChannelM {
     return this;
   }
 
-  get_users(): InputUserT[] {
+  get_users(): VectorS<InputUserT> {
     return this._values[1];
   }
-  set_users(val: InputUserT[]): this {
+  set_users(val: VectorS<InputUserT>): this {
     this._values[1] = val;
 
     return this;
@@ -89700,13 +89962,13 @@ export class ChannelsInviteToChannelM {
     }
 
     {
-      let val = values[1] as InputUserT[];
+      let val = values[1] as VectorS<InputUserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -89729,19 +89991,19 @@ export class ChannelsInviteToChannelM {
     }
 
     {
-      let val = values[1] as InputUserT[];
+      let val = values[1] as VectorS<InputUserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -90330,7 +90592,11 @@ AllStructs.set(MessagesSearchGlobalM._id, MessagesSearchGlobalM);
 export class MessagesReorderStickerSetsM {
   static _id = 0x78337739;
   _method() {}
-  _values = ([0, true, []] as unknown) as [number, true, ProtoLong[]];
+  _values = ([0, true, new VectorS<ProtoLong>()] as unknown) as [
+    number,
+    true,
+    VectorS<ProtoLong>
+  ];
 
   get_flags(): number {
     return this._values[0];
@@ -90356,10 +90622,10 @@ export class MessagesReorderStickerSetsM {
     return !!(this.get_flags() & (1 << 0));
   }
 
-  get_order(): ProtoLong[] {
+  get_order(): VectorS<ProtoLong> {
     return this._values[2];
   }
-  set_order(val: ProtoLong[]): this {
+  set_order(val: VectorS<ProtoLong>): this {
     this._values[2] = val;
 
     return this;
@@ -90380,13 +90646,13 @@ export class MessagesReorderStickerSetsM {
     }
 
     {
-      let val = values[2] as ProtoLong[];
+      let val = values[2] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -90413,17 +90679,17 @@ export class MessagesReorderStickerSetsM {
     }
 
     {
-      let val = values[2] as ProtoLong[];
+      let val = values[2] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -90924,7 +91190,7 @@ export class MessagesSetInlineBotResultsM {
     true,
     true,
     [0, 0],
-    [],
+    new VectorS<InputBotInlineResultT>(),
     0,
     "",
     (new InlineBotSwitchPmT() as unknown) as InlineBotSwitchPmT
@@ -90933,7 +91199,7 @@ export class MessagesSetInlineBotResultsM {
     true,
     true,
     ProtoLong,
-    InputBotInlineResultT[],
+    VectorS<InputBotInlineResultT>,
     number,
     string,
     InlineBotSwitchPmT
@@ -90987,10 +91253,10 @@ export class MessagesSetInlineBotResultsM {
     return this;
   }
 
-  get_results(): InputBotInlineResultT[] {
+  get_results(): VectorS<InputBotInlineResultT> {
     return this._values[4];
   }
-  set_results(val: InputBotInlineResultT[]): this {
+  set_results(val: VectorS<InputBotInlineResultT>): this {
     this._values[4] = val;
 
     return this;
@@ -91059,13 +91325,13 @@ export class MessagesSetInlineBotResultsM {
     }
 
     {
-      let val = values[4] as InputBotInlineResultT[];
+      let val = values[4] as VectorS<InputBotInlineResultT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -91119,19 +91385,19 @@ export class MessagesSetInlineBotResultsM {
     }
 
     {
-      let val = values[4] as InputBotInlineResultT[];
+      let val = values[4] as VectorS<InputBotInlineResultT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputBotInlineResultT = (new InputBotInlineResultT() as unknown) as InputBotInlineResultT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -91893,7 +92159,7 @@ export class MessagesEditMessageM {
     "",
     (new InputMediaT() as unknown) as InputMediaT,
     (new ReplyMarkupT() as unknown) as ReplyMarkupT,
-    [],
+    new VectorS<MessageEntityT>(),
     0
   ] as unknown) as [
     number,
@@ -91903,7 +92169,7 @@ export class MessagesEditMessageM {
     string,
     InputMediaT,
     ReplyMarkupT,
-    MessageEntityT[],
+    VectorS<MessageEntityT>,
     number
   ];
 
@@ -91994,10 +92260,10 @@ export class MessagesEditMessageM {
     return !!(this.get_flags() & (1 << 2));
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[7];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[7] = val;
 
     this.set_flags(this.get_flags() | (1 << 3));
@@ -92064,13 +92330,13 @@ export class MessagesEditMessageM {
     }
 
     if (this.has_entities()) {
-      let val = values[7] as MessageEntityT[];
+      let val = values[7] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -92138,19 +92404,19 @@ export class MessagesEditMessageM {
     }
 
     if (this.has_entities()) {
-      let val = values[7] as MessageEntityT[];
+      let val = values[7] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[7] = val;
     }
@@ -92187,7 +92453,7 @@ export class MessagesEditInlineBotMessageM {
     "",
     (new InputMediaT() as unknown) as InputMediaT,
     (new ReplyMarkupT() as unknown) as ReplyMarkupT,
-    []
+    new VectorS<MessageEntityT>()
   ] as unknown) as [
     number,
     true,
@@ -92195,7 +92461,7 @@ export class MessagesEditInlineBotMessageM {
     string,
     InputMediaT,
     ReplyMarkupT,
-    MessageEntityT[]
+    VectorS<MessageEntityT>
   ];
 
   get_flags(): number {
@@ -92276,10 +92542,10 @@ export class MessagesEditInlineBotMessageM {
     return !!(this.get_flags() & (1 << 2));
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[6];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[6] = val;
 
     this.set_flags(this.get_flags() | (1 << 3));
@@ -92326,13 +92592,13 @@ export class MessagesEditInlineBotMessageM {
     }
 
     if (this.has_entities()) {
-      let val = values[6] as MessageEntityT[];
+      let val = values[6] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -92389,19 +92655,19 @@ export class MessagesEditInlineBotMessageM {
     }
 
     if (this.has_entities()) {
-      let val = values[6] as MessageEntityT[];
+      let val = values[6] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
@@ -93181,12 +93447,14 @@ AllStructs.set(ContactsResetTopPeerRatingM._id, ContactsResetTopPeerRatingM);
 export class MessagesGetPeerDialogsM {
   static _id = 0xe470bcfd;
   _method() {}
-  _values = ([[]] as unknown) as [InputDialogPeerT[]];
+  _values = ([new VectorS<InputDialogPeerT>()] as unknown) as [
+    VectorS<InputDialogPeerT>
+  ];
 
-  get_peers(): InputDialogPeerT[] {
+  get_peers(): VectorS<InputDialogPeerT> {
     return this._values[0];
   }
-  set_peers(val: InputDialogPeerT[]): this {
+  set_peers(val: VectorS<InputDialogPeerT>): this {
     this._values[0] = val;
 
     return this;
@@ -93198,13 +93466,13 @@ export class MessagesGetPeerDialogsM {
     let values = this._values;
 
     {
-      let val = values[0] as InputDialogPeerT[];
+      let val = values[0] as VectorS<InputDialogPeerT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -93219,19 +93487,19 @@ export class MessagesGetPeerDialogsM {
     let values = this._values;
 
     {
-      let val = values[0] as InputDialogPeerT[];
+      let val = values[0] as VectorS<InputDialogPeerT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputDialogPeerT = (new InputDialogPeerT() as unknown) as InputDialogPeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -93260,14 +93528,14 @@ export class MessagesSaveDraftM {
     0,
     (new InputPeerT() as unknown) as InputPeerT,
     "",
-    []
+    new VectorS<MessageEntityT>()
   ] as unknown) as [
     number,
     true,
     number,
     InputPeerT,
     string,
-    MessageEntityT[]
+    VectorS<MessageEntityT>
   ];
 
   get_flags(): number {
@@ -93327,10 +93595,10 @@ export class MessagesSaveDraftM {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[5];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[5] = val;
 
     this.set_flags(this.get_flags() | (1 << 3));
@@ -93372,13 +93640,13 @@ export class MessagesSaveDraftM {
     }
 
     if (this.has_entities()) {
-      let val = values[5] as MessageEntityT[];
+      let val = values[5] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -93425,19 +93693,19 @@ export class MessagesSaveDraftM {
     }
 
     if (this.has_entities()) {
-      let val = values[5] as MessageEntityT[];
+      let val = values[5] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[5] = val;
     }
@@ -93530,12 +93798,12 @@ AllStructs.set(MessagesGetFeaturedStickersM._id, MessagesGetFeaturedStickersM);
 export class MessagesReadFeaturedStickersM {
   static _id = 0x5b118126;
   _method() {}
-  _values = ([[]] as unknown) as [ProtoLong[]];
+  _values = ([new VectorS<ProtoLong>()] as unknown) as [VectorS<ProtoLong>];
 
-  get_id(): ProtoLong[] {
+  get_id(): VectorS<ProtoLong> {
     return this._values[0];
   }
-  set_id(val: ProtoLong[]): this {
+  set_id(val: VectorS<ProtoLong>): this {
     this._values[0] = val;
 
     return this;
@@ -93547,13 +93815,13 @@ export class MessagesReadFeaturedStickersM {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -93568,17 +93836,17 @@ export class MessagesReadFeaturedStickersM {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -94369,12 +94637,12 @@ AllStructs.set(MessagesGetAttachedStickersM._id, MessagesGetAttachedStickersM);
 export class AuthDropTempAuthKeysM {
   static _id = 0x8e48a188;
   _method() {}
-  _values = ([[]] as unknown) as [ProtoLong[]];
+  _values = ([new VectorS<ProtoLong>()] as unknown) as [VectorS<ProtoLong>];
 
-  get_except_auth_keys(): ProtoLong[] {
+  get_except_auth_keys(): VectorS<ProtoLong> {
     return this._values[0];
   }
-  set_except_auth_keys(val: ProtoLong[]): this {
+  set_except_auth_keys(val: VectorS<ProtoLong>): this {
     this._values[0] = val;
 
     return this;
@@ -94386,13 +94654,13 @@ export class AuthDropTempAuthKeysM {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -94407,17 +94675,17 @@ export class AuthDropTempAuthKeysM {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -95090,12 +95358,12 @@ AllStructs.set(MessagesGetCommonChatsM._id, MessagesGetCommonChatsM);
 export class MessagesGetAllChatsM {
   static _id = 0xeba80ff0;
   _method() {}
-  _values = ([[]] as unknown) as [number[]];
+  _values = ([new VectorS<number>()] as unknown) as [VectorS<number>];
 
-  get_except_ids(): number[] {
+  get_except_ids(): VectorS<number> {
     return this._values[0];
   }
-  set_except_ids(val: number[]): this {
+  set_except_ids(val: VectorS<number>): this {
     this._values[0] = val;
 
     return this;
@@ -95107,13 +95375,13 @@ export class MessagesGetAllChatsM {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -95128,17 +95396,17 @@ export class MessagesGetAllChatsM {
     let values = this._values;
 
     {
-      let val = values[0] as number[];
+      let val = values[0] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -95401,11 +95669,11 @@ AllStructs.set(MessagesToggleDialogPinM._id, MessagesToggleDialogPinM);
 export class MessagesReorderPinnedDialogsM {
   static _id = 0x3b1adf37;
   _method() {}
-  _values = ([0, true, 0, []] as unknown) as [
+  _values = ([0, true, 0, new VectorS<InputDialogPeerT>()] as unknown) as [
     number,
     true,
     number,
-    InputDialogPeerT[]
+    VectorS<InputDialogPeerT>
   ];
 
   get_flags(): number {
@@ -95441,10 +95709,10 @@ export class MessagesReorderPinnedDialogsM {
     return this;
   }
 
-  get_order(): InputDialogPeerT[] {
+  get_order(): VectorS<InputDialogPeerT> {
     return this._values[3];
   }
-  set_order(val: InputDialogPeerT[]): this {
+  set_order(val: VectorS<InputDialogPeerT>): this {
     this._values[3] = val;
 
     return this;
@@ -95470,13 +95738,13 @@ export class MessagesReorderPinnedDialogsM {
     }
 
     {
-      let val = values[3] as InputDialogPeerT[];
+      let val = values[3] as VectorS<InputDialogPeerT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -95509,19 +95777,19 @@ export class MessagesReorderPinnedDialogsM {
     }
 
     {
-      let val = values[3] as InputDialogPeerT[];
+      let val = values[3] as VectorS<InputDialogPeerT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputDialogPeerT = (new InputDialogPeerT() as unknown) as InputDialogPeerT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -96421,11 +96689,11 @@ AllStructs.set(PaymentsClearSavedInfoM._id, PaymentsClearSavedInfoM);
 export class MessagesSetBotShippingResultsM {
   static _id = 0xe5f672fa;
   _method() {}
-  _values = ([0, [0, 0], "", []] as unknown) as [
+  _values = ([0, [0, 0], "", new VectorS<ShippingOptionT>()] as unknown) as [
     number,
     ProtoLong,
     string,
-    ShippingOptionT[]
+    VectorS<ShippingOptionT>
   ];
 
   get_flags(): number {
@@ -96461,10 +96729,10 @@ export class MessagesSetBotShippingResultsM {
     return !!(this.get_flags() & (1 << 0));
   }
 
-  get_shipping_options(): ShippingOptionT[] {
+  get_shipping_options(): VectorS<ShippingOptionT> {
     return this._values[3];
   }
-  set_shipping_options(val: ShippingOptionT[]): this {
+  set_shipping_options(val: VectorS<ShippingOptionT>): this {
     this._values[3] = val;
 
     this.set_flags(this.get_flags() | (1 << 1));
@@ -96497,13 +96765,13 @@ export class MessagesSetBotShippingResultsM {
     }
 
     if (this.has_shipping_options()) {
-      let val = values[3] as ShippingOptionT[];
+      let val = values[3] as VectorS<ShippingOptionT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -96536,19 +96804,19 @@ export class MessagesSetBotShippingResultsM {
     }
 
     if (this.has_shipping_options()) {
-      let val = values[3] as ShippingOptionT[];
+      let val = values[3] as VectorS<ShippingOptionT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ShippingOptionT = (new ShippingOptionT() as unknown) as ShippingOptionT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -96711,14 +96979,14 @@ export class StickersCreateStickerSetM {
     (new InputUserT() as unknown) as InputUserT,
     "",
     "",
-    []
+    new VectorS<InputStickerSetItemS>()
   ] as unknown) as [
     number,
     true,
     InputUserT,
     string,
     string,
-    InputStickerSetItemS[]
+    VectorS<InputStickerSetItemS>
   ];
 
   get_flags(): number {
@@ -96772,10 +97040,10 @@ export class StickersCreateStickerSetM {
     return this;
   }
 
-  get_stickers(): InputStickerSetItemS[] {
+  get_stickers(): VectorS<InputStickerSetItemS> {
     return this._values[5];
   }
-  set_stickers(val: InputStickerSetItemS[]): this {
+  set_stickers(val: VectorS<InputStickerSetItemS>): this {
     this._values[5] = val;
 
     return this;
@@ -96811,13 +97079,13 @@ export class StickersCreateStickerSetM {
     }
 
     {
-      let val = values[5] as InputStickerSetItemS[];
+      let val = values[5] as VectorS<InputStickerSetItemS>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -96864,19 +97132,19 @@ export class StickersCreateStickerSetM {
     }
 
     {
-      let val = values[5] as InputStickerSetItemS[];
+      let val = values[5] as VectorS<InputStickerSetItemS>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputStickerSetItemS = (new InputStickerSetItemS() as unknown) as InputStickerSetItemS;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[5] = val;
     }
@@ -98324,7 +98592,11 @@ AllStructs.set(LangpackGetLangPackM._id, LangpackGetLangPackM);
 export class LangpackGetStringsM {
   static _id = 0xefea3803;
   _method() {}
-  _values = (["", "", []] as unknown) as [string, string, string[]];
+  _values = (["", "", new VectorS<string>()] as unknown) as [
+    string,
+    string,
+    VectorS<string>
+  ];
 
   get_lang_pack(): string {
     return this._values[0];
@@ -98344,10 +98616,10 @@ export class LangpackGetStringsM {
     return this;
   }
 
-  get_keys(): string[] {
+  get_keys(): VectorS<string> {
     return this._values[2];
   }
-  set_keys(val: string[]): this {
+  set_keys(val: VectorS<string>): this {
     this._values[2] = val;
 
     return this;
@@ -98369,13 +98641,13 @@ export class LangpackGetStringsM {
     }
 
     {
-      let val = values[2] as string[];
+      let val = values[2] as VectorS<string>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeString(val);
       }
     }
@@ -98402,17 +98674,17 @@ export class LangpackGetStringsM {
     }
 
     {
-      let val = values[2] as string[];
+      let val = values[2] as VectorS<string>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: string = "";
         val = buf.readString();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -98683,7 +98955,7 @@ export class ChannelsGetAdminLogM {
     (new InputChannelT() as unknown) as InputChannelT,
     "",
     (new ChannelAdminLogEventsFilterS() as unknown) as ChannelAdminLogEventsFilterS,
-    [],
+    new VectorS<InputUserT>(),
     [0, 0],
     [0, 0],
     0
@@ -98692,7 +98964,7 @@ export class ChannelsGetAdminLogM {
     InputChannelT,
     string,
     ChannelAdminLogEventsFilterS,
-    InputUserT[],
+    VectorS<InputUserT>,
     ProtoLong,
     ProtoLong,
     number
@@ -98740,10 +99012,10 @@ export class ChannelsGetAdminLogM {
     return !!(this.get_flags() & (1 << 0));
   }
 
-  get_admins(): InputUserT[] {
+  get_admins(): VectorS<InputUserT> {
     return this._values[4];
   }
-  set_admins(val: InputUserT[]): this {
+  set_admins(val: VectorS<InputUserT>): this {
     this._values[4] = val;
 
     this.set_flags(this.get_flags() | (1 << 1));
@@ -98808,13 +99080,13 @@ export class ChannelsGetAdminLogM {
     }
 
     if (this.has_admins()) {
-      let val = values[4] as InputUserT[];
+      let val = values[4] as VectorS<InputUserT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -98872,19 +99144,19 @@ export class ChannelsGetAdminLogM {
     }
 
     if (this.has_admins()) {
-      let val = values[4] as InputUserT[];
+      let val = values[4] as VectorS<InputUserT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputUserT = (new InputUserT() as unknown) as InputUserT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[4] = val;
     }
@@ -99297,8 +99569,8 @@ export class ChannelsReadMessageContentsM {
   _method() {}
   _values = ([
     (new InputChannelT() as unknown) as InputChannelT,
-    []
-  ] as unknown) as [InputChannelT, number[]];
+    new VectorS<number>()
+  ] as unknown) as [InputChannelT, VectorS<number>];
 
   get_channel(): InputChannelT {
     return this._values[0];
@@ -99309,10 +99581,10 @@ export class ChannelsReadMessageContentsM {
     return this;
   }
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[1];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[1] = val;
 
     return this;
@@ -99329,13 +99601,13 @@ export class ChannelsReadMessageContentsM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -99358,17 +99630,17 @@ export class ChannelsReadMessageContentsM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -99943,7 +100215,7 @@ export class MessagesSendMultiMediaM {
     true,
     (new InputPeerT() as unknown) as InputPeerT,
     0,
-    [],
+    new VectorS<InputSingleMediaS>(),
     0
   ] as unknown) as [
     number,
@@ -99952,7 +100224,7 @@ export class MessagesSendMultiMediaM {
     true,
     InputPeerT,
     number,
-    InputSingleMediaS[],
+    VectorS<InputSingleMediaS>,
     number
   ];
 
@@ -100034,10 +100306,10 @@ export class MessagesSendMultiMediaM {
     return !!(this.get_flags() & (1 << 0));
   }
 
-  get_multi_media(): InputSingleMediaS[] {
+  get_multi_media(): VectorS<InputSingleMediaS> {
     return this._values[6];
   }
-  set_multi_media(val: InputSingleMediaS[]): this {
+  set_multi_media(val: VectorS<InputSingleMediaS>): this {
     this._values[6] = val;
 
     return this;
@@ -100091,13 +100363,13 @@ export class MessagesSendMultiMediaM {
     }
 
     {
-      let val = values[6] as InputSingleMediaS[];
+      let val = values[6] as VectorS<InputSingleMediaS>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -100155,19 +100427,19 @@ export class MessagesSendMultiMediaM {
     }
 
     {
-      let val = values[6] as InputSingleMediaS[];
+      let val = values[6] as VectorS<InputSingleMediaS>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputSingleMediaS = (new InputSingleMediaS() as unknown) as InputSingleMediaS;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[6] = val;
     }
@@ -100698,12 +100970,14 @@ AllStructs.set(AccountGetAllSecureValuesM._id, AccountGetAllSecureValuesM);
 export class AccountGetSecureValueM {
   static _id = 0x73665bc2;
   _method() {}
-  _values = ([[]] as unknown) as [SecureValueTypeT[]];
+  _values = ([new VectorS<SecureValueTypeT>()] as unknown) as [
+    VectorS<SecureValueTypeT>
+  ];
 
-  get_types(): SecureValueTypeT[] {
+  get_types(): VectorS<SecureValueTypeT> {
     return this._values[0];
   }
-  set_types(val: SecureValueTypeT[]): this {
+  set_types(val: VectorS<SecureValueTypeT>): this {
     this._values[0] = val;
 
     return this;
@@ -100715,13 +100989,13 @@ export class AccountGetSecureValueM {
     let values = this._values;
 
     {
-      let val = values[0] as SecureValueTypeT[];
+      let val = values[0] as VectorS<SecureValueTypeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -100736,19 +101010,19 @@ export class AccountGetSecureValueM {
     let values = this._values;
 
     {
-      let val = values[0] as SecureValueTypeT[];
+      let val = values[0] as VectorS<SecureValueTypeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureValueTypeT = (new SecureValueTypeT() as unknown) as SecureValueTypeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -100841,12 +101115,14 @@ AllStructs.set(AccountSaveSecureValueM._id, AccountSaveSecureValueM);
 export class AccountDeleteSecureValueM {
   static _id = 0xb880bc4b;
   _method() {}
-  _values = ([[]] as unknown) as [SecureValueTypeT[]];
+  _values = ([new VectorS<SecureValueTypeT>()] as unknown) as [
+    VectorS<SecureValueTypeT>
+  ];
 
-  get_types(): SecureValueTypeT[] {
+  get_types(): VectorS<SecureValueTypeT> {
     return this._values[0];
   }
-  set_types(val: SecureValueTypeT[]): this {
+  set_types(val: VectorS<SecureValueTypeT>): this {
     this._values[0] = val;
 
     return this;
@@ -100858,13 +101134,13 @@ export class AccountDeleteSecureValueM {
     let values = this._values;
 
     {
-      let val = values[0] as SecureValueTypeT[];
+      let val = values[0] as VectorS<SecureValueTypeT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -100879,19 +101155,19 @@ export class AccountDeleteSecureValueM {
     let values = this._values;
 
     {
-      let val = values[0] as SecureValueTypeT[];
+      let val = values[0] as VectorS<SecureValueTypeT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureValueTypeT = (new SecureValueTypeT() as unknown) as SecureValueTypeT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -100910,10 +101186,10 @@ AllStructs.set(AccountDeleteSecureValueM._id, AccountDeleteSecureValueM);
 export class UsersSetSecureValueErrorsM {
   static _id = 0x90c894b5;
   _method() {}
-  _values = ([(new InputUserT() as unknown) as InputUserT, []] as unknown) as [
-    InputUserT,
-    SecureValueErrorT[]
-  ];
+  _values = ([
+    (new InputUserT() as unknown) as InputUserT,
+    new VectorS<SecureValueErrorT>()
+  ] as unknown) as [InputUserT, VectorS<SecureValueErrorT>];
 
   get_id(): InputUserT {
     return this._values[0];
@@ -100924,10 +101200,10 @@ export class UsersSetSecureValueErrorsM {
     return this;
   }
 
-  get_errors(): SecureValueErrorT[] {
+  get_errors(): VectorS<SecureValueErrorT> {
     return this._values[1];
   }
-  set_errors(val: SecureValueErrorT[]): this {
+  set_errors(val: VectorS<SecureValueErrorT>): this {
     this._values[1] = val;
 
     return this;
@@ -100944,13 +101220,13 @@ export class UsersSetSecureValueErrorsM {
     }
 
     {
-      let val = values[1] as SecureValueErrorT[];
+      let val = values[1] as VectorS<SecureValueErrorT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -100973,19 +101249,19 @@ export class UsersSetSecureValueErrorsM {
     }
 
     {
-      let val = values[1] as SecureValueErrorT[];
+      let val = values[1] as VectorS<SecureValueErrorT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureValueErrorT = (new SecureValueErrorT() as unknown) as SecureValueErrorT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -101102,13 +101378,13 @@ export class AccountAcceptAuthorizationM {
     0,
     "",
     "",
-    [],
+    new VectorS<SecureValueHashS>(),
     (new SecureCredentialsEncryptedT() as unknown) as SecureCredentialsEncryptedT
   ] as unknown) as [
     number,
     string,
     string,
-    SecureValueHashS[],
+    VectorS<SecureValueHashS>,
     SecureCredentialsEncryptedT
   ];
 
@@ -101139,10 +101415,10 @@ export class AccountAcceptAuthorizationM {
     return this;
   }
 
-  get_value_hashes(): SecureValueHashS[] {
+  get_value_hashes(): VectorS<SecureValueHashS> {
     return this._values[3];
   }
-  set_value_hashes(val: SecureValueHashS[]): this {
+  set_value_hashes(val: VectorS<SecureValueHashS>): this {
     this._values[3] = val;
 
     return this;
@@ -101178,13 +101454,13 @@ export class AccountAcceptAuthorizationM {
     }
 
     {
-      let val = values[3] as SecureValueHashS[];
+      let val = values[3] as VectorS<SecureValueHashS>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -101222,19 +101498,19 @@ export class AccountAcceptAuthorizationM {
     }
 
     {
-      let val = values[3] as SecureValueHashS[];
+      let val = values[3] as VectorS<SecureValueHashS>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: SecureValueHashS = (new SecureValueHashS() as unknown) as SecureValueHashS;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -102394,12 +102670,14 @@ AllStructs.set(HelpGetAppConfigM._id, HelpGetAppConfigM);
 export class HelpSaveAppLogM {
   static _id = 0x6f02f748;
   _method() {}
-  _values = ([[]] as unknown) as [InputAppEventS[]];
+  _values = ([new VectorS<InputAppEventS>()] as unknown) as [
+    VectorS<InputAppEventS>
+  ];
 
-  get_events(): InputAppEventS[] {
+  get_events(): VectorS<InputAppEventS> {
     return this._values[0];
   }
-  set_events(val: InputAppEventS[]): this {
+  set_events(val: VectorS<InputAppEventS>): this {
     this._values[0] = val;
 
     return this;
@@ -102411,13 +102689,13 @@ export class HelpSaveAppLogM {
     let values = this._values;
 
     {
-      let val = values[0] as InputAppEventS[];
+      let val = values[0] as VectorS<InputAppEventS>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -102432,19 +102710,19 @@ export class HelpSaveAppLogM {
     let values = this._values;
 
     {
-      let val = values[0] as InputAppEventS[];
+      let val = values[0] as VectorS<InputAppEventS>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputAppEventS = (new InputAppEventS() as unknown) as InputAppEventS;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -102890,8 +103168,8 @@ export class HelpEditUserInfoM {
   _values = ([
     (new InputUserT() as unknown) as InputUserT,
     "",
-    []
-  ] as unknown) as [InputUserT, string, MessageEntityT[]];
+    new VectorS<MessageEntityT>()
+  ] as unknown) as [InputUserT, string, VectorS<MessageEntityT>];
 
   get_user_id(): InputUserT {
     return this._values[0];
@@ -102911,10 +103189,10 @@ export class HelpEditUserInfoM {
     return this;
   }
 
-  get_entities(): MessageEntityT[] {
+  get_entities(): VectorS<MessageEntityT> {
     return this._values[2];
   }
-  set_entities(val: MessageEntityT[]): this {
+  set_entities(val: VectorS<MessageEntityT>): this {
     this._values[2] = val;
 
     return this;
@@ -102936,13 +103214,13 @@ export class HelpEditUserInfoM {
     }
 
     {
-      let val = values[2] as MessageEntityT[];
+      let val = values[2] as VectorS<MessageEntityT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -102971,19 +103249,19 @@ export class HelpEditUserInfoM {
     }
 
     {
-      let val = values[2] as MessageEntityT[];
+      let val = values[2] as VectorS<MessageEntityT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageEntityT = (new MessageEntityT() as unknown) as MessageEntityT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -103199,8 +103477,8 @@ export class MessagesSendVoteM {
   _values = ([
     (new InputPeerT() as unknown) as InputPeerT,
     0,
-    []
-  ] as unknown) as [InputPeerT, number, Uint8Array[]];
+    new VectorS<Uint8Array>()
+  ] as unknown) as [InputPeerT, number, VectorS<Uint8Array>];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -103220,10 +103498,10 @@ export class MessagesSendVoteM {
     return this;
   }
 
-  get_options(): Uint8Array[] {
+  get_options(): VectorS<Uint8Array> {
     return this._values[2];
   }
-  set_options(val: Uint8Array[]): this {
+  set_options(val: VectorS<Uint8Array>): this {
     this._values[2] = val;
 
     return this;
@@ -103245,13 +103523,13 @@ export class MessagesSendVoteM {
     }
 
     {
-      let val = values[2] as Uint8Array[];
+      let val = values[2] as VectorS<Uint8Array>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeBytes(val);
       }
     }
@@ -103280,17 +103558,17 @@ export class MessagesSendVoteM {
     }
 
     {
-      let val = values[2] as Uint8Array[];
+      let val = values[2] as VectorS<Uint8Array>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: Uint8Array = new Uint8Array();
         val = buf.readBytes();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -104356,12 +104634,12 @@ AllStructs.set(
 export class MessagesGetEmojiKeywordsLanguagesM {
   static _id = 0x4e9963b2;
   _method() {}
-  _values = ([[]] as unknown) as [string[]];
+  _values = ([new VectorS<string>()] as unknown) as [VectorS<string>];
 
-  get_lang_codes(): string[] {
+  get_lang_codes(): VectorS<string> {
     return this._values[0];
   }
-  set_lang_codes(val: string[]): this {
+  set_lang_codes(val: VectorS<string>): this {
     this._values[0] = val;
 
     return this;
@@ -104373,13 +104651,13 @@ export class MessagesGetEmojiKeywordsLanguagesM {
     let values = this._values;
 
     {
-      let val = values[0] as string[];
+      let val = values[0] as VectorS<string>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeString(val);
       }
     }
@@ -104394,17 +104672,17 @@ export class MessagesGetEmojiKeywordsLanguagesM {
     let values = this._values;
 
     {
-      let val = values[0] as string[];
+      let val = values[0] as VectorS<string>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: string = "";
         val = buf.readString();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -104474,12 +104752,14 @@ AllStructs.set(MessagesGetEmojiUrlM._id, MessagesGetEmojiUrlM);
 export class FoldersEditPeerFoldersM {
   static _id = 0x6847d0ab;
   _method() {}
-  _values = ([[]] as unknown) as [InputFolderPeerS[]];
+  _values = ([new VectorS<InputFolderPeerS>()] as unknown) as [
+    VectorS<InputFolderPeerS>
+  ];
 
-  get_folder_peers(): InputFolderPeerS[] {
+  get_folder_peers(): VectorS<InputFolderPeerS> {
     return this._values[0];
   }
-  set_folder_peers(val: InputFolderPeerS[]): this {
+  set_folder_peers(val: VectorS<InputFolderPeerS>): this {
     this._values[0] = val;
 
     return this;
@@ -104491,13 +104771,13 @@ export class FoldersEditPeerFoldersM {
     let values = this._values;
 
     {
-      let val = values[0] as InputFolderPeerS[];
+      let val = values[0] as VectorS<InputFolderPeerS>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -104512,19 +104792,19 @@ export class FoldersEditPeerFoldersM {
     let values = this._values;
 
     {
-      let val = values[0] as InputFolderPeerS[];
+      let val = values[0] as VectorS<InputFolderPeerS>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: InputFolderPeerS = (new InputFolderPeerS() as unknown) as InputFolderPeerS;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -104592,10 +104872,10 @@ AllStructs.set(FoldersDeleteFolderM._id, FoldersDeleteFolderM);
 export class MessagesGetSearchCountersM {
   static _id = 0x732eef00;
   _method() {}
-  _values = ([(new InputPeerT() as unknown) as InputPeerT, []] as unknown) as [
-    InputPeerT,
-    MessagesFilterT[]
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    new VectorS<MessagesFilterT>()
+  ] as unknown) as [InputPeerT, VectorS<MessagesFilterT>];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -104606,10 +104886,10 @@ export class MessagesGetSearchCountersM {
     return this;
   }
 
-  get_filters(): MessagesFilterT[] {
+  get_filters(): VectorS<MessagesFilterT> {
     return this._values[1];
   }
-  set_filters(val: MessagesFilterT[]): this {
+  set_filters(val: VectorS<MessagesFilterT>): this {
     this._values[1] = val;
 
     return this;
@@ -104626,13 +104906,13 @@ export class MessagesGetSearchCountersM {
     }
 
     {
-      let val = values[1] as MessagesFilterT[];
+      let val = values[1] as VectorS<MessagesFilterT>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -104655,19 +104935,19 @@ export class MessagesGetSearchCountersM {
     }
 
     {
-      let val = values[1] as MessagesFilterT[];
+      let val = values[1] as VectorS<MessagesFilterT>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessagesFilterT = (new MessagesFilterT() as unknown) as MessagesFilterT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -105712,10 +105992,10 @@ AllStructs.set(MessagesGetScheduledHistoryM._id, MessagesGetScheduledHistoryM);
 export class MessagesGetScheduledMessagesM {
   static _id = 0xbdbb0464;
   _method() {}
-  _values = ([(new InputPeerT() as unknown) as InputPeerT, []] as unknown) as [
-    InputPeerT,
-    number[]
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    new VectorS<number>()
+  ] as unknown) as [InputPeerT, VectorS<number>];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -105726,10 +106006,10 @@ export class MessagesGetScheduledMessagesM {
     return this;
   }
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[1];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[1] = val;
 
     return this;
@@ -105746,13 +106026,13 @@ export class MessagesGetScheduledMessagesM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -105775,17 +106055,17 @@ export class MessagesGetScheduledMessagesM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -105807,10 +106087,10 @@ AllStructs.set(
 export class MessagesSendScheduledMessagesM {
   static _id = 0xbd38850a;
   _method() {}
-  _values = ([(new InputPeerT() as unknown) as InputPeerT, []] as unknown) as [
-    InputPeerT,
-    number[]
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    new VectorS<number>()
+  ] as unknown) as [InputPeerT, VectorS<number>];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -105821,10 +106101,10 @@ export class MessagesSendScheduledMessagesM {
     return this;
   }
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[1];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[1] = val;
 
     return this;
@@ -105841,13 +106121,13 @@ export class MessagesSendScheduledMessagesM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -105870,17 +106150,17 @@ export class MessagesSendScheduledMessagesM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -105902,10 +106182,10 @@ AllStructs.set(
 export class MessagesDeleteScheduledMessagesM {
   static _id = 0x59ae2b16;
   _method() {}
-  _values = ([(new InputPeerT() as unknown) as InputPeerT, []] as unknown) as [
-    InputPeerT,
-    number[]
-  ];
+  _values = ([
+    (new InputPeerT() as unknown) as InputPeerT,
+    new VectorS<number>()
+  ] as unknown) as [InputPeerT, VectorS<number>];
 
   get_peer(): InputPeerT {
     return this._values[0];
@@ -105916,10 +106196,10 @@ export class MessagesDeleteScheduledMessagesM {
     return this;
   }
 
-  get_id(): number[] {
+  get_id(): VectorS<number> {
     return this._values[1];
   }
-  set_id(val: number[]): this {
+  set_id(val: VectorS<number>): this {
     this._values[1] = val;
 
     return this;
@@ -105936,13 +106216,13 @@ export class MessagesDeleteScheduledMessagesM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeInt(val);
       }
     }
@@ -105965,17 +106245,17 @@ export class MessagesDeleteScheduledMessagesM {
     }
 
     {
-      let val = values[1] as number[];
+      let val = values[1] as VectorS<number>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: number = 0;
         val = buf.readInt();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[1] = val;
     }
@@ -106811,7 +107091,7 @@ AllStructs.set(AccountGetThemesM._id, AccountGetThemesM);
  * query:!X
  */
 export function CallInvokeAfterMsgM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: InvokeAfterMsgM
 ): Promise<OneOf | IStruct | RpcErrorS> {
   return invoker.call(req);
@@ -106824,7 +107104,7 @@ export function CallInvokeAfterMsgM(
  * query:!X
  */
 export function CallInvokeAfterMsgsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: InvokeAfterMsgsM
 ): Promise<OneOf | IStruct | RpcErrorS> {
   return invoker.call(req);
@@ -106839,7 +107119,7 @@ export function CallInvokeAfterMsgsM(
  * settings:CodeSettings
  */
 export function CallAuthSendCodeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthSendCodeM
 ): Promise<AuthSentCodeS | RpcErrorS> {
   return invoker.call(req);
@@ -106854,7 +107134,7 @@ export function CallAuthSendCodeM(
  * last_name:string
  */
 export function CallAuthSignUpM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthSignUpM
 ): Promise<AuthAuthorizationT | RpcErrorS> {
   return invoker.call(req);
@@ -106868,7 +107148,7 @@ export function CallAuthSignUpM(
  * phone_code:string
  */
 export function CallAuthSignInM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthSignInM
 ): Promise<AuthAuthorizationT | RpcErrorS> {
   return invoker.call(req);
@@ -106880,7 +107160,7 @@ export function CallAuthSignInM(
  *
  */
 export function CallAuthLogOutM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthLogOutM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -106892,7 +107172,7 @@ export function CallAuthLogOutM(
  *
  */
 export function CallAuthResetAuthorizationsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthResetAuthorizationsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -106904,7 +107184,7 @@ export function CallAuthResetAuthorizationsM(
  * dc_id:int
  */
 export function CallAuthExportAuthorizationM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthExportAuthorizationM
 ): Promise<AuthExportedAuthorizationS | RpcErrorS> {
   return invoker.call(req);
@@ -106917,7 +107197,7 @@ export function CallAuthExportAuthorizationM(
  * bytes:bytes
  */
 export function CallAuthImportAuthorizationM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthImportAuthorizationM
 ): Promise<AuthAuthorizationT | RpcErrorS> {
   return invoker.call(req);
@@ -106932,7 +107212,7 @@ export function CallAuthImportAuthorizationM(
  * encrypted_message:bytes
  */
 export function CallAuthBindTempAuthKeyM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthBindTempAuthKeyM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -106950,7 +107230,7 @@ export function CallAuthBindTempAuthKeyM(
  * other_uids:Vector<int>
  */
 export function CallAccountRegisterDeviceM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountRegisterDeviceM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -106964,7 +107244,7 @@ export function CallAccountRegisterDeviceM(
  * other_uids:Vector<int>
  */
 export function CallAccountUnregisterDeviceM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountUnregisterDeviceM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -106977,7 +107257,7 @@ export function CallAccountUnregisterDeviceM(
  * settings:InputPeerNotifySettings
  */
 export function CallAccountUpdateNotifySettingsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountUpdateNotifySettingsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -106989,7 +107269,7 @@ export function CallAccountUpdateNotifySettingsM(
  * peer:InputNotifyPeer
  */
 export function CallAccountGetNotifySettingsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetNotifySettingsM
 ): Promise<PeerNotifySettingsT | RpcErrorS> {
   return invoker.call(req);
@@ -107001,7 +107281,7 @@ export function CallAccountGetNotifySettingsM(
  *
  */
 export function CallAccountResetNotifySettingsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountResetNotifySettingsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107016,7 +107296,7 @@ export function CallAccountResetNotifySettingsM(
  * about:flags.2?string
  */
 export function CallAccountUpdateProfileM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountUpdateProfileM
 ): Promise<UserT | RpcErrorS> {
   return invoker.call(req);
@@ -107028,7 +107308,7 @@ export function CallAccountUpdateProfileM(
  * offline:Bool
  */
 export function CallAccountUpdateStatusM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountUpdateStatusM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107040,7 +107320,7 @@ export function CallAccountUpdateStatusM(
  * hash:int
  */
 export function CallAccountGetWallPapersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetWallPapersM
 ): Promise<AccountWallPapersT | RpcErrorS> {
   return invoker.call(req);
@@ -107053,7 +107333,7 @@ export function CallAccountGetWallPapersM(
  * reason:ReportReason
  */
 export function CallAccountReportPeerM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountReportPeerM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107065,9 +107345,9 @@ export function CallAccountReportPeerM(
  * id:Vector<InputUser>
  */
 export function CallUsersGetUsersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UsersGetUsersM
-): Promise<UserT[] | RpcErrorS> {
+): Promise<VectorS<UserT> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -107077,7 +107357,7 @@ export function CallUsersGetUsersM(
  * id:InputUser
  */
 export function CallUsersGetFullUserM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UsersGetFullUserM
 ): Promise<UserFullS | RpcErrorS> {
   return invoker.call(req);
@@ -107089,9 +107369,9 @@ export function CallUsersGetFullUserM(
  * hash:int
  */
 export function CallContactsGetContactIDsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsGetContactIDsM
-): Promise<number[] | RpcErrorS> {
+): Promise<VectorS<number> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -107101,9 +107381,9 @@ export function CallContactsGetContactIDsM(
  *
  */
 export function CallContactsGetStatusesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsGetStatusesM
-): Promise<ContactStatusS[] | RpcErrorS> {
+): Promise<VectorS<ContactStatusS> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -107113,7 +107393,7 @@ export function CallContactsGetStatusesM(
  * hash:int
  */
 export function CallContactsGetContactsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsGetContactsM
 ): Promise<ContactsContactsT | RpcErrorS> {
   return invoker.call(req);
@@ -107125,7 +107405,7 @@ export function CallContactsGetContactsM(
  * contacts:Vector<InputContact>
  */
 export function CallContactsImportContactsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsImportContactsM
 ): Promise<ContactsImportedContactsS | RpcErrorS> {
   return invoker.call(req);
@@ -107137,7 +107417,7 @@ export function CallContactsImportContactsM(
  * id:Vector<InputUser>
  */
 export function CallContactsDeleteContactsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsDeleteContactsM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -107149,7 +107429,7 @@ export function CallContactsDeleteContactsM(
  * phones:Vector<string>
  */
 export function CallContactsDeleteByPhonesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsDeleteByPhonesM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107161,7 +107441,7 @@ export function CallContactsDeleteByPhonesM(
  * id:InputUser
  */
 export function CallContactsBlockM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsBlockM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107173,7 +107453,7 @@ export function CallContactsBlockM(
  * id:InputUser
  */
 export function CallContactsUnblockM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsUnblockM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107186,7 +107466,7 @@ export function CallContactsUnblockM(
  * limit:int
  */
 export function CallContactsGetBlockedM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsGetBlockedM
 ): Promise<ContactsBlockedT | RpcErrorS> {
   return invoker.call(req);
@@ -107198,7 +107478,7 @@ export function CallContactsGetBlockedM(
  * id:Vector<InputMessage>
  */
 export function CallMessagesGetMessagesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetMessagesM
 ): Promise<MessagesMessagesT | RpcErrorS> {
   return invoker.call(req);
@@ -107217,7 +107497,7 @@ export function CallMessagesGetMessagesM(
  * hash:int
  */
 export function CallMessagesGetDialogsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetDialogsM
 ): Promise<MessagesDialogsT | RpcErrorS> {
   return invoker.call(req);
@@ -107236,7 +107516,7 @@ export function CallMessagesGetDialogsM(
  * hash:int
  */
 export function CallMessagesGetHistoryM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetHistoryM
 ): Promise<MessagesMessagesT | RpcErrorS> {
   return invoker.call(req);
@@ -107260,7 +107540,7 @@ export function CallMessagesGetHistoryM(
  * hash:int
  */
 export function CallMessagesSearchM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSearchM
 ): Promise<MessagesMessagesT | RpcErrorS> {
   return invoker.call(req);
@@ -107273,7 +107553,7 @@ export function CallMessagesSearchM(
  * max_id:int
  */
 export function CallMessagesReadHistoryM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReadHistoryM
 ): Promise<MessagesAffectedMessagesS | RpcErrorS> {
   return invoker.call(req);
@@ -107289,7 +107569,7 @@ export function CallMessagesReadHistoryM(
  * max_id:int
  */
 export function CallMessagesDeleteHistoryM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesDeleteHistoryM
 ): Promise<MessagesAffectedHistoryS | RpcErrorS> {
   return invoker.call(req);
@@ -107303,7 +107583,7 @@ export function CallMessagesDeleteHistoryM(
  * id:Vector<int>
  */
 export function CallMessagesDeleteMessagesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesDeleteMessagesM
 ): Promise<MessagesAffectedMessagesS | RpcErrorS> {
   return invoker.call(req);
@@ -107315,9 +107595,9 @@ export function CallMessagesDeleteMessagesM(
  * max_id:int
  */
 export function CallMessagesReceivedMessagesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReceivedMessagesM
-): Promise<ReceivedNotifyMessageS[] | RpcErrorS> {
+): Promise<VectorS<ReceivedNotifyMessageS> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -107328,7 +107608,7 @@ export function CallMessagesReceivedMessagesM(
  * action:SendMessageAction
  */
 export function CallMessagesSetTypingM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSetTypingM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107351,7 +107631,7 @@ export function CallMessagesSetTypingM(
  * schedule_date:flags.10?int
  */
 export function CallMessagesSendMessageM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSendMessageM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -107374,7 +107654,7 @@ export function CallMessagesSendMessageM(
  * schedule_date:flags.10?int
  */
 export function CallMessagesSendMediaM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSendMediaM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -107395,7 +107675,7 @@ export function CallMessagesSendMediaM(
  * schedule_date:flags.10?int
  */
 export function CallMessagesForwardMessagesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesForwardMessagesM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -107407,7 +107687,7 @@ export function CallMessagesForwardMessagesM(
  * peer:InputPeer
  */
 export function CallMessagesReportSpamM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReportSpamM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107419,7 +107699,7 @@ export function CallMessagesReportSpamM(
  * peer:InputPeer
  */
 export function CallMessagesGetPeerSettingsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetPeerSettingsM
 ): Promise<PeerSettingsT | RpcErrorS> {
   return invoker.call(req);
@@ -107433,7 +107713,7 @@ export function CallMessagesGetPeerSettingsM(
  * reason:ReportReason
  */
 export function CallMessagesReportM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReportM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107445,7 +107725,7 @@ export function CallMessagesReportM(
  * id:Vector<int>
  */
 export function CallMessagesGetChatsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetChatsM
 ): Promise<MessagesChatsT | RpcErrorS> {
   return invoker.call(req);
@@ -107457,7 +107737,7 @@ export function CallMessagesGetChatsM(
  * chat_id:int
  */
 export function CallMessagesGetFullChatM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetFullChatM
 ): Promise<MessagesChatFullS | RpcErrorS> {
   return invoker.call(req);
@@ -107470,7 +107750,7 @@ export function CallMessagesGetFullChatM(
  * title:string
  */
 export function CallMessagesEditChatTitleM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesEditChatTitleM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -107483,7 +107763,7 @@ export function CallMessagesEditChatTitleM(
  * photo:InputChatPhoto
  */
 export function CallMessagesEditChatPhotoM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesEditChatPhotoM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -107497,7 +107777,7 @@ export function CallMessagesEditChatPhotoM(
  * fwd_limit:int
  */
 export function CallMessagesAddChatUserM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesAddChatUserM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -107510,7 +107790,7 @@ export function CallMessagesAddChatUserM(
  * user_id:InputUser
  */
 export function CallMessagesDeleteChatUserM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesDeleteChatUserM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -107523,7 +107803,7 @@ export function CallMessagesDeleteChatUserM(
  * title:string
  */
 export function CallMessagesCreateChatM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesCreateChatM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -107535,7 +107815,7 @@ export function CallMessagesCreateChatM(
  *
  */
 export function CallUpdatesGetStateM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UpdatesGetStateM
 ): Promise<UpdatesStateT | RpcErrorS> {
   return invoker.call(req);
@@ -107551,7 +107831,7 @@ export function CallUpdatesGetStateM(
  * qts:int
  */
 export function CallUpdatesGetDifferenceM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UpdatesGetDifferenceM
 ): Promise<UpdatesDifferenceT | RpcErrorS> {
   return invoker.call(req);
@@ -107563,7 +107843,7 @@ export function CallUpdatesGetDifferenceM(
  * id:InputPhoto
  */
 export function CallPhotosUpdateProfilePhotoM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhotosUpdateProfilePhotoM
 ): Promise<UserProfilePhotoT | RpcErrorS> {
   return invoker.call(req);
@@ -107575,7 +107855,7 @@ export function CallPhotosUpdateProfilePhotoM(
  * file:InputFile
  */
 export function CallPhotosUploadProfilePhotoM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhotosUploadProfilePhotoM
 ): Promise<PhotosPhotoS | RpcErrorS> {
   return invoker.call(req);
@@ -107587,9 +107867,9 @@ export function CallPhotosUploadProfilePhotoM(
  * id:Vector<InputPhoto>
  */
 export function CallPhotosDeletePhotosM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhotosDeletePhotosM
-): Promise<ProtoLong[] | RpcErrorS> {
+): Promise<VectorS<ProtoLong> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -107601,7 +107881,7 @@ export function CallPhotosDeletePhotosM(
  * bytes:bytes
  */
 export function CallUploadSaveFilePartM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UploadSaveFilePartM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107617,7 +107897,7 @@ export function CallUploadSaveFilePartM(
  * limit:int
  */
 export function CallUploadGetFileM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UploadGetFileM
 ): Promise<UploadFileT | RpcErrorS> {
   return invoker.call(req);
@@ -107629,7 +107909,7 @@ export function CallUploadGetFileM(
  *
  */
 export function CallHelpGetConfigM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetConfigM
 ): Promise<ConfigS | RpcErrorS> {
   return invoker.call(req);
@@ -107641,7 +107921,7 @@ export function CallHelpGetConfigM(
  *
  */
 export function CallHelpGetNearestDcM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetNearestDcM
 ): Promise<NearestDcS | RpcErrorS> {
   return invoker.call(req);
@@ -107653,7 +107933,7 @@ export function CallHelpGetNearestDcM(
  * source:string
  */
 export function CallHelpGetAppUpdateM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetAppUpdateM
 ): Promise<HelpAppUpdateT | RpcErrorS> {
   return invoker.call(req);
@@ -107665,7 +107945,7 @@ export function CallHelpGetAppUpdateM(
  *
  */
 export function CallHelpGetInviteTextM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetInviteTextM
 ): Promise<HelpInviteTextS | RpcErrorS> {
   return invoker.call(req);
@@ -107680,7 +107960,7 @@ export function CallHelpGetInviteTextM(
  * limit:int
  */
 export function CallPhotosGetUserPhotosM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhotosGetUserPhotosM
 ): Promise<PhotosPhotosT | RpcErrorS> {
   return invoker.call(req);
@@ -107693,7 +107973,7 @@ export function CallPhotosGetUserPhotosM(
  * random_length:int
  */
 export function CallMessagesGetDhConfigM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetDhConfigM
 ): Promise<MessagesDhConfigT | RpcErrorS> {
   return invoker.call(req);
@@ -107707,7 +107987,7 @@ export function CallMessagesGetDhConfigM(
  * g_a:bytes
  */
 export function CallMessagesRequestEncryptionM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesRequestEncryptionM
 ): Promise<EncryptedChatT | RpcErrorS> {
   return invoker.call(req);
@@ -107721,7 +108001,7 @@ export function CallMessagesRequestEncryptionM(
  * key_fingerprint:long
  */
 export function CallMessagesAcceptEncryptionM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesAcceptEncryptionM
 ): Promise<EncryptedChatT | RpcErrorS> {
   return invoker.call(req);
@@ -107733,7 +108013,7 @@ export function CallMessagesAcceptEncryptionM(
  * chat_id:int
  */
 export function CallMessagesDiscardEncryptionM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesDiscardEncryptionM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107746,7 +108026,7 @@ export function CallMessagesDiscardEncryptionM(
  * typing:Bool
  */
 export function CallMessagesSetEncryptedTypingM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSetEncryptedTypingM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107759,7 +108039,7 @@ export function CallMessagesSetEncryptedTypingM(
  * max_date:int
  */
 export function CallMessagesReadEncryptedHistoryM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReadEncryptedHistoryM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107773,7 +108053,7 @@ export function CallMessagesReadEncryptedHistoryM(
  * data:bytes
  */
 export function CallMessagesSendEncryptedM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSendEncryptedM
 ): Promise<MessagesSentEncryptedMessageT | RpcErrorS> {
   return invoker.call(req);
@@ -107788,7 +108068,7 @@ export function CallMessagesSendEncryptedM(
  * file:InputEncryptedFile
  */
 export function CallMessagesSendEncryptedFileM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSendEncryptedFileM
 ): Promise<MessagesSentEncryptedMessageT | RpcErrorS> {
   return invoker.call(req);
@@ -107802,7 +108082,7 @@ export function CallMessagesSendEncryptedFileM(
  * data:bytes
  */
 export function CallMessagesSendEncryptedServiceM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSendEncryptedServiceM
 ): Promise<MessagesSentEncryptedMessageT | RpcErrorS> {
   return invoker.call(req);
@@ -107814,9 +108094,9 @@ export function CallMessagesSendEncryptedServiceM(
  * max_qts:int
  */
 export function CallMessagesReceivedQueueM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReceivedQueueM
-): Promise<ProtoLong[] | RpcErrorS> {
+): Promise<VectorS<ProtoLong> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -107826,7 +108106,7 @@ export function CallMessagesReceivedQueueM(
  * peer:InputEncryptedChat
  */
 export function CallMessagesReportEncryptedSpamM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReportEncryptedSpamM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107841,7 +108121,7 @@ export function CallMessagesReportEncryptedSpamM(
  * bytes:bytes
  */
 export function CallUploadSaveBigFilePartM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UploadSaveBigFilePartM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107862,7 +108142,7 @@ export function CallUploadSaveBigFilePartM(
  * query:!X
  */
 export function CallInitConnectionM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: InitConnectionM
 ): Promise<OneOf | IStruct | RpcErrorS> {
   return invoker.call(req);
@@ -107874,7 +108154,7 @@ export function CallInitConnectionM(
  *
  */
 export function CallHelpGetSupportM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetSupportM
 ): Promise<HelpSupportS | RpcErrorS> {
   return invoker.call(req);
@@ -107886,7 +108166,7 @@ export function CallHelpGetSupportM(
  * id:Vector<int>
  */
 export function CallMessagesReadMessageContentsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReadMessageContentsM
 ): Promise<MessagesAffectedMessagesS | RpcErrorS> {
   return invoker.call(req);
@@ -107898,7 +108178,7 @@ export function CallMessagesReadMessageContentsM(
  * username:string
  */
 export function CallAccountCheckUsernameM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountCheckUsernameM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107910,7 +108190,7 @@ export function CallAccountCheckUsernameM(
  * username:string
  */
 export function CallAccountUpdateUsernameM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountUpdateUsernameM
 ): Promise<UserT | RpcErrorS> {
   return invoker.call(req);
@@ -107923,7 +108203,7 @@ export function CallAccountUpdateUsernameM(
  * limit:int
  */
 export function CallContactsSearchM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsSearchM
 ): Promise<ContactsFoundS | RpcErrorS> {
   return invoker.call(req);
@@ -107935,7 +108215,7 @@ export function CallContactsSearchM(
  * key:InputPrivacyKey
  */
 export function CallAccountGetPrivacyM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetPrivacyM
 ): Promise<AccountPrivacyRulesS | RpcErrorS> {
   return invoker.call(req);
@@ -107948,7 +108228,7 @@ export function CallAccountGetPrivacyM(
  * rules:Vector<InputPrivacyRule>
  */
 export function CallAccountSetPrivacyM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountSetPrivacyM
 ): Promise<AccountPrivacyRulesS | RpcErrorS> {
   return invoker.call(req);
@@ -107960,7 +108240,7 @@ export function CallAccountSetPrivacyM(
  * reason:string
  */
 export function CallAccountDeleteAccountM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountDeleteAccountM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107972,7 +108252,7 @@ export function CallAccountDeleteAccountM(
  *
  */
 export function CallAccountGetAccountTtlM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetAccountTtlM
 ): Promise<AccountDaysTtlS | RpcErrorS> {
   return invoker.call(req);
@@ -107984,7 +108264,7 @@ export function CallAccountGetAccountTtlM(
  * ttl:AccountDaysTTL
  */
 export function CallAccountSetAccountTtlM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountSetAccountTtlM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -107997,7 +108277,7 @@ export function CallAccountSetAccountTtlM(
  * query:!X
  */
 export function CallInvokeWithLayerM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: InvokeWithLayerM
 ): Promise<OneOf | IStruct | RpcErrorS> {
   return invoker.call(req);
@@ -108009,7 +108289,7 @@ export function CallInvokeWithLayerM(
  * username:string
  */
 export function CallContactsResolveUsernameM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsResolveUsernameM
 ): Promise<ContactsResolvedPeerS | RpcErrorS> {
   return invoker.call(req);
@@ -108022,7 +108302,7 @@ export function CallContactsResolveUsernameM(
  * settings:CodeSettings
  */
 export function CallAccountSendChangePhoneCodeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountSendChangePhoneCodeM
 ): Promise<AuthSentCodeS | RpcErrorS> {
   return invoker.call(req);
@@ -108036,7 +108316,7 @@ export function CallAccountSendChangePhoneCodeM(
  * phone_code:string
  */
 export function CallAccountChangePhoneM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountChangePhoneM
 ): Promise<UserT | RpcErrorS> {
   return invoker.call(req);
@@ -108049,7 +108329,7 @@ export function CallAccountChangePhoneM(
  * hash:int
  */
 export function CallMessagesGetStickersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetStickersM
 ): Promise<MessagesStickersT | RpcErrorS> {
   return invoker.call(req);
@@ -108061,7 +108341,7 @@ export function CallMessagesGetStickersM(
  * hash:int
  */
 export function CallMessagesGetAllStickersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetAllStickersM
 ): Promise<MessagesAllStickersT | RpcErrorS> {
   return invoker.call(req);
@@ -108073,7 +108353,7 @@ export function CallMessagesGetAllStickersM(
  * period:int
  */
 export function CallAccountUpdateDeviceLockedM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountUpdateDeviceLockedM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108088,7 +108368,7 @@ export function CallAccountUpdateDeviceLockedM(
  * bot_auth_token:string
  */
 export function CallAuthImportBotAuthorizationM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthImportBotAuthorizationM
 ): Promise<AuthAuthorizationT | RpcErrorS> {
   return invoker.call(req);
@@ -108102,7 +108382,7 @@ export function CallAuthImportBotAuthorizationM(
  * entities:flags.3?Vector<MessageEntity>
  */
 export function CallMessagesGetWebPagePreviewM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetWebPagePreviewM
 ): Promise<MessageMediaT | RpcErrorS> {
   return invoker.call(req);
@@ -108114,7 +108394,7 @@ export function CallMessagesGetWebPagePreviewM(
  *
  */
 export function CallAccountGetAuthorizationsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetAuthorizationsM
 ): Promise<AccountAuthorizationsS | RpcErrorS> {
   return invoker.call(req);
@@ -108126,7 +108406,7 @@ export function CallAccountGetAuthorizationsM(
  * hash:long
  */
 export function CallAccountResetAuthorizationM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountResetAuthorizationM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108138,7 +108418,7 @@ export function CallAccountResetAuthorizationM(
  *
  */
 export function CallAccountGetPasswordM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetPasswordM
 ): Promise<AccountPasswordS | RpcErrorS> {
   return invoker.call(req);
@@ -108150,7 +108430,7 @@ export function CallAccountGetPasswordM(
  * password:InputCheckPasswordSRP
  */
 export function CallAccountGetPasswordSettingsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetPasswordSettingsM
 ): Promise<AccountPasswordSettingsS | RpcErrorS> {
   return invoker.call(req);
@@ -108163,7 +108443,7 @@ export function CallAccountGetPasswordSettingsM(
  * new_settings:account.PasswordInputSettings
  */
 export function CallAccountUpdatePasswordSettingsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountUpdatePasswordSettingsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108175,7 +108455,7 @@ export function CallAccountUpdatePasswordSettingsM(
  * password:InputCheckPasswordSRP
  */
 export function CallAuthCheckPasswordM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthCheckPasswordM
 ): Promise<AuthAuthorizationT | RpcErrorS> {
   return invoker.call(req);
@@ -108187,7 +108467,7 @@ export function CallAuthCheckPasswordM(
  *
  */
 export function CallAuthRequestPasswordRecoveryM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthRequestPasswordRecoveryM
 ): Promise<AuthPasswordRecoveryS | RpcErrorS> {
   return invoker.call(req);
@@ -108199,7 +108479,7 @@ export function CallAuthRequestPasswordRecoveryM(
  * code:string
  */
 export function CallAuthRecoverPasswordM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthRecoverPasswordM
 ): Promise<AuthAuthorizationT | RpcErrorS> {
   return invoker.call(req);
@@ -108211,7 +108491,7 @@ export function CallAuthRecoverPasswordM(
  * query:!X
  */
 export function CallInvokeWithoutUpdatesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: InvokeWithoutUpdatesM
 ): Promise<OneOf | IStruct | RpcErrorS> {
   return invoker.call(req);
@@ -108223,7 +108503,7 @@ export function CallInvokeWithoutUpdatesM(
  * peer:InputPeer
  */
 export function CallMessagesExportChatInviteM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesExportChatInviteM
 ): Promise<ExportedChatInviteT | RpcErrorS> {
   return invoker.call(req);
@@ -108235,7 +108515,7 @@ export function CallMessagesExportChatInviteM(
  * hash:string
  */
 export function CallMessagesCheckChatInviteM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesCheckChatInviteM
 ): Promise<ChatInviteT | RpcErrorS> {
   return invoker.call(req);
@@ -108247,7 +108527,7 @@ export function CallMessagesCheckChatInviteM(
  * hash:string
  */
 export function CallMessagesImportChatInviteM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesImportChatInviteM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108259,7 +108539,7 @@ export function CallMessagesImportChatInviteM(
  * stickerset:InputStickerSet
  */
 export function CallMessagesGetStickerSetM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetStickerSetM
 ): Promise<MessagesStickerSetT | RpcErrorS> {
   return invoker.call(req);
@@ -108272,7 +108552,7 @@ export function CallMessagesGetStickerSetM(
  * archived:Bool
  */
 export function CallMessagesInstallStickerSetM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesInstallStickerSetM
 ): Promise<MessagesStickerSetInstallResultT | RpcErrorS> {
   return invoker.call(req);
@@ -108284,7 +108564,7 @@ export function CallMessagesInstallStickerSetM(
  * stickerset:InputStickerSet
  */
 export function CallMessagesUninstallStickerSetM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesUninstallStickerSetM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108299,7 +108579,7 @@ export function CallMessagesUninstallStickerSetM(
  * start_param:string
  */
 export function CallMessagesStartBotM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesStartBotM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108311,7 +108591,7 @@ export function CallMessagesStartBotM(
  * prev_app_version:string
  */
 export function CallHelpGetAppChangelogM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetAppChangelogM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108325,9 +108605,9 @@ export function CallHelpGetAppChangelogM(
  * increment:Bool
  */
 export function CallMessagesGetMessagesViewsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetMessagesViewsM
-): Promise<number[] | RpcErrorS> {
+): Promise<VectorS<number> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -108338,7 +108618,7 @@ export function CallMessagesGetMessagesViewsM(
  * max_id:int
  */
 export function CallChannelsReadHistoryM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsReadHistoryM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108351,7 +108631,7 @@ export function CallChannelsReadHistoryM(
  * id:Vector<int>
  */
 export function CallChannelsDeleteMessagesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsDeleteMessagesM
 ): Promise<MessagesAffectedMessagesS | RpcErrorS> {
   return invoker.call(req);
@@ -108364,7 +108644,7 @@ export function CallChannelsDeleteMessagesM(
  * user_id:InputUser
  */
 export function CallChannelsDeleteUserHistoryM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsDeleteUserHistoryM
 ): Promise<MessagesAffectedHistoryS | RpcErrorS> {
   return invoker.call(req);
@@ -108378,7 +108658,7 @@ export function CallChannelsDeleteUserHistoryM(
  * id:Vector<int>
  */
 export function CallChannelsReportSpamM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsReportSpamM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108391,7 +108671,7 @@ export function CallChannelsReportSpamM(
  * id:Vector<InputMessage>
  */
 export function CallChannelsGetMessagesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsGetMessagesM
 ): Promise<MessagesMessagesT | RpcErrorS> {
   return invoker.call(req);
@@ -108407,7 +108687,7 @@ export function CallChannelsGetMessagesM(
  * hash:int
  */
 export function CallChannelsGetParticipantsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsGetParticipantsM
 ): Promise<ChannelsChannelParticipantsT | RpcErrorS> {
   return invoker.call(req);
@@ -108420,7 +108700,7 @@ export function CallChannelsGetParticipantsM(
  * user_id:InputUser
  */
 export function CallChannelsGetParticipantM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsGetParticipantM
 ): Promise<ChannelsChannelParticipantS | RpcErrorS> {
   return invoker.call(req);
@@ -108432,7 +108712,7 @@ export function CallChannelsGetParticipantM(
  * id:Vector<InputChannel>
  */
 export function CallChannelsGetChannelsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsGetChannelsM
 ): Promise<MessagesChatsT | RpcErrorS> {
   return invoker.call(req);
@@ -108444,7 +108724,7 @@ export function CallChannelsGetChannelsM(
  * channel:InputChannel
  */
 export function CallChannelsGetFullChannelM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsGetFullChannelM
 ): Promise<MessagesChatFullS | RpcErrorS> {
   return invoker.call(req);
@@ -108462,7 +108742,7 @@ export function CallChannelsGetFullChannelM(
  * address:flags.2?string
  */
 export function CallChannelsCreateChannelM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsCreateChannelM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108477,7 +108757,7 @@ export function CallChannelsCreateChannelM(
  * rank:string
  */
 export function CallChannelsEditAdminM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsEditAdminM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108490,7 +108770,7 @@ export function CallChannelsEditAdminM(
  * title:string
  */
 export function CallChannelsEditTitleM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsEditTitleM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108503,7 +108783,7 @@ export function CallChannelsEditTitleM(
  * photo:InputChatPhoto
  */
 export function CallChannelsEditPhotoM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsEditPhotoM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108516,7 +108796,7 @@ export function CallChannelsEditPhotoM(
  * username:string
  */
 export function CallChannelsCheckUsernameM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsCheckUsernameM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108529,7 +108809,7 @@ export function CallChannelsCheckUsernameM(
  * username:string
  */
 export function CallChannelsUpdateUsernameM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsUpdateUsernameM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108541,7 +108821,7 @@ export function CallChannelsUpdateUsernameM(
  * channel:InputChannel
  */
 export function CallChannelsJoinChannelM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsJoinChannelM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108553,7 +108833,7 @@ export function CallChannelsJoinChannelM(
  * channel:InputChannel
  */
 export function CallChannelsLeaveChannelM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsLeaveChannelM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108566,7 +108846,7 @@ export function CallChannelsLeaveChannelM(
  * users:Vector<InputUser>
  */
 export function CallChannelsInviteToChannelM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsInviteToChannelM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108578,7 +108858,7 @@ export function CallChannelsInviteToChannelM(
  * channel:InputChannel
  */
 export function CallChannelsDeleteChannelM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsDeleteChannelM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108595,7 +108875,7 @@ export function CallChannelsDeleteChannelM(
  * limit:int
  */
 export function CallUpdatesGetChannelDifferenceM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UpdatesGetChannelDifferenceM
 ): Promise<UpdatesChannelDifferenceT | RpcErrorS> {
   return invoker.call(req);
@@ -108609,7 +108889,7 @@ export function CallUpdatesGetChannelDifferenceM(
  * is_admin:Bool
  */
 export function CallMessagesEditChatAdminM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesEditChatAdminM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108621,7 +108901,7 @@ export function CallMessagesEditChatAdminM(
  * chat_id:int
  */
 export function CallMessagesMigrateChatM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesMigrateChatM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108639,7 +108919,7 @@ export function CallMessagesMigrateChatM(
  * limit:int
  */
 export function CallMessagesSearchGlobalM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSearchGlobalM
 ): Promise<MessagesMessagesT | RpcErrorS> {
   return invoker.call(req);
@@ -108653,7 +108933,7 @@ export function CallMessagesSearchGlobalM(
  * order:Vector<long>
  */
 export function CallMessagesReorderStickerSetsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReorderStickerSetsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108667,7 +108947,7 @@ export function CallMessagesReorderStickerSetsM(
  * mime_type:string
  */
 export function CallMessagesGetDocumentByHashM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetDocumentByHashM
 ): Promise<DocumentT | RpcErrorS> {
   return invoker.call(req);
@@ -108680,7 +108960,7 @@ export function CallMessagesGetDocumentByHashM(
  * offset:int
  */
 export function CallMessagesSearchGifsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSearchGifsM
 ): Promise<MessagesFoundGifsS | RpcErrorS> {
   return invoker.call(req);
@@ -108692,7 +108972,7 @@ export function CallMessagesSearchGifsM(
  * hash:int
  */
 export function CallMessagesGetSavedGifsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetSavedGifsM
 ): Promise<MessagesSavedGifsT | RpcErrorS> {
   return invoker.call(req);
@@ -108705,7 +108985,7 @@ export function CallMessagesGetSavedGifsM(
  * unsave:Bool
  */
 export function CallMessagesSaveGifM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSaveGifM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108722,7 +109002,7 @@ export function CallMessagesSaveGifM(
  * offset:string
  */
 export function CallMessagesGetInlineBotResultsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetInlineBotResultsM
 ): Promise<MessagesBotResultsS | RpcErrorS> {
   return invoker.call(req);
@@ -108741,7 +109021,7 @@ export function CallMessagesGetInlineBotResultsM(
  * switch_pm:flags.3?InlineBotSwitchPM
  */
 export function CallMessagesSetInlineBotResultsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSetInlineBotResultsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108763,7 +109043,7 @@ export function CallMessagesSetInlineBotResultsM(
  * schedule_date:flags.10?int
  */
 export function CallMessagesSendInlineBotResultM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSendInlineBotResultM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108777,7 +109057,7 @@ export function CallMessagesSendInlineBotResultM(
  * grouped:Bool
  */
 export function CallChannelsExportMessageLinkM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsExportMessageLinkM
 ): Promise<ExportedMessageLinkS | RpcErrorS> {
   return invoker.call(req);
@@ -108790,7 +109070,7 @@ export function CallChannelsExportMessageLinkM(
  * enabled:Bool
  */
 export function CallChannelsToggleSignaturesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsToggleSignaturesM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108803,7 +109083,7 @@ export function CallChannelsToggleSignaturesM(
  * phone_code_hash:string
  */
 export function CallAuthResendCodeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthResendCodeM
 ): Promise<AuthSentCodeS | RpcErrorS> {
   return invoker.call(req);
@@ -108816,7 +109096,7 @@ export function CallAuthResendCodeM(
  * phone_code_hash:string
  */
 export function CallAuthCancelCodeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthCancelCodeM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108829,7 +109109,7 @@ export function CallAuthCancelCodeM(
  * id:int
  */
 export function CallMessagesGetMessageEditDataM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetMessageEditDataM
 ): Promise<MessagesMessageEditDataS | RpcErrorS> {
   return invoker.call(req);
@@ -108849,7 +109129,7 @@ export function CallMessagesGetMessageEditDataM(
  * schedule_date:flags.15?int
  */
 export function CallMessagesEditMessageM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesEditMessageM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108867,7 +109147,7 @@ export function CallMessagesEditMessageM(
  * entities:flags.3?Vector<MessageEntity>
  */
 export function CallMessagesEditInlineBotMessageM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesEditInlineBotMessageM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108883,7 +109163,7 @@ export function CallMessagesEditInlineBotMessageM(
  * data:flags.0?bytes
  */
 export function CallMessagesGetBotCallbackAnswerM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetBotCallbackAnswerM
 ): Promise<MessagesBotCallbackAnswerS | RpcErrorS> {
   return invoker.call(req);
@@ -108900,7 +109180,7 @@ export function CallMessagesGetBotCallbackAnswerM(
  * cache_time:int
  */
 export function CallMessagesSetBotCallbackAnswerM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSetBotCallbackAnswerM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108923,7 +109203,7 @@ export function CallMessagesSetBotCallbackAnswerM(
  * hash:int
  */
 export function CallContactsGetTopPeersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsGetTopPeersM
 ): Promise<ContactsTopPeersT | RpcErrorS> {
   return invoker.call(req);
@@ -108936,7 +109216,7 @@ export function CallContactsGetTopPeersM(
  * peer:InputPeer
  */
 export function CallContactsResetTopPeerRatingM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsResetTopPeerRatingM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108948,7 +109228,7 @@ export function CallContactsResetTopPeerRatingM(
  * peers:Vector<InputDialogPeer>
  */
 export function CallMessagesGetPeerDialogsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetPeerDialogsM
 ): Promise<MessagesPeerDialogsS | RpcErrorS> {
   return invoker.call(req);
@@ -108965,7 +109245,7 @@ export function CallMessagesGetPeerDialogsM(
  * entities:flags.3?Vector<MessageEntity>
  */
 export function CallMessagesSaveDraftM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSaveDraftM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -108977,7 +109257,7 @@ export function CallMessagesSaveDraftM(
  *
  */
 export function CallMessagesGetAllDraftsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetAllDraftsM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -108989,7 +109269,7 @@ export function CallMessagesGetAllDraftsM(
  * hash:int
  */
 export function CallMessagesGetFeaturedStickersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetFeaturedStickersM
 ): Promise<MessagesFeaturedStickersT | RpcErrorS> {
   return invoker.call(req);
@@ -109001,7 +109281,7 @@ export function CallMessagesGetFeaturedStickersM(
  * id:Vector<long>
  */
 export function CallMessagesReadFeaturedStickersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReadFeaturedStickersM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109015,7 +109295,7 @@ export function CallMessagesReadFeaturedStickersM(
  * hash:int
  */
 export function CallMessagesGetRecentStickersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetRecentStickersM
 ): Promise<MessagesRecentStickersT | RpcErrorS> {
   return invoker.call(req);
@@ -109030,7 +109310,7 @@ export function CallMessagesGetRecentStickersM(
  * unsave:Bool
  */
 export function CallMessagesSaveRecentStickerM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSaveRecentStickerM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109043,7 +109323,7 @@ export function CallMessagesSaveRecentStickerM(
  * attached:flags.0?true
  */
 export function CallMessagesClearRecentStickersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesClearRecentStickersM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109058,7 +109338,7 @@ export function CallMessagesClearRecentStickersM(
  * limit:int
  */
 export function CallMessagesGetArchivedStickersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetArchivedStickersM
 ): Promise<MessagesArchivedStickersS | RpcErrorS> {
   return invoker.call(req);
@@ -109071,7 +109351,7 @@ export function CallMessagesGetArchivedStickersM(
  * settings:CodeSettings
  */
 export function CallAccountSendConfirmPhoneCodeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountSendConfirmPhoneCodeM
 ): Promise<AuthSentCodeS | RpcErrorS> {
   return invoker.call(req);
@@ -109084,7 +109364,7 @@ export function CallAccountSendConfirmPhoneCodeM(
  * phone_code:string
  */
 export function CallAccountConfirmPhoneM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountConfirmPhoneM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109098,7 +109378,7 @@ export function CallAccountConfirmPhoneM(
  * check_limit:flags.1?true
  */
 export function CallChannelsGetAdminedPublicChannelsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsGetAdminedPublicChannelsM
 ): Promise<MessagesChatsT | RpcErrorS> {
   return invoker.call(req);
@@ -109110,7 +109390,7 @@ export function CallChannelsGetAdminedPublicChannelsM(
  * hash:int
  */
 export function CallMessagesGetMaskStickersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetMaskStickersM
 ): Promise<MessagesAllStickersT | RpcErrorS> {
   return invoker.call(req);
@@ -109122,9 +109402,9 @@ export function CallMessagesGetMaskStickersM(
  * media:InputStickeredMedia
  */
 export function CallMessagesGetAttachedStickersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetAttachedStickersM
-): Promise<StickerSetCoveredT[] | RpcErrorS> {
+): Promise<VectorS<StickerSetCoveredT> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -109134,7 +109414,7 @@ export function CallMessagesGetAttachedStickersM(
  * except_auth_keys:Vector<long>
  */
 export function CallAuthDropTempAuthKeysM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AuthDropTempAuthKeysM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109152,7 +109432,7 @@ export function CallAuthDropTempAuthKeysM(
  * score:int
  */
 export function CallMessagesSetGameScoreM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSetGameScoreM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -109169,7 +109449,7 @@ export function CallMessagesSetGameScoreM(
  * score:int
  */
 export function CallMessagesSetInlineGameScoreM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSetInlineGameScoreM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109183,7 +109463,7 @@ export function CallMessagesSetInlineGameScoreM(
  * user_id:InputUser
  */
 export function CallMessagesGetGameHighScoresM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetGameHighScoresM
 ): Promise<MessagesHighScoresS | RpcErrorS> {
   return invoker.call(req);
@@ -109196,7 +109476,7 @@ export function CallMessagesGetGameHighScoresM(
  * user_id:InputUser
  */
 export function CallMessagesGetInlineGameHighScoresM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetInlineGameHighScoresM
 ): Promise<MessagesHighScoresS | RpcErrorS> {
   return invoker.call(req);
@@ -109210,7 +109490,7 @@ export function CallMessagesGetInlineGameHighScoresM(
  * limit:int
  */
 export function CallMessagesGetCommonChatsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetCommonChatsM
 ): Promise<MessagesChatsT | RpcErrorS> {
   return invoker.call(req);
@@ -109222,7 +109502,7 @@ export function CallMessagesGetCommonChatsM(
  * except_ids:Vector<int>
  */
 export function CallMessagesGetAllChatsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetAllChatsM
 ): Promise<MessagesChatsT | RpcErrorS> {
   return invoker.call(req);
@@ -109235,7 +109515,7 @@ export function CallMessagesGetAllChatsM(
  * message:string
  */
 export function CallHelpSetBotUpdatesStatusM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpSetBotUpdatesStatusM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109248,7 +109528,7 @@ export function CallHelpSetBotUpdatesStatusM(
  * hash:int
  */
 export function CallMessagesGetWebPageM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetWebPageM
 ): Promise<WebPageT | RpcErrorS> {
   return invoker.call(req);
@@ -109262,7 +109542,7 @@ export function CallMessagesGetWebPageM(
  * peer:InputDialogPeer
  */
 export function CallMessagesToggleDialogPinM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesToggleDialogPinM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109277,7 +109557,7 @@ export function CallMessagesToggleDialogPinM(
  * order:Vector<InputDialogPeer>
  */
 export function CallMessagesReorderPinnedDialogsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReorderPinnedDialogsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109289,7 +109569,7 @@ export function CallMessagesReorderPinnedDialogsM(
  * folder_id:int
  */
 export function CallMessagesGetPinnedDialogsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetPinnedDialogsM
 ): Promise<MessagesPeerDialogsS | RpcErrorS> {
   return invoker.call(req);
@@ -109302,7 +109582,7 @@ export function CallMessagesGetPinnedDialogsM(
  * params:DataJSON
  */
 export function CallBotsSendCustomRequestM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: BotsSendCustomRequestM
 ): Promise<DataJsonT | RpcErrorS> {
   return invoker.call(req);
@@ -109315,7 +109595,7 @@ export function CallBotsSendCustomRequestM(
  * data:DataJSON
  */
 export function CallBotsAnswerWebhookJsonQueryM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: BotsAnswerWebhookJsonQueryM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109329,7 +109609,7 @@ export function CallBotsAnswerWebhookJsonQueryM(
  * limit:int
  */
 export function CallUploadGetWebFileM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UploadGetWebFileM
 ): Promise<UploadWebFileS | RpcErrorS> {
   return invoker.call(req);
@@ -109341,7 +109621,7 @@ export function CallUploadGetWebFileM(
  * msg_id:int
  */
 export function CallPaymentsGetPaymentFormM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PaymentsGetPaymentFormM
 ): Promise<PaymentsPaymentFormS | RpcErrorS> {
   return invoker.call(req);
@@ -109353,7 +109633,7 @@ export function CallPaymentsGetPaymentFormM(
  * msg_id:int
  */
 export function CallPaymentsGetPaymentReceiptM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PaymentsGetPaymentReceiptM
 ): Promise<PaymentsPaymentReceiptS | RpcErrorS> {
   return invoker.call(req);
@@ -109368,7 +109648,7 @@ export function CallPaymentsGetPaymentReceiptM(
  * info:PaymentRequestedInfo
  */
 export function CallPaymentsValidateRequestedInfoM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PaymentsValidateRequestedInfoM
 ): Promise<PaymentsValidatedRequestedInfoS | RpcErrorS> {
   return invoker.call(req);
@@ -109384,7 +109664,7 @@ export function CallPaymentsValidateRequestedInfoM(
  * credentials:InputPaymentCredentials
  */
 export function CallPaymentsSendPaymentFormM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PaymentsSendPaymentFormM
 ): Promise<PaymentsPaymentResultT | RpcErrorS> {
   return invoker.call(req);
@@ -109397,7 +109677,7 @@ export function CallPaymentsSendPaymentFormM(
  * period:int
  */
 export function CallAccountGetTmpPasswordM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetTmpPasswordM
 ): Promise<AccountTmpPasswordS | RpcErrorS> {
   return invoker.call(req);
@@ -109409,7 +109689,7 @@ export function CallAccountGetTmpPasswordM(
  *
  */
 export function CallPaymentsGetSavedInfoM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PaymentsGetSavedInfoM
 ): Promise<PaymentsSavedInfoS | RpcErrorS> {
   return invoker.call(req);
@@ -109423,7 +109703,7 @@ export function CallPaymentsGetSavedInfoM(
  * info:flags.1?true
  */
 export function CallPaymentsClearSavedInfoM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PaymentsClearSavedInfoM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109438,7 +109718,7 @@ export function CallPaymentsClearSavedInfoM(
  * shipping_options:flags.1?Vector<ShippingOption>
  */
 export function CallMessagesSetBotShippingResultsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSetBotShippingResultsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109453,7 +109733,7 @@ export function CallMessagesSetBotShippingResultsM(
  * error:flags.0?string
  */
 export function CallMessagesSetBotPrecheckoutResultsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSetBotPrecheckoutResultsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109470,7 +109750,7 @@ export function CallMessagesSetBotPrecheckoutResultsM(
  * stickers:Vector<InputStickerSetItem>
  */
 export function CallStickersCreateStickerSetM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: StickersCreateStickerSetM
 ): Promise<MessagesStickerSetT | RpcErrorS> {
   return invoker.call(req);
@@ -109482,7 +109762,7 @@ export function CallStickersCreateStickerSetM(
  * sticker:InputDocument
  */
 export function CallStickersRemoveStickerFromSetM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: StickersRemoveStickerFromSetM
 ): Promise<MessagesStickerSetT | RpcErrorS> {
   return invoker.call(req);
@@ -109495,7 +109775,7 @@ export function CallStickersRemoveStickerFromSetM(
  * position:int
  */
 export function CallStickersChangeStickerPositionM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: StickersChangeStickerPositionM
 ): Promise<MessagesStickerSetT | RpcErrorS> {
   return invoker.call(req);
@@ -109508,7 +109788,7 @@ export function CallStickersChangeStickerPositionM(
  * sticker:InputStickerSetItem
  */
 export function CallStickersAddStickerToSetM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: StickersAddStickerToSetM
 ): Promise<MessagesStickerSetT | RpcErrorS> {
   return invoker.call(req);
@@ -109521,7 +109801,7 @@ export function CallStickersAddStickerToSetM(
  * media:InputMedia
  */
 export function CallMessagesUploadMediaM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesUploadMediaM
 ): Promise<MessageMediaT | RpcErrorS> {
   return invoker.call(req);
@@ -109533,7 +109813,7 @@ export function CallMessagesUploadMediaM(
  *
  */
 export function CallPhoneGetCallConfigM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhoneGetCallConfigM
 ): Promise<DataJsonT | RpcErrorS> {
   return invoker.call(req);
@@ -109550,7 +109830,7 @@ export function CallPhoneGetCallConfigM(
  * protocol:PhoneCallProtocol
  */
 export function CallPhoneRequestCallM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhoneRequestCallM
 ): Promise<PhonePhoneCallS | RpcErrorS> {
   return invoker.call(req);
@@ -109564,7 +109844,7 @@ export function CallPhoneRequestCallM(
  * protocol:PhoneCallProtocol
  */
 export function CallPhoneAcceptCallM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhoneAcceptCallM
 ): Promise<PhonePhoneCallS | RpcErrorS> {
   return invoker.call(req);
@@ -109579,7 +109859,7 @@ export function CallPhoneAcceptCallM(
  * protocol:PhoneCallProtocol
  */
 export function CallPhoneConfirmCallM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhoneConfirmCallM
 ): Promise<PhonePhoneCallS | RpcErrorS> {
   return invoker.call(req);
@@ -109591,7 +109871,7 @@ export function CallPhoneConfirmCallM(
  * peer:InputPhoneCall
  */
 export function CallPhoneReceivedCallM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhoneReceivedCallM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109608,7 +109888,7 @@ export function CallPhoneReceivedCallM(
  * connection_id:long
  */
 export function CallPhoneDiscardCallM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhoneDiscardCallM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -109624,7 +109904,7 @@ export function CallPhoneDiscardCallM(
  * comment:string
  */
 export function CallPhoneSetCallRatingM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhoneSetCallRatingM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -109637,7 +109917,7 @@ export function CallPhoneSetCallRatingM(
  * debug:DataJSON
  */
 export function CallPhoneSaveCallDebugM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PhoneSaveCallDebugM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109651,7 +109931,7 @@ export function CallPhoneSaveCallDebugM(
  * limit:int
  */
 export function CallUploadGetCdnFileM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UploadGetCdnFileM
 ): Promise<UploadCdnFileT | RpcErrorS> {
   return invoker.call(req);
@@ -109664,9 +109944,9 @@ export function CallUploadGetCdnFileM(
  * request_token:bytes
  */
 export function CallUploadReuploadCdnFileM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UploadReuploadCdnFileM
-): Promise<FileHashT[] | RpcErrorS> {
+): Promise<VectorS<FileHashT> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -109676,7 +109956,7 @@ export function CallUploadReuploadCdnFileM(
  *
  */
 export function CallHelpGetCdnConfigM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetCdnConfigM
 ): Promise<CdnConfigS | RpcErrorS> {
   return invoker.call(req);
@@ -109689,7 +109969,7 @@ export function CallHelpGetCdnConfigM(
  * lang_code:string
  */
 export function CallLangpackGetLangPackM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: LangpackGetLangPackM
 ): Promise<LangPackDifferenceT | RpcErrorS> {
   return invoker.call(req);
@@ -109703,9 +109983,9 @@ export function CallLangpackGetLangPackM(
  * keys:Vector<string>
  */
 export function CallLangpackGetStringsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: LangpackGetStringsM
-): Promise<LangPackStringT[] | RpcErrorS> {
+): Promise<VectorS<LangPackStringT> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -109717,7 +109997,7 @@ export function CallLangpackGetStringsM(
  * from_version:int
  */
 export function CallLangpackGetDifferenceM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: LangpackGetDifferenceM
 ): Promise<LangPackDifferenceT | RpcErrorS> {
   return invoker.call(req);
@@ -109729,9 +110009,9 @@ export function CallLangpackGetDifferenceM(
  * lang_pack:string
  */
 export function CallLangpackGetLanguagesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: LangpackGetLanguagesM
-): Promise<LangPackLanguageS[] | RpcErrorS> {
+): Promise<VectorS<LangPackLanguageS> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -109743,7 +110023,7 @@ export function CallLangpackGetLanguagesM(
  * banned_rights:ChatBannedRights
  */
 export function CallChannelsEditBannedM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsEditBannedM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -109762,7 +110042,7 @@ export function CallChannelsEditBannedM(
  * limit:int
  */
 export function CallChannelsGetAdminLogM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsGetAdminLogM
 ): Promise<ChannelsAdminLogResultsS | RpcErrorS> {
   return invoker.call(req);
@@ -109775,9 +110055,9 @@ export function CallChannelsGetAdminLogM(
  * offset:int
  */
 export function CallUploadGetCdnFileHashesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UploadGetCdnFileHashesM
-): Promise<FileHashT[] | RpcErrorS> {
+): Promise<VectorS<FileHashT> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -109789,7 +110069,7 @@ export function CallUploadGetCdnFileHashesM(
  * random_id:long
  */
 export function CallMessagesSendScreenshotNotificationM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSendScreenshotNotificationM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -109802,7 +110082,7 @@ export function CallMessagesSendScreenshotNotificationM(
  * stickerset:InputStickerSet
  */
 export function CallChannelsSetStickersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsSetStickersM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109814,7 +110094,7 @@ export function CallChannelsSetStickersM(
  * hash:int
  */
 export function CallMessagesGetFavedStickersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetFavedStickersM
 ): Promise<MessagesFavedStickersT | RpcErrorS> {
   return invoker.call(req);
@@ -109827,7 +110107,7 @@ export function CallMessagesGetFavedStickersM(
  * unfave:Bool
  */
 export function CallMessagesFaveStickerM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesFaveStickerM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109840,7 +110120,7 @@ export function CallMessagesFaveStickerM(
  * id:Vector<int>
  */
 export function CallChannelsReadMessageContentsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsReadMessageContentsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109852,7 +110132,7 @@ export function CallChannelsReadMessageContentsM(
  *
  */
 export function CallContactsResetSavedM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsResetSavedM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109869,7 +110149,7 @@ export function CallContactsResetSavedM(
  * min_id:int
  */
 export function CallMessagesGetUnreadMentionsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetUnreadMentionsM
 ): Promise<MessagesMessagesT | RpcErrorS> {
   return invoker.call(req);
@@ -109882,7 +110162,7 @@ export function CallMessagesGetUnreadMentionsM(
  * max_id:int
  */
 export function CallChannelsDeleteHistoryM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsDeleteHistoryM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -109894,7 +110174,7 @@ export function CallChannelsDeleteHistoryM(
  * referer:string
  */
 export function CallHelpGetRecentMeUrlsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetRecentMeUrlsM
 ): Promise<HelpRecentMeUrlsS | RpcErrorS> {
   return invoker.call(req);
@@ -109907,7 +110187,7 @@ export function CallHelpGetRecentMeUrlsM(
  * enabled:Bool
  */
 export function CallChannelsTogglePreHistoryHiddenM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsTogglePreHistoryHiddenM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -109919,7 +110199,7 @@ export function CallChannelsTogglePreHistoryHiddenM(
  * peer:InputPeer
  */
 export function CallMessagesReadMentionsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesReadMentionsM
 ): Promise<MessagesAffectedHistoryS | RpcErrorS> {
   return invoker.call(req);
@@ -109933,7 +110213,7 @@ export function CallMessagesReadMentionsM(
  * hash:int
  */
 export function CallMessagesGetRecentLocationsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetRecentLocationsM
 ): Promise<MessagesMessagesT | RpcErrorS> {
   return invoker.call(req);
@@ -109952,7 +110232,7 @@ export function CallMessagesGetRecentLocationsM(
  * schedule_date:flags.10?int
  */
 export function CallMessagesSendMultiMediaM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSendMultiMediaM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -109965,7 +110245,7 @@ export function CallMessagesSendMultiMediaM(
  * file:InputEncryptedFile
  */
 export function CallMessagesUploadEncryptedFileM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesUploadEncryptedFileM
 ): Promise<EncryptedFileT | RpcErrorS> {
   return invoker.call(req);
@@ -109977,7 +110257,7 @@ export function CallMessagesUploadEncryptedFileM(
  *
  */
 export function CallAccountGetWebAuthorizationsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetWebAuthorizationsM
 ): Promise<AccountWebAuthorizationsS | RpcErrorS> {
   return invoker.call(req);
@@ -109989,7 +110269,7 @@ export function CallAccountGetWebAuthorizationsM(
  * hash:long
  */
 export function CallAccountResetWebAuthorizationM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountResetWebAuthorizationM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110001,7 +110281,7 @@ export function CallAccountResetWebAuthorizationM(
  *
  */
 export function CallAccountResetWebAuthorizationsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountResetWebAuthorizationsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110016,7 +110296,7 @@ export function CallAccountResetWebAuthorizationsM(
  * hash:int
  */
 export function CallMessagesSearchStickerSetsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSearchStickerSetsM
 ): Promise<MessagesFoundStickerSetsT | RpcErrorS> {
   return invoker.call(req);
@@ -110029,9 +110309,9 @@ export function CallMessagesSearchStickerSetsM(
  * offset:int
  */
 export function CallUploadGetFileHashesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UploadGetFileHashesM
-): Promise<FileHashT[] | RpcErrorS> {
+): Promise<VectorS<FileHashT> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -110041,7 +110321,7 @@ export function CallUploadGetFileHashesM(
  *
  */
 export function CallHelpGetProxyDataM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetProxyDataM
 ): Promise<HelpProxyDataT | RpcErrorS> {
   return invoker.call(req);
@@ -110053,7 +110333,7 @@ export function CallHelpGetProxyDataM(
  *
  */
 export function CallHelpGetTermsOfServiceUpdateM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetTermsOfServiceUpdateM
 ): Promise<HelpTermsOfServiceUpdateT | RpcErrorS> {
   return invoker.call(req);
@@ -110065,7 +110345,7 @@ export function CallHelpGetTermsOfServiceUpdateM(
  * id:DataJSON
  */
 export function CallHelpAcceptTermsOfServiceM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpAcceptTermsOfServiceM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110077,9 +110357,9 @@ export function CallHelpAcceptTermsOfServiceM(
  *
  */
 export function CallAccountGetAllSecureValuesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetAllSecureValuesM
-): Promise<SecureValueT[] | RpcErrorS> {
+): Promise<VectorS<SecureValueT> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -110089,9 +110369,9 @@ export function CallAccountGetAllSecureValuesM(
  * types:Vector<SecureValueType>
  */
 export function CallAccountGetSecureValueM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetSecureValueM
-): Promise<SecureValueT[] | RpcErrorS> {
+): Promise<VectorS<SecureValueT> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -110102,7 +110382,7 @@ export function CallAccountGetSecureValueM(
  * secure_secret_id:long
  */
 export function CallAccountSaveSecureValueM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountSaveSecureValueM
 ): Promise<SecureValueT | RpcErrorS> {
   return invoker.call(req);
@@ -110114,7 +110394,7 @@ export function CallAccountSaveSecureValueM(
  * types:Vector<SecureValueType>
  */
 export function CallAccountDeleteSecureValueM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountDeleteSecureValueM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110127,7 +110407,7 @@ export function CallAccountDeleteSecureValueM(
  * errors:Vector<SecureValueError>
  */
 export function CallUsersSetSecureValueErrorsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: UsersSetSecureValueErrorsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110141,7 +110421,7 @@ export function CallUsersSetSecureValueErrorsM(
  * public_key:string
  */
 export function CallAccountGetAuthorizationFormM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetAuthorizationFormM
 ): Promise<AccountAuthorizationFormS | RpcErrorS> {
   return invoker.call(req);
@@ -110157,7 +110437,7 @@ export function CallAccountGetAuthorizationFormM(
  * credentials:SecureCredentialsEncrypted
  */
 export function CallAccountAcceptAuthorizationM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountAcceptAuthorizationM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110170,7 +110450,7 @@ export function CallAccountAcceptAuthorizationM(
  * settings:CodeSettings
  */
 export function CallAccountSendVerifyPhoneCodeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountSendVerifyPhoneCodeM
 ): Promise<AuthSentCodeS | RpcErrorS> {
   return invoker.call(req);
@@ -110184,7 +110464,7 @@ export function CallAccountSendVerifyPhoneCodeM(
  * phone_code:string
  */
 export function CallAccountVerifyPhoneM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountVerifyPhoneM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110196,7 +110476,7 @@ export function CallAccountVerifyPhoneM(
  * email:string
  */
 export function CallAccountSendVerifyEmailCodeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountSendVerifyEmailCodeM
 ): Promise<AccountSentEmailCodeS | RpcErrorS> {
   return invoker.call(req);
@@ -110209,7 +110489,7 @@ export function CallAccountSendVerifyEmailCodeM(
  * code:string
  */
 export function CallAccountVerifyEmailM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountVerifyEmailM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110221,7 +110501,7 @@ export function CallAccountVerifyEmailM(
  * path:string
  */
 export function CallHelpGetDeepLinkInfoM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetDeepLinkInfoM
 ): Promise<HelpDeepLinkInfoT | RpcErrorS> {
   return invoker.call(req);
@@ -110233,9 +110513,9 @@ export function CallHelpGetDeepLinkInfoM(
  *
  */
 export function CallContactsGetSavedM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsGetSavedM
-): Promise<SavedContactT[] | RpcErrorS> {
+): Promise<VectorS<SavedContactT> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -110245,7 +110525,7 @@ export function CallContactsGetSavedM(
  * offset:int
  */
 export function CallChannelsGetLeftChannelsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsGetLeftChannelsM
 ): Promise<MessagesChatsT | RpcErrorS> {
   return invoker.call(req);
@@ -110264,7 +110544,7 @@ export function CallChannelsGetLeftChannelsM(
  * file_max_size:flags.5?int
  */
 export function CallAccountInitTakeoutSessionM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountInitTakeoutSessionM
 ): Promise<AccountTakeoutS | RpcErrorS> {
   return invoker.call(req);
@@ -110277,7 +110557,7 @@ export function CallAccountInitTakeoutSessionM(
  * success:flags.0?true
  */
 export function CallAccountFinishTakeoutSessionM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountFinishTakeoutSessionM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110289,9 +110569,9 @@ export function CallAccountFinishTakeoutSessionM(
  *
  */
 export function CallMessagesGetSplitRangesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetSplitRangesM
-): Promise<MessageRangeT[] | RpcErrorS> {
+): Promise<VectorS<MessageRangeT> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -110302,7 +110582,7 @@ export function CallMessagesGetSplitRangesM(
  * query:!X
  */
 export function CallInvokeWithMessagesRangeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: InvokeWithMessagesRangeM
 ): Promise<OneOf | IStruct | RpcErrorS> {
   return invoker.call(req);
@@ -110315,7 +110595,7 @@ export function CallInvokeWithMessagesRangeM(
  * query:!X
  */
 export function CallInvokeWithTakeoutM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: InvokeWithTakeoutM
 ): Promise<OneOf | IStruct | RpcErrorS> {
   return invoker.call(req);
@@ -110329,7 +110609,7 @@ export function CallInvokeWithTakeoutM(
  * peer:InputDialogPeer
  */
 export function CallMessagesMarkDialogUnreadM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesMarkDialogUnreadM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110341,9 +110621,9 @@ export function CallMessagesMarkDialogUnreadM(
  *
  */
 export function CallMessagesGetDialogUnreadMarksM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetDialogUnreadMarksM
-): Promise<DialogPeerT[] | RpcErrorS> {
+): Promise<VectorS<DialogPeerT> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -110353,7 +110633,7 @@ export function CallMessagesGetDialogUnreadMarksM(
  * enabled:Bool
  */
 export function CallContactsToggleTopPeersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsToggleTopPeersM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110365,7 +110645,7 @@ export function CallContactsToggleTopPeersM(
  *
  */
 export function CallMessagesClearAllDraftsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesClearAllDraftsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110377,7 +110657,7 @@ export function CallMessagesClearAllDraftsM(
  *
  */
 export function CallHelpGetAppConfigM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetAppConfigM
 ): Promise<JsonValueT | RpcErrorS> {
   return invoker.call(req);
@@ -110389,7 +110669,7 @@ export function CallHelpGetAppConfigM(
  * events:Vector<InputAppEvent>
  */
 export function CallHelpSaveAppLogM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpSaveAppLogM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110401,7 +110681,7 @@ export function CallHelpSaveAppLogM(
  * hash:int
  */
 export function CallHelpGetPassportConfigM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetPassportConfigM
 ): Promise<HelpPassportConfigT | RpcErrorS> {
   return invoker.call(req);
@@ -110414,7 +110694,7 @@ export function CallHelpGetPassportConfigM(
  * lang_code:string
  */
 export function CallLangpackGetLanguageM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: LangpackGetLanguageM
 ): Promise<LangPackLanguageS | RpcErrorS> {
   return invoker.call(req);
@@ -110429,7 +110709,7 @@ export function CallLangpackGetLanguageM(
  * id:int
  */
 export function CallMessagesUpdatePinnedMessageM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesUpdatePinnedMessageM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110441,7 +110721,7 @@ export function CallMessagesUpdatePinnedMessageM(
  * code:string
  */
 export function CallAccountConfirmPasswordEmailM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountConfirmPasswordEmailM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110453,7 +110733,7 @@ export function CallAccountConfirmPasswordEmailM(
  *
  */
 export function CallAccountResendPasswordEmailM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountResendPasswordEmailM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110465,7 +110745,7 @@ export function CallAccountResendPasswordEmailM(
  *
  */
 export function CallAccountCancelPasswordEmailM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountCancelPasswordEmailM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110477,7 +110757,7 @@ export function CallAccountCancelPasswordEmailM(
  *
  */
 export function CallHelpGetSupportNameM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetSupportNameM
 ): Promise<HelpSupportNameS | RpcErrorS> {
   return invoker.call(req);
@@ -110489,7 +110769,7 @@ export function CallHelpGetSupportNameM(
  * user_id:InputUser
  */
 export function CallHelpGetUserInfoM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpGetUserInfoM
 ): Promise<HelpUserInfoT | RpcErrorS> {
   return invoker.call(req);
@@ -110503,7 +110783,7 @@ export function CallHelpGetUserInfoM(
  * entities:Vector<MessageEntity>
  */
 export function CallHelpEditUserInfoM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HelpEditUserInfoM
 ): Promise<HelpUserInfoT | RpcErrorS> {
   return invoker.call(req);
@@ -110515,7 +110795,7 @@ export function CallHelpEditUserInfoM(
  *
  */
 export function CallAccountGetContactSignUpNotificationM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetContactSignUpNotificationM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110527,7 +110807,7 @@ export function CallAccountGetContactSignUpNotificationM(
  * silent:Bool
  */
 export function CallAccountSetContactSignUpNotificationM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountSetContactSignUpNotificationM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110541,7 +110821,7 @@ export function CallAccountSetContactSignUpNotificationM(
  * peer:flags.0?InputNotifyPeer
  */
 export function CallAccountGetNotifyExceptionsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetNotifyExceptionsM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110555,7 +110835,7 @@ export function CallAccountGetNotifyExceptionsM(
  * options:Vector<bytes>
  */
 export function CallMessagesSendVoteM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSendVoteM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110568,7 +110848,7 @@ export function CallMessagesSendVoteM(
  * msg_id:int
  */
 export function CallMessagesGetPollResultsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetPollResultsM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110580,7 +110860,7 @@ export function CallMessagesGetPollResultsM(
  * peer:InputPeer
  */
 export function CallMessagesGetOnlinesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetOnlinesM
 ): Promise<ChatOnlinesS | RpcErrorS> {
   return invoker.call(req);
@@ -110595,7 +110875,7 @@ export function CallMessagesGetOnlinesM(
  * params:string
  */
 export function CallMessagesGetStatsUrlM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetStatsUrlM
 ): Promise<StatsUrlS | RpcErrorS> {
   return invoker.call(req);
@@ -110608,7 +110888,7 @@ export function CallMessagesGetStatsUrlM(
  * about:string
  */
 export function CallMessagesEditChatAboutM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesEditChatAboutM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110621,7 +110901,7 @@ export function CallMessagesEditChatAboutM(
  * banned_rights:ChatBannedRights
  */
 export function CallMessagesEditChatDefaultBannedRightsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesEditChatDefaultBannedRightsM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110633,7 +110913,7 @@ export function CallMessagesEditChatDefaultBannedRightsM(
  * wallpaper:InputWallPaper
  */
 export function CallAccountGetWallPaperM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetWallPaperM
 ): Promise<WallPaperT | RpcErrorS> {
   return invoker.call(req);
@@ -110647,7 +110927,7 @@ export function CallAccountGetWallPaperM(
  * settings:WallPaperSettings
  */
 export function CallAccountUploadWallPaperM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountUploadWallPaperM
 ): Promise<WallPaperT | RpcErrorS> {
   return invoker.call(req);
@@ -110661,7 +110941,7 @@ export function CallAccountUploadWallPaperM(
  * settings:WallPaperSettings
  */
 export function CallAccountSaveWallPaperM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountSaveWallPaperM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110674,7 +110954,7 @@ export function CallAccountSaveWallPaperM(
  * settings:WallPaperSettings
  */
 export function CallAccountInstallWallPaperM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountInstallWallPaperM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110686,7 +110966,7 @@ export function CallAccountInstallWallPaperM(
  *
  */
 export function CallAccountResetWallPapersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountResetWallPapersM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110698,7 +110978,7 @@ export function CallAccountResetWallPapersM(
  *
  */
 export function CallAccountGetAutoDownloadSettingsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetAutoDownloadSettingsM
 ): Promise<AccountAutoDownloadSettingsS | RpcErrorS> {
   return invoker.call(req);
@@ -110713,7 +110993,7 @@ export function CallAccountGetAutoDownloadSettingsM(
  * settings:AutoDownloadSettings
  */
 export function CallAccountSaveAutoDownloadSettingsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountSaveAutoDownloadSettingsM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110725,7 +111005,7 @@ export function CallAccountSaveAutoDownloadSettingsM(
  * lang_code:string
  */
 export function CallMessagesGetEmojiKeywordsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetEmojiKeywordsM
 ): Promise<EmojiKeywordsDifferenceS | RpcErrorS> {
   return invoker.call(req);
@@ -110738,7 +111018,7 @@ export function CallMessagesGetEmojiKeywordsM(
  * from_version:int
  */
 export function CallMessagesGetEmojiKeywordsDifferenceM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetEmojiKeywordsDifferenceM
 ): Promise<EmojiKeywordsDifferenceS | RpcErrorS> {
   return invoker.call(req);
@@ -110750,9 +111030,9 @@ export function CallMessagesGetEmojiKeywordsDifferenceM(
  * lang_codes:Vector<string>
  */
 export function CallMessagesGetEmojiKeywordsLanguagesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetEmojiKeywordsLanguagesM
-): Promise<EmojiLanguageS[] | RpcErrorS> {
+): Promise<VectorS<EmojiLanguageS> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -110762,7 +111042,7 @@ export function CallMessagesGetEmojiKeywordsLanguagesM(
  * lang_code:string
  */
 export function CallMessagesGetEmojiUrlM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetEmojiUrlM
 ): Promise<EmojiUrlS | RpcErrorS> {
   return invoker.call(req);
@@ -110774,7 +111054,7 @@ export function CallMessagesGetEmojiUrlM(
  * folder_peers:Vector<InputFolderPeer>
  */
 export function CallFoldersEditPeerFoldersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: FoldersEditPeerFoldersM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110786,7 +111066,7 @@ export function CallFoldersEditPeerFoldersM(
  * folder_id:int
  */
 export function CallFoldersDeleteFolderM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: FoldersDeleteFolderM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110799,9 +111079,9 @@ export function CallFoldersDeleteFolderM(
  * filters:Vector<MessagesFilter>
  */
 export function CallMessagesGetSearchCountersM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetSearchCountersM
-): Promise<MessagesSearchCounterS[] | RpcErrorS> {
+): Promise<VectorS<MessagesSearchCounterS> | RpcErrorS> {
   return invoker.call(req);
 }
 
@@ -110811,7 +111091,7 @@ export function CallMessagesGetSearchCountersM(
  *
  */
 export function CallChannelsGetGroupsForDiscussionM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsGetGroupsForDiscussionM
 ): Promise<MessagesChatsT | RpcErrorS> {
   return invoker.call(req);
@@ -110824,7 +111104,7 @@ export function CallChannelsGetGroupsForDiscussionM(
  * group:InputChannel
  */
 export function CallChannelsSetDiscussionGroupM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsSetDiscussionGroupM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110838,7 +111118,7 @@ export function CallChannelsSetDiscussionGroupM(
  * button_id:int
  */
 export function CallMessagesRequestUrlAuthM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesRequestUrlAuthM
 ): Promise<UrlAuthResultT | RpcErrorS> {
   return invoker.call(req);
@@ -110854,7 +111134,7 @@ export function CallMessagesRequestUrlAuthM(
  * button_id:int
  */
 export function CallMessagesAcceptUrlAuthM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesAcceptUrlAuthM
 ): Promise<UrlAuthResultT | RpcErrorS> {
   return invoker.call(req);
@@ -110866,7 +111146,7 @@ export function CallMessagesAcceptUrlAuthM(
  * peer:InputPeer
  */
 export function CallMessagesHidePeerSettingsBarM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesHidePeerSettingsBarM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110883,7 +111163,7 @@ export function CallMessagesHidePeerSettingsBarM(
  * phone:string
  */
 export function CallContactsAddContactM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsAddContactM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110895,7 +111175,7 @@ export function CallContactsAddContactM(
  * id:InputUser
  */
 export function CallContactsAcceptContactM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsAcceptContactM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110909,7 +111189,7 @@ export function CallContactsAcceptContactM(
  * password:InputCheckPasswordSRP
  */
 export function CallChannelsEditCreatorM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsEditCreatorM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110921,7 +111201,7 @@ export function CallChannelsEditCreatorM(
  * geo_point:InputGeoPoint
  */
 export function CallContactsGetLocatedM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ContactsGetLocatedM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110935,7 +111215,7 @@ export function CallContactsGetLocatedM(
  * address:string
  */
 export function CallChannelsEditLocationM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsEditLocationM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -110948,7 +111228,7 @@ export function CallChannelsEditLocationM(
  * seconds:int
  */
 export function CallChannelsToggleSlowModeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ChannelsToggleSlowModeM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -110961,7 +111241,7 @@ export function CallChannelsToggleSlowModeM(
  * hash:int
  */
 export function CallMessagesGetScheduledHistoryM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetScheduledHistoryM
 ): Promise<MessagesMessagesT | RpcErrorS> {
   return invoker.call(req);
@@ -110974,7 +111254,7 @@ export function CallMessagesGetScheduledHistoryM(
  * id:Vector<int>
  */
 export function CallMessagesGetScheduledMessagesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesGetScheduledMessagesM
 ): Promise<MessagesMessagesT | RpcErrorS> {
   return invoker.call(req);
@@ -110987,7 +111267,7 @@ export function CallMessagesGetScheduledMessagesM(
  * id:Vector<int>
  */
 export function CallMessagesSendScheduledMessagesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesSendScheduledMessagesM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -111000,7 +111280,7 @@ export function CallMessagesSendScheduledMessagesM(
  * id:Vector<int>
  */
 export function CallMessagesDeleteScheduledMessagesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: MessagesDeleteScheduledMessagesM
 ): Promise<UpdatesT | RpcErrorS> {
   return invoker.call(req);
@@ -111016,7 +111296,7 @@ export function CallMessagesDeleteScheduledMessagesM(
  * mime_type:string
  */
 export function CallAccountUploadThemeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountUploadThemeM
 ): Promise<DocumentT | RpcErrorS> {
   return invoker.call(req);
@@ -111030,7 +111310,7 @@ export function CallAccountUploadThemeM(
  * document:InputDocument
  */
 export function CallAccountCreateThemeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountCreateThemeM
 ): Promise<ThemeT | RpcErrorS> {
   return invoker.call(req);
@@ -111047,7 +111327,7 @@ export function CallAccountCreateThemeM(
  * document:flags.2?InputDocument
  */
 export function CallAccountUpdateThemeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountUpdateThemeM
 ): Promise<ThemeT | RpcErrorS> {
   return invoker.call(req);
@@ -111060,7 +111340,7 @@ export function CallAccountUpdateThemeM(
  * unsave:Bool
  */
 export function CallAccountSaveThemeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountSaveThemeM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -111075,7 +111355,7 @@ export function CallAccountSaveThemeM(
  * theme:flags.1?InputTheme
  */
 export function CallAccountInstallThemeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountInstallThemeM
 ): Promise<BoolT | RpcErrorS> {
   return invoker.call(req);
@@ -111089,7 +111369,7 @@ export function CallAccountInstallThemeM(
  * document_id:long
  */
 export function CallAccountGetThemeM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetThemeM
 ): Promise<ThemeT | RpcErrorS> {
   return invoker.call(req);
@@ -111102,7 +111382,7 @@ export function CallAccountGetThemeM(
  * hash:int
  */
 export function CallAccountGetThemesM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: AccountGetThemesM
 ): Promise<AccountThemesT | RpcErrorS> {
   return invoker.call(req);

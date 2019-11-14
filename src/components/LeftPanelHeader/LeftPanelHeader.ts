@@ -12,12 +12,15 @@ export class LeftPanelHeader extends Tag<
   HTMLDivElement,
   ILeftPanelHeaderProps
 > {
-  defer = () => {};
-
   constructor(props: ILeftPanelHeaderProps) {
     super({
       ...props,
       tag: h.div(h.className(s.root))
     });
+  }
+  defer: Array<() => void> = [];
+  destroy() {
+    this.defer.map(v => v());
+    this.defer = [];
   }
 }

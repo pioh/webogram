@@ -4,6 +4,7 @@
   box-sizing: border-box;
 }
 html {
+  height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, Roboto, Open Sans,
     Helvetica Neue, Noto Sans Armenian, Noto Sans Bengali, Noto Sans Cherokee,
     Noto Sans Devanagari, Noto Sans Ethiopic, Noto Sans Georgian,
@@ -15,5 +16,6 @@ html {
 }
 
 body {
-  padding: 8px;
+  height: 100%;
+  width: 100%;
 }

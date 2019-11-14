@@ -1,5 +1,6 @@
 import { ApiInvoker } from "../ApiInvoker";
 import { ByteBuffer } from "../ByteBuffer";
+import { Connection } from "../Connection";
 import {
   AllStructs,
   IStruct,
@@ -14,17 +15,22 @@ import {
  * #1cb5c415:481674261:481674261
  *
  */
-export class VectorS {
+export class VectorS<T = unknown> {
   static _id = 0x1cb5c415;
 
-  _values = ([] as unknown) as any[];
+  _values = ([] as unknown) as T[];
 
   _write(buf: ByteBuffer, noId = false): this {
     if (!noId) buf.writeInt(VectorS._id);
 
     buf.writeInt(this._values.length);
     for (let i = 0; i < this._values.length; i++) {
-      this._values[i]._write(buf);
+      let val = this._values[i] as any;
+      if (Array.isArray(val)) buf.writeLong(val as ProtoLong);
+      else if (typeof val === "number") buf.writeInt(val);
+      else if (val instanceof Uint8Array) buf.writeBytes(val);
+      else if (typeof val === "string") buf.writeString(val);
+      else val._write(buf);
     }
 
     return this;
@@ -38,10 +44,18 @@ export class VectorS {
     let len = buf.readInt();
     for (let i = 0; i < len; i++) {
       let item = new OneOf()._read(buf);
-      this._values.push(item);
+      this._values.push(item as any);
     }
 
     return this;
+  }
+
+  set_values(v: T[]): this {
+    this._values = v as any;
+    return this;
+  }
+  get_values(): T[] {
+    return (this._values as unknown) as T[];
   }
 }
 AllStructs.set(VectorS._id, VectorS);
@@ -61,8 +75,8 @@ export class ResPqS {
     new Uint8Array(16),
     new Uint8Array(16),
     new Uint8Array(),
-    []
-  ] as unknown) as [Uint8Array, Uint8Array, Uint8Array, ProtoLong[]];
+    new VectorS<ProtoLong>()
+  ] as unknown) as [Uint8Array, Uint8Array, Uint8Array, VectorS<ProtoLong>];
 
   get_nonce(): Uint8Array {
     return this._values[0];
@@ -91,10 +105,10 @@ export class ResPqS {
     return this;
   }
 
-  get_server_public_key_fingerprints(): ProtoLong[] {
+  get_server_public_key_fingerprints(): VectorS<ProtoLong> {
     return this._values[3];
   }
-  set_server_public_key_fingerprints(val: ProtoLong[]): this {
+  set_server_public_key_fingerprints(val: VectorS<ProtoLong>): this {
     this._values[3] = val;
 
     return this;
@@ -121,13 +135,13 @@ export class ResPqS {
     }
 
     {
-      let val = values[3] as ProtoLong[];
+      let val = values[3] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -160,17 +174,17 @@ export class ResPqS {
     }
 
     {
-      let val = values[3] as ProtoLong[];
+      let val = values[3] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[3] = val;
     }
@@ -1685,10 +1699,10 @@ AllStructs.set(FutureSaltS._id, FutureSaltS);
 export class FutureSaltsS {
   static _id = 0xae500895;
 
-  _values = ([[0, 0], 0, []] as unknown) as [
+  _values = ([[0, 0], 0, new VectorS<FutureSaltT>()] as unknown) as [
     ProtoLong,
     number,
-    FutureSaltT[]
+    VectorS<FutureSaltT>
   ];
 
   get_req_msg_id(): ProtoLong {
@@ -1709,10 +1723,10 @@ export class FutureSaltsS {
     return this;
   }
 
-  get_salts(): FutureSaltT[] {
+  get_salts(): VectorS<FutureSaltT> {
     return this._values[2];
   }
-  set_salts(val: FutureSaltT[]): this {
+  set_salts(val: VectorS<FutureSaltT>): this {
     this._values[2] = val;
 
     return this;
@@ -1734,12 +1748,12 @@ export class FutureSaltsS {
     }
 
     {
-      let val = values[2] as FutureSaltT[];
+      let val = values[2] as VectorS<FutureSaltT>;
 
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf);
       }
     }
@@ -1766,17 +1780,17 @@ export class FutureSaltsS {
     }
 
     {
-      let val = values[2] as FutureSaltT[];
+      let val = values[2] as VectorS<FutureSaltT>;
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: FutureSaltT = (new FutureSaltT() as unknown) as FutureSaltT;
 
         val = val._read(buf);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[2] = val;
     }
@@ -2057,12 +2071,12 @@ AllStructs.set(NewSessionCreatedS._id, NewSessionCreatedS);
 export class MsgContainerS {
   static _id = 0x73f1f8dc;
 
-  _values = ([[]] as unknown) as [MessageS[]];
+  _values = ([new VectorS<MessageS>()] as unknown) as [VectorS<MessageS>];
 
-  get_messages(): MessageS[] {
+  get_messages(): VectorS<MessageS> {
     return this._values[0];
   }
-  set_messages(val: MessageS[]): this {
+  set_messages(val: VectorS<MessageS>): this {
     this._values[0] = val;
 
     return this;
@@ -2074,12 +2088,12 @@ export class MsgContainerS {
     let values = this._values;
 
     {
-      let val = values[0] as MessageS[];
+      let val = values[0] as VectorS<MessageS>;
 
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         val._write(buf, true);
       }
     }
@@ -2094,16 +2108,16 @@ export class MsgContainerS {
     let values = this._values;
 
     {
-      let val = values[0] as MessageS[];
+      let val = values[0] as VectorS<MessageS>;
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: MessageS = new MessageS();
         val = val._read(buf, true);
         if (val instanceof OneOf) val = val.unwrap();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -2356,12 +2370,12 @@ AllStructs.set(GzipPackedS._id, GzipPackedS);
 export class MsgsAckS {
   static _id = 0x62d6b459;
 
-  _values = ([[]] as unknown) as [ProtoLong[]];
+  _values = ([new VectorS<ProtoLong>()] as unknown) as [VectorS<ProtoLong>];
 
-  get_msg_ids(): ProtoLong[] {
+  get_msg_ids(): VectorS<ProtoLong> {
     return this._values[0];
   }
-  set_msg_ids(val: ProtoLong[]): this {
+  set_msg_ids(val: VectorS<ProtoLong>): this {
     this._values[0] = val;
 
     return this;
@@ -2373,13 +2387,13 @@ export class MsgsAckS {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -2394,17 +2408,17 @@ export class MsgsAckS {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -2630,12 +2644,12 @@ AllStructs.set(BadServerSaltS._id, BadServerSaltS);
 export class MsgResendReqS {
   static _id = 0x7d861a08;
 
-  _values = ([[]] as unknown) as [ProtoLong[]];
+  _values = ([new VectorS<ProtoLong>()] as unknown) as [VectorS<ProtoLong>];
 
-  get_msg_ids(): ProtoLong[] {
+  get_msg_ids(): VectorS<ProtoLong> {
     return this._values[0];
   }
-  set_msg_ids(val: ProtoLong[]): this {
+  set_msg_ids(val: VectorS<ProtoLong>): this {
     this._values[0] = val;
 
     return this;
@@ -2647,13 +2661,13 @@ export class MsgResendReqS {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -2668,17 +2682,17 @@ export class MsgResendReqS {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -2696,12 +2710,12 @@ AllStructs.set(MsgResendReqS._id, MsgResendReqS);
 export class MsgsStateReqS {
   static _id = 0xda69fb52;
 
-  _values = ([[]] as unknown) as [ProtoLong[]];
+  _values = ([new VectorS<ProtoLong>()] as unknown) as [VectorS<ProtoLong>];
 
-  get_msg_ids(): ProtoLong[] {
+  get_msg_ids(): VectorS<ProtoLong> {
     return this._values[0];
   }
-  set_msg_ids(val: ProtoLong[]): this {
+  set_msg_ids(val: VectorS<ProtoLong>): this {
     this._values[0] = val;
 
     return this;
@@ -2713,13 +2727,13 @@ export class MsgsStateReqS {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -2734,17 +2748,17 @@ export class MsgsStateReqS {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -2833,15 +2847,15 @@ AllStructs.set(MsgsStateInfoS._id, MsgsStateInfoS);
 export class MsgsAllInfoS {
   static _id = 0x8cc0d131;
 
-  _values = ([[], new Uint8Array()] as unknown) as [
-    ProtoLong[],
+  _values = ([new VectorS<ProtoLong>(), new Uint8Array()] as unknown) as [
+    VectorS<ProtoLong>,
     Uint8Array
   ];
 
-  get_msg_ids(): ProtoLong[] {
+  get_msg_ids(): VectorS<ProtoLong> {
     return this._values[0];
   }
-  set_msg_ids(val: ProtoLong[]): this {
+  set_msg_ids(val: VectorS<ProtoLong>): this {
     this._values[0] = val;
 
     return this;
@@ -2862,13 +2876,13 @@ export class MsgsAllInfoS {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       buf.writeInt(481674261);
-      buf.writeInt(val.length);
+      buf.writeInt(val.get_values().length);
       let vector = val;
-      for (let i = 0; i < vector.length; i++) {
-        let val = vector[i];
+      for (let i = 0; i < vector._values.length; i++) {
+        let val = vector.get_values()[i];
         buf.writeLong(val);
       }
     }
@@ -2888,17 +2902,17 @@ export class MsgsAllInfoS {
     let values = this._values;
 
     {
-      let val = values[0] as ProtoLong[];
+      let val = values[0] as VectorS<ProtoLong>;
 
       if (buf.readUInt() !== 481674261) panic("not vector");
 
       let len = buf.readInt();
-      val.splice(0);
+      val._values.splice(0);
       let vector = val;
       for (let i = 0; i < len; i++) {
         let val: ProtoLong = [0, 0];
         val = buf.readLong();
-        vector.push(val);
+        vector.get_values().push(val);
       }
       values[0] = val;
     }
@@ -3981,7 +3995,7 @@ AllStructs.set(HttpWaitM._id, HttpWaitM);
  * nonce:int128
  */
 export function CallReqPqM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ReqPqM
 ): Promise<ResPqS | RpcErrorS> {
   return invoker.call(req);
@@ -3998,7 +4012,7 @@ export function CallReqPqM(
  * encrypted_data:bytes
  */
 export function CallReqDhParamsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: ReqDhParamsM
 ): Promise<ServerDhParamsT | RpcErrorS> {
   return invoker.call(req);
@@ -4012,7 +4026,7 @@ export function CallReqDhParamsM(
  * encrypted_data:bytes
  */
 export function CallSetClientDhParamsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: SetClientDhParamsM
 ): Promise<SetClientDhParamsAnswerT | RpcErrorS> {
   return invoker.call(req);
@@ -4024,7 +4038,7 @@ export function CallSetClientDhParamsM(
  * req_msg_id:long
  */
 export function CallRpcDropAnswerM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: RpcDropAnswerM
 ): Promise<RpcDropAnswerT | RpcErrorS> {
   return invoker.call(req);
@@ -4036,7 +4050,7 @@ export function CallRpcDropAnswerM(
  * num:int
  */
 export function CallGetFutureSaltsM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: GetFutureSaltsM
 ): Promise<FutureSaltsS | RpcErrorS> {
   return invoker.call(req);
@@ -4048,7 +4062,7 @@ export function CallGetFutureSaltsM(
  * ping_id:long
  */
 export function CallPingM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PingM
 ): Promise<PongS | RpcErrorS> {
   return invoker.call(req);
@@ -4061,7 +4075,7 @@ export function CallPingM(
  * disconnect_delay:int
  */
 export function CallPingDelayDisconnectM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: PingDelayDisconnectM
 ): Promise<PongS | RpcErrorS> {
   return invoker.call(req);
@@ -4073,7 +4087,7 @@ export function CallPingDelayDisconnectM(
  * session_id:long
  */
 export function CallDestroySessionM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: DestroySessionM
 ): Promise<DestroySessionResT | RpcErrorS> {
   return invoker.call(req);
@@ -4087,7 +4101,7 @@ export function CallDestroySessionM(
  * max_wait:int
  */
 export function CallHttpWaitM(
-  invoker: ApiInvoker,
+  invoker: ApiInvoker | Connection,
   req: HttpWaitM
 ): Promise<OneOf | IStruct | RpcErrorS> {
   return invoker.call(req);

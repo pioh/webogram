@@ -134,6 +134,7 @@ export const htmlFor = Attr("for");
 export const role = Attr("role");
 export const tabindex = Attr("tabindex");
 export const type = Attr("type");
+export const src = Attr("src");
 
 export const autocomplete = Attr("autocomplete");
 export const autocorrect = Attr("autocorrect");

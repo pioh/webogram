@@ -47,6 +47,7 @@
   "dependencies": {
     "@types/crypto-js": "^3.1.43",
     "@types/jsbn": "^1.2.29",
+    "@types/runes": "^0.4.1",
     "crypto-js": "^3.1.9-1",
     "global": "^4.4.0",
     "jsbn": "^1.1.0",
@@ -54,6 +55,7 @@
     "leemon": "^6.2.0",
     "pako": "^1.0.10",
     "pbkdf2": "^3.0.17",
+    "runes": "^0.4.3",
     "rusha": "^0.8.13",
     "sjcl": "^1.0.8",
     "ts-node": "^8.4.1",

@@ -9,12 +9,15 @@ interface INoChatProps extends ITagProps<HTMLDivElement> {
 }
 
 export class NoChat extends Tag<HTMLDivElement, INoChatProps> {
-  defer = () => {};
-
   constructor(props: INoChatProps) {
     super({
       ...props,
       tag: h.div(h.className(s.root))
     });
+  }
+  defer: Array<() => void> = [];
+  destroy() {
+    this.defer.map(v => v());
+    this.defer = [];
   }
 }

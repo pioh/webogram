@@ -1,7 +1,11 @@
 import { config } from "const/config";
 import { GetDcHref } from "const/dc";
-import { errors } from "const/errors";
-import { GetKeyByFingerPrints, GetPublicKeyByDc } from "const/PublicKyes";
+import { errors, findError } from "const/errors";
+import {
+  GetKeyByFingerPrints,
+  GetPublicKeyByDc,
+  IPublicKey
+} from "const/PublicKyes";
 import { assertEquals } from "lib/assertEquals";
 import { bytesFromHex } from "lib/BytesFromHex";
 import { bytesXor } from "lib/bytesXor";
@@ -12,22 +16,20 @@ import { ungzip } from "lib/pako.js";
 import { Sha1 } from "lib/Sha";
 import { WorkerClient } from "lib/WorkerClient";
 
-import { HelpGetNearestDc } from "./api";
 import { ApiInvoker } from "./ApiInvoker";
 import { ByteBuffer } from "./ByteBuffer";
 import {
-  AuthAuthorizationS,
-  HelpGetConfigM,
+  AuthExportAuthorizationM,
+  AuthImportAuthorizationM,
+  CallAuthExportAuthorizationM,
+  CallAuthImportAuthorizationM,
   HelpGetNearestDcM,
   InitConnectionM,
   InvokeWithLayerM,
-  NearestDcS,
-  UserEmptyS,
-  UserS
+  NearestDcS
 } from "./generator/ApiShema.gen";
 import {
   BadServerSaltS,
-  CallPingM,
   GzipPackedS,
   HttpWaitM,
   MessageT,
@@ -39,7 +41,8 @@ import {
   PingM,
   PongS,
   RpcErrorS,
-  RpcResultS
+  RpcResultS,
+  VectorS
 } from "./generator/MTprotoShema.gen";
 import { NewNonce } from "./nonce";
 import {
@@ -54,12 +57,13 @@ import {
   TypeResDHParamsOk,
   TypeResPQ
 } from "./schema";
-import { IStruct, OneOf, TMethod } from "./SchemaHelpers";
+import { IStruct, OneOf, ProtoLong, TMethod } from "./SchemaHelpers";
 import { TimeStore } from "./TimeStore";
 
 export interface IConnectionProps {
   timeStore: TimeStore;
   apiInvoker: ApiInvoker;
+  dc: number;
 }
 
 const ID = (id: ILong) =>
@@ -77,18 +81,17 @@ export interface MethodWrap {
 export interface IWaiter extends MethodWrap {
   time: number;
   retry: number;
+  message: MessageT;
   rpcError?: RpcErrorS;
 }
 
 export class Connection {
-  private props: IConnectionProps;
+  props: IConnectionProps;
   private worker = new WorkerClient();
 
   private callbacks: Array<() => Promise<void> | void> = [];
 
-  private dc = config.dc;
-  private nearestDc = this.dc;
-  private publicKey = GetPublicKeyByDc(this.dc);
+  private publicKey: IPublicKey;
   private retry = 0;
   private nonce = NewNonce();
   private serverNonce = new Uint8Array();
@@ -111,7 +114,6 @@ export class Connection {
   private inited = false;
   private initing = false;
   private seq_no = 0;
-  private user = new UserS();
   connectionInited = false;
   isDebug = true;
   acks: ILong[] = [];
@@ -121,14 +123,10 @@ export class Connection {
 
   constructor(props: IConnectionProps) {
     this.props = props;
+    this.publicKey = GetPublicKeyByDc(this.props.dc);
   }
-  setAuthorization(a: AuthAuthorizationS) {
-    let u = a.get_user();
-    if (u instanceof OneOf) u = u.unwrap();
-    if (u instanceof UserEmptyS) this.user = new UserS().set_id(u.get_id());
-    else this.user = u;
-
-    this.writeSessionToStorage();
+  get user() {
+    return this.props.apiInvoker.props.userStore();
   }
   async init() {
     if (this.initing || this.inited) return;
@@ -146,6 +144,11 @@ export class Connection {
       this.callbacks.push(r);
     });
   }
+  _onNearestDc: Set<(dc: number) => void> = new Set();
+  onNearestDc(foo: (dc: number) => void) {
+    this._onNearestDc.add(foo);
+    return () => this._onNearestDc.delete(foo);
+  }
   private async mtpSendPlainRequest(requestBuf: ByteBuffer) {
     let clientMsgID = this.props.timeStore.generateMessageID();
 
@@ -153,7 +156,7 @@ export class Connection {
     requestBuf.writeIntAt((requestBuf.size - 5) * 4, 4);
 
     let ping = performance.now() / 1000;
-    let response = await fetch(GetDcHref(2), {
+    let response = await fetch(GetDcHref(this.props.dc), {
       method: "POST",
       body: requestBuf.getBuffer32(),
       mode: "cors"
@@ -174,12 +177,13 @@ export class Connection {
 
   async send(requestWrap: MethodWrap | IWaiter) {
     let wrap = requestWrap as IWaiter;
-
     wrap = {
       ...requestWrap,
       time: wrap.time || Date.now(),
-      retry: wrap.retry !== void 0 ? wrap.retry : 2
+      retry: wrap.retry !== void 0 ? wrap.retry : 2,
+      message: this.nextMsg(wrap.name, !(wrap.method instanceof HttpWaitM))
     };
+    let messages = [wrap.message];
     if (wrap.retry <= 0) {
       if (wrap.cb) {
         wrap.cb(
@@ -193,7 +197,7 @@ export class Connection {
     }
 
     let request = wrap.method;
-    if (!this.connectionInited) {
+    if (!this.connectionInited && !(wrap.method instanceof HttpWaitM)) {
       if (this.isDebug) console.log("send initConnection");
       request = new InvokeWithLayerM().set_layer(config.apiLayer).set_query(
         new InitConnectionM()
@@ -207,28 +211,35 @@ export class Connection {
           .set_query(request)
       );
     }
-    let messages = [this.nextMsg(wrap.name).set_body(request)];
+
+    messages[0].set_body(request);
+    let wait = wrap.method instanceof HttpWaitM;
+    if (!this.longPoolSent) {
+      wait = true;
+      messages.push(
+        this.nextMsg("http_wait", false).set_body(
+          new HttpWaitM()
+            .set_max_delay(500)
+            .set_max_wait(5000)
+            .set_wait_after(150)
+        )
+      );
+    }
     let wrapID = messages[0].get_msg_id().join();
     if (wrap.cb) {
       this.sending.set(wrapID, wrap);
     }
-    setTimeout(() => {
-      let w = this.sending.get(wrapID);
-      if (!w) return;
-      this.sending.delete(wrapID);
-      console.error("request timeout", w);
-      if (w.cb) {
-        w.cb(
-          new RpcErrorS()
-            .set_error_message(errors.MSG_WAIT_FAILED)
-            .set_error_code(504)
-        );
-      }
-    }, 30000);
+    if (!(wrap.method instanceof HttpWaitM)) {
+      setTimeout(() => {
+        this.checkRpcStatus(wrapID);
+      }, 1000);
+    }
     if (this.acks.length) {
       messages.push(
         this.nextMsg("acks", false).set_body(
-          new MsgsAckS().set_msg_ids(this.acks)
+          new MsgsAckS().set_msg_ids(
+            new VectorS<ProtoLong>().set_values(this.acks)
+          )
         )
       );
       console.log("SEND acks", this.acks);
@@ -238,13 +249,25 @@ export class Connection {
       messages.length === 1
         ? messages[0]
         : this.nextMsg("container", false).set_body(
-            new MsgContainerS().set_messages(messages)
+            new MsgContainerS().set_messages(
+              new VectorS<MessageT>().set_values(messages)
+            )
           );
 
     if (this.isDebug) console.log("send " + wrap.name);
-    await this.sendMessage(wrap.name, message);
+
+    await this.sendMessage(wrap.name, message, wait);
   }
-  async sendMessage(name: string, m: MessageT) {
+  async checkRpcStatus(wrapID: string) {
+    let w = this.sending.get(wrapID);
+    if (!w) return;
+    if (this.sentAcks.has(w.message.get_msg_id().join())) {
+      this.sendMessage(`resend ${w.name}`, w.message, false);
+      setTimeout(() => this.checkRpcStatus(wrapID), 1000);
+      return;
+    }
+  }
+  async sendMessage(name: string, m: MessageT, wait: boolean) {
     let req = new ByteBuffer();
     req.writeU8A(this.serverSalt);
     req.writeU8A(this.session);
@@ -264,14 +287,27 @@ export class Connection {
     reqWrap.writeU8A(this.authKeyID);
     reqWrap.writeU8A(msgKey);
     reqWrap.writeU8A(encrypted);
-    let response = await fetch(GetDcHref(2), {
+    let ping = performance.now() / 1000;
+    let response = await fetch(GetDcHref(this.props.dc), {
       method: "POST",
       body: reqWrap.getBuffer32(),
       mode: "cors"
     });
+    ping = performance.now() / 1000 - ping;
+
     if (this.isDebug) console.log("sent " + name);
     this.connectionInited = true;
-    await this.sendOnResponse(response);
+    let data = await this.sendOnResponse(
+      response,
+      !wait ? ping : 0,
+      name,
+      m,
+      wait
+    );
+    if (this.sending.size && !this.longPoolSent) {
+      this.longPool();
+    }
+    return data;
   }
   nextMsg(name: string, main = true): MessageT {
     let m = new MessageT();
@@ -286,7 +322,13 @@ export class Connection {
     return m;
   }
 
-  async sendOnResponse(response: Response) {
+  async sendOnResponse(
+    response: Response,
+    ping: number,
+    name: string,
+    message: MessageT,
+    wait: boolean
+  ) {
     let responseBuffer = new ByteBuffer(
       new Uint32Array(await response.arrayBuffer())
     );
@@ -307,9 +349,23 @@ export class Connection {
     let session = decryptedBuffer.readU8A(2);
     assertEquals(this.session, session);
     let res = new MessageT()._read(decryptedBuffer, true);
-    await this.processMessage(res);
+    console.log("RESPONSE", res);
+    if (ping) {
+      this.props.timeStore.syncWithServer(
+        message.get_msg_id(),
+        res.get_msg_id(),
+        ping
+      );
+    }
+    await this.processMessage(res, name, message, wait);
+    return res;
   }
-  async processMessage(m: MessageT | IStruct) {
+  async processMessage(
+    m: MessageT | IStruct,
+    name: string,
+    req: MessageT,
+    wait: boolean
+  ) {
     let body = m;
     if (m instanceof MessageT) {
       body = m.get_body();
@@ -326,27 +382,33 @@ export class Connection {
     if (body instanceof RpcResultS) {
       this.processRpcResult(body);
     } else if (body instanceof MsgContainerS) {
-      for (let msg of body.get_messages()) {
-        await this.processMessage(msg);
+      for (let msg of body.get_messages().get_values()) {
+        await this.processMessage(msg, name, req, wait);
       }
     } else if (body instanceof GzipPackedS) {
       let data = body.get_packed_data();
       let buf = new ByteBuffer(ungzip(data));
       let next = new OneOf()._read(buf);
-      await this.processMessage(next);
+      await this.processMessage(next, name, req, wait);
     } else if (body instanceof NewSessionCreatedS) {
       if (this.isDebug) console.log("XNewTSessionTCreated");
       this.connectionInited = false;
       this.serverSalt = new Uint8Array(
         new Uint32Array(body.get_server_salt()).buffer
       );
+      this.writeSessionToStorage();
     } else if (body instanceof BadServerSaltS) {
       this.connectionInited = false;
       this.serverSalt = new Uint8Array(
         new Uint32Array(body.get_new_server_salt()).buffer
       );
+      this.writeSessionToStorage();
+      this.sendMessage(name, req, wait);
     } else if (body instanceof MsgsAckS) {
-      body.get_msg_ids().forEach(id => this.sentAcks.delete(id.join()));
+      body
+        .get_msg_ids()
+        .get_values()
+        .forEach(id => this.sentAcks.delete(id.join()));
     } else {
       if ("get_msg_id" in body) {
         let id = (body as any).get_msg_id() as ILong;
@@ -370,8 +432,10 @@ export class Connection {
       );
     }
   }
-  processRpcResult(r: RpcResultS) {
+  async processRpcResult(r: RpcResultS) {
     let id = r.get_req_msg_id();
+    let w = this.sending.get(id.join());
+    this.sending.delete(id.join());
     let instance = r.get_result();
     if (instance instanceof GzipPackedS) {
       let data = instance.get_packed_data();
@@ -379,16 +443,15 @@ export class Connection {
       instance = new OneOf()._read(buf);
     }
     if (instance instanceof OneOf) instance = instance.unwrap();
-    let w = this.sending.get(id.join());
+
     if (w) {
-      this.sending.delete(id.join());
       if (!instance) {
         this.connectionInited = false;
         this.send({
           ...w,
           retry: w.retry - 1,
           rpcError: new RpcErrorS()
-            .set_error_message(errors.API_ID_INVALID)
+            .set_error_message("API_ID_INVALID")
             .set_error_code(400)
         });
         return;
@@ -400,6 +463,24 @@ export class Connection {
           instance
         );
       if (instance instanceof RpcErrorS) {
+        let err = findError(instance.get_error_message());
+        if (err.type === "AUTH_KEY_UNREGISTERED") {
+          if (this.user.isLoggedIn) {
+            if (this.user.userDC !== this.props.dc) {
+              await this.reimportAuth();
+              this.send({
+                ...w,
+                retry: w.retry - 1,
+                rpcError: new RpcErrorS().set_error_message(
+                  "AUTH_KEY_UNREGISTERED"
+                )
+              });
+              return;
+            } else {
+              this.user.setIsLoggedIn(false);
+            }
+          }
+        }
         if (this.isDebug)
           console.error(
             "rpc error for " + w.name,
@@ -472,16 +553,9 @@ export class Connection {
   readSessionFromStorage() {
     try {
       // let sessionS = localStorage.getItem("session");
-      let dc = localStorage.getItem("dc");
-      let nearestDc = localStorage.getItem("nearestDc");
-      if (dc) this.dc = JSON.parse(dc);
-      if (nearestDc) this.nearestDc = JSON.parse(nearestDc);
-      this.dc = this.dc || this.nearestDc || config.dc;
-      this.nearestDc = this.nearestDc || this.dc || config.dc;
-
-      let authKeyIDS = localStorage.getItem(`authKeyID${this.dc}`);
-      let authKeyS = localStorage.getItem(`authKey${this.dc}`);
-      let serverSaltS = localStorage.getItem(`serverSalt${this.dc}`);
+      let authKeyIDS = localStorage.getItem(`authKeyID${this.props.dc}`);
+      let authKeyS = localStorage.getItem(`authKey${this.props.dc}`);
+      let serverSaltS = localStorage.getItem(`serverSalt${this.props.dc}`);
       if (serverSaltS && authKeyIDS && authKeyS) {
         // this.session = new Uint8Array(JSON.parse(sessionS));
         this.authKeyID = new Uint8Array(JSON.parse(authKeyIDS));
@@ -496,22 +570,19 @@ export class Connection {
     return false;
   }
   writeSessionToStorage() {
-    localStorage.setItem("dc", JSON.stringify(this.dc));
-    localStorage.setItem("nearestDc", JSON.stringify(this.nearestDc));
     // localStorage.setItem("session", JSON.stringify([...this.session]));
     localStorage.setItem(
-      `authKeyID${this.dc}`,
+      `authKeyID${this.props.dc}`,
       JSON.stringify([...this.authKeyID])
     );
     localStorage.setItem(
-      `authKey${this.dc}`,
+      `authKey${this.props.dc}`,
       JSON.stringify([...this.authKey])
     );
     localStorage.setItem(
-      `serverSalt${this.dc}`,
+      `serverSalt${this.props.dc}`,
       JSON.stringify([...this.serverSalt])
     );
-    localStorage.setItem(`userID`, JSON.stringify(this.user.get_id()));
     console.log("write session from storage");
   }
   async ping() {
@@ -525,19 +596,23 @@ export class Connection {
     return false;
   }
   async getNearestDC() {
-    let dc = await new Promise(r =>
-      this.send({ name: "nearest dc", method: new HelpGetNearestDcM(), cb: r })
+    let dc = await new Promise((r, c) =>
+      this.send({
+        name: "nearest dc",
+        method: new HelpGetNearestDcM(),
+        cb: r
+      }).catch(c)
     );
     if (dc instanceof NearestDcS) {
-      this.nearestDc = dc.get_nearest_dc();
-      this.writeSessionToStorage();
-      return dc.get_nearest_dc();
+      let nearest = dc.get_nearest_dc();
+      for (let cb of this._onNearestDc) cb(nearest);
+      return nearest;
     }
     return 0;
   }
   private async initConnection() {
     let readSession = this.readSessionFromStorage();
-    this.longPool();
+
     if (!readSession || !(await this.getNearestDC())) {
       for (let i = 0; i < 4; i++) {
         try {
@@ -547,12 +622,10 @@ export class Connection {
           let dc = await this.getNearestDC();
           if (!dc) continue;
           this.writeSessionToStorage();
-          if (dc !== this.dc) {
-            this.dc = dc;
-            await this.initConnection();
-            return;
-          }
           this.inited = true;
+          if (this.shouldReimportAuth || this.user.isLoggedIn) {
+            await this.reimportAuth();
+          }
           break;
         } catch (e) {
           console.error(e.stack);
@@ -565,6 +638,7 @@ export class Connection {
     if (!this.inited) {
       throw new Error("failed init connection");
     }
+    this.longPool();
 
     while (this.callbacks.length) {
       if (!this.inited) return;
@@ -582,15 +656,14 @@ export class Connection {
     // if (!force && this.longPoolID) return;
     // let m =
     try {
-      await this.sendMessage(
-        "http_wait",
-        this.nextMsg("http_wait", false).set_body(
-          new HttpWaitM()
-            .set_max_delay(500)
-            .set_max_wait(25000)
-            .set_wait_after(150)
-        )
-      );
+      await this.send({
+        name: "http_wait",
+        method: new HttpWaitM()
+          .set_max_delay(500)
+          .set_max_wait(25000)
+          .set_wait_after(150),
+        retry: 1
+      });
       // this.longPoolDelay = 100;
     } catch (e) {
       this.longPoolDelay *= 2;
@@ -617,6 +690,50 @@ export class Connection {
     this.pq = pq.slice();
     res.destroy();
     [this.p, this.q] = await this.worker.pqPrimeFactorization(this.pq);
+  }
+  shouldReimportAuth = false;
+  importingAuth = false;
+  async reimportAuth() {
+    if (this.importingAuth) return;
+    if (!this.inited) {
+      this.shouldReimportAuth = true;
+      return;
+    }
+    try {
+      this.inited = false;
+      this.importingAuth = true;
+      this.shouldReimportAuth = false;
+      let userDC = this.props.apiInvoker.props.userStore().userDC;
+      if (userDC === this.props.dc) return;
+      let userConn = this.props.apiInvoker.connection(userDC);
+      let auth = await CallAuthExportAuthorizationM(
+        userConn,
+        new AuthExportAuthorizationM().set_dc_id(this.props.dc)
+      );
+      if (auth instanceof RpcErrorS) return;
+      let bytes = auth.get_bytes();
+      let id = auth.get_id();
+      let response = await new Promise(async cb => {
+        // GetRandomValues(this.session);
+        // this.connectionInited = false;
+        // this.seq_no = 0;
+        // this.authKey = bytes;
+        // this.authKeyID = (await Sha1(bytes)).slice(-8);
+        this.send({
+          name: "import auth",
+          method: new AuthImportAuthorizationM().set_bytes(bytes).set_id(id),
+          cb
+        });
+      });
+      if (response instanceof RpcErrorS) {
+        return;
+      }
+    } finally {
+      this.importingAuth = false;
+      this.inited = true;
+      let cb: undefined | (() => void);
+      while ((cb = this.callbacks.pop())) cb();
+    }
   }
 
   private async fetchDHParams() {
@@ -781,5 +898,18 @@ export class Connection {
     this.authKeyID = authKeyID;
     this.authKey = authKey;
     this.serverSalt = serverSalt;
+  }
+
+  async call(req: TMethod): Promise<any> {
+    await this.ready();
+    return new Promise(r =>
+      this.send({
+        name: Object.getPrototypeOf(req).constructor.name,
+        method: req,
+        cb: instance => {
+          r(instance);
+        }
+      })
+    );
   }
 }

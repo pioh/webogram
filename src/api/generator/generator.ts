@@ -10,6 +10,7 @@ function WriteHeader(file: string) {
   l(`
   import {ByteBuffer} from "../ByteBuffer"
   import {ApiInvoker} from "../ApiInvoker"
+  import {Connection} from "../Connection"
   import {panic, AllStructs, ProtoLong, IStruct, OneOf, TMethod} from "../SchemaHelpers"
   `);
   if (file !== "./MTprotoShema.gen.ts") {
@@ -180,8 +181,8 @@ function mapType(type: string, isType = false): TypeDesc {
     let t = mapType(Vector[1], true);
     usedTypes.add(t.type);
     return {
-      value: `[]`,
-      type: `Array<${t.type}>`,
+      value: `new VectorS<${t.type}>()`,
+      type: `VectorS<${t.type}>`,
       read: `
         ${
           readId
@@ -191,20 +192,20 @@ function mapType(type: string, isType = false): TypeDesc {
             : ""
         }
         let len = buf.readInt();
-        val.splice(0);
+        val._values.splice(0);
         let vector = val;
         for (let i = 0; i < len; i++) {
           let val: ${t.type} = ${t.value};
           ${t.read};
-          vector.push(val);
+          vector.get_values().push(val);
         }
         `,
       write: `
         ${readId ? `buf.writeInt(481674261);` : ""}
-        buf.writeInt(val.length);
+        buf.writeInt(val.get_values().length);
         let vector = val;
-        for (let i = 0; i < vector.length; i++) {
-          let val = vector[i];
+        for (let i = 0; i < vector._values.length; i++) {
+          let val = vector.get_values()[i];
           ${t.write};
         }
     `
@@ -338,7 +339,7 @@ function AddMethod(m: typeof jsonApi.methods[0], used: Set<string>) {
    * #${id.toString(16)}:${id}:${m.id}
    * ${m.params.map(p => `${p.name}:${p.type}`).join("\n* ")}
    */
-  export function Call${name} (invoker: ApiInvoker, req: ${name}): Promise<${
+  export function Call${name} (invoker: ApiInvoker|Connection, req: ${name}): Promise<${
     W.type
   }|${toName("RpcError")}> {
     return invoker.call(req);
@@ -362,13 +363,13 @@ function AddConstructor(
        * #${id.toString(16)}:${id}:${c.id}
        * ${c.params.map(p => `${p.name}:${p.type}`).join("\n* ")}
        */
-      export class ${P} {
+      export class ${P}${isVector?"<T = unknown>":""} {
         static _id = 0x${id.toString(16)}
         ${c.returnType ? `_method() {}` : ""}
         _values = [${c.params
           .map(pr => mapType(pr.type).value)
           .join(", ")}] as unknown as ${
-    isVector && !c.params.length ? "any" : ""
+    isVector && !c.params.length ? "T" : ""
   }[${c.params.map(pr => mapType(pr.type).type).join(", ")}];
         ${
           isMessage
@@ -431,7 +432,12 @@ function AddConstructor(
                   ? `
             buf.writeInt(this._values.length);
             for (let i = 0; i < this._values.length; i++) {
-              this._values[i]._write(buf);
+              let val = this._values[i] as any;
+              if (Array.isArray(val)) buf.writeLong(val as ProtoLong);
+              else if (typeof val === "number") buf.writeInt(val);
+              else if (val instanceof Uint8Array) buf.writeBytes(val);
+              else if (typeof val === "string") buf.writeString(val);
+              else val._write(buf);
             }
             `
                   : ""
@@ -491,7 +497,7 @@ function AddConstructor(
             let len = buf.readInt();
             for (let i = 0; i < len; i++) {
               let item = new OneOf()._read(buf);
-              this._values.push(item);
+              this._values.push(item as any);
             }
             `
                 : ""
@@ -499,6 +505,16 @@ function AddConstructor(
 
             return this;
           }
+
+          ${isVector ? `
+            set_values(v: T[]): this {
+              this._values = v as any;
+              return this;
+            }
+            get_values(): T[] {
+              return this._values as unknown as T[];
+            }
+          ` :""}
       }
       AllStructs.set(${P}._id, ${P});
     `);

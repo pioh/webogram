@@ -1,8 +1,109 @@
 .root {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   flex-shrink: 0;
   width: 421px;
   border-right: 1px solid #dadce0;
   background: #fff;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.item {
+  width: 100%;
+  height: 72px;
+  margin-top: 4px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 9px;
+  overflow-x: hidden;
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(112, 117, 121, 0.08);
+  }
+}
+
+.photo {
+  height: 54px;
+  width: 54px;
+  border-radius: 27px;
+  color: #fff;
+  font-size: 23px;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  margin-right: 9px;
+  overflow: hidden;
+  > img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  /* width: 100%; */
+  height: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
+}
+.online {
+  color: #3490ec;
+}
+
+.title {
+  color: #000;
+  font-size: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.message {
+  font-size: 16px;
+  color: #707579;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  margin-left: auto;
+  color: #707579;
+  font-size: 12px;
+  padding: 0 3px 0 1px;
+  display: flex;
+  flex-shrink: 0;
+}
+.unread {
+  margin-left: auto;
+  background: #c4c9cc;
+  color: #fff;
+  min-width: 24px;
+  height: 24px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0 8px;
+}
+.unread.active {
+  background: #4dcd5e;
+}
+
+.half {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 50%;
+  flex: 1;
 }
