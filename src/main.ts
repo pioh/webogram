@@ -3,6 +3,7 @@ import { TimeStore } from "api/TimeStore";
 import { Navigator } from "components/Navigator/Navigator";
 import { UserStore } from "components/User/UserStore";
 import "static/font.css";
+import "static/icons.scss";
 
 import "./main.scss";
 

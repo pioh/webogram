@@ -7,10 +7,12 @@ export interface IInputProps extends ITagProps<HTMLDivElement> {
   forInput?: Array<h.TagProp<HTMLInputElement>>;
   forWrap?: Array<h.TagProp<HTMLDivElement>>;
   forLabel?: Array<h.TagProp<HTMLLabelElement>>;
+  iconLeft?: Tag<HTMLElement>;
   iconRight?: Tag<HTMLElement>;
   mask?: (value: string) => string;
   number?: boolean;
   value?: string | number | null;
+  theme?: Exclude<keyof typeof s, "default">;
 }
 
 export class Input extends Tag<HTMLDivElement, IInputProps> {
@@ -31,10 +33,19 @@ export class Input extends Tag<HTMLDivElement, IInputProps> {
       tag: h.div(h.className(s.root), props.forWrap),
       ...props
     });
-
+    if (this.props.theme) this.addClass(s[this.props.theme]);
     this.addClass(s.root);
     this.append(this.label, this.error, this.input);
-    if (props.iconRight) this.append(props.iconRight);
+    if (props.iconRight) {
+      this.append(props.iconRight);
+      props.iconRight.addClass(s.iconRight);
+      this.addClass(s.withIconRight);
+    }
+    if (props.iconLeft) {
+      this.append(props.iconLeft);
+      props.iconLeft.addClass(s.iconLeft);
+      this.addClass(s.withIconLeft);
+    }
 
     this.processValue();
     if (props.value) this.value = props.value;
@@ -119,8 +130,8 @@ export class Input extends Tag<HTMLDivElement, IInputProps> {
     if (oldIcon) oldIcon.remove();
     if (icon) {
       icon.addClass(s.iconRight);
-      document.createElement("i");
       this.append(icon);
+      this.addClass(s.withIconRight);
     }
   }
   addForceFocus() {

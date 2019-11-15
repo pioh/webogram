@@ -87,7 +87,7 @@ ul.list {
   }
 
   &:hover::-webkit-scrollbar-thumb {
-    background: rgba(3, 46, 79, 0.22);
+    background: #b8bcbe;
     border: 10px solid rgba(0, 0, 0, 0); /* Transparent border together with `background-clip: padding-box` does the trick */
     background-clip: padding-box;
     --webkit-border-radius: 20px;

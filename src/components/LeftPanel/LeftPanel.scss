@@ -1,13 +1,38 @@
 .root {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
   flex-shrink: 0;
   width: 421px;
   border-right: 1px solid #dadce0;
   background: #fff;
+
+  padding-right: 5px;
+}
+
+.chats {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
   overflow-y: auto;
   padding: 8px;
+  padding-right: 3px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    opacity: 0;
+  }
+  &:hover::-webkit-scrollbar {
+    background: transparent;
+    opacity: 0.99;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: #b8bcbe;
+    border: 10px solid rgba(0, 0, 0, 0); /* Transparent border together with `background-clip: padding-box` does the trick */
+    background-clip: padding-box;
+    --webkit-border-radius: 20px;
+  }
 }
 
 .item {
@@ -20,7 +45,8 @@
   padding: 9px;
   overflow-x: hidden;
   cursor: pointer;
-  &:hover {
+  &:hover,
+  &.active {
     background-color: rgba(112, 117, 121, 0.08);
   }
 }

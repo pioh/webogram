@@ -32,6 +32,7 @@
 }
 
 .root > input {
+  caret-color: #4ea4f6;
   width: 100%;
   border: 1px solid #dadce0;
   border-radius: 10px;
@@ -43,6 +44,7 @@
   line-height: 21px;
 
   outline: none;
+  transition: all 0.15s ease-out;
 }
 
 .iconRight {
@@ -90,4 +92,62 @@ label.error {
 .input[type="password"] {
   letter-spacing: 1px;
   font-size: 30px;
+}
+
+.grey {
+  margin: 0 9px;
+  height: 100%;
+  > input {
+    background: rgba(112, 117, 121, 0.08);
+    height: 100%;
+    border-radius: 22px;
+    line-height: 36px;
+    border-color: transparent;
+  }
+
+  &.focus,
+  &.forceFocus {
+    > input {
+      border-width: 2px;
+      padding: 0 15px;
+
+      border-color: #4ea4f6;
+    }
+    &.withIconLeft > input {
+      padding-left: 39px;
+    }
+    > label {
+      color: #4ea4f6;
+    }
+    > .iconLeft {
+      opacity: 1;
+      color: #4ea4f6;
+    }
+  }
+}
+
+.withIconRight {
+  > input {
+    padding-right: 40px;
+  }
+}
+.withIconLeft {
+  > input {
+    padding-left: 40px;
+  }
+}
+
+.iconLeft {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 48px;
+  height: 44px;
+  text-align: center;
+  line-height: 42px;
+  font-size: 24px;
+  color: #707579;
+  opacity: 0.6;
+  transition: all 0.15s ease-out;
+  pointer-events: none;
 }

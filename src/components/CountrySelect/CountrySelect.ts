@@ -45,15 +45,17 @@ export class CountrySelect extends Tag<HTMLDivElement> {
   }
   onChange(cb: (code: string, country: string) => void) {
     this._onChange.push(cb);
+    return this;
   }
   remove() {
     super.remove();
     this.close();
+    return this;
   }
 
   async autoSetCountry() {
     let country = await this.country;
-    if (this.code || this.class.has(s.open)) return;
+    if (this.code || this.class.has(s.open)) return this;
     let code = (navigator.language || "").toLowerCase().split("-");
     let found = country.filter(v => {
       if (v[2].toLowerCase() === code[1]) return true;
@@ -63,6 +65,7 @@ export class CountrySelect extends Tag<HTMLDivElement> {
     if (found.length === 1) {
       this.setValue(found[0][1], found[0][0]);
     }
+    return this;
   }
 
   onInputChange = async (value: string | number | null) => {
@@ -75,34 +78,38 @@ export class CountrySelect extends Tag<HTMLDivElement> {
       .sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
       .map(o => o[1]);
     this.renderOptions();
+    return this;
   };
   close = (e?: MouseEvent) => {
-    if (e && this.tag.contains(e.target as Node)) return;
+    if (e && this.tag.contains(e.target as Node)) return this;
     window.removeEventListener("click", this.close);
     window.removeEventListener("resize", this.onWindowResize);
-    if (!this.ul) return;
+    if (!this.ul) return this;
     this.ul.remove();
     this.ul = null;
     this.removeClass(s.open, s.upperSelect);
     this.input.removeForceFocus();
     this.input.value = this.value;
+    return this;
   };
   setValue(value: string, code: string) {
     if (this.input.value !== value) {
       this.input.value = value;
     }
-    if (value === this.value && code === this.code) return;
+    if (value === this.value && code === this.code) return this;
     this.value = value;
     this.code = code;
     this._onChange.map(cb => cb(code, value));
+    return this;
   }
   onWindowResize = () => {
     this.matchUpOrDown();
     this.rerenderListItems();
     this.input.tag.scrollIntoView();
+    return this;
   };
   matchUpOrDown = () => {
-    if (!this.ul) return;
+    if (!this.ul) return this;
     let inputRect = this.input.getBoundingClientRect();
     let maxHeight = window.innerHeight - inputRect.height - inputRect.top - 16;
     let maxHeightUp = inputRect.top - 16;
@@ -113,6 +120,7 @@ export class CountrySelect extends Tag<HTMLDivElement> {
       this.removeClass(s.upperSelect);
     }
     this.ul.tag.style.maxHeight = `${maxHeight}px`;
+    return this;
   };
   rate(val: string, o: ICountry): string {
     val = this.strip(val);
@@ -153,9 +161,11 @@ export class CountrySelect extends Tag<HTMLDivElement> {
     window.addEventListener("resize", this.onWindowResize, { passive: true });
     window.addEventListener("click", this.close, { passive: true });
     this.input.scrollIntoView();
+    return this;
   };
   onScroll = () => {
     this.rerenderListItems();
+    return this;
   };
   rerenderListItems = throttle(10, async () => {
     if (!this.ul) return;
@@ -225,10 +235,11 @@ export class CountrySelect extends Tag<HTMLDivElement> {
       this.ul.tag.scrollTop =
         -this.scroll + this.ul.tag.scrollHeight - this.ul.tag.clientHeight;
     }
+    return this;
   });
 
   matchListPaddings() {
-    if (!this.ul) return;
+    if (!this.ul) return this;
     let H = this.ul.tag.clientHeight;
     if (H < MIN_SELECT_HEIGHT) H = window.innerHeight;
     else H += LI_HEIGHT * 2;
@@ -241,9 +252,10 @@ export class CountrySelect extends Tag<HTMLDivElement> {
     if (this.offset + this.itemsCount > this.options.length) {
       this.itemsCount = this.options.length - this.offset;
     }
+    return this;
   }
   renderOptions() {
-    if (!this.ul) return;
+    if (!this.ul) return this;
     this.ul.tag.innerHTML = "";
     this.scroll = 0;
     this.matchListPaddings();
@@ -262,6 +274,7 @@ export class CountrySelect extends Tag<HTMLDivElement> {
         )
       ).tag
     );
+    return this;
   }
   renderLi(index: number) {
     let c = this.options[index];

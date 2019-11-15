@@ -1,3 +1,49 @@
 .hide {
   display: none !important;
 }
+.withWave {
+  overflow: hidden;
+  position: relative;
+}
+.wave {
+  position: absolute;
+  background: rgba(112, 117, 121, 0.08);
+  border-radius: 50%;
+  width: 1px;
+  height: 1px;
+  animation: wave 0.7s ease;
+  opacity: 0;
+}
+.wave.small {
+  width: 1px;
+  height: 1px;
+  animation: waveSmall 0.4s ease;
+}
+
+@keyframes wave {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1000);
+    opacity: 0;
+  }
+}
+
+@keyframes waveSmall {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(100);
+    opacity: 0;
+  }
+}

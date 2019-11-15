@@ -107093,7 +107093,7 @@ AllStructs.set(AccountGetThemesM._id, AccountGetThemesM);
 export function CallInvokeAfterMsgM(
   invoker: ApiInvoker | Connection,
   req: InvokeAfterMsgM
-): Promise<OneOf | IStruct | RpcErrorS> {
+): Promise<(OneOf | IStruct | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107106,7 +107106,7 @@ export function CallInvokeAfterMsgM(
 export function CallInvokeAfterMsgsM(
   invoker: ApiInvoker | Connection,
   req: InvokeAfterMsgsM
-): Promise<OneOf | IStruct | RpcErrorS> {
+): Promise<(OneOf | IStruct | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107121,7 +107121,7 @@ export function CallInvokeAfterMsgsM(
 export function CallAuthSendCodeM(
   invoker: ApiInvoker | Connection,
   req: AuthSendCodeM
-): Promise<AuthSentCodeS | RpcErrorS> {
+): Promise<(AuthSentCodeS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107136,7 +107136,7 @@ export function CallAuthSendCodeM(
 export function CallAuthSignUpM(
   invoker: ApiInvoker | Connection,
   req: AuthSignUpM
-): Promise<AuthAuthorizationT | RpcErrorS> {
+): Promise<(AuthAuthorizationT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107150,7 +107150,7 @@ export function CallAuthSignUpM(
 export function CallAuthSignInM(
   invoker: ApiInvoker | Connection,
   req: AuthSignInM
-): Promise<AuthAuthorizationT | RpcErrorS> {
+): Promise<(AuthAuthorizationT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107162,7 +107162,7 @@ export function CallAuthSignInM(
 export function CallAuthLogOutM(
   invoker: ApiInvoker | Connection,
   req: AuthLogOutM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107174,7 +107174,7 @@ export function CallAuthLogOutM(
 export function CallAuthResetAuthorizationsM(
   invoker: ApiInvoker | Connection,
   req: AuthResetAuthorizationsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107186,7 +107186,7 @@ export function CallAuthResetAuthorizationsM(
 export function CallAuthExportAuthorizationM(
   invoker: ApiInvoker | Connection,
   req: AuthExportAuthorizationM
-): Promise<AuthExportedAuthorizationS | RpcErrorS> {
+): Promise<(AuthExportedAuthorizationS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107199,7 +107199,7 @@ export function CallAuthExportAuthorizationM(
 export function CallAuthImportAuthorizationM(
   invoker: ApiInvoker | Connection,
   req: AuthImportAuthorizationM
-): Promise<AuthAuthorizationT | RpcErrorS> {
+): Promise<(AuthAuthorizationT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107214,7 +107214,7 @@ export function CallAuthImportAuthorizationM(
 export function CallAuthBindTempAuthKeyM(
   invoker: ApiInvoker | Connection,
   req: AuthBindTempAuthKeyM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107232,7 +107232,7 @@ export function CallAuthBindTempAuthKeyM(
 export function CallAccountRegisterDeviceM(
   invoker: ApiInvoker | Connection,
   req: AccountRegisterDeviceM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107246,7 +107246,7 @@ export function CallAccountRegisterDeviceM(
 export function CallAccountUnregisterDeviceM(
   invoker: ApiInvoker | Connection,
   req: AccountUnregisterDeviceM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107259,7 +107259,7 @@ export function CallAccountUnregisterDeviceM(
 export function CallAccountUpdateNotifySettingsM(
   invoker: ApiInvoker | Connection,
   req: AccountUpdateNotifySettingsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107271,7 +107271,7 @@ export function CallAccountUpdateNotifySettingsM(
 export function CallAccountGetNotifySettingsM(
   invoker: ApiInvoker | Connection,
   req: AccountGetNotifySettingsM
-): Promise<PeerNotifySettingsT | RpcErrorS> {
+): Promise<(PeerNotifySettingsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107283,7 +107283,7 @@ export function CallAccountGetNotifySettingsM(
 export function CallAccountResetNotifySettingsM(
   invoker: ApiInvoker | Connection,
   req: AccountResetNotifySettingsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107298,7 +107298,7 @@ export function CallAccountResetNotifySettingsM(
 export function CallAccountUpdateProfileM(
   invoker: ApiInvoker | Connection,
   req: AccountUpdateProfileM
-): Promise<UserT | RpcErrorS> {
+): Promise<(UserT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107310,7 +107310,7 @@ export function CallAccountUpdateProfileM(
 export function CallAccountUpdateStatusM(
   invoker: ApiInvoker | Connection,
   req: AccountUpdateStatusM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107322,7 +107322,7 @@ export function CallAccountUpdateStatusM(
 export function CallAccountGetWallPapersM(
   invoker: ApiInvoker | Connection,
   req: AccountGetWallPapersM
-): Promise<AccountWallPapersT | RpcErrorS> {
+): Promise<(AccountWallPapersT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107335,7 +107335,7 @@ export function CallAccountGetWallPapersM(
 export function CallAccountReportPeerM(
   invoker: ApiInvoker | Connection,
   req: AccountReportPeerM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107347,7 +107347,7 @@ export function CallAccountReportPeerM(
 export function CallUsersGetUsersM(
   invoker: ApiInvoker | Connection,
   req: UsersGetUsersM
-): Promise<VectorS<UserT> | RpcErrorS> {
+): Promise<(VectorS<UserT> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107359,7 +107359,7 @@ export function CallUsersGetUsersM(
 export function CallUsersGetFullUserM(
   invoker: ApiInvoker | Connection,
   req: UsersGetFullUserM
-): Promise<UserFullS | RpcErrorS> {
+): Promise<(UserFullS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107371,7 +107371,7 @@ export function CallUsersGetFullUserM(
 export function CallContactsGetContactIDsM(
   invoker: ApiInvoker | Connection,
   req: ContactsGetContactIDsM
-): Promise<VectorS<number> | RpcErrorS> {
+): Promise<(VectorS<number> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107383,7 +107383,7 @@ export function CallContactsGetContactIDsM(
 export function CallContactsGetStatusesM(
   invoker: ApiInvoker | Connection,
   req: ContactsGetStatusesM
-): Promise<VectorS<ContactStatusS> | RpcErrorS> {
+): Promise<(VectorS<ContactStatusS> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107395,7 +107395,7 @@ export function CallContactsGetStatusesM(
 export function CallContactsGetContactsM(
   invoker: ApiInvoker | Connection,
   req: ContactsGetContactsM
-): Promise<ContactsContactsT | RpcErrorS> {
+): Promise<(ContactsContactsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107407,7 +107407,7 @@ export function CallContactsGetContactsM(
 export function CallContactsImportContactsM(
   invoker: ApiInvoker | Connection,
   req: ContactsImportContactsM
-): Promise<ContactsImportedContactsS | RpcErrorS> {
+): Promise<(ContactsImportedContactsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107419,7 +107419,7 @@ export function CallContactsImportContactsM(
 export function CallContactsDeleteContactsM(
   invoker: ApiInvoker | Connection,
   req: ContactsDeleteContactsM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107431,7 +107431,7 @@ export function CallContactsDeleteContactsM(
 export function CallContactsDeleteByPhonesM(
   invoker: ApiInvoker | Connection,
   req: ContactsDeleteByPhonesM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107443,7 +107443,7 @@ export function CallContactsDeleteByPhonesM(
 export function CallContactsBlockM(
   invoker: ApiInvoker | Connection,
   req: ContactsBlockM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107455,7 +107455,7 @@ export function CallContactsBlockM(
 export function CallContactsUnblockM(
   invoker: ApiInvoker | Connection,
   req: ContactsUnblockM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107468,7 +107468,7 @@ export function CallContactsUnblockM(
 export function CallContactsGetBlockedM(
   invoker: ApiInvoker | Connection,
   req: ContactsGetBlockedM
-): Promise<ContactsBlockedT | RpcErrorS> {
+): Promise<(ContactsBlockedT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107480,7 +107480,7 @@ export function CallContactsGetBlockedM(
 export function CallMessagesGetMessagesM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetMessagesM
-): Promise<MessagesMessagesT | RpcErrorS> {
+): Promise<(MessagesMessagesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107499,7 +107499,7 @@ export function CallMessagesGetMessagesM(
 export function CallMessagesGetDialogsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetDialogsM
-): Promise<MessagesDialogsT | RpcErrorS> {
+): Promise<(MessagesDialogsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107518,7 +107518,7 @@ export function CallMessagesGetDialogsM(
 export function CallMessagesGetHistoryM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetHistoryM
-): Promise<MessagesMessagesT | RpcErrorS> {
+): Promise<(MessagesMessagesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107542,7 +107542,7 @@ export function CallMessagesGetHistoryM(
 export function CallMessagesSearchM(
   invoker: ApiInvoker | Connection,
   req: MessagesSearchM
-): Promise<MessagesMessagesT | RpcErrorS> {
+): Promise<(MessagesMessagesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107555,7 +107555,7 @@ export function CallMessagesSearchM(
 export function CallMessagesReadHistoryM(
   invoker: ApiInvoker | Connection,
   req: MessagesReadHistoryM
-): Promise<MessagesAffectedMessagesS | RpcErrorS> {
+): Promise<(MessagesAffectedMessagesS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107571,7 +107571,7 @@ export function CallMessagesReadHistoryM(
 export function CallMessagesDeleteHistoryM(
   invoker: ApiInvoker | Connection,
   req: MessagesDeleteHistoryM
-): Promise<MessagesAffectedHistoryS | RpcErrorS> {
+): Promise<(MessagesAffectedHistoryS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107585,7 +107585,7 @@ export function CallMessagesDeleteHistoryM(
 export function CallMessagesDeleteMessagesM(
   invoker: ApiInvoker | Connection,
   req: MessagesDeleteMessagesM
-): Promise<MessagesAffectedMessagesS | RpcErrorS> {
+): Promise<(MessagesAffectedMessagesS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107597,7 +107597,7 @@ export function CallMessagesDeleteMessagesM(
 export function CallMessagesReceivedMessagesM(
   invoker: ApiInvoker | Connection,
   req: MessagesReceivedMessagesM
-): Promise<VectorS<ReceivedNotifyMessageS> | RpcErrorS> {
+): Promise<(VectorS<ReceivedNotifyMessageS> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107610,7 +107610,7 @@ export function CallMessagesReceivedMessagesM(
 export function CallMessagesSetTypingM(
   invoker: ApiInvoker | Connection,
   req: MessagesSetTypingM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107633,7 +107633,7 @@ export function CallMessagesSetTypingM(
 export function CallMessagesSendMessageM(
   invoker: ApiInvoker | Connection,
   req: MessagesSendMessageM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107656,7 +107656,7 @@ export function CallMessagesSendMessageM(
 export function CallMessagesSendMediaM(
   invoker: ApiInvoker | Connection,
   req: MessagesSendMediaM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107677,7 +107677,7 @@ export function CallMessagesSendMediaM(
 export function CallMessagesForwardMessagesM(
   invoker: ApiInvoker | Connection,
   req: MessagesForwardMessagesM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107689,7 +107689,7 @@ export function CallMessagesForwardMessagesM(
 export function CallMessagesReportSpamM(
   invoker: ApiInvoker | Connection,
   req: MessagesReportSpamM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107701,7 +107701,7 @@ export function CallMessagesReportSpamM(
 export function CallMessagesGetPeerSettingsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetPeerSettingsM
-): Promise<PeerSettingsT | RpcErrorS> {
+): Promise<(PeerSettingsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107715,7 +107715,7 @@ export function CallMessagesGetPeerSettingsM(
 export function CallMessagesReportM(
   invoker: ApiInvoker | Connection,
   req: MessagesReportM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107727,7 +107727,7 @@ export function CallMessagesReportM(
 export function CallMessagesGetChatsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetChatsM
-): Promise<MessagesChatsT | RpcErrorS> {
+): Promise<(MessagesChatsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107739,7 +107739,7 @@ export function CallMessagesGetChatsM(
 export function CallMessagesGetFullChatM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetFullChatM
-): Promise<MessagesChatFullS | RpcErrorS> {
+): Promise<(MessagesChatFullS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107752,7 +107752,7 @@ export function CallMessagesGetFullChatM(
 export function CallMessagesEditChatTitleM(
   invoker: ApiInvoker | Connection,
   req: MessagesEditChatTitleM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107765,7 +107765,7 @@ export function CallMessagesEditChatTitleM(
 export function CallMessagesEditChatPhotoM(
   invoker: ApiInvoker | Connection,
   req: MessagesEditChatPhotoM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107779,7 +107779,7 @@ export function CallMessagesEditChatPhotoM(
 export function CallMessagesAddChatUserM(
   invoker: ApiInvoker | Connection,
   req: MessagesAddChatUserM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107792,7 +107792,7 @@ export function CallMessagesAddChatUserM(
 export function CallMessagesDeleteChatUserM(
   invoker: ApiInvoker | Connection,
   req: MessagesDeleteChatUserM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107805,7 +107805,7 @@ export function CallMessagesDeleteChatUserM(
 export function CallMessagesCreateChatM(
   invoker: ApiInvoker | Connection,
   req: MessagesCreateChatM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107817,7 +107817,7 @@ export function CallMessagesCreateChatM(
 export function CallUpdatesGetStateM(
   invoker: ApiInvoker | Connection,
   req: UpdatesGetStateM
-): Promise<UpdatesStateT | RpcErrorS> {
+): Promise<(UpdatesStateT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107833,7 +107833,7 @@ export function CallUpdatesGetStateM(
 export function CallUpdatesGetDifferenceM(
   invoker: ApiInvoker | Connection,
   req: UpdatesGetDifferenceM
-): Promise<UpdatesDifferenceT | RpcErrorS> {
+): Promise<(UpdatesDifferenceT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107845,7 +107845,7 @@ export function CallUpdatesGetDifferenceM(
 export function CallPhotosUpdateProfilePhotoM(
   invoker: ApiInvoker | Connection,
   req: PhotosUpdateProfilePhotoM
-): Promise<UserProfilePhotoT | RpcErrorS> {
+): Promise<(UserProfilePhotoT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107857,7 +107857,7 @@ export function CallPhotosUpdateProfilePhotoM(
 export function CallPhotosUploadProfilePhotoM(
   invoker: ApiInvoker | Connection,
   req: PhotosUploadProfilePhotoM
-): Promise<PhotosPhotoS | RpcErrorS> {
+): Promise<(PhotosPhotoS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107869,7 +107869,7 @@ export function CallPhotosUploadProfilePhotoM(
 export function CallPhotosDeletePhotosM(
   invoker: ApiInvoker | Connection,
   req: PhotosDeletePhotosM
-): Promise<VectorS<ProtoLong> | RpcErrorS> {
+): Promise<(VectorS<ProtoLong> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107883,7 +107883,7 @@ export function CallPhotosDeletePhotosM(
 export function CallUploadSaveFilePartM(
   invoker: ApiInvoker | Connection,
   req: UploadSaveFilePartM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107899,7 +107899,7 @@ export function CallUploadSaveFilePartM(
 export function CallUploadGetFileM(
   invoker: ApiInvoker | Connection,
   req: UploadGetFileM
-): Promise<UploadFileT | RpcErrorS> {
+): Promise<(UploadFileT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107911,7 +107911,7 @@ export function CallUploadGetFileM(
 export function CallHelpGetConfigM(
   invoker: ApiInvoker | Connection,
   req: HelpGetConfigM
-): Promise<ConfigS | RpcErrorS> {
+): Promise<(ConfigS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107923,7 +107923,7 @@ export function CallHelpGetConfigM(
 export function CallHelpGetNearestDcM(
   invoker: ApiInvoker | Connection,
   req: HelpGetNearestDcM
-): Promise<NearestDcS | RpcErrorS> {
+): Promise<(NearestDcS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107935,7 +107935,7 @@ export function CallHelpGetNearestDcM(
 export function CallHelpGetAppUpdateM(
   invoker: ApiInvoker | Connection,
   req: HelpGetAppUpdateM
-): Promise<HelpAppUpdateT | RpcErrorS> {
+): Promise<(HelpAppUpdateT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107947,7 +107947,7 @@ export function CallHelpGetAppUpdateM(
 export function CallHelpGetInviteTextM(
   invoker: ApiInvoker | Connection,
   req: HelpGetInviteTextM
-): Promise<HelpInviteTextS | RpcErrorS> {
+): Promise<(HelpInviteTextS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107962,7 +107962,7 @@ export function CallHelpGetInviteTextM(
 export function CallPhotosGetUserPhotosM(
   invoker: ApiInvoker | Connection,
   req: PhotosGetUserPhotosM
-): Promise<PhotosPhotosT | RpcErrorS> {
+): Promise<(PhotosPhotosT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107975,7 +107975,7 @@ export function CallPhotosGetUserPhotosM(
 export function CallMessagesGetDhConfigM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetDhConfigM
-): Promise<MessagesDhConfigT | RpcErrorS> {
+): Promise<(MessagesDhConfigT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -107989,7 +107989,7 @@ export function CallMessagesGetDhConfigM(
 export function CallMessagesRequestEncryptionM(
   invoker: ApiInvoker | Connection,
   req: MessagesRequestEncryptionM
-): Promise<EncryptedChatT | RpcErrorS> {
+): Promise<(EncryptedChatT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108003,7 +108003,7 @@ export function CallMessagesRequestEncryptionM(
 export function CallMessagesAcceptEncryptionM(
   invoker: ApiInvoker | Connection,
   req: MessagesAcceptEncryptionM
-): Promise<EncryptedChatT | RpcErrorS> {
+): Promise<(EncryptedChatT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108015,7 +108015,7 @@ export function CallMessagesAcceptEncryptionM(
 export function CallMessagesDiscardEncryptionM(
   invoker: ApiInvoker | Connection,
   req: MessagesDiscardEncryptionM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108028,7 +108028,7 @@ export function CallMessagesDiscardEncryptionM(
 export function CallMessagesSetEncryptedTypingM(
   invoker: ApiInvoker | Connection,
   req: MessagesSetEncryptedTypingM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108041,7 +108041,7 @@ export function CallMessagesSetEncryptedTypingM(
 export function CallMessagesReadEncryptedHistoryM(
   invoker: ApiInvoker | Connection,
   req: MessagesReadEncryptedHistoryM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108055,7 +108055,7 @@ export function CallMessagesReadEncryptedHistoryM(
 export function CallMessagesSendEncryptedM(
   invoker: ApiInvoker | Connection,
   req: MessagesSendEncryptedM
-): Promise<MessagesSentEncryptedMessageT | RpcErrorS> {
+): Promise<(MessagesSentEncryptedMessageT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108070,7 +108070,7 @@ export function CallMessagesSendEncryptedM(
 export function CallMessagesSendEncryptedFileM(
   invoker: ApiInvoker | Connection,
   req: MessagesSendEncryptedFileM
-): Promise<MessagesSentEncryptedMessageT | RpcErrorS> {
+): Promise<(MessagesSentEncryptedMessageT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108084,7 +108084,7 @@ export function CallMessagesSendEncryptedFileM(
 export function CallMessagesSendEncryptedServiceM(
   invoker: ApiInvoker | Connection,
   req: MessagesSendEncryptedServiceM
-): Promise<MessagesSentEncryptedMessageT | RpcErrorS> {
+): Promise<(MessagesSentEncryptedMessageT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108096,7 +108096,7 @@ export function CallMessagesSendEncryptedServiceM(
 export function CallMessagesReceivedQueueM(
   invoker: ApiInvoker | Connection,
   req: MessagesReceivedQueueM
-): Promise<VectorS<ProtoLong> | RpcErrorS> {
+): Promise<(VectorS<ProtoLong> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108108,7 +108108,7 @@ export function CallMessagesReceivedQueueM(
 export function CallMessagesReportEncryptedSpamM(
   invoker: ApiInvoker | Connection,
   req: MessagesReportEncryptedSpamM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108123,7 +108123,7 @@ export function CallMessagesReportEncryptedSpamM(
 export function CallUploadSaveBigFilePartM(
   invoker: ApiInvoker | Connection,
   req: UploadSaveBigFilePartM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108144,7 +108144,7 @@ export function CallUploadSaveBigFilePartM(
 export function CallInitConnectionM(
   invoker: ApiInvoker | Connection,
   req: InitConnectionM
-): Promise<OneOf | IStruct | RpcErrorS> {
+): Promise<(OneOf | IStruct | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108156,7 +108156,7 @@ export function CallInitConnectionM(
 export function CallHelpGetSupportM(
   invoker: ApiInvoker | Connection,
   req: HelpGetSupportM
-): Promise<HelpSupportS | RpcErrorS> {
+): Promise<(HelpSupportS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108168,7 +108168,7 @@ export function CallHelpGetSupportM(
 export function CallMessagesReadMessageContentsM(
   invoker: ApiInvoker | Connection,
   req: MessagesReadMessageContentsM
-): Promise<MessagesAffectedMessagesS | RpcErrorS> {
+): Promise<(MessagesAffectedMessagesS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108180,7 +108180,7 @@ export function CallMessagesReadMessageContentsM(
 export function CallAccountCheckUsernameM(
   invoker: ApiInvoker | Connection,
   req: AccountCheckUsernameM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108192,7 +108192,7 @@ export function CallAccountCheckUsernameM(
 export function CallAccountUpdateUsernameM(
   invoker: ApiInvoker | Connection,
   req: AccountUpdateUsernameM
-): Promise<UserT | RpcErrorS> {
+): Promise<(UserT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108205,7 +108205,7 @@ export function CallAccountUpdateUsernameM(
 export function CallContactsSearchM(
   invoker: ApiInvoker | Connection,
   req: ContactsSearchM
-): Promise<ContactsFoundS | RpcErrorS> {
+): Promise<(ContactsFoundS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108217,7 +108217,7 @@ export function CallContactsSearchM(
 export function CallAccountGetPrivacyM(
   invoker: ApiInvoker | Connection,
   req: AccountGetPrivacyM
-): Promise<AccountPrivacyRulesS | RpcErrorS> {
+): Promise<(AccountPrivacyRulesS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108230,7 +108230,7 @@ export function CallAccountGetPrivacyM(
 export function CallAccountSetPrivacyM(
   invoker: ApiInvoker | Connection,
   req: AccountSetPrivacyM
-): Promise<AccountPrivacyRulesS | RpcErrorS> {
+): Promise<(AccountPrivacyRulesS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108242,7 +108242,7 @@ export function CallAccountSetPrivacyM(
 export function CallAccountDeleteAccountM(
   invoker: ApiInvoker | Connection,
   req: AccountDeleteAccountM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108254,7 +108254,7 @@ export function CallAccountDeleteAccountM(
 export function CallAccountGetAccountTtlM(
   invoker: ApiInvoker | Connection,
   req: AccountGetAccountTtlM
-): Promise<AccountDaysTtlS | RpcErrorS> {
+): Promise<(AccountDaysTtlS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108266,7 +108266,7 @@ export function CallAccountGetAccountTtlM(
 export function CallAccountSetAccountTtlM(
   invoker: ApiInvoker | Connection,
   req: AccountSetAccountTtlM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108279,7 +108279,7 @@ export function CallAccountSetAccountTtlM(
 export function CallInvokeWithLayerM(
   invoker: ApiInvoker | Connection,
   req: InvokeWithLayerM
-): Promise<OneOf | IStruct | RpcErrorS> {
+): Promise<(OneOf | IStruct | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108291,7 +108291,7 @@ export function CallInvokeWithLayerM(
 export function CallContactsResolveUsernameM(
   invoker: ApiInvoker | Connection,
   req: ContactsResolveUsernameM
-): Promise<ContactsResolvedPeerS | RpcErrorS> {
+): Promise<(ContactsResolvedPeerS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108304,7 +108304,7 @@ export function CallContactsResolveUsernameM(
 export function CallAccountSendChangePhoneCodeM(
   invoker: ApiInvoker | Connection,
   req: AccountSendChangePhoneCodeM
-): Promise<AuthSentCodeS | RpcErrorS> {
+): Promise<(AuthSentCodeS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108318,7 +108318,7 @@ export function CallAccountSendChangePhoneCodeM(
 export function CallAccountChangePhoneM(
   invoker: ApiInvoker | Connection,
   req: AccountChangePhoneM
-): Promise<UserT | RpcErrorS> {
+): Promise<(UserT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108331,7 +108331,7 @@ export function CallAccountChangePhoneM(
 export function CallMessagesGetStickersM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetStickersM
-): Promise<MessagesStickersT | RpcErrorS> {
+): Promise<(MessagesStickersT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108343,7 +108343,7 @@ export function CallMessagesGetStickersM(
 export function CallMessagesGetAllStickersM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetAllStickersM
-): Promise<MessagesAllStickersT | RpcErrorS> {
+): Promise<(MessagesAllStickersT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108355,7 +108355,7 @@ export function CallMessagesGetAllStickersM(
 export function CallAccountUpdateDeviceLockedM(
   invoker: ApiInvoker | Connection,
   req: AccountUpdateDeviceLockedM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108370,7 +108370,7 @@ export function CallAccountUpdateDeviceLockedM(
 export function CallAuthImportBotAuthorizationM(
   invoker: ApiInvoker | Connection,
   req: AuthImportBotAuthorizationM
-): Promise<AuthAuthorizationT | RpcErrorS> {
+): Promise<(AuthAuthorizationT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108384,7 +108384,7 @@ export function CallAuthImportBotAuthorizationM(
 export function CallMessagesGetWebPagePreviewM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetWebPagePreviewM
-): Promise<MessageMediaT | RpcErrorS> {
+): Promise<(MessageMediaT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108396,7 +108396,7 @@ export function CallMessagesGetWebPagePreviewM(
 export function CallAccountGetAuthorizationsM(
   invoker: ApiInvoker | Connection,
   req: AccountGetAuthorizationsM
-): Promise<AccountAuthorizationsS | RpcErrorS> {
+): Promise<(AccountAuthorizationsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108408,7 +108408,7 @@ export function CallAccountGetAuthorizationsM(
 export function CallAccountResetAuthorizationM(
   invoker: ApiInvoker | Connection,
   req: AccountResetAuthorizationM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108420,7 +108420,7 @@ export function CallAccountResetAuthorizationM(
 export function CallAccountGetPasswordM(
   invoker: ApiInvoker | Connection,
   req: AccountGetPasswordM
-): Promise<AccountPasswordS | RpcErrorS> {
+): Promise<(AccountPasswordS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108432,7 +108432,7 @@ export function CallAccountGetPasswordM(
 export function CallAccountGetPasswordSettingsM(
   invoker: ApiInvoker | Connection,
   req: AccountGetPasswordSettingsM
-): Promise<AccountPasswordSettingsS | RpcErrorS> {
+): Promise<(AccountPasswordSettingsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108445,7 +108445,7 @@ export function CallAccountGetPasswordSettingsM(
 export function CallAccountUpdatePasswordSettingsM(
   invoker: ApiInvoker | Connection,
   req: AccountUpdatePasswordSettingsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108457,7 +108457,7 @@ export function CallAccountUpdatePasswordSettingsM(
 export function CallAuthCheckPasswordM(
   invoker: ApiInvoker | Connection,
   req: AuthCheckPasswordM
-): Promise<AuthAuthorizationT | RpcErrorS> {
+): Promise<(AuthAuthorizationT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108469,7 +108469,7 @@ export function CallAuthCheckPasswordM(
 export function CallAuthRequestPasswordRecoveryM(
   invoker: ApiInvoker | Connection,
   req: AuthRequestPasswordRecoveryM
-): Promise<AuthPasswordRecoveryS | RpcErrorS> {
+): Promise<(AuthPasswordRecoveryS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108481,7 +108481,7 @@ export function CallAuthRequestPasswordRecoveryM(
 export function CallAuthRecoverPasswordM(
   invoker: ApiInvoker | Connection,
   req: AuthRecoverPasswordM
-): Promise<AuthAuthorizationT | RpcErrorS> {
+): Promise<(AuthAuthorizationT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108493,7 +108493,7 @@ export function CallAuthRecoverPasswordM(
 export function CallInvokeWithoutUpdatesM(
   invoker: ApiInvoker | Connection,
   req: InvokeWithoutUpdatesM
-): Promise<OneOf | IStruct | RpcErrorS> {
+): Promise<(OneOf | IStruct | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108505,7 +108505,7 @@ export function CallInvokeWithoutUpdatesM(
 export function CallMessagesExportChatInviteM(
   invoker: ApiInvoker | Connection,
   req: MessagesExportChatInviteM
-): Promise<ExportedChatInviteT | RpcErrorS> {
+): Promise<(ExportedChatInviteT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108517,7 +108517,7 @@ export function CallMessagesExportChatInviteM(
 export function CallMessagesCheckChatInviteM(
   invoker: ApiInvoker | Connection,
   req: MessagesCheckChatInviteM
-): Promise<ChatInviteT | RpcErrorS> {
+): Promise<(ChatInviteT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108529,7 +108529,7 @@ export function CallMessagesCheckChatInviteM(
 export function CallMessagesImportChatInviteM(
   invoker: ApiInvoker | Connection,
   req: MessagesImportChatInviteM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108541,7 +108541,7 @@ export function CallMessagesImportChatInviteM(
 export function CallMessagesGetStickerSetM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetStickerSetM
-): Promise<MessagesStickerSetT | RpcErrorS> {
+): Promise<(MessagesStickerSetT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108554,7 +108554,7 @@ export function CallMessagesGetStickerSetM(
 export function CallMessagesInstallStickerSetM(
   invoker: ApiInvoker | Connection,
   req: MessagesInstallStickerSetM
-): Promise<MessagesStickerSetInstallResultT | RpcErrorS> {
+): Promise<(MessagesStickerSetInstallResultT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108566,7 +108566,7 @@ export function CallMessagesInstallStickerSetM(
 export function CallMessagesUninstallStickerSetM(
   invoker: ApiInvoker | Connection,
   req: MessagesUninstallStickerSetM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108581,7 +108581,7 @@ export function CallMessagesUninstallStickerSetM(
 export function CallMessagesStartBotM(
   invoker: ApiInvoker | Connection,
   req: MessagesStartBotM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108593,7 +108593,7 @@ export function CallMessagesStartBotM(
 export function CallHelpGetAppChangelogM(
   invoker: ApiInvoker | Connection,
   req: HelpGetAppChangelogM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108607,7 +108607,7 @@ export function CallHelpGetAppChangelogM(
 export function CallMessagesGetMessagesViewsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetMessagesViewsM
-): Promise<VectorS<number> | RpcErrorS> {
+): Promise<(VectorS<number> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108620,7 +108620,7 @@ export function CallMessagesGetMessagesViewsM(
 export function CallChannelsReadHistoryM(
   invoker: ApiInvoker | Connection,
   req: ChannelsReadHistoryM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108633,7 +108633,7 @@ export function CallChannelsReadHistoryM(
 export function CallChannelsDeleteMessagesM(
   invoker: ApiInvoker | Connection,
   req: ChannelsDeleteMessagesM
-): Promise<MessagesAffectedMessagesS | RpcErrorS> {
+): Promise<(MessagesAffectedMessagesS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108646,7 +108646,7 @@ export function CallChannelsDeleteMessagesM(
 export function CallChannelsDeleteUserHistoryM(
   invoker: ApiInvoker | Connection,
   req: ChannelsDeleteUserHistoryM
-): Promise<MessagesAffectedHistoryS | RpcErrorS> {
+): Promise<(MessagesAffectedHistoryS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108660,7 +108660,7 @@ export function CallChannelsDeleteUserHistoryM(
 export function CallChannelsReportSpamM(
   invoker: ApiInvoker | Connection,
   req: ChannelsReportSpamM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108673,7 +108673,7 @@ export function CallChannelsReportSpamM(
 export function CallChannelsGetMessagesM(
   invoker: ApiInvoker | Connection,
   req: ChannelsGetMessagesM
-): Promise<MessagesMessagesT | RpcErrorS> {
+): Promise<(MessagesMessagesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108689,7 +108689,7 @@ export function CallChannelsGetMessagesM(
 export function CallChannelsGetParticipantsM(
   invoker: ApiInvoker | Connection,
   req: ChannelsGetParticipantsM
-): Promise<ChannelsChannelParticipantsT | RpcErrorS> {
+): Promise<(ChannelsChannelParticipantsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108702,7 +108702,7 @@ export function CallChannelsGetParticipantsM(
 export function CallChannelsGetParticipantM(
   invoker: ApiInvoker | Connection,
   req: ChannelsGetParticipantM
-): Promise<ChannelsChannelParticipantS | RpcErrorS> {
+): Promise<(ChannelsChannelParticipantS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108714,7 +108714,7 @@ export function CallChannelsGetParticipantM(
 export function CallChannelsGetChannelsM(
   invoker: ApiInvoker | Connection,
   req: ChannelsGetChannelsM
-): Promise<MessagesChatsT | RpcErrorS> {
+): Promise<(MessagesChatsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108726,7 +108726,7 @@ export function CallChannelsGetChannelsM(
 export function CallChannelsGetFullChannelM(
   invoker: ApiInvoker | Connection,
   req: ChannelsGetFullChannelM
-): Promise<MessagesChatFullS | RpcErrorS> {
+): Promise<(MessagesChatFullS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108744,7 +108744,7 @@ export function CallChannelsGetFullChannelM(
 export function CallChannelsCreateChannelM(
   invoker: ApiInvoker | Connection,
   req: ChannelsCreateChannelM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108759,7 +108759,7 @@ export function CallChannelsCreateChannelM(
 export function CallChannelsEditAdminM(
   invoker: ApiInvoker | Connection,
   req: ChannelsEditAdminM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108772,7 +108772,7 @@ export function CallChannelsEditAdminM(
 export function CallChannelsEditTitleM(
   invoker: ApiInvoker | Connection,
   req: ChannelsEditTitleM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108785,7 +108785,7 @@ export function CallChannelsEditTitleM(
 export function CallChannelsEditPhotoM(
   invoker: ApiInvoker | Connection,
   req: ChannelsEditPhotoM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108798,7 +108798,7 @@ export function CallChannelsEditPhotoM(
 export function CallChannelsCheckUsernameM(
   invoker: ApiInvoker | Connection,
   req: ChannelsCheckUsernameM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108811,7 +108811,7 @@ export function CallChannelsCheckUsernameM(
 export function CallChannelsUpdateUsernameM(
   invoker: ApiInvoker | Connection,
   req: ChannelsUpdateUsernameM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108823,7 +108823,7 @@ export function CallChannelsUpdateUsernameM(
 export function CallChannelsJoinChannelM(
   invoker: ApiInvoker | Connection,
   req: ChannelsJoinChannelM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108835,7 +108835,7 @@ export function CallChannelsJoinChannelM(
 export function CallChannelsLeaveChannelM(
   invoker: ApiInvoker | Connection,
   req: ChannelsLeaveChannelM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108848,7 +108848,7 @@ export function CallChannelsLeaveChannelM(
 export function CallChannelsInviteToChannelM(
   invoker: ApiInvoker | Connection,
   req: ChannelsInviteToChannelM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108860,7 +108860,7 @@ export function CallChannelsInviteToChannelM(
 export function CallChannelsDeleteChannelM(
   invoker: ApiInvoker | Connection,
   req: ChannelsDeleteChannelM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108877,7 +108877,7 @@ export function CallChannelsDeleteChannelM(
 export function CallUpdatesGetChannelDifferenceM(
   invoker: ApiInvoker | Connection,
   req: UpdatesGetChannelDifferenceM
-): Promise<UpdatesChannelDifferenceT | RpcErrorS> {
+): Promise<(UpdatesChannelDifferenceT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108891,7 +108891,7 @@ export function CallUpdatesGetChannelDifferenceM(
 export function CallMessagesEditChatAdminM(
   invoker: ApiInvoker | Connection,
   req: MessagesEditChatAdminM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108903,7 +108903,7 @@ export function CallMessagesEditChatAdminM(
 export function CallMessagesMigrateChatM(
   invoker: ApiInvoker | Connection,
   req: MessagesMigrateChatM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108921,7 +108921,7 @@ export function CallMessagesMigrateChatM(
 export function CallMessagesSearchGlobalM(
   invoker: ApiInvoker | Connection,
   req: MessagesSearchGlobalM
-): Promise<MessagesMessagesT | RpcErrorS> {
+): Promise<(MessagesMessagesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108935,7 +108935,7 @@ export function CallMessagesSearchGlobalM(
 export function CallMessagesReorderStickerSetsM(
   invoker: ApiInvoker | Connection,
   req: MessagesReorderStickerSetsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108949,7 +108949,7 @@ export function CallMessagesReorderStickerSetsM(
 export function CallMessagesGetDocumentByHashM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetDocumentByHashM
-): Promise<DocumentT | RpcErrorS> {
+): Promise<(DocumentT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108962,7 +108962,7 @@ export function CallMessagesGetDocumentByHashM(
 export function CallMessagesSearchGifsM(
   invoker: ApiInvoker | Connection,
   req: MessagesSearchGifsM
-): Promise<MessagesFoundGifsS | RpcErrorS> {
+): Promise<(MessagesFoundGifsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108974,7 +108974,7 @@ export function CallMessagesSearchGifsM(
 export function CallMessagesGetSavedGifsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetSavedGifsM
-): Promise<MessagesSavedGifsT | RpcErrorS> {
+): Promise<(MessagesSavedGifsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -108987,7 +108987,7 @@ export function CallMessagesGetSavedGifsM(
 export function CallMessagesSaveGifM(
   invoker: ApiInvoker | Connection,
   req: MessagesSaveGifM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109004,7 +109004,7 @@ export function CallMessagesSaveGifM(
 export function CallMessagesGetInlineBotResultsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetInlineBotResultsM
-): Promise<MessagesBotResultsS | RpcErrorS> {
+): Promise<(MessagesBotResultsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109023,7 +109023,7 @@ export function CallMessagesGetInlineBotResultsM(
 export function CallMessagesSetInlineBotResultsM(
   invoker: ApiInvoker | Connection,
   req: MessagesSetInlineBotResultsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109045,7 +109045,7 @@ export function CallMessagesSetInlineBotResultsM(
 export function CallMessagesSendInlineBotResultM(
   invoker: ApiInvoker | Connection,
   req: MessagesSendInlineBotResultM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109059,7 +109059,7 @@ export function CallMessagesSendInlineBotResultM(
 export function CallChannelsExportMessageLinkM(
   invoker: ApiInvoker | Connection,
   req: ChannelsExportMessageLinkM
-): Promise<ExportedMessageLinkS | RpcErrorS> {
+): Promise<(ExportedMessageLinkS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109072,7 +109072,7 @@ export function CallChannelsExportMessageLinkM(
 export function CallChannelsToggleSignaturesM(
   invoker: ApiInvoker | Connection,
   req: ChannelsToggleSignaturesM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109085,7 +109085,7 @@ export function CallChannelsToggleSignaturesM(
 export function CallAuthResendCodeM(
   invoker: ApiInvoker | Connection,
   req: AuthResendCodeM
-): Promise<AuthSentCodeS | RpcErrorS> {
+): Promise<(AuthSentCodeS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109098,7 +109098,7 @@ export function CallAuthResendCodeM(
 export function CallAuthCancelCodeM(
   invoker: ApiInvoker | Connection,
   req: AuthCancelCodeM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109111,7 +109111,7 @@ export function CallAuthCancelCodeM(
 export function CallMessagesGetMessageEditDataM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetMessageEditDataM
-): Promise<MessagesMessageEditDataS | RpcErrorS> {
+): Promise<(MessagesMessageEditDataS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109131,7 +109131,7 @@ export function CallMessagesGetMessageEditDataM(
 export function CallMessagesEditMessageM(
   invoker: ApiInvoker | Connection,
   req: MessagesEditMessageM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109149,7 +109149,7 @@ export function CallMessagesEditMessageM(
 export function CallMessagesEditInlineBotMessageM(
   invoker: ApiInvoker | Connection,
   req: MessagesEditInlineBotMessageM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109165,7 +109165,7 @@ export function CallMessagesEditInlineBotMessageM(
 export function CallMessagesGetBotCallbackAnswerM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetBotCallbackAnswerM
-): Promise<MessagesBotCallbackAnswerS | RpcErrorS> {
+): Promise<(MessagesBotCallbackAnswerS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109182,7 +109182,7 @@ export function CallMessagesGetBotCallbackAnswerM(
 export function CallMessagesSetBotCallbackAnswerM(
   invoker: ApiInvoker | Connection,
   req: MessagesSetBotCallbackAnswerM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109205,7 +109205,7 @@ export function CallMessagesSetBotCallbackAnswerM(
 export function CallContactsGetTopPeersM(
   invoker: ApiInvoker | Connection,
   req: ContactsGetTopPeersM
-): Promise<ContactsTopPeersT | RpcErrorS> {
+): Promise<(ContactsTopPeersT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109218,7 +109218,7 @@ export function CallContactsGetTopPeersM(
 export function CallContactsResetTopPeerRatingM(
   invoker: ApiInvoker | Connection,
   req: ContactsResetTopPeerRatingM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109230,7 +109230,7 @@ export function CallContactsResetTopPeerRatingM(
 export function CallMessagesGetPeerDialogsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetPeerDialogsM
-): Promise<MessagesPeerDialogsS | RpcErrorS> {
+): Promise<(MessagesPeerDialogsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109247,7 +109247,7 @@ export function CallMessagesGetPeerDialogsM(
 export function CallMessagesSaveDraftM(
   invoker: ApiInvoker | Connection,
   req: MessagesSaveDraftM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109259,7 +109259,7 @@ export function CallMessagesSaveDraftM(
 export function CallMessagesGetAllDraftsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetAllDraftsM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109271,7 +109271,7 @@ export function CallMessagesGetAllDraftsM(
 export function CallMessagesGetFeaturedStickersM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetFeaturedStickersM
-): Promise<MessagesFeaturedStickersT | RpcErrorS> {
+): Promise<(MessagesFeaturedStickersT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109283,7 +109283,7 @@ export function CallMessagesGetFeaturedStickersM(
 export function CallMessagesReadFeaturedStickersM(
   invoker: ApiInvoker | Connection,
   req: MessagesReadFeaturedStickersM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109297,7 +109297,7 @@ export function CallMessagesReadFeaturedStickersM(
 export function CallMessagesGetRecentStickersM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetRecentStickersM
-): Promise<MessagesRecentStickersT | RpcErrorS> {
+): Promise<(MessagesRecentStickersT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109312,7 +109312,7 @@ export function CallMessagesGetRecentStickersM(
 export function CallMessagesSaveRecentStickerM(
   invoker: ApiInvoker | Connection,
   req: MessagesSaveRecentStickerM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109325,7 +109325,7 @@ export function CallMessagesSaveRecentStickerM(
 export function CallMessagesClearRecentStickersM(
   invoker: ApiInvoker | Connection,
   req: MessagesClearRecentStickersM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109340,7 +109340,7 @@ export function CallMessagesClearRecentStickersM(
 export function CallMessagesGetArchivedStickersM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetArchivedStickersM
-): Promise<MessagesArchivedStickersS | RpcErrorS> {
+): Promise<(MessagesArchivedStickersS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109353,7 +109353,7 @@ export function CallMessagesGetArchivedStickersM(
 export function CallAccountSendConfirmPhoneCodeM(
   invoker: ApiInvoker | Connection,
   req: AccountSendConfirmPhoneCodeM
-): Promise<AuthSentCodeS | RpcErrorS> {
+): Promise<(AuthSentCodeS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109366,7 +109366,7 @@ export function CallAccountSendConfirmPhoneCodeM(
 export function CallAccountConfirmPhoneM(
   invoker: ApiInvoker | Connection,
   req: AccountConfirmPhoneM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109380,7 +109380,7 @@ export function CallAccountConfirmPhoneM(
 export function CallChannelsGetAdminedPublicChannelsM(
   invoker: ApiInvoker | Connection,
   req: ChannelsGetAdminedPublicChannelsM
-): Promise<MessagesChatsT | RpcErrorS> {
+): Promise<(MessagesChatsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109392,7 +109392,7 @@ export function CallChannelsGetAdminedPublicChannelsM(
 export function CallMessagesGetMaskStickersM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetMaskStickersM
-): Promise<MessagesAllStickersT | RpcErrorS> {
+): Promise<(MessagesAllStickersT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109404,7 +109404,7 @@ export function CallMessagesGetMaskStickersM(
 export function CallMessagesGetAttachedStickersM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetAttachedStickersM
-): Promise<VectorS<StickerSetCoveredT> | RpcErrorS> {
+): Promise<(VectorS<StickerSetCoveredT> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109416,7 +109416,7 @@ export function CallMessagesGetAttachedStickersM(
 export function CallAuthDropTempAuthKeysM(
   invoker: ApiInvoker | Connection,
   req: AuthDropTempAuthKeysM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109434,7 +109434,7 @@ export function CallAuthDropTempAuthKeysM(
 export function CallMessagesSetGameScoreM(
   invoker: ApiInvoker | Connection,
   req: MessagesSetGameScoreM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109451,7 +109451,7 @@ export function CallMessagesSetGameScoreM(
 export function CallMessagesSetInlineGameScoreM(
   invoker: ApiInvoker | Connection,
   req: MessagesSetInlineGameScoreM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109465,7 +109465,7 @@ export function CallMessagesSetInlineGameScoreM(
 export function CallMessagesGetGameHighScoresM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetGameHighScoresM
-): Promise<MessagesHighScoresS | RpcErrorS> {
+): Promise<(MessagesHighScoresS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109478,7 +109478,7 @@ export function CallMessagesGetGameHighScoresM(
 export function CallMessagesGetInlineGameHighScoresM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetInlineGameHighScoresM
-): Promise<MessagesHighScoresS | RpcErrorS> {
+): Promise<(MessagesHighScoresS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109492,7 +109492,7 @@ export function CallMessagesGetInlineGameHighScoresM(
 export function CallMessagesGetCommonChatsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetCommonChatsM
-): Promise<MessagesChatsT | RpcErrorS> {
+): Promise<(MessagesChatsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109504,7 +109504,7 @@ export function CallMessagesGetCommonChatsM(
 export function CallMessagesGetAllChatsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetAllChatsM
-): Promise<MessagesChatsT | RpcErrorS> {
+): Promise<(MessagesChatsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109517,7 +109517,7 @@ export function CallMessagesGetAllChatsM(
 export function CallHelpSetBotUpdatesStatusM(
   invoker: ApiInvoker | Connection,
   req: HelpSetBotUpdatesStatusM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109530,7 +109530,7 @@ export function CallHelpSetBotUpdatesStatusM(
 export function CallMessagesGetWebPageM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetWebPageM
-): Promise<WebPageT | RpcErrorS> {
+): Promise<(WebPageT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109544,7 +109544,7 @@ export function CallMessagesGetWebPageM(
 export function CallMessagesToggleDialogPinM(
   invoker: ApiInvoker | Connection,
   req: MessagesToggleDialogPinM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109559,7 +109559,7 @@ export function CallMessagesToggleDialogPinM(
 export function CallMessagesReorderPinnedDialogsM(
   invoker: ApiInvoker | Connection,
   req: MessagesReorderPinnedDialogsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109571,7 +109571,7 @@ export function CallMessagesReorderPinnedDialogsM(
 export function CallMessagesGetPinnedDialogsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetPinnedDialogsM
-): Promise<MessagesPeerDialogsS | RpcErrorS> {
+): Promise<(MessagesPeerDialogsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109584,7 +109584,7 @@ export function CallMessagesGetPinnedDialogsM(
 export function CallBotsSendCustomRequestM(
   invoker: ApiInvoker | Connection,
   req: BotsSendCustomRequestM
-): Promise<DataJsonT | RpcErrorS> {
+): Promise<(DataJsonT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109597,7 +109597,7 @@ export function CallBotsSendCustomRequestM(
 export function CallBotsAnswerWebhookJsonQueryM(
   invoker: ApiInvoker | Connection,
   req: BotsAnswerWebhookJsonQueryM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109611,7 +109611,7 @@ export function CallBotsAnswerWebhookJsonQueryM(
 export function CallUploadGetWebFileM(
   invoker: ApiInvoker | Connection,
   req: UploadGetWebFileM
-): Promise<UploadWebFileS | RpcErrorS> {
+): Promise<(UploadWebFileS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109623,7 +109623,7 @@ export function CallUploadGetWebFileM(
 export function CallPaymentsGetPaymentFormM(
   invoker: ApiInvoker | Connection,
   req: PaymentsGetPaymentFormM
-): Promise<PaymentsPaymentFormS | RpcErrorS> {
+): Promise<(PaymentsPaymentFormS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109635,7 +109635,7 @@ export function CallPaymentsGetPaymentFormM(
 export function CallPaymentsGetPaymentReceiptM(
   invoker: ApiInvoker | Connection,
   req: PaymentsGetPaymentReceiptM
-): Promise<PaymentsPaymentReceiptS | RpcErrorS> {
+): Promise<(PaymentsPaymentReceiptS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109650,7 +109650,7 @@ export function CallPaymentsGetPaymentReceiptM(
 export function CallPaymentsValidateRequestedInfoM(
   invoker: ApiInvoker | Connection,
   req: PaymentsValidateRequestedInfoM
-): Promise<PaymentsValidatedRequestedInfoS | RpcErrorS> {
+): Promise<(PaymentsValidatedRequestedInfoS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109666,7 +109666,7 @@ export function CallPaymentsValidateRequestedInfoM(
 export function CallPaymentsSendPaymentFormM(
   invoker: ApiInvoker | Connection,
   req: PaymentsSendPaymentFormM
-): Promise<PaymentsPaymentResultT | RpcErrorS> {
+): Promise<(PaymentsPaymentResultT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109679,7 +109679,7 @@ export function CallPaymentsSendPaymentFormM(
 export function CallAccountGetTmpPasswordM(
   invoker: ApiInvoker | Connection,
   req: AccountGetTmpPasswordM
-): Promise<AccountTmpPasswordS | RpcErrorS> {
+): Promise<(AccountTmpPasswordS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109691,7 +109691,7 @@ export function CallAccountGetTmpPasswordM(
 export function CallPaymentsGetSavedInfoM(
   invoker: ApiInvoker | Connection,
   req: PaymentsGetSavedInfoM
-): Promise<PaymentsSavedInfoS | RpcErrorS> {
+): Promise<(PaymentsSavedInfoS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109705,7 +109705,7 @@ export function CallPaymentsGetSavedInfoM(
 export function CallPaymentsClearSavedInfoM(
   invoker: ApiInvoker | Connection,
   req: PaymentsClearSavedInfoM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109720,7 +109720,7 @@ export function CallPaymentsClearSavedInfoM(
 export function CallMessagesSetBotShippingResultsM(
   invoker: ApiInvoker | Connection,
   req: MessagesSetBotShippingResultsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109735,7 +109735,7 @@ export function CallMessagesSetBotShippingResultsM(
 export function CallMessagesSetBotPrecheckoutResultsM(
   invoker: ApiInvoker | Connection,
   req: MessagesSetBotPrecheckoutResultsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109752,7 +109752,7 @@ export function CallMessagesSetBotPrecheckoutResultsM(
 export function CallStickersCreateStickerSetM(
   invoker: ApiInvoker | Connection,
   req: StickersCreateStickerSetM
-): Promise<MessagesStickerSetT | RpcErrorS> {
+): Promise<(MessagesStickerSetT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109764,7 +109764,7 @@ export function CallStickersCreateStickerSetM(
 export function CallStickersRemoveStickerFromSetM(
   invoker: ApiInvoker | Connection,
   req: StickersRemoveStickerFromSetM
-): Promise<MessagesStickerSetT | RpcErrorS> {
+): Promise<(MessagesStickerSetT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109777,7 +109777,7 @@ export function CallStickersRemoveStickerFromSetM(
 export function CallStickersChangeStickerPositionM(
   invoker: ApiInvoker | Connection,
   req: StickersChangeStickerPositionM
-): Promise<MessagesStickerSetT | RpcErrorS> {
+): Promise<(MessagesStickerSetT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109790,7 +109790,7 @@ export function CallStickersChangeStickerPositionM(
 export function CallStickersAddStickerToSetM(
   invoker: ApiInvoker | Connection,
   req: StickersAddStickerToSetM
-): Promise<MessagesStickerSetT | RpcErrorS> {
+): Promise<(MessagesStickerSetT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109803,7 +109803,7 @@ export function CallStickersAddStickerToSetM(
 export function CallMessagesUploadMediaM(
   invoker: ApiInvoker | Connection,
   req: MessagesUploadMediaM
-): Promise<MessageMediaT | RpcErrorS> {
+): Promise<(MessageMediaT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109815,7 +109815,7 @@ export function CallMessagesUploadMediaM(
 export function CallPhoneGetCallConfigM(
   invoker: ApiInvoker | Connection,
   req: PhoneGetCallConfigM
-): Promise<DataJsonT | RpcErrorS> {
+): Promise<(DataJsonT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109832,7 +109832,7 @@ export function CallPhoneGetCallConfigM(
 export function CallPhoneRequestCallM(
   invoker: ApiInvoker | Connection,
   req: PhoneRequestCallM
-): Promise<PhonePhoneCallS | RpcErrorS> {
+): Promise<(PhonePhoneCallS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109846,7 +109846,7 @@ export function CallPhoneRequestCallM(
 export function CallPhoneAcceptCallM(
   invoker: ApiInvoker | Connection,
   req: PhoneAcceptCallM
-): Promise<PhonePhoneCallS | RpcErrorS> {
+): Promise<(PhonePhoneCallS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109861,7 +109861,7 @@ export function CallPhoneAcceptCallM(
 export function CallPhoneConfirmCallM(
   invoker: ApiInvoker | Connection,
   req: PhoneConfirmCallM
-): Promise<PhonePhoneCallS | RpcErrorS> {
+): Promise<(PhonePhoneCallS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109873,7 +109873,7 @@ export function CallPhoneConfirmCallM(
 export function CallPhoneReceivedCallM(
   invoker: ApiInvoker | Connection,
   req: PhoneReceivedCallM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109890,7 +109890,7 @@ export function CallPhoneReceivedCallM(
 export function CallPhoneDiscardCallM(
   invoker: ApiInvoker | Connection,
   req: PhoneDiscardCallM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109906,7 +109906,7 @@ export function CallPhoneDiscardCallM(
 export function CallPhoneSetCallRatingM(
   invoker: ApiInvoker | Connection,
   req: PhoneSetCallRatingM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109919,7 +109919,7 @@ export function CallPhoneSetCallRatingM(
 export function CallPhoneSaveCallDebugM(
   invoker: ApiInvoker | Connection,
   req: PhoneSaveCallDebugM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109933,7 +109933,7 @@ export function CallPhoneSaveCallDebugM(
 export function CallUploadGetCdnFileM(
   invoker: ApiInvoker | Connection,
   req: UploadGetCdnFileM
-): Promise<UploadCdnFileT | RpcErrorS> {
+): Promise<(UploadCdnFileT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109946,7 +109946,7 @@ export function CallUploadGetCdnFileM(
 export function CallUploadReuploadCdnFileM(
   invoker: ApiInvoker | Connection,
   req: UploadReuploadCdnFileM
-): Promise<VectorS<FileHashT> | RpcErrorS> {
+): Promise<(VectorS<FileHashT> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109958,7 +109958,7 @@ export function CallUploadReuploadCdnFileM(
 export function CallHelpGetCdnConfigM(
   invoker: ApiInvoker | Connection,
   req: HelpGetCdnConfigM
-): Promise<CdnConfigS | RpcErrorS> {
+): Promise<(CdnConfigS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109971,7 +109971,7 @@ export function CallHelpGetCdnConfigM(
 export function CallLangpackGetLangPackM(
   invoker: ApiInvoker | Connection,
   req: LangpackGetLangPackM
-): Promise<LangPackDifferenceT | RpcErrorS> {
+): Promise<(LangPackDifferenceT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109985,7 +109985,7 @@ export function CallLangpackGetLangPackM(
 export function CallLangpackGetStringsM(
   invoker: ApiInvoker | Connection,
   req: LangpackGetStringsM
-): Promise<VectorS<LangPackStringT> | RpcErrorS> {
+): Promise<(VectorS<LangPackStringT> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -109999,7 +109999,7 @@ export function CallLangpackGetStringsM(
 export function CallLangpackGetDifferenceM(
   invoker: ApiInvoker | Connection,
   req: LangpackGetDifferenceM
-): Promise<LangPackDifferenceT | RpcErrorS> {
+): Promise<(LangPackDifferenceT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110011,7 +110011,7 @@ export function CallLangpackGetDifferenceM(
 export function CallLangpackGetLanguagesM(
   invoker: ApiInvoker | Connection,
   req: LangpackGetLanguagesM
-): Promise<VectorS<LangPackLanguageS> | RpcErrorS> {
+): Promise<(VectorS<LangPackLanguageS> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110025,7 +110025,7 @@ export function CallLangpackGetLanguagesM(
 export function CallChannelsEditBannedM(
   invoker: ApiInvoker | Connection,
   req: ChannelsEditBannedM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110044,7 +110044,7 @@ export function CallChannelsEditBannedM(
 export function CallChannelsGetAdminLogM(
   invoker: ApiInvoker | Connection,
   req: ChannelsGetAdminLogM
-): Promise<ChannelsAdminLogResultsS | RpcErrorS> {
+): Promise<(ChannelsAdminLogResultsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110057,7 +110057,7 @@ export function CallChannelsGetAdminLogM(
 export function CallUploadGetCdnFileHashesM(
   invoker: ApiInvoker | Connection,
   req: UploadGetCdnFileHashesM
-): Promise<VectorS<FileHashT> | RpcErrorS> {
+): Promise<(VectorS<FileHashT> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110071,7 +110071,7 @@ export function CallUploadGetCdnFileHashesM(
 export function CallMessagesSendScreenshotNotificationM(
   invoker: ApiInvoker | Connection,
   req: MessagesSendScreenshotNotificationM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110084,7 +110084,7 @@ export function CallMessagesSendScreenshotNotificationM(
 export function CallChannelsSetStickersM(
   invoker: ApiInvoker | Connection,
   req: ChannelsSetStickersM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110096,7 +110096,7 @@ export function CallChannelsSetStickersM(
 export function CallMessagesGetFavedStickersM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetFavedStickersM
-): Promise<MessagesFavedStickersT | RpcErrorS> {
+): Promise<(MessagesFavedStickersT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110109,7 +110109,7 @@ export function CallMessagesGetFavedStickersM(
 export function CallMessagesFaveStickerM(
   invoker: ApiInvoker | Connection,
   req: MessagesFaveStickerM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110122,7 +110122,7 @@ export function CallMessagesFaveStickerM(
 export function CallChannelsReadMessageContentsM(
   invoker: ApiInvoker | Connection,
   req: ChannelsReadMessageContentsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110134,7 +110134,7 @@ export function CallChannelsReadMessageContentsM(
 export function CallContactsResetSavedM(
   invoker: ApiInvoker | Connection,
   req: ContactsResetSavedM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110151,7 +110151,7 @@ export function CallContactsResetSavedM(
 export function CallMessagesGetUnreadMentionsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetUnreadMentionsM
-): Promise<MessagesMessagesT | RpcErrorS> {
+): Promise<(MessagesMessagesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110164,7 +110164,7 @@ export function CallMessagesGetUnreadMentionsM(
 export function CallChannelsDeleteHistoryM(
   invoker: ApiInvoker | Connection,
   req: ChannelsDeleteHistoryM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110176,7 +110176,7 @@ export function CallChannelsDeleteHistoryM(
 export function CallHelpGetRecentMeUrlsM(
   invoker: ApiInvoker | Connection,
   req: HelpGetRecentMeUrlsM
-): Promise<HelpRecentMeUrlsS | RpcErrorS> {
+): Promise<(HelpRecentMeUrlsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110189,7 +110189,7 @@ export function CallHelpGetRecentMeUrlsM(
 export function CallChannelsTogglePreHistoryHiddenM(
   invoker: ApiInvoker | Connection,
   req: ChannelsTogglePreHistoryHiddenM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110201,7 +110201,7 @@ export function CallChannelsTogglePreHistoryHiddenM(
 export function CallMessagesReadMentionsM(
   invoker: ApiInvoker | Connection,
   req: MessagesReadMentionsM
-): Promise<MessagesAffectedHistoryS | RpcErrorS> {
+): Promise<(MessagesAffectedHistoryS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110215,7 +110215,7 @@ export function CallMessagesReadMentionsM(
 export function CallMessagesGetRecentLocationsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetRecentLocationsM
-): Promise<MessagesMessagesT | RpcErrorS> {
+): Promise<(MessagesMessagesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110234,7 +110234,7 @@ export function CallMessagesGetRecentLocationsM(
 export function CallMessagesSendMultiMediaM(
   invoker: ApiInvoker | Connection,
   req: MessagesSendMultiMediaM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110247,7 +110247,7 @@ export function CallMessagesSendMultiMediaM(
 export function CallMessagesUploadEncryptedFileM(
   invoker: ApiInvoker | Connection,
   req: MessagesUploadEncryptedFileM
-): Promise<EncryptedFileT | RpcErrorS> {
+): Promise<(EncryptedFileT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110259,7 +110259,7 @@ export function CallMessagesUploadEncryptedFileM(
 export function CallAccountGetWebAuthorizationsM(
   invoker: ApiInvoker | Connection,
   req: AccountGetWebAuthorizationsM
-): Promise<AccountWebAuthorizationsS | RpcErrorS> {
+): Promise<(AccountWebAuthorizationsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110271,7 +110271,7 @@ export function CallAccountGetWebAuthorizationsM(
 export function CallAccountResetWebAuthorizationM(
   invoker: ApiInvoker | Connection,
   req: AccountResetWebAuthorizationM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110283,7 +110283,7 @@ export function CallAccountResetWebAuthorizationM(
 export function CallAccountResetWebAuthorizationsM(
   invoker: ApiInvoker | Connection,
   req: AccountResetWebAuthorizationsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110298,7 +110298,7 @@ export function CallAccountResetWebAuthorizationsM(
 export function CallMessagesSearchStickerSetsM(
   invoker: ApiInvoker | Connection,
   req: MessagesSearchStickerSetsM
-): Promise<MessagesFoundStickerSetsT | RpcErrorS> {
+): Promise<(MessagesFoundStickerSetsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110311,7 +110311,7 @@ export function CallMessagesSearchStickerSetsM(
 export function CallUploadGetFileHashesM(
   invoker: ApiInvoker | Connection,
   req: UploadGetFileHashesM
-): Promise<VectorS<FileHashT> | RpcErrorS> {
+): Promise<(VectorS<FileHashT> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110323,7 +110323,7 @@ export function CallUploadGetFileHashesM(
 export function CallHelpGetProxyDataM(
   invoker: ApiInvoker | Connection,
   req: HelpGetProxyDataM
-): Promise<HelpProxyDataT | RpcErrorS> {
+): Promise<(HelpProxyDataT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110335,7 +110335,7 @@ export function CallHelpGetProxyDataM(
 export function CallHelpGetTermsOfServiceUpdateM(
   invoker: ApiInvoker | Connection,
   req: HelpGetTermsOfServiceUpdateM
-): Promise<HelpTermsOfServiceUpdateT | RpcErrorS> {
+): Promise<(HelpTermsOfServiceUpdateT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110347,7 +110347,7 @@ export function CallHelpGetTermsOfServiceUpdateM(
 export function CallHelpAcceptTermsOfServiceM(
   invoker: ApiInvoker | Connection,
   req: HelpAcceptTermsOfServiceM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110359,7 +110359,7 @@ export function CallHelpAcceptTermsOfServiceM(
 export function CallAccountGetAllSecureValuesM(
   invoker: ApiInvoker | Connection,
   req: AccountGetAllSecureValuesM
-): Promise<VectorS<SecureValueT> | RpcErrorS> {
+): Promise<(VectorS<SecureValueT> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110371,7 +110371,7 @@ export function CallAccountGetAllSecureValuesM(
 export function CallAccountGetSecureValueM(
   invoker: ApiInvoker | Connection,
   req: AccountGetSecureValueM
-): Promise<VectorS<SecureValueT> | RpcErrorS> {
+): Promise<(VectorS<SecureValueT> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110384,7 +110384,7 @@ export function CallAccountGetSecureValueM(
 export function CallAccountSaveSecureValueM(
   invoker: ApiInvoker | Connection,
   req: AccountSaveSecureValueM
-): Promise<SecureValueT | RpcErrorS> {
+): Promise<(SecureValueT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110396,7 +110396,7 @@ export function CallAccountSaveSecureValueM(
 export function CallAccountDeleteSecureValueM(
   invoker: ApiInvoker | Connection,
   req: AccountDeleteSecureValueM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110409,7 +110409,7 @@ export function CallAccountDeleteSecureValueM(
 export function CallUsersSetSecureValueErrorsM(
   invoker: ApiInvoker | Connection,
   req: UsersSetSecureValueErrorsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110423,7 +110423,7 @@ export function CallUsersSetSecureValueErrorsM(
 export function CallAccountGetAuthorizationFormM(
   invoker: ApiInvoker | Connection,
   req: AccountGetAuthorizationFormM
-): Promise<AccountAuthorizationFormS | RpcErrorS> {
+): Promise<(AccountAuthorizationFormS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110439,7 +110439,7 @@ export function CallAccountGetAuthorizationFormM(
 export function CallAccountAcceptAuthorizationM(
   invoker: ApiInvoker | Connection,
   req: AccountAcceptAuthorizationM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110452,7 +110452,7 @@ export function CallAccountAcceptAuthorizationM(
 export function CallAccountSendVerifyPhoneCodeM(
   invoker: ApiInvoker | Connection,
   req: AccountSendVerifyPhoneCodeM
-): Promise<AuthSentCodeS | RpcErrorS> {
+): Promise<(AuthSentCodeS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110466,7 +110466,7 @@ export function CallAccountSendVerifyPhoneCodeM(
 export function CallAccountVerifyPhoneM(
   invoker: ApiInvoker | Connection,
   req: AccountVerifyPhoneM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110478,7 +110478,7 @@ export function CallAccountVerifyPhoneM(
 export function CallAccountSendVerifyEmailCodeM(
   invoker: ApiInvoker | Connection,
   req: AccountSendVerifyEmailCodeM
-): Promise<AccountSentEmailCodeS | RpcErrorS> {
+): Promise<(AccountSentEmailCodeS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110491,7 +110491,7 @@ export function CallAccountSendVerifyEmailCodeM(
 export function CallAccountVerifyEmailM(
   invoker: ApiInvoker | Connection,
   req: AccountVerifyEmailM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110503,7 +110503,7 @@ export function CallAccountVerifyEmailM(
 export function CallHelpGetDeepLinkInfoM(
   invoker: ApiInvoker | Connection,
   req: HelpGetDeepLinkInfoM
-): Promise<HelpDeepLinkInfoT | RpcErrorS> {
+): Promise<(HelpDeepLinkInfoT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110515,7 +110515,7 @@ export function CallHelpGetDeepLinkInfoM(
 export function CallContactsGetSavedM(
   invoker: ApiInvoker | Connection,
   req: ContactsGetSavedM
-): Promise<VectorS<SavedContactT> | RpcErrorS> {
+): Promise<(VectorS<SavedContactT> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110527,7 +110527,7 @@ export function CallContactsGetSavedM(
 export function CallChannelsGetLeftChannelsM(
   invoker: ApiInvoker | Connection,
   req: ChannelsGetLeftChannelsM
-): Promise<MessagesChatsT | RpcErrorS> {
+): Promise<(MessagesChatsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110546,7 +110546,7 @@ export function CallChannelsGetLeftChannelsM(
 export function CallAccountInitTakeoutSessionM(
   invoker: ApiInvoker | Connection,
   req: AccountInitTakeoutSessionM
-): Promise<AccountTakeoutS | RpcErrorS> {
+): Promise<(AccountTakeoutS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110559,7 +110559,7 @@ export function CallAccountInitTakeoutSessionM(
 export function CallAccountFinishTakeoutSessionM(
   invoker: ApiInvoker | Connection,
   req: AccountFinishTakeoutSessionM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110571,7 +110571,7 @@ export function CallAccountFinishTakeoutSessionM(
 export function CallMessagesGetSplitRangesM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetSplitRangesM
-): Promise<VectorS<MessageRangeT> | RpcErrorS> {
+): Promise<(VectorS<MessageRangeT> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110584,7 +110584,7 @@ export function CallMessagesGetSplitRangesM(
 export function CallInvokeWithMessagesRangeM(
   invoker: ApiInvoker | Connection,
   req: InvokeWithMessagesRangeM
-): Promise<OneOf | IStruct | RpcErrorS> {
+): Promise<(OneOf | IStruct | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110597,7 +110597,7 @@ export function CallInvokeWithMessagesRangeM(
 export function CallInvokeWithTakeoutM(
   invoker: ApiInvoker | Connection,
   req: InvokeWithTakeoutM
-): Promise<OneOf | IStruct | RpcErrorS> {
+): Promise<(OneOf | IStruct | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110611,7 +110611,7 @@ export function CallInvokeWithTakeoutM(
 export function CallMessagesMarkDialogUnreadM(
   invoker: ApiInvoker | Connection,
   req: MessagesMarkDialogUnreadM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110623,7 +110623,7 @@ export function CallMessagesMarkDialogUnreadM(
 export function CallMessagesGetDialogUnreadMarksM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetDialogUnreadMarksM
-): Promise<VectorS<DialogPeerT> | RpcErrorS> {
+): Promise<(VectorS<DialogPeerT> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110635,7 +110635,7 @@ export function CallMessagesGetDialogUnreadMarksM(
 export function CallContactsToggleTopPeersM(
   invoker: ApiInvoker | Connection,
   req: ContactsToggleTopPeersM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110647,7 +110647,7 @@ export function CallContactsToggleTopPeersM(
 export function CallMessagesClearAllDraftsM(
   invoker: ApiInvoker | Connection,
   req: MessagesClearAllDraftsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110659,7 +110659,7 @@ export function CallMessagesClearAllDraftsM(
 export function CallHelpGetAppConfigM(
   invoker: ApiInvoker | Connection,
   req: HelpGetAppConfigM
-): Promise<JsonValueT | RpcErrorS> {
+): Promise<(JsonValueT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110671,7 +110671,7 @@ export function CallHelpGetAppConfigM(
 export function CallHelpSaveAppLogM(
   invoker: ApiInvoker | Connection,
   req: HelpSaveAppLogM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110683,7 +110683,7 @@ export function CallHelpSaveAppLogM(
 export function CallHelpGetPassportConfigM(
   invoker: ApiInvoker | Connection,
   req: HelpGetPassportConfigM
-): Promise<HelpPassportConfigT | RpcErrorS> {
+): Promise<(HelpPassportConfigT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110696,7 +110696,7 @@ export function CallHelpGetPassportConfigM(
 export function CallLangpackGetLanguageM(
   invoker: ApiInvoker | Connection,
   req: LangpackGetLanguageM
-): Promise<LangPackLanguageS | RpcErrorS> {
+): Promise<(LangPackLanguageS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110711,7 +110711,7 @@ export function CallLangpackGetLanguageM(
 export function CallMessagesUpdatePinnedMessageM(
   invoker: ApiInvoker | Connection,
   req: MessagesUpdatePinnedMessageM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110723,7 +110723,7 @@ export function CallMessagesUpdatePinnedMessageM(
 export function CallAccountConfirmPasswordEmailM(
   invoker: ApiInvoker | Connection,
   req: AccountConfirmPasswordEmailM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110735,7 +110735,7 @@ export function CallAccountConfirmPasswordEmailM(
 export function CallAccountResendPasswordEmailM(
   invoker: ApiInvoker | Connection,
   req: AccountResendPasswordEmailM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110747,7 +110747,7 @@ export function CallAccountResendPasswordEmailM(
 export function CallAccountCancelPasswordEmailM(
   invoker: ApiInvoker | Connection,
   req: AccountCancelPasswordEmailM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110759,7 +110759,7 @@ export function CallAccountCancelPasswordEmailM(
 export function CallHelpGetSupportNameM(
   invoker: ApiInvoker | Connection,
   req: HelpGetSupportNameM
-): Promise<HelpSupportNameS | RpcErrorS> {
+): Promise<(HelpSupportNameS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110771,7 +110771,7 @@ export function CallHelpGetSupportNameM(
 export function CallHelpGetUserInfoM(
   invoker: ApiInvoker | Connection,
   req: HelpGetUserInfoM
-): Promise<HelpUserInfoT | RpcErrorS> {
+): Promise<(HelpUserInfoT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110785,7 +110785,7 @@ export function CallHelpGetUserInfoM(
 export function CallHelpEditUserInfoM(
   invoker: ApiInvoker | Connection,
   req: HelpEditUserInfoM
-): Promise<HelpUserInfoT | RpcErrorS> {
+): Promise<(HelpUserInfoT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110797,7 +110797,7 @@ export function CallHelpEditUserInfoM(
 export function CallAccountGetContactSignUpNotificationM(
   invoker: ApiInvoker | Connection,
   req: AccountGetContactSignUpNotificationM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110809,7 +110809,7 @@ export function CallAccountGetContactSignUpNotificationM(
 export function CallAccountSetContactSignUpNotificationM(
   invoker: ApiInvoker | Connection,
   req: AccountSetContactSignUpNotificationM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110823,7 +110823,7 @@ export function CallAccountSetContactSignUpNotificationM(
 export function CallAccountGetNotifyExceptionsM(
   invoker: ApiInvoker | Connection,
   req: AccountGetNotifyExceptionsM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110837,7 +110837,7 @@ export function CallAccountGetNotifyExceptionsM(
 export function CallMessagesSendVoteM(
   invoker: ApiInvoker | Connection,
   req: MessagesSendVoteM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110850,7 +110850,7 @@ export function CallMessagesSendVoteM(
 export function CallMessagesGetPollResultsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetPollResultsM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110862,7 +110862,7 @@ export function CallMessagesGetPollResultsM(
 export function CallMessagesGetOnlinesM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetOnlinesM
-): Promise<ChatOnlinesS | RpcErrorS> {
+): Promise<(ChatOnlinesS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110877,7 +110877,7 @@ export function CallMessagesGetOnlinesM(
 export function CallMessagesGetStatsUrlM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetStatsUrlM
-): Promise<StatsUrlS | RpcErrorS> {
+): Promise<(StatsUrlS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110890,7 +110890,7 @@ export function CallMessagesGetStatsUrlM(
 export function CallMessagesEditChatAboutM(
   invoker: ApiInvoker | Connection,
   req: MessagesEditChatAboutM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110903,7 +110903,7 @@ export function CallMessagesEditChatAboutM(
 export function CallMessagesEditChatDefaultBannedRightsM(
   invoker: ApiInvoker | Connection,
   req: MessagesEditChatDefaultBannedRightsM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110915,7 +110915,7 @@ export function CallMessagesEditChatDefaultBannedRightsM(
 export function CallAccountGetWallPaperM(
   invoker: ApiInvoker | Connection,
   req: AccountGetWallPaperM
-): Promise<WallPaperT | RpcErrorS> {
+): Promise<(WallPaperT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110929,7 +110929,7 @@ export function CallAccountGetWallPaperM(
 export function CallAccountUploadWallPaperM(
   invoker: ApiInvoker | Connection,
   req: AccountUploadWallPaperM
-): Promise<WallPaperT | RpcErrorS> {
+): Promise<(WallPaperT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110943,7 +110943,7 @@ export function CallAccountUploadWallPaperM(
 export function CallAccountSaveWallPaperM(
   invoker: ApiInvoker | Connection,
   req: AccountSaveWallPaperM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110956,7 +110956,7 @@ export function CallAccountSaveWallPaperM(
 export function CallAccountInstallWallPaperM(
   invoker: ApiInvoker | Connection,
   req: AccountInstallWallPaperM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110968,7 +110968,7 @@ export function CallAccountInstallWallPaperM(
 export function CallAccountResetWallPapersM(
   invoker: ApiInvoker | Connection,
   req: AccountResetWallPapersM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110980,7 +110980,7 @@ export function CallAccountResetWallPapersM(
 export function CallAccountGetAutoDownloadSettingsM(
   invoker: ApiInvoker | Connection,
   req: AccountGetAutoDownloadSettingsM
-): Promise<AccountAutoDownloadSettingsS | RpcErrorS> {
+): Promise<(AccountAutoDownloadSettingsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -110995,7 +110995,7 @@ export function CallAccountGetAutoDownloadSettingsM(
 export function CallAccountSaveAutoDownloadSettingsM(
   invoker: ApiInvoker | Connection,
   req: AccountSaveAutoDownloadSettingsM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111007,7 +111007,7 @@ export function CallAccountSaveAutoDownloadSettingsM(
 export function CallMessagesGetEmojiKeywordsM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetEmojiKeywordsM
-): Promise<EmojiKeywordsDifferenceS | RpcErrorS> {
+): Promise<(EmojiKeywordsDifferenceS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111020,7 +111020,7 @@ export function CallMessagesGetEmojiKeywordsM(
 export function CallMessagesGetEmojiKeywordsDifferenceM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetEmojiKeywordsDifferenceM
-): Promise<EmojiKeywordsDifferenceS | RpcErrorS> {
+): Promise<(EmojiKeywordsDifferenceS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111032,7 +111032,7 @@ export function CallMessagesGetEmojiKeywordsDifferenceM(
 export function CallMessagesGetEmojiKeywordsLanguagesM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetEmojiKeywordsLanguagesM
-): Promise<VectorS<EmojiLanguageS> | RpcErrorS> {
+): Promise<(VectorS<EmojiLanguageS> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111044,7 +111044,7 @@ export function CallMessagesGetEmojiKeywordsLanguagesM(
 export function CallMessagesGetEmojiUrlM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetEmojiUrlM
-): Promise<EmojiUrlS | RpcErrorS> {
+): Promise<(EmojiUrlS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111056,7 +111056,7 @@ export function CallMessagesGetEmojiUrlM(
 export function CallFoldersEditPeerFoldersM(
   invoker: ApiInvoker | Connection,
   req: FoldersEditPeerFoldersM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111068,7 +111068,7 @@ export function CallFoldersEditPeerFoldersM(
 export function CallFoldersDeleteFolderM(
   invoker: ApiInvoker | Connection,
   req: FoldersDeleteFolderM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111081,7 +111081,7 @@ export function CallFoldersDeleteFolderM(
 export function CallMessagesGetSearchCountersM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetSearchCountersM
-): Promise<VectorS<MessagesSearchCounterS> | RpcErrorS> {
+): Promise<(VectorS<MessagesSearchCounterS> | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111093,7 +111093,7 @@ export function CallMessagesGetSearchCountersM(
 export function CallChannelsGetGroupsForDiscussionM(
   invoker: ApiInvoker | Connection,
   req: ChannelsGetGroupsForDiscussionM
-): Promise<MessagesChatsT | RpcErrorS> {
+): Promise<(MessagesChatsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111106,7 +111106,7 @@ export function CallChannelsGetGroupsForDiscussionM(
 export function CallChannelsSetDiscussionGroupM(
   invoker: ApiInvoker | Connection,
   req: ChannelsSetDiscussionGroupM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111120,7 +111120,7 @@ export function CallChannelsSetDiscussionGroupM(
 export function CallMessagesRequestUrlAuthM(
   invoker: ApiInvoker | Connection,
   req: MessagesRequestUrlAuthM
-): Promise<UrlAuthResultT | RpcErrorS> {
+): Promise<(UrlAuthResultT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111136,7 +111136,7 @@ export function CallMessagesRequestUrlAuthM(
 export function CallMessagesAcceptUrlAuthM(
   invoker: ApiInvoker | Connection,
   req: MessagesAcceptUrlAuthM
-): Promise<UrlAuthResultT | RpcErrorS> {
+): Promise<(UrlAuthResultT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111148,7 +111148,7 @@ export function CallMessagesAcceptUrlAuthM(
 export function CallMessagesHidePeerSettingsBarM(
   invoker: ApiInvoker | Connection,
   req: MessagesHidePeerSettingsBarM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111165,7 +111165,7 @@ export function CallMessagesHidePeerSettingsBarM(
 export function CallContactsAddContactM(
   invoker: ApiInvoker | Connection,
   req: ContactsAddContactM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111177,7 +111177,7 @@ export function CallContactsAddContactM(
 export function CallContactsAcceptContactM(
   invoker: ApiInvoker | Connection,
   req: ContactsAcceptContactM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111191,7 +111191,7 @@ export function CallContactsAcceptContactM(
 export function CallChannelsEditCreatorM(
   invoker: ApiInvoker | Connection,
   req: ChannelsEditCreatorM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111203,7 +111203,7 @@ export function CallChannelsEditCreatorM(
 export function CallContactsGetLocatedM(
   invoker: ApiInvoker | Connection,
   req: ContactsGetLocatedM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111217,7 +111217,7 @@ export function CallContactsGetLocatedM(
 export function CallChannelsEditLocationM(
   invoker: ApiInvoker | Connection,
   req: ChannelsEditLocationM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111230,7 +111230,7 @@ export function CallChannelsEditLocationM(
 export function CallChannelsToggleSlowModeM(
   invoker: ApiInvoker | Connection,
   req: ChannelsToggleSlowModeM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111243,7 +111243,7 @@ export function CallChannelsToggleSlowModeM(
 export function CallMessagesGetScheduledHistoryM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetScheduledHistoryM
-): Promise<MessagesMessagesT | RpcErrorS> {
+): Promise<(MessagesMessagesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111256,7 +111256,7 @@ export function CallMessagesGetScheduledHistoryM(
 export function CallMessagesGetScheduledMessagesM(
   invoker: ApiInvoker | Connection,
   req: MessagesGetScheduledMessagesM
-): Promise<MessagesMessagesT | RpcErrorS> {
+): Promise<(MessagesMessagesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111269,7 +111269,7 @@ export function CallMessagesGetScheduledMessagesM(
 export function CallMessagesSendScheduledMessagesM(
   invoker: ApiInvoker | Connection,
   req: MessagesSendScheduledMessagesM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111282,7 +111282,7 @@ export function CallMessagesSendScheduledMessagesM(
 export function CallMessagesDeleteScheduledMessagesM(
   invoker: ApiInvoker | Connection,
   req: MessagesDeleteScheduledMessagesM
-): Promise<UpdatesT | RpcErrorS> {
+): Promise<(UpdatesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111298,7 +111298,7 @@ export function CallMessagesDeleteScheduledMessagesM(
 export function CallAccountUploadThemeM(
   invoker: ApiInvoker | Connection,
   req: AccountUploadThemeM
-): Promise<DocumentT | RpcErrorS> {
+): Promise<(DocumentT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111312,7 +111312,7 @@ export function CallAccountUploadThemeM(
 export function CallAccountCreateThemeM(
   invoker: ApiInvoker | Connection,
   req: AccountCreateThemeM
-): Promise<ThemeT | RpcErrorS> {
+): Promise<(ThemeT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111329,7 +111329,7 @@ export function CallAccountCreateThemeM(
 export function CallAccountUpdateThemeM(
   invoker: ApiInvoker | Connection,
   req: AccountUpdateThemeM
-): Promise<ThemeT | RpcErrorS> {
+): Promise<(ThemeT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111342,7 +111342,7 @@ export function CallAccountUpdateThemeM(
 export function CallAccountSaveThemeM(
   invoker: ApiInvoker | Connection,
   req: AccountSaveThemeM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111357,7 +111357,7 @@ export function CallAccountSaveThemeM(
 export function CallAccountInstallThemeM(
   invoker: ApiInvoker | Connection,
   req: AccountInstallThemeM
-): Promise<BoolT | RpcErrorS> {
+): Promise<(BoolT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111371,7 +111371,7 @@ export function CallAccountInstallThemeM(
 export function CallAccountGetThemeM(
   invoker: ApiInvoker | Connection,
   req: AccountGetThemeM
-): Promise<ThemeT | RpcErrorS> {
+): Promise<(ThemeT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -111384,6 +111384,6 @@ export function CallAccountGetThemeM(
 export function CallAccountGetThemesM(
   invoker: ApiInvoker | Connection,
   req: AccountGetThemesM
-): Promise<AccountThemesT | RpcErrorS> {
+): Promise<(AccountThemesT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }

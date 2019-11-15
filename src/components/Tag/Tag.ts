@@ -11,6 +11,7 @@ export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
   props: P;
   tag: T;
   class: Set<string>;
+  isRemove = false;
   listeners: Array<h.Listener<keyof HTMLElementEventMap, T>> = [];
   //   childrens: Array<Tag<any>> = [];
 
@@ -36,6 +37,7 @@ export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
   }
   show() {
     this.removeClass(s.hide);
+    return this;
   }
   isHidden() {
     return this.class.has(s.hide);
@@ -48,8 +50,9 @@ export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
       changed = true;
       this.class.add(c);
     }
-    if (!changed) return;
+    if (!changed) return this;
     this.tag.setAttribute("class", [...this.class].join(" "));
+    return this;
   }
   removeClass(...s: string[]) {
     let changed = false;
@@ -59,22 +62,30 @@ export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
       changed = true;
       this.class.delete(c);
     }
-    if (!changed) return;
+    if (!changed) return this;
     this.tag.setAttribute("class", [...this.class].join(" "));
+    return this;
   }
   mount(): T {
+    if (this.isRemove) {
+      this.isRemove = false;
+      this.listen(...this.listeners);
+    }
     return this.tag;
   }
   remove() {
+    this.isRemove = true;
     this.tag.remove();
     this.unlisten(...this.listeners);
+    return this;
   }
 
   listen(...listeners: Array<h.Listener<any, T>>) {
     for (let l of listeners) {
       this.listeners.push(l);
-      this.tag.addEventListener(l.n, l.c, l.o);
+      if (!this.isRemove) this.tag.addEventListener(l.n, l.c, l.o);
     }
+    return this;
   }
   unlisten(...listeners: Array<h.Listener<keyof HTMLElementEventMap, T>>) {
     this.listeners = this.listeners.filter(l => {
@@ -86,6 +97,7 @@ export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
     for (let l of listeners) {
       this.tag.removeEventListener(l.n, l.c);
     }
+    return this;
   }
   append(...tags: Array<Node | string | Tag<any>>) {
     this.tag.append(
@@ -97,5 +109,25 @@ export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
         return v;
       })
     );
+    return this;
+  }
+
+  wave(type: "small" | "big" = "big") {
+    this.addClass(s.withWave);
+    this.listen(
+      h.onMouseDown(e => {
+        let rect = this.tag.getBoundingClientRect();
+        let X = e.clientX - rect.left;
+        let Y = e.clientY - rect.top;
+        let wave = h.div(
+          h.className(s.wave),
+          h.style(`top: ${Y}px; left: ${X}px;`)
+        );
+        if (type === "small") wave.addClass(s.small);
+        this.append(wave);
+        setTimeout(() => wave.remove(), 900);
+      })
+    );
+    return this;
   }
 }

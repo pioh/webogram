@@ -1,7 +1,89 @@
 .root {
   display: flex;
-  width: 100%;
-  height: 100%;
   margin-top: 5px;
   min-height: 33px;
+  min-width: 33px;
+  position: relative;
+  margin-right: auto;
+  max-width: 100%;
+  flex-shrink: 0;
+  > .tail {
+    display: none;
+  }
+  > * {
+    z-index: 2;
+  }
+  > .text {
+    border-radius: 12px 12px 12px 12px;
+    // box-shadow: 0 1px 2px 0 rgba(16, 35, 47, 0.15);
+    box-shadow: 0px 1px 2px rgba(16, 35, 47, 0.15);
+  }
+
+  align-items: center;
+  justify-content: flex-start;
+  // background-color: #fff;
+  &.self {
+    justify-content: flex-end;
+    // background-color: #eeffde;
+    // border-radius: 12px 12px 0 12px;
+  }
+}
+.left:not(.last) > .text {
+  border-top-left-radius: 6px;
+}
+.right:not(.last) > .text {
+  border-top-right-radius: 6px;
+}
+.left:not(.first) > .text {
+  border-bottom-left-radius: 6px;
+}
+.right:not(.first) > .text {
+  border-bottom-right-radius: 6px;
+}
+.left.first {
+  > .text {
+    border-bottom-left-radius: 0px;
+  }
+  > .tail {
+    display: block;
+  }
+}
+.right.first {
+  > .text {
+    border-bottom-right-radius: 0px;
+  }
+  > .tail {
+    display: block;
+  }
+}
+.text {
+  padding: 10px;
+  font-size: 15px;
+  line-height: 21px;
+  white-space: pre-wrap;
+  background-color: #fff;
+}
+.self > .text {
+  background-color: #eeffde;
+}
+
+.self {
+  // background: ;
+  margin-right: 0;
+  margin-left: auto;
+}
+
+.tail {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  bottom: -3px;
+}
+.tail.right {
+  right: -10.6px;
+}
+.tail.left {
+  left: -10px;
+  bottom: -3.5px;
+  transform: scaleX(-1);
 }

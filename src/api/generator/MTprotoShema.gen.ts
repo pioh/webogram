@@ -3997,7 +3997,7 @@ AllStructs.set(HttpWaitM._id, HttpWaitM);
 export function CallReqPqM(
   invoker: ApiInvoker | Connection,
   req: ReqPqM
-): Promise<ResPqS | RpcErrorS> {
+): Promise<(ResPqS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -4014,7 +4014,7 @@ export function CallReqPqM(
 export function CallReqDhParamsM(
   invoker: ApiInvoker | Connection,
   req: ReqDhParamsM
-): Promise<ServerDhParamsT | RpcErrorS> {
+): Promise<(ServerDhParamsT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -4028,7 +4028,7 @@ export function CallReqDhParamsM(
 export function CallSetClientDhParamsM(
   invoker: ApiInvoker | Connection,
   req: SetClientDhParamsM
-): Promise<SetClientDhParamsAnswerT | RpcErrorS> {
+): Promise<(SetClientDhParamsAnswerT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -4040,7 +4040,7 @@ export function CallSetClientDhParamsM(
 export function CallRpcDropAnswerM(
   invoker: ApiInvoker | Connection,
   req: RpcDropAnswerM
-): Promise<RpcDropAnswerT | RpcErrorS> {
+): Promise<(RpcDropAnswerT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -4052,7 +4052,7 @@ export function CallRpcDropAnswerM(
 export function CallGetFutureSaltsM(
   invoker: ApiInvoker | Connection,
   req: GetFutureSaltsM
-): Promise<FutureSaltsS | RpcErrorS> {
+): Promise<(FutureSaltsS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -4064,7 +4064,7 @@ export function CallGetFutureSaltsM(
 export function CallPingM(
   invoker: ApiInvoker | Connection,
   req: PingM
-): Promise<PongS | RpcErrorS> {
+): Promise<(PongS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -4077,7 +4077,7 @@ export function CallPingM(
 export function CallPingDelayDisconnectM(
   invoker: ApiInvoker | Connection,
   req: PingDelayDisconnectM
-): Promise<PongS | RpcErrorS> {
+): Promise<(PongS | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -4089,7 +4089,7 @@ export function CallPingDelayDisconnectM(
 export function CallDestroySessionM(
   invoker: ApiInvoker | Connection,
   req: DestroySessionM
-): Promise<DestroySessionResT | RpcErrorS> {
+): Promise<(DestroySessionResT | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }
 
@@ -4103,6 +4103,6 @@ export function CallDestroySessionM(
 export function CallHttpWaitM(
   invoker: ApiInvoker | Connection,
   req: HttpWaitM
-): Promise<OneOf | IStruct | RpcErrorS> {
+): Promise<(OneOf | IStruct | RpcErrorS) & { dc: number }> {
   return invoker.call(req);
 }

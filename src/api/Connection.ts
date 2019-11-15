@@ -380,7 +380,7 @@ export class Connection {
     }
 
     if (body instanceof RpcResultS) {
-      this.processRpcResult(body);
+      await this.processRpcResult(body);
     } else if (body instanceof MsgContainerS) {
       for (let msg of body.get_messages().get_values()) {
         await this.processMessage(msg, name, req, wait);
@@ -421,6 +421,7 @@ export class Connection {
               Object.getPrototypeOf(body).constructor.name,
               body
             );
+          (w as any).dc = this.props.dc;
           if (w.cb) w.cb(body);
           return;
         }
@@ -464,6 +465,16 @@ export class Connection {
         );
       if (instance instanceof RpcErrorS) {
         let err = findError(instance.get_error_message());
+        /// PHONE_MIGRATE_|NETWORK_MIGRATE_|USER_MIGRATE_
+        if (err.type.match(/MIGRATE/) && Number(err.id)) {
+          let conn = this.props.apiInvoker.connection(Number(err.id));
+          await conn.ready();
+          conn.send({
+            ...w,
+            retry: w.retry - 1
+          });
+          return;
+        }
         if (err.type === "AUTH_KEY_UNREGISTERED") {
           if (this.user.isLoggedIn) {
             if (this.user.userDC !== this.props.dc) {
@@ -488,6 +499,7 @@ export class Connection {
             instance.get_error_message()
           );
       }
+      (w as any).dc = this.props.dc;
       if (w.cb) w.cb(instance);
       return;
     }
