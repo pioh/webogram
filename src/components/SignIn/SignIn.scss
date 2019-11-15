@@ -58,3 +58,16 @@
 .action {
   white-space: pre;
 }
+.resendCode {
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: -60px;
+  z-index: 2;
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: 19px;
+  color: #888;
+  &:hover {
+    text-decoration: underline;
+  }
+}

@@ -1,9 +1,12 @@
 import { Tag } from "components/Tag/Tag";
 
-export function html<T>(html: TemplateStringsArray, ...keys: any) {
+export function html<T>(html: TemplateStringsArray | string[], ...keys: any) {
   let template = document.createElement("template");
   template.innerHTML = html
-    .reduce((out, next, i) => out + next + keys[i], "")
+    .reduce(
+      (out, next, i) => out + next + (keys[i] === void 0 ? "" : keys[i]),
+      ""
+    )
     .trim();
   return (template.content.firstChild as unknown) as T;
 }
@@ -135,6 +138,7 @@ export const role = Attr("role");
 export const tabindex = Attr("tabindex");
 export const type = Attr("type");
 export const src = Attr("src");
+export const contenteditable = Attr("contenteditable")("true");
 
 export const autocomplete = Attr("autocomplete");
 export const autocorrect = Attr("autocorrect");
@@ -151,3 +155,4 @@ export const onFocus = NewEvenListener("focus");
 export const onBlur = NewEvenListener("blur");
 export const onInput = NewEvenListener("input");
 export const onScroll = NewEvenListener("scroll");
+export const onMouseDown = NewEvenListener("mousedown");

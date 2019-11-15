@@ -6,32 +6,57 @@
   width: 100%;
   height: 100%;
   flex-shrink: 1;
+  overflow: hidden;
   background: #e6ebee;
 }
 
 .content {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  overflow-y: auto;
   flex-grow: 1;
   height: 100%;
   width: 100%;
-  max-width: 633px;
+  position: relative;
+  margin-right: 8px;
+  // margin-bottom: -84px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    opacity: 0;
+  }
+  &:hover::-webkit-scrollbar {
+    background: transparent;
+    opacity: 0.99;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: #b8bcbe;
+    border: 10px solid rgba(0, 0, 0, 0); /* Transparent border together with `background-clip: padding-box` does the trick */
+    background-clip: padding-box;
+    --webkit-border-radius: 20px;
+  }
 }
 
 .messages {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   flex-grow: 1;
-  height: 100%;
+  // height: 100%;
+  max-width: 633px;
   width: 100%;
-  overflow-y: auto;
+  // margin-bottom: 84px;
+  // margin-top: 100px;
+  // padding-top: 10px;
+  flex-shrink: 0;
 }
 
 .messagesContent {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   flex-grow: 1;
   min-height: 100%;
   width: 100%;
-  overflow-y: hidden;
 }

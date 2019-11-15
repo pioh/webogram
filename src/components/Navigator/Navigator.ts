@@ -40,7 +40,10 @@ export class Navigator extends Tag<HTMLDivElement, INavigatorProps> {
 
   goToSignIn() {
     this.deferPage();
-    this.signIn = new SignIn({ apiInoker: this.props.apiInvoker });
+    this.signIn = new SignIn({
+      apiInoker: this.props.apiInvoker,
+      userStore: () => this.props.userStore
+    });
     this.append(this.signIn.mount());
 
     this.deferPage = () => {

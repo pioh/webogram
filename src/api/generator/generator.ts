@@ -339,9 +339,9 @@ function AddMethod(m: typeof jsonApi.methods[0], used: Set<string>) {
    * #${id.toString(16)}:${id}:${m.id}
    * ${m.params.map(p => `${p.name}:${p.type}`).join("\n* ")}
    */
-  export function Call${name} (invoker: ApiInvoker|Connection, req: ${name}): Promise<${
+  export function Call${name} (invoker: ApiInvoker|Connection, req: ${name}): Promise<(${
     W.type
-  }|${toName("RpcError")}> {
+  }|${toName("RpcError")})&{dc: number}> {
     return invoker.call(req);
   }
   `);

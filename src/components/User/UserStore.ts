@@ -10,7 +10,6 @@ import {
   VectorS
 } from "api/generator/ApiShema.gen";
 import { RpcErrorS } from "api/generator/MTprotoShema.gen";
-import { findError } from "const/errors";
 
 export interface IUserStoreProps {
   apiInvoker: ApiInvoker;
@@ -19,7 +18,12 @@ export class UserStore {
   props: IUserStoreProps;
 
   user = new UserS();
-  userDC = Number(localStorage.userDC || 0);
+  get userDC() {
+    return Number(localStorage.userDC || 0);
+  }
+  set userDC(userDC: number) {
+    localStorage.userDC = userDC || this.userDC;
+  }
   isLoggedIn = false;
 
   private _onLogout: Set<() => void> = new Set();
@@ -71,7 +75,7 @@ export class UserStore {
   }
   async loadUser() {
     this.userDC = this.userDC || this.props.apiInvoker.dc;
-    let conn = this.props.apiInvoker.connection();
+    let conn = this.props.apiInvoker.connection(this.userDC);
     let response = await CallUsersGetUsersM(
       conn,
       new UsersGetUsersM().set_id(
@@ -79,19 +83,19 @@ export class UserStore {
       )
     );
     if (response instanceof RpcErrorS || response.get_values().length !== 1) {
-      if (response instanceof RpcErrorS) {
-        let err = findError(response.get_error_message());
-        if (err.type === "USER_MIGRATE" && Number(err.id)) {
-          this.userDC = Number(err.id);
-          localStorage.userDC = this.userDC;
-          await this.loadUser();
-          return;
-        }
-      }
+      // if (response instanceof RpcErrorS) {
+      //   let err = findError(response.get_error_message());
+      //   if (err.type === "USER_MIGRATE" && Number(err.id)) {
+      //     this.userDC = Number(err.id);
+      //     localStorage.userDC = this.userDC;
+      //     await this.loadUser();
+      //     return;
+      //   }
+      // }
       this.setUser(new UserEmptyS());
       return;
     }
-    localStorage.userDC = conn.props.dc;
+    this.userDC = response.dc || this.userDC;
     this.setUser(response.get_values()[0]);
   }
   setIsLoggedIn(is: boolean) {

@@ -1,5 +1,30 @@
 .root {
   display: flex;
   width: 100%;
+  height: 60px;
+  align-items: center;
+  padding: 8px 14px;
+  padding-right: 14px - 5px;
+
+  flex-shrink: 0;
+}
+.menu {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  font-size: 24px;
+  border-radius: 50%;
+  color: #707579;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    background-color: rgba(112, 117, 121, 0.08);
+  }
+}
+
+.search {
   height: 100%;
+  width: 100%;
 }

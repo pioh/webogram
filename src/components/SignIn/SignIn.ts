@@ -5,6 +5,7 @@ import {
   AuthAuthorizationS,
   AuthAuthorizationSignUpRequiredS,
   AuthCheckPasswordM,
+  AuthResendCodeM,
   AuthSendCodeM,
   AuthSentCodeS,
   AuthSentCodeTypeAppS,
@@ -14,6 +15,7 @@ import {
   AuthSignUpM,
   CallAccountGetPasswordM,
   CallAuthCheckPasswordM,
+  CallAuthResendCodeM,
   CallAuthSendCodeM,
   CallAuthSignInM,
   CallAuthSignUpM,
@@ -25,6 +27,7 @@ import { Button } from "components/Button/Button";
 import { CountrySelect } from "components/CountrySelect/CountrySelect";
 import { Input } from "components/Input/Input";
 import { ITagProps, Tag } from "components/Tag/Tag";
+import { UserStore } from "components/User/UserStore";
 import { config } from "const/config";
 import { findError } from "const/errors";
 import * as h from "lib/html";
@@ -35,6 +38,7 @@ import * as s from "./SignIn.scss";
 
 interface ISignInProps extends ITagProps<HTMLDivElement> {
   apiInoker: ApiInvoker;
+  userStore: () => UserStore;
 }
 
 export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
@@ -44,6 +48,13 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     h.className(s.action),
     "Please confirm your country and\nenter your phone number"
   );
+  resendCode = h
+    .div(
+      h.className(s.resendCode),
+      "resend code",
+      h.onClick(() => this.onResendCode())
+    )
+    .hide();
   error = new Tag<HTMLDivElement>({
     tag: h.div(h.className(s.error)),
     hide: true
@@ -92,6 +103,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     this.countrySelect,
     this.phone,
     this.code,
+    this.resendCode,
     this.password,
     this.passwordHint,
     this.name,
@@ -151,6 +163,18 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     this.defer.map(v => v());
     this.defer = [];
   }
+  onResendCode = async () => {
+    this.resendCode.remove();
+    let phone = String(this.phone.value);
+    setTimeout(() => this.code.tag.after(this.resendCode.mount()), 30000);
+    let res = await CallAuthResendCodeM(
+      this.props.apiInoker.connection(this.props.userStore().userDC),
+      new AuthResendCodeM()
+        .set_phone_code_hash(this.sentCode.get_phone_code_hash())
+        .set_phone_number(phone)
+    );
+    this.onAuthSentCode(res, phone, res.dc);
+  };
   phoneOnChange = () => {
     this.clearErrors();
     let v = String(this.phone.value || "");
@@ -201,6 +225,10 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
         .set_api_id(config.apiID)
         .set_phone_number(phone)
     );
+    this.onAuthSentCode(res, phone, res.dc);
+  }
+  onAuthSentCode(res: AuthSentCodeS | RpcErrorS, phone: string, dc: number) {
+    this.props.userStore().userDC = dc;
     if (String(this.phone.value) !== phone) return;
 
     if (res instanceof RpcErrorS) {
@@ -230,8 +258,10 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     this.deferStep();
     this.deferStep = () => {
       this.code.hide();
+      this.resendCode.hide();
     };
     this.code.show();
+    this.resendCode.show();
     this.heder.tag.innerText = localStorage.getItem("phone") || "";
     switch (localStorage.getItem("signInState")) {
       case "code-sms":
@@ -408,8 +438,11 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     this.finish();
   }
   finish() {
-    localStorage.setItem("signInState", "done");
     this.deferStep();
+    localStorage.removeItem("signInState");
+    localStorage.removeItem("phone");
+    localStorage.removeItem("phoneCodeHash");
+    localStorage.removeItem("code-length");
   }
   setError(tag: Input | null, errType: string) {
     let err = findError(errType);

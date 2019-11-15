@@ -1,5 +1,6 @@
 import { UserStore } from "components/User/UserStore";
 import { config } from "const/config";
+import { AllDc } from "const/dc";
 
 import { Connection } from "./Connection";
 import { AuthAuthorizationS } from "./generator/ApiShema.gen";
@@ -17,7 +18,13 @@ export class ApiInvoker {
 
   constructor(props: IApiInvokerProps) {
     this.props = props;
+    let otherDC = AllDc.filter(
+      v => v.isTest === config.test && v.id !== this.dc
+    ).map(v => v.id);
     this.connection();
+    setTimeout(() => {
+      otherDC.forEach(id => this.connection(id));
+    }, 100);
   }
   connection(dc: number = this.dc) {
     let connection = this._connections.get(dc);

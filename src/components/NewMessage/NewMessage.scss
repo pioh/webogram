@@ -1,9 +1,126 @@
 .root {
   display: flex;
   width: 100%;
-  height: 54px;
-  border-radius: 12px;
-  background: #fff;
+  z-index: 10;
+  bottom: 0;
+  pointer-events: none;
+  justify-content: center;
+}
+.content {
+  display: flex;
+  width: 100%;
+  max-width: 633px;
+  pointer-events: initial;
+  position: relative;
+  padding: 0;
+  right: 7px;
   margin-bottom: 20px;
   margin-top: 10px;
+  > .back {
+    background: #e6ebee;
+    position: absolute;
+    z-index: -10;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    top: -10px;
+  }
+  > :not(:last-child) {
+    margin-right: 9px;
+  }
+}
+
+.bable {
+  display: flex;
+  width: 100%;
+  border-radius: 10px;
+  background: #fff;
+  min-height: 54px;
+  align-items: flex-end;
+
+  position: relative;
+  border-bottom-right-radius: 0;
+  box-shadow: 0px 1px 2px rgba(16, 35, 47, 0.15);
+}
+
+.input {
+  font-size: 16px;
+  color: #000;
+  width: 100%;
+  white-space: pre-wrap;
+  outline: none;
+  line-height: 21px;
+  padding: 16.5px 0;
+  max-height: 406px;
+  margin-right: -46px;
+  padding-right: 46px;
+
+  overflow: hidden;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    opacity: 0;
+  }
+  &:hover::-webkit-scrollbar {
+    background: transparent;
+    opacity: 0.99;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: #f4f4f5;
+    border: 10px solid rgba(0, 0, 0, 0); /* Transparent border together with `background-clip: padding-box` does the trick */
+    background-clip: padding-box;
+    --webkit-border-radius: 20px;
+  }
+}
+
+.emoji,
+.attach {
+  cursor: pointer;
+  display: flex;
+  margin-top: auto;
+  justify-content: center;
+  flex-shrink: 0;
+  align-items: center;
+  font-size: 22px;
+  width: 54px;
+  height: 54px;
+  color: #8d969c;
+  &:hover {
+    color: #4ea4f6;
+  }
+}
+
+.send {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #4ea4f6;
+  color: #fff;
+  font-size: 21px;
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+  align-items: center;
+
+  > .sendBack {
+    z-index: -1;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    transition: all 0.15s ease-out;
+    background: #c2d7e9;
+  }
+  &:active > .sendBack {
+    height: 148px;
+    width: 148px;
+    left: -47px;
+    top: -47px;
+  }
 }

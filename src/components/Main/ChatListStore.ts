@@ -1,6 +1,8 @@
 import { ApiInvoker } from "api/ApiInvoker";
 import {
   CallMessagesGetDialogsM,
+  ChannelS,
+  ChatS,
   ChatT,
   DialogFolderS,
   DialogS,
@@ -16,10 +18,12 @@ import {
   PeerChannelS,
   PeerChatS,
   PeerUserS,
+  UserS,
   UserT
 } from "api/generator/ApiShema.gen";
 import { RpcErrorS } from "api/generator/MTprotoShema.gen";
 import { RpcError } from "api/schema";
+import { ChatStore } from "components/Chat/ChatStore";
 import { UserStore } from "components/User/UserStore";
 import { findError } from "const/errors";
 
@@ -35,10 +39,14 @@ export class ChatListStore {
   error = "";
   dialogs: Array<DialogS | DialogFolderS> = [];
   pinned: Array<DialogS | DialogFolderS> = [];
-  messages: Map<number, MessageT> = new Map();
-  chats: Map<number, ChatT> = new Map();
-  users: Map<number, UserT> = new Map();
+  messages: Map<number, MessageS> = new Map();
+  chats: Map<number, ChatS | ChannelS> = new Map();
+  users: Map<number, UserS> = new Map();
   loading = true;
+
+  chatStores: Map<number, ChatStore> = new Map();
+
+  activeDialog: DialogS | DialogFolderS | null = null;
 
   limit = 20;
   reqId = 0;
@@ -46,6 +54,7 @@ export class ChatListStore {
 
   private _onError: Set<(err: string) => void> = new Set();
   private _onUpdate: Set<() => void> = new Set();
+  private _onDialog: Set<() => void> = new Set();
 
   constructor(props: IChatListStorePRops) {
     this.props = props;
@@ -55,6 +64,20 @@ export class ChatListStore {
   destroy() {
     this.defer.map(v => v());
     this.defer = [];
+  }
+  getChatStore(dialog: DialogS | DialogFolderS): ChatStore {
+    let id = this.peerToId(dialog.get_peer());
+    let chat = this.chatStores.get(id);
+    if (!chat) {
+      chat = new ChatStore({
+        chatListStore: this,
+        apiInvoker: this.props.apiInvoker,
+        dialog,
+        userStore: this.props.userStore
+      });
+      this.chatStores.set(id, chat);
+    }
+    return chat;
   }
   load = async () => {
     let reqId = ++this.reqId;
@@ -93,13 +116,14 @@ export class ChatListStore {
         ? this.peerToId(this.dialogs[this.dialogs.length - 1].get_peer())
         : 0;
     for (let m of mdialogs.get_chats().get_values()) {
-      this.chats.set(m.get_id(), m);
+      if (m instanceof ChatS || m instanceof ChannelS)
+        this.chats.set(m.get_id(), m);
     }
     for (let m of mdialogs.get_messages().get_values()) {
-      this.messages.set(m.get_id(), m);
+      if (m instanceof MessageS) this.messages.set(m.get_id(), m);
     }
     for (let m of mdialogs.get_users().get_values()) {
-      this.users.set(m.get_id(), m);
+      if (m instanceof UserS) this.users.set(m.get_id(), m);
     }
   }
   peerToId(p: PeerUserS | PeerChatS | PeerChannelS) {
@@ -128,5 +152,16 @@ export class ChatListStore {
     this._onUpdate.add(foo);
     if (this.dialogs.length) foo();
     return () => this._onUpdate.delete(foo);
+  }
+
+  onDialog(foo: () => void): () => void {
+    this._onDialog.add(foo);
+    if (this.activeDialog) foo();
+    return () => this._onDialog.delete(foo);
+  }
+  openDialog(d: DialogS | DialogFolderS) {
+    if (this.activeDialog === d) return;
+    this.activeDialog = d;
+    this._onDialog.forEach(foo => foo());
   }
 }
