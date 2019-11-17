@@ -1,5 +1,10 @@
 {
-  "extends": ["tslint:latest", "tslint-eslint-rules", "tslint-config-prettier"],
+  "extends": [
+    "tslint:latest",
+    "tslint-eslint-rules",
+    "tslint-config-prettier",
+    "tslint-etc"
+  ],
   "project": "tsconfig.json",
   "allowJs": true,
   "typeCheck": true,
@@ -17,7 +22,9 @@
       "webpack.config.js",
       "*.js",
       "src/lib/pbkdf2/lib/sync-browser.js",
-      "src/lib/aes.js"
+      "src/lib/aes.js",
+      "./src/api/generator/ApiShema.gen.ts",
+      "./src/api/generator/MTprotoShema.gen.ts"
     ]
   },
   "no-unsafe-finally": [false],
@@ -26,6 +33,7 @@
     "node_modules/tslint-microsoft-contrib"
   ],
   "rules": {
+    "no-unused-declaration": true,
     "prefer-for-of": false,
     "ban": [true, "name"],
     "no-object-literal-type-assertion": [false],
@@ -66,7 +74,7 @@
     "no-default-export": true,
     "no-implicit-dependencies": [false],
     "no-submodule-imports": false,
-    "no-relative-imports": [true, "allow-siblings"],
+    "no-relative-imports": [false, "allow-siblings"],
     "comment-format": [true, "check-space"],
     "no-bitwise": false,
     "indent": [true, "spaces", 2],

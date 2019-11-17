@@ -2,37 +2,23 @@ import { substr } from "runes";
 
 import { ApiInvoker } from "api/ApiInvoker";
 import {
-  CallMessagesGetChatsM,
-  CallMessagesGetDialogsM,
   CallMessagesGetHistoryM,
   CallUploadGetCdnFileM,
   CallUploadGetFileM,
   ChannelS,
   ChatPhotoS,
   ChatS,
-  ChatT,
-  DialogFolderS,
-  DialogS,
-  DialogT,
   FileLocationT,
   InputPeerChannelS,
   InputPeerChatS,
-  InputPeerEmptyS,
   InputPeerPhotoFileLocationS,
-  InputPeerT,
   InputPeerUserS,
   MessageS,
   MessagesChannelMessagesS,
-  MessagesDialogsNotModifiedS,
-  MessagesDialogsS,
-  MessagesDialogsSliceS,
-  MessagesGetChatsM,
-  MessagesGetDialogsM,
   MessagesGetHistoryM,
   MessagesMessagesNotModifiedS,
   MessagesMessagesS,
   MessagesMessagesSliceS,
-  MessageT,
   PeerChannelS,
   PeerChatS,
   PeerT,
@@ -43,16 +29,13 @@ import {
   UploadGetFileM,
   UserProfilePhotoS,
   UserS,
-  UserStatusEmptyS,
   UserStatusLastMonthS,
   UserStatusLastWeekS,
   UserStatusOfflineS,
   UserStatusOnlineS,
-  UserStatusRecentlyS,
-  UserT
+  UserStatusRecentlyS
 } from "api/generator/ApiShema.gen";
-import { RpcErrorS, VectorS } from "api/generator/MTprotoShema.gen";
-import { RpcError } from "api/schema";
+import { RpcErrorS } from "api/generator/MTprotoShema.gen";
 import { ChatListStore } from "components/Main/ChatListStore";
 import { UserStore } from "components/User/UserStore";
 import { findError } from "const/errors";
@@ -62,7 +45,7 @@ import * as h from "lib/html";
 interface IChatStoreProps {
   apiInvoker: ApiInvoker;
   userStore: UserStore;
-  dialog: DialogFolderS | DialogS;
+  peer: UserS | ChannelS | ChatS;
   chatListStore: ChatListStore;
 }
 
@@ -80,7 +63,7 @@ export class ChatStore {
   currentView: MessageS[] = [];
   viewOffset = 0;
 
-  loading = true;
+  loading = false;
 
   limit = 20;
   reqId = 0;
@@ -91,8 +74,23 @@ export class ChatStore {
 
   constructor(props: IChatStoreProps) {
     this.props = props;
-    this.defer.push(this.props.userStore.onUpdate(this.load));
-    console.log(this);
+  }
+  inited = false;
+  init() {
+    if (this.inited) return;
+    this.inited = true;
+    this.defer.push(
+      this.props.userStore.onUpdate(async () => {
+        this.offsetId = 0;
+        this.currentView = [];
+        this.loading = true;
+        try {
+          await this.load();
+        } finally {
+          this.loading = false;
+        }
+      })
+    );
   }
 
   destroy() {
@@ -101,7 +99,7 @@ export class ChatStore {
   }
 
   get peer() {
-    return this.props.dialog.get_peer();
+    return this.props.peer;
   }
   type(peer: PeerT) {
     if (peer instanceof PeerUserS) return "user";
@@ -120,7 +118,8 @@ export class ChatStore {
   findChat(id: number) {
     return this.chats.get(id) || this.props.chatListStore.chats.get(id) || null;
   }
-  user(peer: PeerT): UserS | null {
+  user(peer: PeerT | ChannelS | UserS | ChatS): UserS | null {
+    if (peer instanceof UserS) return peer;
     if (peer instanceof PeerUserS) {
       let user = this.findUser(peer.get_user_id()) || null;
       if (user && user instanceof UserS) return user;
@@ -128,7 +127,8 @@ export class ChatStore {
     }
     return null;
   }
-  chat(peer: PeerT): ChatS | null {
+  chat(peer: PeerT | ChannelS | UserS | ChatS): ChatS | null {
+    if (peer instanceof ChatS) return peer;
     if (peer instanceof PeerChatS) {
       let chat = this.findChat(peer.get_chat_id()) || null;
       if (chat && chat instanceof ChatS) return chat;
@@ -136,7 +136,8 @@ export class ChatStore {
     }
     return null;
   }
-  channel(peer: PeerT): ChannelS | null {
+  channel(peer: PeerT | ChannelS | UserS | ChatS): ChannelS | null {
+    if (peer instanceof ChannelS) return peer;
     if (peer instanceof PeerChannelS) {
       let channel = this.findChat(peer.get_channel_id()) || null;
       if (channel && channel instanceof ChannelS) return channel;
@@ -144,7 +145,7 @@ export class ChatStore {
     }
     return null;
   }
-  status(peer: PeerT) {
+  status(peer: PeerT | ChannelS | UserS | ChatS) {
     let user = this.user(peer);
     if (user) {
       let status = user.get_status();
@@ -160,10 +161,14 @@ export class ChatStore {
       return "";
     }
     let chat = this.chat(peer) || this.channel(peer);
-    if (chat) {
-      let count = chat.get_participants_count();
+    let count = chat && chat.get_participants_count();
+    if (chat && count) {
       let text = this.prettyInt(count);
-      text += chat instanceof ChatS ? "member" : "subscriber";
+      text +=
+        chat instanceof ChatS ||
+        (chat instanceof ChannelS && !chat.has_broadcast())
+          ? "member"
+          : "subscriber";
       text += count !== 1 ? "s" : "";
       return text;
     }
@@ -179,7 +184,7 @@ export class ChatStore {
     a = a.slice(a.findIndex(v => v !== 0));
     return a.join(",");
   }
-  photo(peer: PeerT) {
+  photo(peer: PeerT | ChannelS | UserS | ChatS) {
     let someone = this.user(peer) || this.channel(peer) || this.chat(peer);
     if (!someone) return;
     let photo = someone.get_photo();
@@ -189,17 +194,25 @@ export class ChatStore {
     return null;
   }
   inputPeer(
-    peer: PeerT
+    peer: PeerT | UserS | ChatS | ChannelS
   ): InputPeerChatS | InputPeerUserS | InputPeerChannelS | null {
-    let user = this.user(peer);
+    let user: UserS | null = null;
+    if (peer instanceof UserS) user = peer;
+    else if (peer instanceof PeerUserS) user = this.user(peer);
+
     if (user) {
       return new InputPeerUserS()
         .set_access_hash(user.get_access_hash())
         .set_user_id(user.get_id());
     }
-    let chat = this.chat(peer);
+    let chat: ChatS | null;
+    if (peer instanceof ChatS) chat = peer;
+    else chat = this.chat(peer as PeerT);
     if (chat) return new InputPeerChatS().set_chat_id(chat.get_id());
-    let channel = this.channel(peer);
+
+    let channel: ChannelS | null = null;
+    if (peer instanceof ChannelS) channel = peer;
+    else channel = this.channel(peer as PeerT);
     if (channel)
       return new InputPeerChannelS()
         .set_access_hash(channel.get_access_hash())
@@ -207,14 +220,20 @@ export class ChatStore {
     return null;
   }
 
-  name(peer: PeerT) {
-    let user = this.user(peer);
+  name(peer: PeerT | UserS | ChatS | ChannelS) {
+    let user: UserS | null = peer as UserS;
+    if (!(user instanceof UserS)) {
+      user = this.user(peer as PeerT);
+    }
     if (user) {
       return [user.get_first_name(), user.get_last_name()]
         .filter(v => v)
         .join(" ");
     }
-    let chat = this.chat(peer) || this.channel(peer);
+    let chat =
+      this.chat(peer as PeerT) ||
+      this.channel(peer as PeerT) ||
+      (peer as ChatS | ChannelS);
     if (chat) return chat.get_title();
     return "";
   }
@@ -231,7 +250,6 @@ export class ChatStore {
         .set_offset_id(this.offsetId)
         .set_limit(this.limit)
     );
-    this.loading = false;
     if (this.reqId !== reqId) return;
     if (res instanceof RpcErrorS)
       return this.handleError(res.get_error_message());
@@ -242,6 +260,15 @@ export class ChatStore {
       this.sendUpdate();
     } else if (wasError) this.sendUpdate();
   };
+  loadNext = async () => {
+    if (this.loading) return;
+    this.loading = true;
+    try {
+      await this.load();
+    } finally {
+      this.loading = false;
+    }
+  };
   sendUpdate() {
     for (let cb of this._onUpdate) cb();
   }
@@ -251,11 +278,12 @@ export class ChatStore {
       | MessagesMessagesSliceS
       | MessagesChannelMessagesS
   ) {
-    this.currentView = [];
+    // this.currentView = [];
     for (let m of messages.get_messages().get_values()) {
       if (m instanceof MessageS) {
         this.messages.set(m.get_id(), m);
         this.currentView.push(m);
+        this.offsetId = m.get_id();
       }
     }
     for (let m of messages.get_chats().get_values()) {
@@ -319,7 +347,7 @@ export class ChatStore {
     tag: HTMLElement,
     location: FileLocationT,
     dc: number,
-    peer: PeerT
+    peer: PeerT | ChannelS | UserS | ChatS
   ) {
     let ipeer = this.inputPeer(peer);
     if (!ipeer) return;
@@ -358,7 +386,7 @@ export class ChatStore {
     dc: number,
     fileToken: Uint8Array,
     location: FileLocationT,
-    peer: PeerT
+    peer: PeerT | ChannelS | UserS | ChatS
   ) {
     let key = `${location.get_local_id()}:${location.get_volume_id()}`;
     let photo = await CallUploadGetCdnFileM(

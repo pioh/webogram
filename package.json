@@ -8,10 +8,12 @@
   "scripts": {
     "gh-pages": "rm -rf docs && yarn prod && \\cp -r ./dist/* ./ && mv dist docs",
     "prod": "rm -rf dist && NODE_ENV=production yarn webpack",
-    "fix": "node ./node_modules/.bin/prettier \"./**/*.{ts,js,json,scss,css,jsx,tsx,html}\" --write && node ./node_modules/.bin/tslint --project . --fix",
+    "fix": "yarn prettier \"./**/*.{ts,js,json,scss,css,jsx,tsx,html}\" --write && node ./node_modules/.bin/tslint --parallel 24 --project . --fix",
+    "fixp": "find src/api/proto/ -name '*.ts' | parallel node_modules/.bin/tslint -p . --fix",
     "start": "yarn webpack --watch"
   },
   "devDependencies": {
+    "@mixer/parallel-prettier": "^1.0.0",
     "@types/node": "^12.12.6",
     "@types/pako": "^1.0.1",
     "@types/request": "^2.48.3",
@@ -50,6 +52,7 @@
     "@types/runes": "^0.4.1",
     "crypto-js": "^3.1.9-1",
     "global": "^4.4.0",
+    "imask": "^5.2.1",
     "jsbn": "^1.1.0",
     "jsencrypt": "travist/jsencrypt",
     "leemon": "^6.2.0",
@@ -60,6 +63,7 @@
     "sjcl": "^1.0.8",
     "ts-node": "^8.4.1",
     "tsickle-loader": "^0.5.0",
+    "tslint-etc": "^1.9.2",
     "worker-loader": "^2.0.0"
   }
 }

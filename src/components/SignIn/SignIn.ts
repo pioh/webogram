@@ -30,9 +30,9 @@ import { ITagProps, Tag } from "components/Tag/Tag";
 import { UserStore } from "components/User/UserStore";
 import { config } from "const/config";
 import { findError } from "const/errors";
+import { GetPhoneFormat } from "dictionary";
 import * as h from "lib/html";
-import { SRP } from "lib/SRP";
-import { SRPLeemon } from "lib/SRPleemon";
+import { GetWorker } from "lib/WorkerClient";
 
 import * as s from "./SignIn.scss";
 
@@ -42,6 +42,7 @@ interface ISignInProps extends ITagProps<HTMLDivElement> {
 }
 
 export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
+  worker = GetWorker();
   defer: Array<() => void> = [];
   heder = h.h1("Sign in to Telegram");
   action = h.p(
@@ -71,7 +72,13 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     hide: true
   });
   password = new Input({
-    forInput: [h.type("password")],
+    forInput: [
+      h.type("password"),
+      h.autocapitalizeOff,
+      h.autocompleteOff,
+      h.autocorrectOff,
+      h.spellcheckOff
+    ],
     forLabel: ["Password"],
     hide: true
   });
@@ -135,12 +142,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
       tag: h.div(h.className(s.root))
     });
     this.append(this.content);
-    this.countrySelect.onChange(c => {
-      if (!c) return;
-      if (this.countrySelect.isHidden()) return;
-      if (!this.phone.value) this.phone.value = c;
-      this.phone.show();
-    });
+    this.countrySelect.onChange(this.onCountryChange);
     this.phone.onChange(this.phoneOnChange);
     this.code.onChange(this.codeOnChange);
     this.password.onChange(() => this.clearErrors());
@@ -157,15 +159,36 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
         this.goToSignIn();
     }
   }
+  onCountryChange = async (c: string) => {
+    if (!c) return;
+    if (this.countrySelect.isHidden()) return;
+    if (!this.phone.value) this.phone.value = c;
+    let format = await GetPhoneFormat();
+    let found = format.get(Number(c.replace(/\D/g, "")));
+    found = found || [2, 2, 2, 2, 2, 2];
+    // console.log(found);
+    let mask = "+" + found.map(v => this.repeat(v, "0")).join(" ");
+    this.phone.doMask(mask);
+    // console.log(mask);
+    this.phone.show();
+  };
+  repeat(n: number, c: string) {
+    let out = "";
+    for (let i = 0; i < n; i++) out += c;
+    return out;
+  }
   destroy() {
     this.deferStep();
     this.deferStep = () => {};
     this.defer.map(v => v());
     this.defer = [];
   }
+  get phoneValue() {
+    return this.phone.value ? `+${this.phone.value}` : "";
+  }
   onResendCode = async () => {
     this.resendCode.remove();
-    let phone = String(this.phone.value);
+    let phone = String(this.phoneValue);
     setTimeout(() => this.code.tag.after(this.resendCode.mount()), 30000);
     let res = await CallAuthResendCodeM(
       this.props.apiInoker.connection(this.props.userStore().userDC),
@@ -177,7 +200,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
   };
   phoneOnChange = () => {
     this.clearErrors();
-    let v = String(this.phone.value || "");
+    let v = String(this.phoneValue || "");
     if (v.length > 7) this.buttonNext.show();
     else this.buttonNext.hide();
   };
@@ -191,16 +214,19 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     }
     if (!code) return;
     code = String(code);
-    if (code.length < this.codeLength || !this.codeLength) return;
+    if (code.length < this.codeLength && this.codeLength) return;
     this.signIn(code);
   };
   goToSignIn = () => {
     this.deferStep();
     this.countrySelect.show();
     if (this.countrySelect.code) {
-      if (!this.phone.value) this.phone.value = this.countrySelect.code;
+      if (!this.phoneValue) this.phone.value = this.countrySelect.code;
       this.phone.show();
     }
+    this.heder.tag.innerText = "Sign in to Telegram";
+    this.action.tag.innerText =
+      "Please confirm your country and\nenter your phone number";
     this.phoneOnChange();
     this.deferStep = () => {
       this.countrySelect.hide();
@@ -215,9 +241,9 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     if (!this.name.isHidden()) this.sendSignUp();
   }
   async sendCode() {
-    if (!this.phone.value) return;
+    if (!this.phoneValue) return;
     this.clearErrors();
-    let phone = String(this.phone.value);
+    let phone = String(this.phoneValue);
     let res = await CallAuthSendCodeM(
       this.props.apiInoker,
       new AuthSendCodeM()
@@ -229,7 +255,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
   }
   onAuthSentCode(res: AuthSentCodeS | RpcErrorS, phone: string, dc: number) {
     this.props.userStore().userDC = dc;
-    if (String(this.phone.value) !== phone) return;
+    if (String(this.phoneValue) !== phone) return;
 
     if (res instanceof RpcErrorS) {
       this.setError(this.phone, res.get_error_message());
@@ -256,10 +282,14 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
   goToCode() {
     this.clearErrors();
     this.deferStep();
+    let listen = h.onClick(this.goToSignIn);
+    this.heder.listen(listen);
     this.deferStep = () => {
       this.code.hide();
+      this.heder.unlisten(listen);
       this.resendCode.hide();
     };
+
     this.code.show();
     this.resendCode.show();
     this.heder.tag.innerText = localStorage.getItem("phone") || "";
@@ -280,11 +310,11 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     }
   }
   async signIn(code: string) {
-    if (!this.sentCode || !this.phone.value || !code) return;
+    if (!this.sentCode || !this.phoneValue || !code) return;
     console.log(
       code,
       this.sentCode.get_phone_code_hash(),
-      String(this.phone.value)
+      String(this.phoneValue)
     );
     this.clearErrors();
     let authorization = await CallAuthSignInM(
@@ -292,7 +322,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
       new AuthSignInM()
         .set_phone_code(code)
         .set_phone_code_hash(this.sentCode.get_phone_code_hash())
-        .set_phone_number(String(this.phone.value))
+        .set_phone_number(String(this.phoneValue))
     );
     if (String(this.code.value) !== code) return;
     if (authorization instanceof RpcErrorS) {
@@ -376,7 +406,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     let g_a: Uint8Array;
     let passphraseKey = new TextEncoder().encode(password);
     try {
-      [M1, g_a] = await SRPLeemon(
+      [M1, g_a] = await this.worker.srp(
         passphraseKey,
         alg.get_g(),
         alg.get_p(),
@@ -420,10 +450,10 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     let authorization = await CallAuthSignUpM(
       this.props.apiInoker,
       new AuthSignUpM()
-        .set_first_name(firstName) // TODO
+        .set_first_name(firstName)
         .set_last_name(lastName)
         .set_phone_code_hash(this.sentCode!.get_phone_code_hash())
-        .set_phone_number(String(this.phone.value))
+        .set_phone_number(String(this.phoneValue))
     );
     if (authorization instanceof RpcErrorS) {
       this.setError(this.name, authorization.get_error_message());

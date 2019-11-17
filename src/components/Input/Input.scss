@@ -35,6 +35,7 @@
   caret-color: #4ea4f6;
   width: 100%;
   border: 1px solid #dadce0;
+
   border-radius: 10px;
   padding: 0 16px;
   outline: none;
@@ -55,6 +56,10 @@
   margin-top: -8px;
   right: 17px;
   pointer-events: none;
+}
+
+:not(.focus):not(.forceFocus) > input:hover:not(:focus) {
+  border-color: #000;
 }
 
 .focus,
@@ -89,13 +94,15 @@ label.error {
   display: none;
 }
 
-.input[type="password"] {
+.root input[type="password"] {
   letter-spacing: 1px;
   font-size: 30px;
 }
 
 .grey {
-  margin: 0 9px;
+  margin: 0;
+  margin-left: 14px;
+  margin-right: 6px;
   height: 100%;
   > input {
     background: rgba(112, 117, 121, 0.08);

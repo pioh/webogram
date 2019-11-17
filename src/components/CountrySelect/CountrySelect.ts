@@ -1,7 +1,6 @@
 import { Input } from "components/Input/Input";
 import { ITagProps, Tag } from "components/Tag/Tag";
 import { GetCountry, GetEmoji, ICountry } from "dictionary";
-import { emojiSupport } from "lib/emojiSupport";
 import * as h from "lib/html";
 import { throttle } from "lib/throttle";
 

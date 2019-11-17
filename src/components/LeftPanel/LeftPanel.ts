@@ -1,7 +1,5 @@
 import { ApiInvoker } from "api/ApiInvoker";
 import {
-  DialogFolderS,
-  DialogS,
   UserStatusEmptyS,
   UserStatusLastMonthS,
   UserStatusLastWeekS,
@@ -41,15 +39,48 @@ export class LeftPanel extends Tag<HTMLDivElement, ILeftPanelProps> {
   active: Tag<any> | null = null;
 
   redraw = () => {
-    this.chats.tag.innerText = "";
-    for (let dialog of this.props.chatListStore.dialogs) {
-      let draw = this.drawDialog(dialog);
-      if (draw) this.chats.append(draw);
+    // this.chats.tag.innerText = "";
+    let chats = this.chats.tag.querySelectorAll<HTMLDivElement>(`.${s.item}`);
+    let map = new Map<string, HTMLDivElement>();
+    chats.forEach(el => {
+      map.set(el.id, el);
+    });
+    let j = 0;
+    let prev: HTMLDivElement | null = null;
+    for (let i = 0; i < this.props.chatListStore.order.length; i++, j++) {
+      let id = this.props.chatListStore.order[i];
+      let sid = `chat:${id}`;
+      let found = map.get(sid);
+      if (!found) {
+        let tag = this.drawDialog(id, sid);
+        if (!tag) {
+          j--;
+          continue;
+        }
+        found = tag.tag;
+      } else {
+        this.updateDialog(found, id, sid);
+      }
+      // let dialog = this.props.chatListStore.
+
+      if (chats[j]) {
+        if (chats[j].id !== sid) {
+          chats[j].remove();
+        }
+      } else {
+        if (prev) prev.after(found);
+        else this.chats.tag.prepend(found);
+      }
+      prev = found;
     }
   };
-  drawDialog(dialog: DialogS | DialogFolderS) {
-    let peer = dialog.get_peer();
-    let chat = this.props.chatListStore.getChatStore(dialog);
+  drawDialog(id: number, sid: string) {
+    let peer =
+      this.props.chatListStore.chats.get(id) ||
+      this.props.chatListStore.users.get(id);
+    if (!peer) return null;
+
+    let chat = this.props.chatListStore.getChatStore(peer);
     let ipeer = chat.inputPeer(peer);
     if (!ipeer) return null;
 
@@ -61,6 +92,7 @@ export class LeftPanel extends Tag<HTMLDivElement, ILeftPanelProps> {
     let photoDiv = h.div(h.className(s.photo));
     let div = h
       .div(
+        h.id(sid),
         h.className(s.item),
         photoDiv,
         h.div(
@@ -71,7 +103,7 @@ export class LeftPanel extends Tag<HTMLDivElement, ILeftPanelProps> {
         h.onClick(() => {
           if (this.active) this.active.removeClass(s.active);
           this.active = div.addClass(s.active);
-          this.props.chatListStore.openDialog(dialog);
+          this.props.chatListStore.openDialog(id);
         })
       )
       .wave();
@@ -79,24 +111,27 @@ export class LeftPanel extends Tag<HTMLDivElement, ILeftPanelProps> {
     photoDiv.append(photoText);
     photoDiv.tag.style.backgroundColor = chat.photoColor(photoText);
 
-    let message = this.props.chatListStore.messages.get(
-      dialog.get_top_message()
-    );
+    let message = this.props.chatListStore.messages.get(id);
     if (message) {
       messageText.append(message.get_message());
       messageTime.append(chat.messageDate(message));
     }
     let photo = chat.photo(peer);
-    if (photo)
-      chat.loadPhoto(
-        photoDiv.tag,
-        photo.get_photo_small(),
-        photo.get_dc_id(),
-        peer
-      );
+    if (photo) {
+      requestAnimationFrame(() => {
+        chat.loadPhoto(
+          photoDiv.tag,
+          photo!.get_photo_small(),
+          photo!.get_dc_id(),
+          peer!
+        );
+      });
+    }
 
     return div;
   }
+
+  updateDialog(div: HTMLDivElement, id: number, sid: string) {}
 
   statusToText(
     status:

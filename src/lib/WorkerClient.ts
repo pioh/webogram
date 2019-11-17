@@ -1,8 +1,8 @@
-import CryptoWorker from "crypto.worker";
+let CryptoWorker = import("crypto.worker");
 
 import { ILong } from "./ILong";
 
-const workers: Worker[] = [];
+const workers: Array<Promise<Worker>> = [];
 let nextID = 0;
 let resolvers = new Map<number, (...args: any[]) => void>();
 let nextWorkerIndex = 0;
@@ -19,17 +19,21 @@ export type WorkerMethod =
   | "aesEncrypt"
   | "verifyDhParams"
   | "rsaEncrypt"
-  | "aesDecrypt";
+  | "aesDecrypt"
+  | "srp"
+  | "ungzip";
 
-export class WorkerClient {
+class WorkerClient {
   constructor() {
     while (workers.length < 4) {
-      let worker = new CryptoWorker();
-      worker.addEventListener("message", (msg: any) => {
-        let resolve = resolvers.get(msg.data.id);
-        resolvers.delete(msg.data.id);
-        if (resolve) resolve(msg.data);
-      });
+      let worker = CryptoWorker.then(C => new C.default());
+      worker.then(w =>
+        w.addEventListener("message", (msg: any) => {
+          let resolve = resolvers.get(msg.data.id);
+          resolvers.delete(msg.data.id);
+          if (resolve) resolve(msg.data);
+        })
+      );
 
       workers.push(worker);
     }
@@ -73,7 +77,7 @@ export class WorkerClient {
     for (let worker of workers) {
       p.push(
         this.fetch<{ p: ArrayBuffer; q: ArrayBuffer }>(
-          worker,
+          await worker,
           "pqPrimeFactorization",
           { pq }
         )
@@ -89,19 +93,27 @@ export class WorkerClient {
     y: Uint8Array,
     m: Uint8Array
   ): Promise<Uint8Array> {
-    let res = await this.fetch<{ a: ArrayBuffer }>(nextWorker(), "modPow", {
-      x,
-      y,
-      m
-    });
+    let res = await this.fetch<{ a: ArrayBuffer }>(
+      await nextWorker(),
+      "modPow",
+      {
+        x,
+        y,
+        m
+      }
+    );
 
     return new Uint8Array(res.a);
   }
 
   async sha256Hash(data: Uint8Array): Promise<Uint8Array> {
-    let res = await this.fetch<{ d: ArrayBuffer }>(nextWorker(), "sha256Hash", {
-      d: data
-    });
+    let res = await this.fetch<{ d: ArrayBuffer }>(
+      await nextWorker(),
+      "sha256Hash",
+      {
+        d: data
+      }
+    );
 
     return new Uint8Array(res.d);
   }
@@ -111,19 +123,27 @@ export class WorkerClient {
     aesKey: Uint8Array,
     aesIv: Uint8Array
   ): Promise<Uint8Array> {
-    let res = await this.fetch<{ d: ArrayBuffer }>(nextWorker(), "aesEncrypt", {
-      d: data,
-      k: aesKey,
-      i: aesIv
-    });
+    let res = await this.fetch<{ d: ArrayBuffer }>(
+      await nextWorker(),
+      "aesEncrypt",
+      {
+        d: data,
+        k: aesKey,
+        i: aesIv
+      }
+    );
 
     return new Uint8Array(res.d);
   }
   async rsaEncrypt(finger: ILong, data: Uint8Array): Promise<Uint8Array> {
-    let res = await this.fetch<{ d: ArrayBuffer }>(nextWorker(), "rsaEncrypt", {
-      f: finger,
-      d: data
-    });
+    let res = await this.fetch<{ d: ArrayBuffer }>(
+      await nextWorker(),
+      "rsaEncrypt",
+      {
+        f: finger,
+        d: data
+      }
+    );
 
     return new Uint8Array(res.d);
   }
@@ -132,22 +152,68 @@ export class WorkerClient {
     aesKey: Uint8Array,
     aesIv: Uint8Array
   ): Promise<Uint8Array> {
-    let res = await this.fetch<{ d: ArrayBuffer }>(nextWorker(), "aesDecrypt", {
-      d: data,
-      k: aesKey,
-      i: aesIv
-    });
+    let res = await this.fetch<{ d: ArrayBuffer }>(
+      await nextWorker(),
+      "aesDecrypt",
+      {
+        d: data,
+        k: aesKey,
+        i: aesIv
+      }
+    );
 
     return new Uint8Array(res.d);
   }
   async verifyDhParams(dh: Uint8Array, ga: Uint8Array): Promise<boolean> {
-    let res = await this.fetch<{ r: boolean }>(nextWorker(), "verifyDhParams", {
-      dh,
-      ga
-    });
+    let res = await this.fetch<{ r: boolean }>(
+      await nextWorker(),
+      "verifyDhParams",
+      {
+        dh,
+        ga
+      }
+    );
 
     return res.r;
   }
+  async ungzip(d: Uint8Array): Promise<Uint8Array> {
+    let res = await this.fetch<{ d: ArrayBuffer }>(
+      await nextWorker(),
+      "ungzip",
+      {
+        d
+      }
+    );
+    return new Uint8Array(res.d);
+  }
+  async srp(
+    password: Uint8Array,
+    g_number: number,
+    p: Uint8Array,
+    salt1: Uint8Array,
+    salt2: Uint8Array,
+    g_b: Uint8Array
+  ): Promise<[Uint8Array, Uint8Array]> {
+    let res = await this.fetch<{ M1: ArrayBuffer; A: ArrayBuffer }>(
+      await nextWorker(),
+      "srp",
+      {
+        password,
+        g_number,
+        p,
+        salt1,
+        salt2,
+        g_b
+      }
+    );
+
+    return [new Uint8Array(res.M1), new Uint8Array(res.A)];
+  }
+}
+let worker: WorkerClient | null = null;
+export function GetWorker() {
+  if (worker === null) worker = new WorkerClient();
+  return worker;
 }
 
 // worker.onmessage = event => {};

@@ -127,6 +127,11 @@ export const p = HtmlTag("p");
 export const br = HtmlTag("br");
 export const label = HtmlTag("label");
 export const button = HtmlTag("button");
+export const b = HtmlTag("b");
+export const pre = HtmlTag("pre");
+export const strike = HtmlTag("strike" as "div");
+export const u = HtmlTag("u");
+export const blockquote = HtmlTag("blockquote");
 
 export const id = Attr("id");
 export const className = Attr("class");
@@ -137,13 +142,16 @@ export const htmlFor = Attr("for");
 export const role = Attr("role");
 export const tabindex = Attr("tabindex");
 export const type = Attr("type");
+export const href = Attr("href");
 export const src = Attr("src");
+
 export const contenteditable = Attr("contenteditable")("true");
 
 export const autocomplete = Attr("autocomplete");
 export const autocorrect = Attr("autocorrect");
 export const autocapitalize = Attr("autocapitalize");
 export const spellcheck = Attr("spellcheck");
+export const blank = Attr("target")("_blank");
 
 export const autocompleteOff = autocomplete("off");
 export const autocorrectOff = autocorrect("off");

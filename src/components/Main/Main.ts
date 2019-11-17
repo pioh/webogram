@@ -1,6 +1,7 @@
 import { ApiInvoker } from "api/ApiInvoker";
 import { Chat } from "components/Chat/Chat";
 import { LeftPanel } from "components/LeftPanel/LeftPanel";
+import { MediaStore } from "components/Message/MediaStore";
 import { NoChat } from "components/NoChat/NoChat";
 import { RightPanel } from "components/RightPanel/RightPanel";
 import { ITagProps, Tag } from "components/Tag/Tag";
@@ -17,6 +18,7 @@ interface IMainProps extends ITagProps<HTMLDivElement> {
 }
 
 export class Main extends Tag<HTMLDivElement, IMainProps> {
+  mediaStore = new MediaStore({ apiInvoker: this.props.apiInoker });
   defer: Array<() => void> = [];
   chatListStore = new ChatListStore({
     apiInvoker: this.props.apiInoker,
@@ -76,12 +78,16 @@ export class Main extends Tag<HTMLDivElement, IMainProps> {
       return;
     }
     this.removeContent();
-    let chatStore = this.chatListStore.getChatStore(dialog);
-
+    // this.chatListStore.idFromPeer(dialog)
+    let chatStore = this.chatListStore.chatStores.get(dialog);
+    if (!chatStore) return;
+    chatStore.init();
     this.chat = new Chat({
       apiInoker: this.props.apiInoker,
       chatListStore: this.chatListStore,
-      chatStore
+      chatStore,
+      mediaStore: this.mediaStore,
+      userStore: this.props.userStore
     });
     this.leftPanel.tag.after(this.chat.mount());
   };

@@ -1,3 +1,5 @@
+import IMask from "imask";
+
 import { ITagProps, Tag } from "components/Tag/Tag";
 import * as h from "lib/html";
 
@@ -9,13 +11,13 @@ export interface IInputProps extends ITagProps<HTMLDivElement> {
   forLabel?: Array<h.TagProp<HTMLLabelElement>>;
   iconLeft?: Tag<HTMLElement>;
   iconRight?: Tag<HTMLElement>;
-  mask?: (value: string) => string;
   number?: boolean;
   value?: string | number | null;
   theme?: Exclude<keyof typeof s, "default">;
 }
 
 export class Input extends Tag<HTMLDivElement, IInputProps> {
+  mask: IMask.InputMask<any> | null = null;
   private input = h.input(
     h.autocapitalizeOff,
     h.autocompleteOff,
@@ -25,6 +27,7 @@ export class Input extends Tag<HTMLDivElement, IInputProps> {
     h.onBlur(() => this.removeClass(s.focus)),
     this.props.forInput
   );
+  _onChange: Array<(val: string | number | null) => void> = [];
   private label = h.label(this.props.forLabel);
   private error = h.label(h.className(s.error));
 
@@ -54,6 +57,18 @@ export class Input extends Tag<HTMLDivElement, IInputProps> {
     this.label.tag.htmlFor = this.input.tag.id;
     this.error.tag.htmlFor = this.input.tag.id;
   }
+  doMask = (mask: string) => {
+    if (this.mask) this.mask.updateOptions({ mask });
+    else {
+      this.mask = IMask(this.input.tag, {
+        mask
+      });
+      this.mask.on("accept", () => {
+        this.processValue();
+        if (this.isComplete()) for (let cb of this._onChange) cb(this.value);
+      });
+    }
+  };
   getBoundingClientRect() {
     return this.input.tag.getBoundingClientRect();
   }
@@ -87,11 +102,14 @@ export class Input extends Tag<HTMLDivElement, IInputProps> {
     return value;
   }
   isComplete() {
-    return this.input.tag.value === this.maskValue(this.value);
+    // return this.input.tag.value === this.maskValue(this.value);
+    return true;
   }
   get value(): string | number | null {
     return this.unmaskValue(
-      this.maskValue(this.unmaskValue(this.input.tag.value))
+      this.maskValue(
+        this.unmaskValue(this.mask ? this.mask.value : this.input.tag.value)
+      )
     );
   }
   set value(value: string | number | null) {
@@ -119,6 +137,7 @@ export class Input extends Tag<HTMLDivElement, IInputProps> {
     else this.removeClass(s.withValue);
   };
   onChange(cb: (val: string | number | null) => void) {
+    this._onChange.push(cb);
     this.input.listen(
       h.onInput<HTMLInputElement>(() => {
         if (this.isComplete()) cb(this.value);

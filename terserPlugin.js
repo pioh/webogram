@@ -5,7 +5,7 @@ module.exports.terserPlugin = new TerserPlugin({
 
   parallel: true,
   cache: true,
-  sourceMap: false,
+  sourceMap: true,
   terserOptions: {
     warnings: false,
     // ecma: 5,

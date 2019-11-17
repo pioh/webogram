@@ -12,9 +12,8 @@ import { bytesXor } from "lib/bytesXor";
 import { GetRandomValues } from "lib/GetRandomValues";
 import { ILong } from "lib/ILong";
 import { nextRandomInt } from "lib/nextRandomInt";
-import { ungzip } from "lib/pako.js";
 import { Sha1 } from "lib/Sha";
-import { WorkerClient } from "lib/WorkerClient";
+import { GetWorker } from "lib/WorkerClient";
 
 import { ApiInvoker } from "./ApiInvoker";
 import { ByteBuffer } from "./ByteBuffer";
@@ -22,7 +21,6 @@ import {
   AuthExportAuthorizationM,
   AuthImportAuthorizationM,
   CallAuthExportAuthorizationM,
-  CallAuthImportAuthorizationM,
   HelpGetNearestDcM,
   InitConnectionM,
   InvokeWithLayerM,
@@ -66,6 +64,7 @@ export interface IConnectionProps {
   dc: number;
 }
 
+let T = () => Math.ceil(performance.now() / 10) / 100;
 const ID = (id: ILong) =>
   id[0]
     .toString(16)
@@ -87,7 +86,7 @@ export interface IWaiter extends MethodWrap {
 
 export class Connection {
   props: IConnectionProps;
-  private worker = new WorkerClient();
+  private worker = GetWorker();
 
   private callbacks: Array<() => Promise<void> | void> = [];
 
@@ -137,6 +136,7 @@ export class Connection {
       this.initing = false;
     }
   }
+
   async ready() {
     if (this.inited) return;
 
@@ -166,9 +166,9 @@ export class Connection {
     let responseBuffer = new ByteBuffer(
       new Uint32Array(await response.arrayBuffer())
     );
-    let auth_key_id = responseBuffer.readLong();
+    responseBuffer.readLong();
     let serverMsgID = responseBuffer.readLong();
-    let msg_len = responseBuffer.readInt();
+    responseBuffer.readInt();
 
     this.props.timeStore.syncWithServer(clientMsgID, serverMsgID, ping);
 
@@ -198,7 +198,7 @@ export class Connection {
 
     let request = wrap.method;
     if (!this.connectionInited && !(wrap.method instanceof HttpWaitM)) {
-      if (this.isDebug) console.log("send initConnection");
+      if (this.isDebug) console.log(T(), "send initConnection");
       request = new InvokeWithLayerM().set_layer(config.apiLayer).set_query(
         new InitConnectionM()
           .set_api_id(config.apiID)
@@ -214,14 +214,14 @@ export class Connection {
 
     messages[0].set_body(request);
     let wait = wrap.method instanceof HttpWaitM;
-    if (!this.longPoolSent) {
-      wait = true;
+    if (!wait) {
+      // wait = true;
       messages.push(
         this.nextMsg("http_wait", false).set_body(
           new HttpWaitM()
-            .set_max_delay(500)
-            .set_max_wait(5000)
-            .set_wait_after(150)
+            .set_max_delay(5)
+            .set_max_wait(5)
+            .set_wait_after(5)
         )
       );
     }
@@ -232,17 +232,18 @@ export class Connection {
     if (!(wrap.method instanceof HttpWaitM)) {
       setTimeout(() => {
         this.checkRpcStatus(wrapID);
-      }, 1000);
+      }, 10000);
     }
     if (this.acks.length) {
-      messages.push(
+      messages.unshift(
         this.nextMsg("acks", false).set_body(
           new MsgsAckS().set_msg_ids(
             new VectorS<ProtoLong>().set_values(this.acks)
           )
         )
       );
-      console.log("SEND acks", this.acks);
+      // console.log("send acks", this.acks.map(id => ID(id)).join(" "));
+      this.lastAcksTIme = Date.now();
       this.acks = [];
     }
     let message =
@@ -254,7 +255,7 @@ export class Connection {
             )
           );
 
-    if (this.isDebug) console.log("send " + wrap.name);
+    // if (this.isDebug) console.log("send " + wrap.name);
 
     await this.sendMessage(wrap.name, message, wait);
   }
@@ -295,7 +296,7 @@ export class Connection {
     });
     ping = performance.now() / 1000 - ping;
 
-    if (this.isDebug) console.log("sent " + name);
+    // if (this.isDebug) console.log("sent " + name);
     this.connectionInited = true;
     let data = await this.sendOnResponse(
       response,
@@ -317,8 +318,11 @@ export class Connection {
     }
     m.set_msg_id(this.props.timeStore.generateMessageID());
     m.set_seqno(this.seq_no);
-    if (this.isDebug)
-      console.log(`msg id for ${name} ${ID(m.get_msg_id())} ${m.get_msg_id()}`);
+    if (this.isDebug && main)
+      console.log(
+        T(),
+        `msg id for ${name} ${ID(m.get_msg_id())} ${m.get_msg_id()}`
+      );
     return m;
   }
 
@@ -349,7 +353,7 @@ export class Connection {
     let session = decryptedBuffer.readU8A(2);
     assertEquals(this.session, session);
     let res = new MessageT()._read(decryptedBuffer, true);
-    console.log("RESPONSE", res);
+    // console.log("RESPONSE", res);
     if (ping) {
       this.props.timeStore.syncWithServer(
         message.get_msg_id(),
@@ -357,9 +361,39 @@ export class Connection {
         ping
       );
     }
+    // console.log(T(), "receive", ID(res.get_msg_id()));
+    // this.acks.push(res.get_msg_id());
     await this.processMessage(res, name, message, wait);
+    this.processAcks();
     return res;
   }
+  lastAcksTIme = 0;
+  processAcks = async () => {
+    if (!this.acks.length) return;
+    if (Date.now() - this.lastAcksTIme < 1000) {
+      setTimeout(this.processAcks, 1000 - (Date.now() - this.lastAcksTIme));
+      return;
+    }
+    this.lastAcksTIme = Date.now();
+    this.send({
+      name: "acks",
+      method: new HttpWaitM()
+        .set_max_delay(5)
+        .set_max_wait(5)
+        .set_wait_after(5)
+    });
+    // this.sendMessage(
+    //   "acks",
+    //   this.nextMsg("acks", false).set_body(
+    //     new MsgsAckS().set_msg_ids(
+    //       new VectorS<ProtoLong>().set_values(this.acks)
+    //     )
+    //   ),
+    //   true
+    // );
+    // console.log("send acks", this.acks.map(ID).join(" "));
+    // this.acks = [];
+  };
   async processMessage(
     m: MessageT | IStruct,
     name: string,
@@ -369,7 +403,9 @@ export class Connection {
     let body = m;
     if (m instanceof MessageT) {
       body = m.get_body();
-      this.acks.push(m.get_msg_id());
+      if (m.get_seqno() % 2) {
+        this.acks.push(m.get_msg_id());
+      }
     }
 
     if (body instanceof OneOf) body = body.unwrap();
@@ -387,12 +423,12 @@ export class Connection {
       }
     } else if (body instanceof GzipPackedS) {
       let data = body.get_packed_data();
-      let buf = new ByteBuffer(ungzip(data));
+      let buf = new ByteBuffer(await this.worker.ungzip(data));
       let next = new OneOf()._read(buf);
       await this.processMessage(next, name, req, wait);
     } else if (body instanceof NewSessionCreatedS) {
-      if (this.isDebug) console.log("XNewTSessionTCreated");
-      this.connectionInited = false;
+      // if (this.isDebug) console.log(T(), "XNewTSessionTCreated");
+      // this.connectionInited = false;
       this.serverSalt = new Uint8Array(
         new Uint32Array(body.get_server_salt()).buffer
       );
@@ -412,17 +448,30 @@ export class Connection {
     } else {
       if ("get_msg_id" in body) {
         let id = (body as any).get_msg_id() as ILong;
+        // if (Array.isArray(id)) this.acks.push(id);
         if (Array.isArray(id) && this.sending.has(id.join())) {
           let w = this.sending.get(id.join())!;
           this.sending.delete(id.join());
           if (this.isDebug)
             console.log(
+              T(),
               "receive " + w.name,
               Object.getPrototypeOf(body).constructor.name,
               body
             );
           (w as any).dc = this.props.dc;
           if (w.cb) w.cb(body);
+          return;
+        }
+      }
+      if (typeof body === "object" && body && body.constructor) {
+        let id = (body.constructor as any)._id;
+        let arr = this.props.apiInvoker._onMessage.get(id);
+        if (arr && arr.size) {
+          // console.log(body);
+          for (let foo of arr) {
+            foo(body);
+          }
           return;
         }
       }
@@ -440,7 +489,7 @@ export class Connection {
     let instance = r.get_result();
     if (instance instanceof GzipPackedS) {
       let data = instance.get_packed_data();
-      let buf = new ByteBuffer(ungzip(data));
+      let buf = new ByteBuffer(await this.worker.ungzip(data));
       instance = new OneOf()._read(buf);
     }
     if (instance instanceof OneOf) instance = instance.unwrap();
@@ -459,6 +508,7 @@ export class Connection {
       }
       if (this.isDebug)
         console.log(
+          T(),
           "receive " + w.name,
           Object.getPrototypeOf(instance).constructor.name,
           instance
@@ -475,7 +525,7 @@ export class Connection {
           });
           return;
         }
-        if (err.type === "AUTH_KEY_UNREGISTERED") {
+        if (err.type.startsWith("AUTH_KEY")) {
           if (this.user.isLoggedIn) {
             if (this.user.userDC !== this.props.dc) {
               await this.reimportAuth();
@@ -488,7 +538,10 @@ export class Connection {
               });
               return;
             } else {
+              this.clearSession();
+              this.inited = false;
               this.user.setIsLoggedIn(false);
+              this.initConnection();
             }
           }
         }
@@ -511,6 +564,17 @@ export class Connection {
           instance.get_error_message()
         );
       return;
+    }
+    if (typeof instance === "object" && instance && instance.constructor) {
+      let id = (instance.constructor as any)._id;
+      let arr = this.props.apiInvoker._onMessage.get(id);
+      if (arr && arr.size) {
+        // console.log(instance);
+        for (let foo of arr) {
+          foo(instance);
+        }
+        return;
+      }
     }
     console.error(
       "unexpected rpc result for " + ID(id),
@@ -573,13 +637,23 @@ export class Connection {
         this.authKeyID = new Uint8Array(JSON.parse(authKeyIDS));
         this.authKey = new Uint8Array(JSON.parse(authKeyS));
         this.serverSalt = new Uint8Array(JSON.parse(serverSaltS));
-        console.log("read session from storage");
+        console.log(T(), "read session from storage");
         return true;
       }
     } catch (e) {
       console.error("failed read session from local storage", e.stack);
     }
     return false;
+  }
+  clearSession() {
+    this.connectionInited = false;
+    this.authKey = new Uint8Array();
+    this.authKeyID = new Uint8Array();
+    this.serverSalt = new Uint8Array();
+    GetRandomValues(this.session);
+    localStorage.removeItem(`authKeyID${this.props.dc}`);
+    localStorage.removeItem(`authKey${this.props.dc}`);
+    localStorage.removeItem(`serverSalt${this.props.dc}`);
   }
   writeSessionToStorage() {
     // localStorage.setItem("session", JSON.stringify([...this.session]));
@@ -595,7 +669,7 @@ export class Connection {
       `serverSalt${this.props.dc}`,
       JSON.stringify([...this.serverSalt])
     );
-    console.log("write session from storage");
+    // console.log(T(), "write session to storage");
   }
   async ping() {
     let id = [...GetRandomValues(new Int32Array(2))] as ILong;
@@ -625,7 +699,7 @@ export class Connection {
   private async initConnection() {
     let readSession = this.readSessionFromStorage();
 
-    if (!readSession || !(await this.getNearestDC())) {
+    if (!readSession) {
       for (let i = 0; i < 4; i++) {
         try {
           await this.fetchPQ();
@@ -650,7 +724,9 @@ export class Connection {
     if (!this.inited) {
       throw new Error("failed init connection");
     }
-    this.longPool();
+    setTimeout(() => {
+      this.longPool();
+    }, 1000);
 
     while (this.callbacks.length) {
       if (!this.inited) return;
@@ -660,9 +736,13 @@ export class Connection {
   // longPoolID = "";
   longPoolSent = false;
   longPoolTime = 0;
-  longPoolDelay = 1000;
+  longPoolDelay = 100;
   private async longPool(force = false) {
     if (this.longPoolSent && !force) return;
+    if (this.props.dc !== this.props.apiInvoker.dc) {
+      this.longPoolSent = false;
+      return;
+    }
     this.longPoolSent = true;
     this.longPoolTime = Date.now();
     // if (!force && this.longPoolID) return;
@@ -687,7 +767,7 @@ export class Connection {
     }
   }
   private async fetchPQ() {
-    if (this.isDebug) console.log("fetch pq");
+    if (this.isDebug) console.log(T(), "fetch pq");
     let req = new ByteBuffer();
     this.writeTempHeader(req);
     req.writeStruct(MethodReqPq, [this.nonce]);
@@ -722,7 +802,12 @@ export class Connection {
         userConn,
         new AuthExportAuthorizationM().set_dc_id(this.props.dc)
       );
-      if (auth instanceof RpcErrorS) return;
+      if (auth instanceof RpcErrorS) {
+        this.clearSession();
+        this.inited = false;
+        this.initConnection();
+        return;
+      }
       let bytes = auth.get_bytes();
       let id = auth.get_id();
       let response = await new Promise(async cb => {
@@ -749,7 +834,7 @@ export class Connection {
   }
 
   private async fetchDHParams() {
-    if (this.isDebug) console.log("fetchDHParams");
+    if (this.isDebug) console.log(T(), "fetchDHParams");
     let dataWithHash = new ByteBuffer();
     dataWithHash.padding(5); // for sha1
     dataWithHash.writeStruct(TypePQInnerData, [
@@ -801,7 +886,7 @@ export class Connection {
   }
 
   private async decryptServerDHData(encryptedData: Uint8Array) {
-    if (this.isDebug) console.log("decryptServerDHData");
+    if (this.isDebug) console.log(T(), "decryptServerDHData");
     let [
       shaServerNewNonce,
       shaNewNewNonce,
@@ -846,7 +931,7 @@ export class Connection {
   }
 
   private async mtpSendSetClientDhParams() {
-    if (this.isDebug) console.log("mtpSendSetClientDhParams");
+    if (this.isDebug) console.log(T(), "mtpSendSetClientDhParams");
     let b = GetRandomValues(new Uint8Array(2048 / 8));
     let gb = await this.worker.modPow(
       bytesFromHex(this.g.toString(16)),

@@ -87,7 +87,7 @@ export class Tag<T extends HTMLElement, P extends ITagProps<T> = ITagProps<T>> {
     }
     return this;
   }
-  unlisten(...listeners: Array<h.Listener<keyof HTMLElementEventMap, T>>) {
+  unlisten(...listeners: Array<h.Listener<any, T>>) {
     this.listeners = this.listeners.filter(l => {
       if (listeners.find(r => r === l || (r.c === l.c && r.n === l.n))) {
         return false;
