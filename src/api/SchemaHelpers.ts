@@ -128,39 +128,52 @@ export function r<T>(id: number, name: string, props: () => any[]): T {
           void 0
         );
       }
-      // if (isVector) {
-      //   buf.writeInt(this._values.length);
-      //   for (let i = 0; i < this._values.length; i++) {
-      //     let val = this._values[i] as any;
-      //     if (Array.isArray(val)) buf.writeLong(val as ProtoLong);
-      //     else if (typeof val === "number") buf.writeInt(val);
-      //     else if (val instanceof Uint8Array) buf.writeBytes(val);
-      //     else if (typeof val === "string") buf.writeString(val);
-      //     else val._write(buf);
-      //   }
-      // }
+      if (isVector) {
+        buf.writeInt(this._values.length);
+        for (let i = 0; i < this._values.length; i++) {
+          let val = this._values[i] as any;
+          if (Array.isArray(val)) buf.writeLong(val as ProtoLong);
+          else if (typeof val === "number") buf.writeInt(val);
+          else if (val instanceof Uint8Array) buf.writeBytes(val);
+          else if (typeof val === "string") buf.writeString(val);
+          else val._write(buf);
+        }
+      }
       if (isMessage) {
         buf.writeIntAt((buf.size - size - 4) * 4, size + 3);
       }
       return this;
     };
     ctor.prototype._read = function(this: any, buf: ByteBuffer, noId: boolean) {
-      if (!noId && !isMessage) buf.readInt();
-      for (let i = 0; i < p.length; i += 2) {
-        this._values[i / 2] = (p[i + 1] as ReadWriter).read(
-          i / 2,
-          buf,
-          this._values,
-          void 0
-        );
+      if (!noId && !isMessage) {
+        let _id = buf.readUInt();
+        if (id !== _id) panic(_id.toString(16));
       }
-      // if (isVector) {
-      //   let len = buf.readInt();
-      //   for (let i = 0; i < len; i++) {
-      //     let item = new OneOf()._read(buf);
-      //     this._values.push(item as any);
-      //   }
-      // }
+      let size = buf.size;
+      try {
+        for (let i = 0; i < p.length; i += 2) {
+          this._values[i / 2] = (p[i + 1] as ReadWriter).read(
+            i / 2,
+            buf,
+            this._values,
+            void 0
+          );
+        }
+      } catch (e) {
+        if (isMessage) {
+          buf.size = size + this._values[2] / 4 + 4;
+          console.error(e.stack);
+        } else {
+          throw e;
+        }
+      }
+      if (isVector) {
+        let len = buf.readInt();
+        for (let i = 0; i < len; i++) {
+          let item = new OneOf()._read(buf);
+          this._values.push(item as any);
+        }
+      }
       return this;
     };
     ctor.prototype.set_values = function(this: any, values: any[]) {
@@ -319,7 +332,10 @@ export const Optional = (
 export const VectorRW = (rw: ReadWriter = OneOfRW, small = false) => ({
   create: () => new VectorS(),
   read: (index: number, buf: ByteBuffer, values: any[], noId: boolean) => {
-    if (!small) buf.readInt();
+    if (!small) {
+      let _id = buf.readUInt();
+      if (0x1cb5c415 !== _id) panic(_id.toString(16));
+    }
     let len = buf.readInt();
     let vector = new VectorS();
     // let vector = new Array(len);

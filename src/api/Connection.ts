@@ -646,6 +646,7 @@ export class Connection {
     return false;
   }
   clearSession() {
+    this.connectionInited = false;
     this.authKey = new Uint8Array();
     this.authKeyID = new Uint8Array();
     this.serverSalt = new Uint8Array();

@@ -224,6 +224,9 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
       if (!this.phoneValue) this.phone.value = this.countrySelect.code;
       this.phone.show();
     }
+    this.heder.tag.innerText = "Sign in to Telegram";
+    this.action.tag.innerText =
+      "Please confirm your country and\nenter your phone number";
     this.phoneOnChange();
     this.deferStep = () => {
       this.countrySelect.hide();
@@ -279,10 +282,14 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
   goToCode() {
     this.clearErrors();
     this.deferStep();
+    let listen = h.onClick(this.goToSignIn);
+    this.heder.listen(listen);
     this.deferStep = () => {
       this.code.hide();
+      this.heder.unlisten(listen);
       this.resendCode.hide();
     };
+
     this.code.show();
     this.resendCode.show();
     this.heder.tag.innerText = localStorage.getItem("phone") || "";
@@ -443,7 +450,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     let authorization = await CallAuthSignUpM(
       this.props.apiInoker,
       new AuthSignUpM()
-        .set_first_name(firstName) // TODO
+        .set_first_name(firstName)
         .set_last_name(lastName)
         .set_phone_code_hash(this.sentCode!.get_phone_code_hash())
         .set_phone_number(String(this.phoneValue))

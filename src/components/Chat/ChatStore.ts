@@ -63,7 +63,7 @@ export class ChatStore {
   currentView: MessageS[] = [];
   viewOffset = 0;
 
-  loading = true;
+  loading = false;
 
   limit = 20;
   reqId = 0;
@@ -79,7 +79,18 @@ export class ChatStore {
   init() {
     if (this.inited) return;
     this.inited = true;
-    this.defer.push(this.props.userStore.onUpdate(this.load));
+    this.defer.push(
+      this.props.userStore.onUpdate(async () => {
+        this.offsetId = 0;
+        this.currentView = [];
+        this.loading = true;
+        try {
+          await this.load();
+        } finally {
+          this.loading = false;
+        }
+      })
+    );
   }
 
   destroy() {
@@ -239,7 +250,6 @@ export class ChatStore {
         .set_offset_id(this.offsetId)
         .set_limit(this.limit)
     );
-    this.loading = false;
     if (this.reqId !== reqId) return;
     if (res instanceof RpcErrorS)
       return this.handleError(res.get_error_message());
@@ -250,6 +260,15 @@ export class ChatStore {
       this.sendUpdate();
     } else if (wasError) this.sendUpdate();
   };
+  loadNext = async () => {
+    if (this.loading) return;
+    this.loading = true;
+    try {
+      await this.load();
+    } finally {
+      this.loading = false;
+    }
+  };
   sendUpdate() {
     for (let cb of this._onUpdate) cb();
   }
@@ -259,11 +278,12 @@ export class ChatStore {
       | MessagesMessagesSliceS
       | MessagesChannelMessagesS
   ) {
-    this.currentView = [];
+    // this.currentView = [];
     for (let m of messages.get_messages().get_values()) {
       if (m instanceof MessageS) {
         this.messages.set(m.get_id(), m);
         this.currentView.push(m);
+        this.offsetId = m.get_id();
       }
     }
     for (let m of messages.get_chats().get_values()) {
