@@ -528,6 +528,7 @@ export class Connection {
         if (err.type.startsWith("AUTH_KEY")) {
           if (this.user.isLoggedIn) {
             if (this.user.userDC !== this.props.dc) {
+              this.connectionInited = false;
               await this.reimportAuth();
               this.send({
                 ...w,
@@ -540,6 +541,7 @@ export class Connection {
             } else {
               this.clearSession();
               this.inited = false;
+              this.connectionInited = false;
               this.user.setIsLoggedIn(false);
               this.initConnection();
             }

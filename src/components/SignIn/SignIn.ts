@@ -49,6 +49,10 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     h.className(s.action),
     "Please confirm your country and\nenter your phone number"
   );
+  spinner = h
+    .spinner()
+    .addClass(s.spinner)
+    .hide();
   resendCode = h
     .div(
       h.className(s.resendCode),
@@ -107,6 +111,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     h.div(h.className(s.logo)),
     this.heder,
     this.action,
+    this.spinner,
     this.countrySelect,
     this.phone,
     this.code,
@@ -162,7 +167,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
   onCountryChange = async (c: string) => {
     if (!c) return;
     if (this.countrySelect.isHidden()) return;
-    if (!this.phone.value) this.phone.value = c;
+
     let format = await GetPhoneFormat();
     let found = format.get(Number(c.replace(/\D/g, "")));
     found = found || [2, 2, 2, 2, 2, 2];
@@ -171,6 +176,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     this.phone.doMask(mask);
     // console.log(mask);
     this.phone.show();
+    this.phone.mask!.value = c;
   };
   repeat(n: number, c: string) {
     let out = "";
@@ -190,12 +196,14 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     this.resendCode.remove();
     let phone = String(this.phoneValue);
     setTimeout(() => this.code.tag.after(this.resendCode.mount()), 30000);
+    this.spinner.show();
     let res = await CallAuthResendCodeM(
       this.props.apiInoker.connection(this.props.userStore().userDC),
       new AuthResendCodeM()
         .set_phone_code_hash(this.sentCode.get_phone_code_hash())
         .set_phone_number(phone)
     );
+    this.spinner.hide();
     this.onAuthSentCode(res, phone, res.dc);
   };
   phoneOnChange = () => {
@@ -221,7 +229,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     this.deferStep();
     this.countrySelect.show();
     if (this.countrySelect.code) {
-      if (!this.phoneValue) this.phone.value = this.countrySelect.code;
+      this.phone.value = this.countrySelect.code;
       this.phone.show();
     }
     this.heder.tag.innerText = "Sign in to Telegram";
@@ -244,6 +252,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     if (!this.phoneValue) return;
     this.clearErrors();
     let phone = String(this.phoneValue);
+    this.spinner.show();
     let res = await CallAuthSendCodeM(
       this.props.apiInoker,
       new AuthSendCodeM()
@@ -251,6 +260,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
         .set_api_id(config.apiID)
         .set_phone_number(phone)
     );
+    this.spinner.hide();
     this.onAuthSentCode(res, phone, res.dc);
   }
   onAuthSentCode(res: AuthSentCodeS | RpcErrorS, phone: string, dc: number) {
@@ -317,6 +327,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
       String(this.phoneValue)
     );
     this.clearErrors();
+    this.spinner.show();
     let authorization = await CallAuthSignInM(
       this.props.apiInoker,
       new AuthSignInM()
@@ -324,6 +335,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
         .set_phone_code_hash(this.sentCode.get_phone_code_hash())
         .set_phone_number(String(this.phoneValue))
     );
+    this.spinner.hide();
     if (String(this.code.value) !== code) return;
     if (authorization instanceof RpcErrorS) {
       let err = findError(authorization.get_error_message());
@@ -387,9 +399,11 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     this.clearErrors();
     let password = String(this.password.value || "");
     if (!password) this.setError(this.password, "EMPTY_PASSWORD");
+    this.spinner.show();
     let accPass = await this.accountPassword;
     if (accPass instanceof RpcErrorS) {
       this.setError(this.password, accPass.get_error_message());
+      this.spinner.hide();
       return;
     }
     let alg = accPass.get_current_algo();
@@ -400,6 +414,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
       )
     ) {
       this.setError(this.password, "PASS_CHECK_ALG_NOT_SUPPORTED");
+      this.spinner.hide();
       return;
     }
     let M1: Uint8Array;
@@ -417,6 +432,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
     } catch (e) {
       console.error(e.stack);
       this.setError(this.password, e.message);
+      this.spinner.hide();
       return;
     }
     // alg.get
@@ -431,6 +447,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
           .set_srp_id(accPass.get_srp_id())
       )
     );
+    this.spinner.hide();
     if (authorization instanceof RpcErrorS) {
       this.setError(this.password, authorization.get_error_message());
       return;
@@ -447,6 +464,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
   async sendSignUp() {
     let firstName = String(this.name.value || "");
     let lastName = String(this.lastName.value || "");
+    this.spinner.show();
     let authorization = await CallAuthSignUpM(
       this.props.apiInoker,
       new AuthSignUpM()
@@ -455,6 +473,7 @@ export class SignIn extends Tag<HTMLDivElement, ISignInProps> {
         .set_phone_code_hash(this.sentCode!.get_phone_code_hash())
         .set_phone_number(String(this.phoneValue))
     );
+    this.spinner.hide();
     if (authorization instanceof RpcErrorS) {
       this.setError(this.name, authorization.get_error_message());
       return;

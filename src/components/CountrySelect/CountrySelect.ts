@@ -1,6 +1,6 @@
 import { Input } from "components/Input/Input";
 import { ITagProps, Tag } from "components/Tag/Tag";
-import { GetCountry, GetEmoji, ICountry } from "dictionary";
+import { GetCountry, ICountry } from "dictionary";
 import * as h from "lib/html";
 import { throttle } from "lib/throttle";
 
@@ -20,7 +20,7 @@ export class CountrySelect extends Tag<HTMLDivElement> {
   options: ICountry[] = [];
   scroll = 0;
   offset = 0;
-  emoji = new Map<string, string>();
+  // emoji = new Map<string, string>();
   country = GetCountry();
   itemsCount = 0;
   code = "";
@@ -39,7 +39,7 @@ export class CountrySelect extends Tag<HTMLDivElement> {
     });
     this.input.onChange(this.onInputChange);
     this.append(this.input.tag);
-    GetEmoji().then(e => (this.emoji = e));
+    // GetEmoji().then(e => (this.emoji = e));
     this.autoSetCountry();
   }
   onChange(cb: (code: string, country: string) => void) {
@@ -110,14 +110,18 @@ export class CountrySelect extends Tag<HTMLDivElement> {
   matchUpOrDown = () => {
     if (!this.ul) return this;
     let inputRect = this.input.getBoundingClientRect();
-    let maxHeight = window.innerHeight - inputRect.height - inputRect.top - 16;
-    let maxHeightUp = inputRect.top - 16;
-    if (maxHeight < MIN_SELECT_HEIGHT) {
-      maxHeight = Math.max(MIN_SELECT_HEIGHT, maxHeightUp);
-      this.addClass(s.upperSelect);
-    } else {
-      this.removeClass(s.upperSelect);
-    }
+    let maxHeight = Math.min(
+      window.innerHeight - inputRect.height - inputRect.top - 16,
+      376
+    );
+    // upper scroll reverse not work in wirefox TODO
+    // let maxHeightUp = Math.min(inputRect.top - 16, 376);
+    // if (maxHeight < MIN_SELECT_HEIGHT) {
+    //   maxHeight = Math.max(MIN_SELECT_HEIGHT, maxHeightUp);
+    //   this.addClass(s.upperSelect);
+    // } else {
+    //   this.removeClass(s.upperSelect);
+    // }
     this.ul.tag.style.maxHeight = `${maxHeight}px`;
     return this;
   };
@@ -277,13 +281,13 @@ export class CountrySelect extends Tag<HTMLDivElement> {
   }
   renderLi(index: number) {
     let c = this.options[index];
-    let emoji = this.emoji.get(`:flag_${c[2].toLowerCase()}:`);
+    // let emoji = this.emoji.get(`:flag_${c[2].toLowerCase()}:`);
 
-    let icon = emoji
-      ? h.i(emoji).tag
-      : h.i(
-          h.style(`background-image: url('flags/${c[2].toLowerCase()}.png');`)
-        ).tag;
+    // let icon = emoji
+    // ? h.i(emoji).tag
+    let icon = h.i(
+      h.style(`background-image: url('flags/${c[2].toLowerCase()}.png');`)
+    ).tag;
     let li = h.li(
       h.role("group"),
       h.tabindex("-1"),

@@ -68,6 +68,7 @@
   }
 
   &:hover::-webkit-scrollbar-thumb {
+    min-height: 50px;
     background: #f4f4f5;
     border: 10px solid rgba(0, 0, 0, 0); /* Transparent border together with `background-clip: padding-box` does the trick */
     background-clip: padding-box;

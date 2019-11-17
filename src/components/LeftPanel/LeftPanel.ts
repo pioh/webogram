@@ -22,14 +22,16 @@ interface ILeftPanelProps extends ITagProps<HTMLDivElement> {
 export class LeftPanel extends Tag<HTMLDivElement, ILeftPanelProps> {
   header = new LeftPanelHeader({ apiInoker: this.props.apiInoker });
   chats = h.div(h.className(s.chats));
+  spinner = h.spinner();
 
   constructor(props: ILeftPanelProps) {
     super({
       ...props,
       tag: h.div(h.className(s.root))
     });
-    this.append(this.header, this.chats);
+    this.append(this.header, this.chats, this.spinner);
     this.props.chatListStore.onUpdate(this.redraw);
+    this.chats.listen(h.onScroll(this.onScroll));
   }
   defer: Array<() => void> = [];
   destroy() {
@@ -39,15 +41,33 @@ export class LeftPanel extends Tag<HTMLDivElement, ILeftPanelProps> {
   active: Tag<any> | null = null;
 
   redraw = () => {
+    let d = Date.now() - this.time;
+    if (d < 300) {
+      if (this.timeout) return;
+      this.timeout = window.setTimeout(() => {
+        this.timeout = 0;
+        this.redraw();
+      }, 300);
+    }
+    this.time = Date.now();
     // this.chats.tag.innerText = "";
     let chats = this.chats.tag.querySelectorAll<HTMLDivElement>(`.${s.item}`);
     let map = new Map<string, HTMLDivElement>();
     chats.forEach(el => {
       map.set(el.id, el);
     });
+    if (this.props.chatListStore.order.length) this.spinner.hide();
+    let needRedraw = new Set([...this.props.chatListStore.needRedraw]);
+    this.props.chatListStore.needRedraw = [];
     let j = 0;
     let prev: HTMLDivElement | null = null;
-    for (let i = 0; i < this.props.chatListStore.order.length; i++, j++) {
+    console.log("redraw");
+    for (
+      let i = 0;
+      i < this.props.chatListStore.order.length &&
+      i < this.props.chatListStore.limit;
+      i++, j++
+    ) {
       let id = this.props.chatListStore.order[i];
       let sid = `chat:${id}`;
       let found = map.get(sid);
@@ -59,22 +79,44 @@ export class LeftPanel extends Tag<HTMLDivElement, ILeftPanelProps> {
         }
         found = tag.tag;
       } else {
-        this.updateDialog(found, id, sid);
-      }
-      // let dialog = this.props.chatListStore.
-
-      if (chats[j]) {
-        if (chats[j].id !== sid) {
-          chats[j].remove();
+        if (needRedraw.has(id)) {
+          found.remove();
+          let tag = this.drawDialog(id, sid);
+          if (!tag) {
+            j--;
+            continue;
+          }
+          found = tag.tag;
+          // this.updateDialog(found, id, sid);
         }
-      } else {
+      }
+      map.delete(sid);
+      // let dialog = this.props.chatListStore.
+      let ok = false;
+      if (chats[j]) {
+        if (chats[j].id !== sid || needRedraw.has(id)) {
+          chats[j].remove();
+        } else {
+          ok = true;
+        }
+      }
+      if (!ok) {
         if (prev) prev.after(found);
         else this.chats.tag.prepend(found);
       }
+
       prev = found;
     }
+    for (let [id, t] of map) {
+      t.remove();
+      map.delete(id);
+    }
   };
+  time = 0;
+  timeout = 0;
   drawDialog(id: number, sid: string) {
+    let dialog = this.props.chatListStore.dialogs.get(id);
+    if (!dialog) return;
     let peer =
       this.props.chatListStore.chats.get(id) ||
       this.props.chatListStore.users.get(id);
@@ -107,29 +149,52 @@ export class LeftPanel extends Tag<HTMLDivElement, ILeftPanelProps> {
         })
       )
       .wave();
+
     let photoText = chat.photoText(name);
-    photoDiv.append(photoText);
     photoDiv.tag.style.backgroundColor = chat.photoColor(photoText);
 
-    let message = this.props.chatListStore.messages.get(id);
+    let message = this.props.chatListStore.messages.get(
+      dialog.get_top_message()
+    );
     if (message) {
       messageText.append(message.get_message());
       messageTime.append(chat.messageDate(message));
     }
     let photo = chat.photo(peer);
     if (photo) {
-      requestAnimationFrame(() => {
-        chat.loadPhoto(
-          photoDiv.tag,
-          photo!.get_photo_small(),
-          photo!.get_dc_id(),
-          peer!
-        );
-      });
-    }
+      // requestAnimationFrame(() => {
+      // this.props.chatListStore.props.
+      chat.loadPhoto(
+        photoDiv.tag,
+        photo!.get_photo_small(),
+        photo!.get_dc_id(),
+        peer!
+      );
+      if (photoDiv.tag.innerHTML === "") {
+        photoDiv.append(photoText);
+      }
+      // });
+    } else photoDiv.append(photoText);
 
     return div;
   }
+  get limit() {
+    let h = Math.max(this.chats.tag.clientHeight * 3, window.innerHeight * 2);
+    return Math.ceil((this.chats.tag.scrollTop + h) / 72);
+  }
+  onScroll = () => {
+    this.props.chatListStore.limit = this.limit;
+    // let c = Math.min(
+    //   this.props.chatListStore.order.length,
+    //   this.props.chatListStore.limit
+    // );
+    // if (this.chats.tag.children.length < c) {
+    this.redraw();
+    // }
+    if (this.props.chatListStore.order.length >= this.props.chatListStore.max)
+      return;
+    this.props.chatListStore.load();
+  };
 
   updateDialog(div: HTMLDivElement, id: number, sid: string) {}
 

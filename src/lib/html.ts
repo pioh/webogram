@@ -1,5 +1,7 @@
 import { Tag } from "components/Tag/Tag";
 
+import * as s from "./html.scss";
+
 export function html<T>(html: TemplateStringsArray | string[], ...keys: any) {
   let template = document.createElement("template");
   template.innerHTML = html
@@ -164,3 +166,27 @@ export const onBlur = NewEvenListener("blur");
 export const onInput = NewEvenListener("input");
 export const onScroll = NewEvenListener("scroll");
 export const onMouseDown = NewEvenListener("mousedown");
+
+export const spinner = () => {
+  return new Tag<HTMLDivElement>({
+    tag: html`
+      <svg
+        class="${s.spinner}"
+        width="65px"
+        height="65px"
+        viewBox="0 0 66 66"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          class="${s.path}"
+          fill="none"
+          stroke-width="6"
+          stroke-linecap="round"
+          cx="33"
+          cy="33"
+          r="30"
+        ></circle>
+      </svg>
+    ` as HTMLDivElement
+  });
+};
