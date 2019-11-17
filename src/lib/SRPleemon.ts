@@ -1,33 +1,30 @@
 import {
   add,
+  add_,
   bpe,
   divInt_,
   equals,
   greater,
-  leftShift_,
   millerRabinInt,
   mod,
   mult,
   multMod,
-  negative,
   one,
   powMod,
   rightShift_,
   str2bigInt,
   sub,
-  zero
+  sub_
 } from "leemon/es/index.js";
 
 import { bytesFromLeemonBigInt } from "./bytesFromLeemonBigInt";
 import { bytesToHex } from "./BytesToHex";
 import { GetRandomValues } from "./GetRandomValues";
-import { Sha256 } from "./Sha";
-// let pbkdf2 = require("./pbkdf2/browser.js");
-let sjcl = require("sjcl");
 
 const padded = (v: Uint8Array, len: number) => {
   let res = new Uint8Array(len);
-  for (let i = 0; i < v.length; i++) res[i] = v[i];
+  for (let i = 0; i < v.length; i++)
+    res[res.length - i - 1] = v[v.length - i - 1];
   return res;
 };
 
@@ -41,12 +38,12 @@ export async function SRPLeemon(
 ): Promise<[Uint8Array, Uint8Array]> {
   let g = new Uint8Array([g_number]);
   let g_padded = new Uint8Array(256);
-  g_padded[0] = g_number;
+  g_padded[255] = g_number;
   let p_big = B(p);
   let g_big = B(g);
   await AssertPandGAreGood(p_big, g_big);
-  let a = new Uint8Array(2048 / 8);
 
+  let a = new Uint8Array(2048 / 8);
   a = GetRandomValues(a);
 
   let a_big = B(a);
@@ -57,8 +54,9 @@ export async function SRPLeemon(
   let k_big = B(await H(new Uint8Array([...p, ...g_padded])));
   let k_v_big = multMod(k_big, v_big, p_big);
   let u_big = B(await H(new Uint8Array([...g_a, ...g_b])));
-  let t_big = sub(B(g_b), k_v_big); // mod(, bp);
-  if (greater(zero, t_big)) t_big = add(t_big, p_big);
+  let t_big = B(g_b); //  mod(sub(B(g_b), k_v_big), p_big); // mod(, bp);
+  if (greater(k_v_big, t_big)) add_(t_big, p_big);
+  sub_(t_big, k_v_big);
 
   let s_a = padded(
     U(powMod(t_big, add(a_big, mult(u_big, x_big)), p_big)),
@@ -91,9 +89,6 @@ async function SH(data: Uint8Array, salt: Uint8Array) {
 
 async function PH1(password: Uint8Array, salt1: Uint8Array, salt2: Uint8Array) {
   return SH(await SH(password, salt1), salt2);
-}
-function S(u: Uint8Array) {
-  return [...u].map(v => String.fromCharCode(v)).join("");
 }
 
 async function PH2(password: Uint8Array, salt1: Uint8Array, salt2: Uint8Array) {
@@ -173,7 +168,7 @@ async function M1(
   return H(
     new Uint8Array([
       ...xor(await H(p), await H(g_padded)),
-      ...(await H(p)),
+      // ...(await H(p)),
       ...(await H(salt1)),
       ...(await H(salt2)),
       ...g_a,

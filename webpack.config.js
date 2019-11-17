@@ -3,9 +3,6 @@ const fs = require("fs-extra");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin");
-const WorkerPlugin = require("worker-plugin");
-const ClosurePlugin = require("closure-webpack-plugin");
-const webpack = require("webpack");
 
 const { terserPlugin } = require("./terserPlugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
@@ -40,7 +37,7 @@ module.exports = {
   context: __dirname,
   cache: true,
   parallelism: 12,
-  devtool: void 0, //"source-map",
+  devtool: "source-map",
   module: {
     rules: [
       {
@@ -70,7 +67,7 @@ module.exports = {
               sassOptions: {
                 includePaths: ["src/styles", "node_modules"]
               },
-              sourceMap: false
+              sourceMap: true
             }
           }
         ]
@@ -136,18 +133,18 @@ module.exports = {
       },
       {
         test: /crypto.worker\.(?:ts|js)$/,
-        use: [{ loader: "worker-loader", options: { inline: false } }, tsLoader]
+        use: [{ loader: "worker-loader", options: { inline: true } }, tsLoader]
       },
       {
         test: /\.(png|jpg)$/,
         loader: "url-loader",
         options: { name: "img/[name].[ext]", limit: 1024 }
+      },
+      {
+        test: /\.(js|tsx|jsx|ts|scss|sass|less)$/,
+        use: ["source-map-loader"],
+        enforce: "pre"
       }
-      // {
-      //   test: /\.(js|tsx|jsx|ts|scss|sass|less)$/,
-      //   use: ["source-map-loader"],
-      //   enforce: "pre"
-      // }
     ]
   },
   plugins: [

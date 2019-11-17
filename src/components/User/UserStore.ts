@@ -34,7 +34,11 @@ export class UserStore {
     this.props = props;
     this.initUser();
     if (!this.isLoggedIn) this.runCallbacks();
-    this.loadUser();
+  }
+  init() {
+    setTimeout(() => {
+      this.loadUser();
+    }, 1000);
     for (let cb of this._onUpdate) cb();
   }
   onLogout(foo: () => void) {

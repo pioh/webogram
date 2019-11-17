@@ -21,4 +21,7 @@ userStore = new UserStore({
 const navigator = new Navigator({ apiInvoker, userStore });
 document.body.appendChild(navigator.mount());
 
-requestAnimationFrame(() => apiInvoker.init());
+requestAnimationFrame(() => {
+  apiInvoker.init();
+  userStore.init();
+});

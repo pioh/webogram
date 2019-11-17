@@ -4,6 +4,7 @@
   "allowJs": true,
   "typeCheck": true,
   "extensions": [".ts"],
+  "no-misused-new": [false],
   "defaults": {
     "severity": "error"
   },

@@ -9,7 +9,7 @@
 .content {
   display: flex;
   width: 100%;
-  max-width: 633px;
+  max-width: 697px;
   pointer-events: initial;
   position: relative;
   padding: 0;
@@ -83,7 +83,7 @@
   justify-content: center;
   flex-shrink: 0;
   align-items: center;
-  font-size: 22px;
+  font-size: 23px;
   width: 54px;
   height: 54px;
   color: #8d969c;
@@ -123,4 +123,15 @@
     left: -47px;
     top: -47px;
   }
+}
+
+.placeholder {
+  color: #b4bcc2;
+  position: absolute;
+  pointer-events: none;
+  left: 54px;
+  bottom: 0;
+  font-size: 16px;
+  line-height: 21px;
+  padding: 16.5px 0;
 }

@@ -89,9 +89,11 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-top: 1px;
 }
 
 .message {
+  margin-bottom: 2px;
   font-size: 16px;
   color: #707579;
   white-space: nowrap;
@@ -103,7 +105,7 @@
   margin-left: auto;
   color: #707579;
   font-size: 12px;
-  padding: 0 3px 0 1px;
+  padding: 0 0px 0 1px;
   display: flex;
   flex-shrink: 0;
 }

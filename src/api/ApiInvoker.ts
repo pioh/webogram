@@ -4,27 +4,36 @@ import { AllDc } from "const/dc";
 
 import { Connection } from "./Connection";
 import { AuthAuthorizationS } from "./generator/ApiShema.gen";
-import { OneOf, TMethod } from "./SchemaHelpers";
+import { IStruct, OneOf, TMethod } from "./SchemaHelpers";
 import { TimeStore } from "./TimeStore";
 
 interface IApiInvokerProps {
   timeStore: TimeStore;
   userStore: () => UserStore;
 }
+
+export type IDisposer = (cancel: () => void) => () => void;
+export const Disposer = (d: IDisposer) => d;
+
 export class ApiInvoker {
   props: IApiInvokerProps;
   private _connections = new Map<number, Connection>();
   dc = Number(localStorage.dc || config.dc);
 
+  _onMessage = new Map<number, Set<(s: any) => void>>();
   constructor(props: IApiInvokerProps) {
     this.props = props;
-    let otherDC = AllDc.filter(
-      v => v.isTest === config.test && v.id !== this.dc
-    ).map(v => v.id);
-    this.connection();
-    setTimeout(() => {
-      otherDC.forEach(id => this.connection(id));
-    }, 100);
+  }
+
+  onMessage<T extends IStruct>(m: T, foo: (m: T) => void) {
+    let id = (m as any).constructor._id;
+    let arr = this._onMessage.get(id);
+    if (!arr) {
+      arr = new Set();
+      this._onMessage.set(id, arr);
+    }
+    arr.add(foo);
+    return () => arr!.delete(foo);
   }
   connection(dc: number = this.dc) {
     let connection = this._connections.get(dc);
@@ -50,6 +59,13 @@ export class ApiInvoker {
     this.props.userStore().setUser(u);
   }
   init() {
+    let otherDC = AllDc.filter(
+      v => v.isTest === config.test && v.id !== this.dc
+    ).map(v => v.id);
+    this.connection();
+    setTimeout(() => {
+      otherDC.forEach(id => this.connection(id));
+    }, 1000);
     this.props.userStore().onLogin(this.reimportAuth);
   }
   reimportAuth = () => {

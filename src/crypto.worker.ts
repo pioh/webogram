@@ -1,3 +1,7 @@
+import { ungzip } from "pako";
+
+import { SRPLeemon } from "lib/SRPleemon";
+
 import { PublicKeys } from "./const/PublicKyes";
 import { AesDecrypt, AesEncrypt, sha256Hash } from "./lib/crypto";
 import { bytesModPow } from "./lib/modPow";
@@ -8,7 +12,7 @@ import { WorkerMethod } from "./lib/WorkerClient";
 
 const ctx: Worker = self as any;
 
-ctx.addEventListener("message", msg => {
+ctx.addEventListener("message", async msg => {
   let name = msg.data.name as WorkerMethod;
   switch (name) {
     case "pqPrimeFactorization":
@@ -63,5 +67,32 @@ ctx.addEventListener("message", msg => {
         )
       });
       break;
+    case "ungzip":
+      {
+        let d = ungzip(new Uint8Array(msg.data.d));
+        ctx.postMessage({ id: msg.data.id, d: d.buffer }, [d.buffer]);
+      }
+      break;
+    case "srp":
+      {
+        let { password, g_number, p, salt1, salt2, g_b } = msg.data;
+        let [M1, A] = await SRPLeemon(
+          U(password),
+          g_number,
+          U(p),
+          U(salt1),
+          U(salt2),
+          U(g_b)
+        );
+        ctx.postMessage({ id: msg.data.id, M1: M1.buffer, A: A.buffer }, [
+          M1.buffer,
+          A.buffer
+        ]);
+      }
+      break;
   }
 });
+
+function U(a: ArrayBuffer) {
+  return new Uint8Array(a);
+}

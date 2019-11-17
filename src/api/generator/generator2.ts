@@ -6,47 +6,28 @@ import { jsonApi } from "./schemaJson";
 
 let out: string[][] = [];
 let l = (...args: any[]) => out.push(args);
-// let globalPrefix = ""
-
 function WriteHeader(file: string) {
   l(`
   import {ByteBuffer} from "../ByteBuffer"
   import {ApiInvoker} from "../ApiInvoker"
   import {Connection} from "../Connection"
-  import {r, c, panic, CallDeclareQueue, AllStructs, Optional, ProtoLong, TypeRW, IStruct, OneOf, TMethod, IntRW, LongRW, DoubleRW, StringRW, BytesRW, Int64RW, Int128RW, Int256RW, OneOfRW, TrueRW, VectorRW} from "../SchemaHelpers"
+  import {panic, AllStructs, ProtoLong, IStruct, OneOf, TMethod} from "../SchemaHelpers"
   `);
   if (file !== "./MTprotoShema.gen.ts") {
     l(`import { RpcErrorS } from "./MTprotoShema.gen";`);
   }
-  // if (file !== "MRpcErrorS") {
-  //   l(`import { RpcErrorS } from "./MRpcErrorS";`);
-  // }
-  // if (file !== `${globalPrefix}VectorS`) {
-  //   l(`import { VectorS } from "./${globalPrefix}VectorS";`);
-  // }
-  // for (let t of lastTypeUse) {
-  //   if (t === "RpcErrorS") continue;
-  //   if (t === "VectorS") continue;
-  //   l(`import {${t}} from "./${globalPrefix}${t}"`)
-  // }
 }
-let queue:Array<{n: string,deps: Set<string>, desc: string}|null> = []
-
 let types = new Map<string, [string[], boolean]>();
 
 const addType = (t: string, p: string, isMethod: boolean) => {
   if (!types.get(t)) types.set(t, [[], isMethod]);
   types.get(t)![0].push(p);
 };
-// let declared = new Set<string>();
-// let waitForDeclare: Set<[string, string, ...string[]]> = new Set();
-let lastTypeUse: Set<string> = new Set();
 
 let usedTypes = new Set<string>();
 let methodGeneration = false;
 const toName = (n: string, postfix = "S", prefix = "") => {
   // if (n.match("^(input|vector)")) prefix = "TT";
-
   n = n
     .replace(/\.| /g, "_")
     .split("_")
@@ -68,7 +49,7 @@ const toName = (n: string, postfix = "S", prefix = "") => {
     postfix;
 
   if (methodGeneration && !usedTypes.has(name)) name = name.replace(/T$/, "S");
-  lastTypeUse.add(name)
+
   return name;
 };
 
@@ -81,11 +62,9 @@ interface TypeDesc {
   write: string;
   optionalName?: string;
   optionalIndex?: number;
-  rw: string;
   // index: number;
 }
-
-let flagIndex: number[] =[]
+let flagIndex = 0;
 function mapType(type: string, isType = false): TypeDesc {
   switch (type) {
     case "true":
@@ -93,8 +72,7 @@ function mapType(type: string, isType = false): TypeDesc {
         value: "true",
         type: "true",
         read: "val = true",
-        write: "",
-        rw: "TrueRW",
+        write: ""
       };
     case "#":
     case "int":
@@ -102,64 +80,56 @@ function mapType(type: string, isType = false): TypeDesc {
         value: "0",
         type: "number",
         read: "val = buf.readInt()",
-        write: "buf.writeInt(val)",
-        rw: "IntRW",
+        write: "buf.writeInt(val)"
       };
     case "long":
       return {
         value: "[0, 0]",
         type: "ProtoLong",
         read: "val = buf.readLong()",
-        write: "buf.writeLong(val)",
-        rw: "LongRW",
+        write: "buf.writeLong(val)"
       };
     case "double":
       return {
         value: "0.0",
         type: "number",
         read: "val = buf.readDouble()",
-        write: "buf.writeDouble(val)",
-        rw: "DoubleRW",
+        write: "buf.writeDouble(val)"
       };
     case "string":
       return {
         value: '""',
         type: "string",
         read: "val = buf.readString()",
-        write: "buf.writeString(val)",
-        rw: "StringRW",
+        write: "buf.writeString(val)"
       };
     case "bytes":
       return {
         value: "new Uint8Array()",
         type: "Uint8Array",
         read: "val = buf.readBytes()",
-        write: "buf.writeBytes(val)",
-        rw: "BytesRW",
+        write: "buf.writeBytes(val)"
       };
     case "int64":
       return {
         value: "new Uint8Array(8)",
         type: "Uint8Array",
         read: "val = buf.readU8A(2)",
-        write: "buf.writeU8A(val)",
-        rw: "Int64RW",
+        write: "buf.writeU8A(val)"
       };
     case "int128":
       return {
         value: "new Uint8Array(16)",
         type: "Uint8Array",
         read: "val = buf.readU8A(4)",
-        write: "buf.writeU8A(val)",
-        rw: "Int128RW",
+        write: "buf.writeU8A(val)"
       };
     case "int256":
       return {
         value: "new Uint8Array(32)",
         type: "Uint8Array",
         read: "val = buf.readU8A(8)",
-        write: "buf.writeU8A(val)",
-        rw: "Int256RW",
+        write: "buf.writeU8A(val)"
       };
     case "X":
     case "Object":
@@ -171,8 +141,7 @@ function mapType(type: string, isType = false): TypeDesc {
         val = val._read(buf)
         if (val instanceof OneOf) val = val.unwrap();
         `,
-        write: "val._write(buf)",
-        rw: "OneOfRW",
+        write: "val._write(buf)"
       };
     case "!X":
       return {
@@ -182,8 +151,7 @@ function mapType(type: string, isType = false): TypeDesc {
           val = val._read(buf)
           if (val instanceof OneOf) val = val.unwrap();
           `,
-        write: "val._write(buf)",
-        rw: "OneOfRW",
+        write: "val._write(buf)"
       };
     case "%Message":
       return {
@@ -192,8 +160,7 @@ function mapType(type: string, isType = false): TypeDesc {
         read: `val = val._read(buf, true)
         if (val instanceof OneOf) val = val.unwrap();
         `,
-        write: "val._write(buf, true)",
-        rw: "TypeRW(MessageS, true)",
+        write: "val._write(buf, true)"
       };
   }
 
@@ -205,7 +172,6 @@ function mapType(type: string, isType = false): TypeDesc {
       ...t,
       optionalIndex: Number(flag[2]),
       optionalName: flag[1],
-      rw: `Optional(${t.rw}, ${flagIndex[flagIndex.length -1]}, ${Number(flag[2])})`
     };
   }
 
@@ -242,8 +208,7 @@ function mapType(type: string, isType = false): TypeDesc {
           let val = vector.get_values()[i];
           ${t.write};
         }
-    `,
-      rw: `VectorRW(${t.rw === "OneOfRW" && readId ? "": t.rw} ${!readId ? ', true' : ''})`,
+    `
     };
   }
   if (!type.match(/\w+/)) console.error("unknown type " + type);
@@ -256,34 +221,28 @@ function mapType(type: string, isType = false): TypeDesc {
     val = val._read(buf);
     if (val instanceof OneOf) val = val.unwrap();
     `,
-    write: "val._write(buf)",
-    rw: `TypeRW(${t})`
+    write: "val._write(buf)"
   };
 }
 
 async function main() {
-  // globalPrefix = "shema"
   await processFile(jsonApi, "./ApiShema.gen.ts");
-  WriteQueue("./ApiShema.gen.ts")
-  // globalPrefix = "mtproto"
   await processFile(mtprotoJson, "./MTprotoShema.gen.ts");
-  WriteQueue("./MTprotoShema.gen.ts")
 }
 async function processFile(json: typeof jsonApi, output: string) {
   out = [];
   types.clear();
   usedTypes.clear();
-  // WriteHeader(output);
+  WriteHeader(output);
   for (let c of json.constructors) {
     AddConstructor(c, false);
   }
+
   let used = new Set([...usedTypes]);
   let tts: typeof types = new Map(
     [...types].map(([t, [p, isMethod]]) => [t, [[...p], isMethod]])
   );
   for (let [t, [p, isMethod]] of tts) {
-    lastTypeUse.clear()
-    let desc = ""
     t = toName(t, "T");
     // p = p.filter(v => v !== t);
     p = p.map(s => toName(s, isMethod ? "M" : "S"));
@@ -294,29 +253,20 @@ async function processFile(json: typeof jsonApi, output: string) {
       //   .join(" | ")}> = [${p.join(", ")}];
       used.add(t);
       usedTypes.add(t);
-      desc = `
+      l(`
       export type ${t} = ${p.map(v => `${v}`).join(" | ")};
       export const ${t} = OneOf;
-      `;
+      `);
     } else if (
       p.length === 1 &&
       (used.has(t) || t.slice(0, -1) !== p[0].slice(0, -1))
     ) {
       used.add(t);
       usedTypes.add(t);
-      desc = `
+      l(`
       export const ${t} = ${p[0]};
       export type ${t} = ${p[0]};
-      `;
-    }
-    if (desc) {
-      lastTypeUse.delete(t)
-      // WriteHeader(globalPrefix + t)
-      l(desc)
-      // fs.writeFileSync(`../proto/${globalPrefix + t}.ts`, out.map(v => v.join(" ")).join("\n"))
-      queue.push({n: t, deps: new Set([...lastTypeUse]), desc: out.join('')})
-      out = []
-      lastTypeUse.clear()
+      `);
     }
   }
   types.clear();
@@ -332,13 +282,10 @@ async function processFile(json: typeof jsonApi, output: string) {
     };
     AddConstructor(o, true);
   }
-  // addAllRemainig()
   tts = new Map(
     [...types].map(([t, [p, isMethod]]) => [t, [[...p], isMethod]])
   );
   for (let [t, [p, isMethod]] of tts) {
-    lastTypeUse.clear()
-    let desc = ""
     t = toName(t, "T");
     // p = p.filter(v => v !== t);
     p = p.map(s => toName(s, isMethod ? "M" : "S"));
@@ -349,40 +296,30 @@ async function processFile(json: typeof jsonApi, output: string) {
       //   .join(" | ")}> = [${p.join(", ")}];
       used.add(t);
       usedTypes.add(t);
-      desc = `
+      l(`
       export type ${t} = ${p.map(v => `${v}`).join(" | ")} | OneOf<${p
         .map(v => `typeof ${v}`)
         .join(" | ")}, ${p.map(v => `${v}`).join(" | ")}>;
 
       export const ${t} = OneOf;
-      `;
+      `);
     } else if (p.length === 1 && t.slice(0, -1) !== p[0].slice(0, -1)) {
-      desc = `
+      l(`
       export const ${t} = ${p[0]};
       export type ${t} = ${p[0]};
-      `;
-    }
-    if (desc) {
-      lastTypeUse.delete(t)
-      // WriteHeader(globalPrefix + t)
-      l(desc)
-      // fs.writeFileSync(`../proto/${globalPrefix + t}.ts`, out.map(v => v.join(" ")).join("\n"))
-      queue.push({n: t, deps: new Set([...lastTypeUse]), desc: out.join('')})
-      out = []
-      lastTypeUse.clear()
+      `);
     }
   }
   for (let m of json.methods) {
     AddMethod(m, used);
   }
   methodGeneration = false;
-  // return new Promise(r =>
-  //   fs.writeFile(output, out.map(v => v.join(" ")).join("\n"), r)
-  // );
+  return new Promise(r =>
+    fs.writeFile(output, out.map(v => v.join(" ")).join("\n"), r)
+  );
 }
 
 function AddMethod(m: typeof jsonApi.methods[0], used: Set<string>) {
-  lastTypeUse.clear()
   // let M = toName(m.method, "M");
   let name = toName(m.method, "M");
   // let t = m.type;
@@ -396,146 +333,191 @@ function AddMethod(m: typeof jsonApi.methods[0], used: Set<string>) {
   // }
   let id = Number(m.id);
   if (id < 0) id += Math.pow(2, 32);
-
-  let P = `Call${name}`
-  let desc = `
+  l(`
   /**
    * ${m.method}:${m.type}
    * #${id.toString(16)}:${id}:${m.id}
    * ${m.params.map(p => `${p.name}:${p.type}`).join("\n* ")}
    */
-  export let Call${name} = c;
-  export type Call${name} = (invoker: ApiInvoker|Connection, req: ${name}) => Promise<(${
+  export function Call${name} (invoker: ApiInvoker|Connection, req: ${name}): Promise<(${
     W.type
-  }|${toName("RpcError")})&{dc: number}>`;
-  lastTypeUse.delete(P)
-  // WriteHeader(globalPrefix + P)
-  l(desc)
-  // fs.writeFileSync(`../proto/${globalPrefix + P}.ts`, out.map(v => v.join(" ")).join("\n"))
-  queue.push({n: P, deps: new Set([...lastTypeUse]), desc: out.join('')})
-  out = []
-  lastTypeUse.clear()
+  }|${toName("RpcError")})&{dc: number}> {
+    return invoker.call(req);
+  }
+  `);
 }
 function AddConstructor(
   c: typeof jsonApi.constructors[0] & { returnType?: string },
   isMethod: boolean
 ) {
-
-  lastTypeUse.clear()
   let P = toName(c.predicate, isMethod ? "M" : "S");
   addType(c.type, c.predicate, isMethod);
 
   let id = Number(c.id);
   if (id < 0) id += Math.pow(2, 32);
-  // let isMessage = 0x5bb8e511 === id;
+  let isMessage = 0x5bb8e511 === id;
   let isVector = 0x1cb5c415 === id;
-  flagIndex.push(0)
-  let fi = flagIndex.length -1
-
-  let desc = `
+  l(`
       /**
        * ${c.predicate}:${c.type} ${c.returnType || ""}
        * #${id.toString(16)}:${id}:${c.id}
        * ${c.params.map(p => `${p.name}:${p.type}`).join("\n* ")}
        */
-      export interface ${P}${isVector?"<T = unknown>":""} {
-        _id: number;        ${c.returnType ? `_method(): void;` : ""}
-        _values: ${
+      export class ${P}${isVector?"<T = unknown>":""} {
+        static _id = 0x${id.toString(16)}
+        ${c.returnType ? `_method() {}` : ""}
+        _values = [${c.params
+          .map(pr => mapType(pr.type).value)
+          .join(", ")}] as unknown as ${
     isVector && !c.params.length ? "T" : ""
   }[${c.params.map(pr => mapType(pr.type).type).join(", ")}];
+        ${
+          isMessage
+            ? `
+        buf = new Uint8Array();
+        `
+            : ""
+        }
+
         ${c.params
           .map((p, i) => {
             let t = mapType(p.type);
             return `
-            get_${p.name} (): ${t.type};
-          set_${p.name} (val: ${t.type}): this;
+            get_${p.name} (): ${t.type} {
+            return this._values[${i}];
+          }
+          set_${p.name} (val: ${t.type}): this {
+            this._values[${i}] = val;
+            ${
+              t.optionalName
+                ? `
+            this.set_${t.optionalName}(this.get_${
+                    t.optionalName
+                  }() | (1<<${t.optionalIndex || 0}));
+            `
+                : ""
+            }
+            return this;
+          }
           ${
             t.optionalName
               ? `
-          has_${p.name} (): boolean;
+          has_${p.name} (): boolean {
+            return !!(this.get_${t.optionalName}() & (1<<${t.optionalIndex ||
+                  0}));
+          }
           `
               : ""
           }
         `;
           })
           .join("")}
-          _write(buf: ByteBuffer, noId: boolean): this;
-          _read(buf: ByteBuffer, noId: boolean): this;
+          _write(buf: ByteBuffer, noId = false): this {
+            if (!noId) buf.writeInt(${P}._id);
+            ${isMessage ? `let size = buf.size;` : ""}
+            ${c.params.length ? "let values = this._values;" : ""}
+            ${c.params
+              .map((p, i) => {
+                let t = mapType(p.type);
+                return `
+                ${t.optionalName ? `if (this.has_${p.name}())` : ""} {
+                  let val = values[${i}] as ${t.type};
+                  ${t.write};
+                }
+              `;
+              })
+              .join("")}
+              ${
+                isVector
+                  ? `
+            buf.writeInt(this._values.length);
+            for (let i = 0; i < this._values.length; i++) {
+              let val = this._values[i] as any;
+              if (Array.isArray(val)) buf.writeLong(val as ProtoLong);
+              else if (typeof val === "number") buf.writeInt(val);
+              else if (val instanceof Uint8Array) buf.writeBytes(val);
+              else if (typeof val === "string") buf.writeString(val);
+              else val._write(buf);
+            }
+            `
+                  : ""
+              }
+            ${
+              isMessage
+                ? `
+                buf.writeIntAt((buf.size - size - 4) * 4, size + 3);
+                `
+                : ""
+            }
+            return this;
+          }
+          _read(buf: ByteBuffer, noId = false): this {
+            if (!noId) {
+              let id = buf.readUInt();
+              if (id !== ${P}._id) panic(id.toString(16));
+            }
+            ${c.params.length ? "let values = this._values;" : ""}
+            ${c.params
+              .slice(0, c.params.length - (isMessage ? 1 : 0))
+              .map(
+                (p, i) => `
+                ${
+                  mapType(p.type).optionalName
+                    ? `if (this.has_${p.name}())`
+                    : ""
+                }{
+                  let val = values[${i}] as ${mapType(p.type).type};
+                  ${mapType(p.type).read};
+                  values[${i}] = val;
+                }
+              `
+              )
+              .join("")}
+            ${
+              isMessage
+                ? `
+              this.buf = new Uint8Array(buf.getBuffer8().buffer, buf.offset * 4, this.get_bytes());
+              {
+                let offset = buf.offset;
+                let val = values[${3}] as ${mapType(c.params[3].type).type};
+                try {
+                  ${mapType(c.params[3].type).read};
+                } catch (e) {
+                  console.error("skip", e.stack)
+                }
+                buf.offset = offset + Math.ceil(this.get_bytes() / 4)
+                values[${3}] = val;
+              }
+            `
+                : ""
+            }
+            ${
+              isVector
+                ? `
+            let len = buf.readInt();
+            for (let i = 0; i < len; i++) {
+              let item = new OneOf()._read(buf);
+              this._values.push(item as any);
+            }
+            `
+                : ""
+            }
+
+            return this;
+          }
 
           ${isVector ? `
-            set_values(v: T[]): this;
-            get_values(): T[];
+            set_values(v: T[]): this {
+              this._values = v as any;
+              return this;
+            }
+            get_values(): T[] {
+              return this._values as unknown as T[];
+            }
           ` :""}
       }
-      export let ${P} = r<new ${isVector?"<T> ":""}() => ${P}${isVector?"<T>":""}>(0x${id.toString(16)}, "${P}", () => [${c.params.map((pr,i) => {
-        let t = mapType(pr.type)
-        if (t.optionalName) {
-          flagIndex[fi] = c.params.findIndex(pr => pr.name === t.optionalName)
-          t = mapType(pr.type)
-        }
-        return `"${pr.name}", ${t.rw}`
-      }).join(", ")}]);
-    `;
-  flagIndex.pop();
-  lastTypeUse.delete(P)
-  // WriteHeader(globalPrefix + P)
-  l(desc)
-  // fs.writeFileSync(`../proto/${globalPrefix + P}.ts`, out.map(v => v.join(" ")).join("\n"))
-  queue.push({n: P, deps: new Set([...lastTypeUse]), desc: out.join('')})
-  out = []
-  lastTypeUse.clear()
-}
-
-function WriteQueue(file: string) {
-  out= []
-  WriteHeader(file)
-  lastTypeUse.clear()
-  // let lastW = 0;
-  // lastTypeUse.add()
-  if (file !== "./MTprotoShema.gen.ts") {
-    lastTypeUse.add("RpcErrorS")
-    // lastTypeUse.add("RpcErrorT")
-  }
-  // let maxW = queue.length;
-  // let i = 0
-  let rem = queue.length;
-  // let l = 0;
-  for (let j = 0; rem && j < 1000;j++) {
-    for (let i = 0; rem && i < queue.length; i++) {
-      // if (i > maxW * 2) break;
-      let w = queue[i]
-      if (!w) continue;
-      let found = false
-      for (let t of w.deps) {
-        if (!lastTypeUse.has(t)) {
-        // queue.push(w)
-        // console.log("n", t, w.n)
-          found = true
-          break
-        }
-      }
-      if (found) continue;
-      // console.log(w.n)
-      // console.log(w.n, ...w.deps)
-      lastTypeUse.add(w.n)
-      l(w.desc)
-      // maxW = queue.length
-      queue[i] = null
-      rem--
-    }
-  }
-  for (let i = 0;i<queue.length;i++) {
-    let w = queue[i]
-    if (!w) continue;
-    console.log(w.n, ...w.deps)
-    l(w.desc)
-  }
-  l('CallDeclareQueue()')
-  fs.writeFileSync(file, out.map(v => v.join(" ")).join("\n"))
-  lastTypeUse.clear();
-  queue = []
-  out = []
+      AllStructs.set(${P}._id, ${P});
+    `);
 }
 
 main().catch(e => console.error(e.stack));
- // "start": "tsc && node generator.js && rm -rf ./*.js && prettier --write *.gen.ts  &&  yarn tslint --force --fix -q *.gen.ts 2>/dev/null 1>/dev/null",
