@@ -42,6 +42,8 @@ import { findError } from "const/errors";
 import { getBgColor } from "lib/colors";
 import * as h from "lib/html";
 
+import * as s from "./Chat.scss";
+
 interface IChatStoreProps {
   apiInvoker: ApiInvoker;
   userStore: UserStore;
@@ -49,7 +51,7 @@ interface IChatStoreProps {
   chatListStore: ChatListStore;
 }
 
-export const photoCache = new Map<string, Uint8Array>();
+export const photoCache = new Map<string, string>();
 
 export class ChatStore {
   props: IChatStoreProps;
@@ -343,7 +345,7 @@ export class ChatStore {
     return getBgColor(photoText);
   }
 
-  async loadPhoto(
+  loadPhoto(
     tag: HTMLElement,
     location: FileLocationT,
     dc: number,
@@ -353,9 +355,21 @@ export class ChatStore {
     if (!ipeer) return;
     let key = `${location.get_local_id()}:${location.get_volume_id()}`;
     if (photoCache.has(key)) {
-      this.handlePhoto(tag, photoCache.get(key)!);
+      this.handlePhoto(tag, photoCache.get(key)!, key);
       return;
     }
+    requestAnimationFrame(() =>
+      this._loadPhoto(tag, location, dc, peer, ipeer!, key)
+    );
+  }
+  async _loadPhoto(
+    tag: HTMLElement,
+    location: FileLocationT,
+    dc: number,
+    peer: PeerT | ChannelS | UserS | ChatS,
+    ipeer: InputPeerChatS | InputPeerUserS | InputPeerChannelS,
+    key: string
+  ) {
     let photo = await CallUploadGetFileM(
       this.props.apiInvoker.connection(dc),
       new UploadGetFileM()
@@ -378,8 +392,10 @@ export class ChatStore {
       );
       return;
     }
-    photoCache.set(key, photo.get_bytes());
-    this.handlePhoto(tag, photo.get_bytes());
+
+    const blob = new Blob([photo.get_bytes()]);
+    const url = window.URL.createObjectURL(blob);
+    this.handlePhoto(tag, url, key);
   }
   async loadPhotoCDN(
     tag: HTMLElement,
@@ -398,13 +414,23 @@ export class ChatStore {
       await this.loadPhoto(tag, location, dc, peer);
       return;
     }
-    photoCache.set(key, photo.get_bytes());
-    this.handlePhoto(tag, photo.get_bytes());
-  }
-  async handlePhoto(tag: HTMLElement, bytes: Uint8Array) {
-    const blob = new Blob([bytes]);
+    const blob = new Blob([photo.get_bytes()]);
     const url = window.URL.createObjectURL(blob);
-    tag.innerText = "";
-    tag.append(h.img(h.src(url)).tag);
+    this.handlePhoto(tag, url, key);
+  }
+  handlePhoto(tag: HTMLElement, url: string, key: string) {
+    let img = h.img(h.className(s.ava), h.src(url)).tag;
+    let found = photoCache.get(key);
+    if (!found) {
+      photoCache.set(key, url);
+      window.setTimeout(() => {
+        img.style.opacity = "1";
+      }, 10);
+    } else {
+      img.style.transition = "none";
+      img.style.opacity = "1";
+    }
+    // if (tag.innerHTML !== "") tag.innerText = "";
+    tag.append(img);
   }
 }

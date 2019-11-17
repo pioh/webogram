@@ -215,7 +215,3 @@ export function GetWorker() {
   if (worker === null) worker = new WorkerClient();
   return worker;
 }
-
-// worker.onmessage = event => {};
-
-// worker.addEventListener("message", event => {});

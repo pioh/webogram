@@ -45,7 +45,7 @@
   line-height: 21px;
 
   outline: none;
-  transition: all 0.15s ease-out;
+  transition: border-color 0.15s ease-out;
 }
 
 .iconRight {
@@ -58,7 +58,7 @@
   pointer-events: none;
 }
 
-:not(.focus):not(.forceFocus) > input:hover:not(:focus) {
+:not(.focus):not(.forceFocus):not(.grey) > input:hover:not(:focus) {
   border-color: #000;
 }
 

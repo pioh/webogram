@@ -1,9 +1,3 @@
-// import CryptoJS from "crypto-js";
-// import { mode } from "crypto-js";
-// import AES from "crypto-js/aes";
-// import LibTypedarrays from "crypto-js/lib-typedarrays/index";
-// import NoPadding from "crypto-js/pad-nopadding";
-
 import { CryptoJS } from "lib/aes.js";
 
 import { addPadding } from "./RsaEncrypt";

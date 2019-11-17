@@ -28,10 +28,11 @@ export class Chat extends Tag<HTMLDivElement, IChatProps> {
   });
   newMessage = new NewMessage({ apiInoker: this.props.apiInoker });
   rendered = new Map<number, Message>();
+  spinner = h.spinner();
   firstRender = true;
   hr = h.div(h.className(s.hr));
   messagesContent = h.div(h.className(s.messagesContent));
-  messages = h.div(h.className(s.messages), this.messagesContent);
+  messages = h.div(h.className(s.messages), this.messagesContent, this.spinner);
   content = h.div(h.className(s.content), this.messages);
   get store() {
     return this.props.chatStore;
@@ -138,6 +139,10 @@ export class Chat extends Tag<HTMLDivElement, IChatProps> {
       this.messagesContent.append(m);
       this.defer.push(() => m.destroy());
     }
+    if (this.messagesContent.tag.innerHTML === "") {
+      this.spinner.show();
+    } else this.spinner.hide();
+
     let toRemove: number[] = [];
     for (let [id, m] of this.rendered) {
       if (!found.has(id)) toRemove.push(id);

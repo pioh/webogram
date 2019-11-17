@@ -1,0 +1,304 @@
+@font-face {
+  font-family: "icons";
+  src: url("fonts/icons.woff2?45330895");
+  src: url("fonts/icons.woff2?45330895") format("woff2"),
+    url("fonts/icons.woff?45330895") format("woff"),
+    url("fonts/icons.ttf?45330895") format("truetype"),
+    url("fonts/icons.svg?45330895") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+:global {
+  [class^="i-"]:before {
+    font-family: "icons";
+    font-style: normal;
+    font-weight: normal;
+    speak: none;
+
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: 0.2em;
+    text-align: center;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1em;
+    margin-left: 0.2em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .i-add:before {
+    content: "\e800";
+  } /* '' */
+  .i-addmember_filled:before {
+    content: "\e801";
+  } /* '' */
+  .i-adduser:before {
+    content: "\e802";
+  } /* '' */
+  .i-admin:before {
+    content: "\e803";
+  } /* '' */
+  .i-animals:before {
+    content: "\e804";
+  } /* '' */
+  .i-archive:before {
+    content: "\e805";
+  } /* '' */
+  .i-attach:before {
+    content: "\e806";
+  } /* '' */
+  .i-avatar_archivedchats:before {
+    content: "\e807";
+  } /* '' */
+  .i-avatar_deletedaccount:before {
+    content: "\e808";
+  } /* '' */
+  .i-avatar_savedmessages:before {
+    content: "\e809";
+  } /* '' */
+  .i-back:before {
+    content: "\e80a";
+  } /* '' */
+  .i-camera:before {
+    content: "\e80b";
+  } /* '' */
+  .i-cameraadd:before {
+    content: "\e80c";
+  } /* '' */
+  .i-car:before {
+    content: "\e80d";
+  } /* '' */
+  .i-channel:before {
+    content: "\e80e";
+  } /* '' */
+  .i-channelviews:before {
+    content: "\e80f";
+  } /* '' */
+  .i-chatsplaceholder:before {
+    content: "\e810";
+  } /* '' */
+  .i-check:before {
+    content: "\e811";
+  } /* '' */
+  .i-checkbox:before {
+    content: "\e812";
+  } /* '' */
+  .i-checkboxblock:before {
+    content: "\e813";
+  } /* '' */
+  .i-checkboxempty:before {
+    content: "\e814";
+  } /* '' */
+  .i-checkboxon:before {
+    content: "\e815";
+  } /* '' */
+  .i-close:before {
+    content: "\e816";
+  } /* '' */
+  .i-copy:before {
+    content: "\e817";
+  } /* '' */
+  .i-data:before {
+    content: "\e818";
+  } /* '' */
+  .i-delete_filled:before {
+    content: "\e819";
+  } /* '' */
+  .i-delete:before {
+    content: "\e81a";
+  } /* '' */
+  .i-deleteuser:before {
+    content: "\e81b";
+  } /* '' */
+  .i-document:before {
+    content: "\e81c";
+  } /* '' */
+  .i-down:before {
+    content: "\e81d";
+  } /* '' */
+  .i-download:before {
+    content: "\e81e";
+  } /* '' */
+  .i-eats:before {
+    content: "\e81f";
+  } /* '' */
+  .i-edit:before {
+    content: "\e820";
+  } /* '' */
+  .i-eye1:before {
+    content: "\e821";
+  } /* '' */
+  .i-eye2:before {
+    content: "\e822";
+  } /* '' */
+  .i-flag:before {
+    content: "\e823";
+  } /* '' */
+  .i-forward:before {
+    content: "\e824";
+  } /* '' */
+  .i-fullscreen:before {
+    content: "\e825";
+  } /* '' */
+  .i-group:before {
+    content: "\e826";
+  } /* '' */
+  .i-help:before {
+    content: "\e827";
+  } /* '' */
+  .i-info:before {
+    content: "\e828";
+  } /* '' */
+  .i-lamp:before {
+    content: "\e829";
+  } /* '' */
+  .i-language:before {
+    content: "\e82a";
+  } /* '' */
+  .i-largepause:before {
+    content: "\e82b";
+  } /* '' */
+  .i-largeplay:before {
+    content: "\e82c";
+  } /* '' */
+  .i-location:before {
+    content: "\e82d";
+  } /* '' */
+  .i-lock:before {
+    content: "\e82e";
+  } /* '' */
+  .i-logout:before {
+    content: "\e82f";
+  } /* '' */
+  .i-menu:before {
+    content: "\e830";
+  } /* '' */
+  .i-message:before {
+    content: "\e831";
+  } /* '' */
+  .i-microphone:before {
+    content: "\e832";
+  } /* '' */
+  .i-more:before {
+    content: "\e833";
+  } /* '' */
+  .i-mute:before {
+    content: "\e834";
+  } /* '' */
+  .i-newchannel:before {
+    content: "\e835";
+  } /* '' */
+  .i-newchat_filled:before {
+    content: "\e836";
+  } /* '' */
+  .i-newgroup:before {
+    content: "\e837";
+  } /* '' */
+  .i-newprivate:before {
+    content: "\e838";
+  } /* '' */
+  .i-next:before {
+    content: "\e839";
+  } /* '' */
+  .i-pause:before {
+    content: "\e83a";
+  } /* '' */
+  .i-permissions:before {
+    content: "\e83b";
+  } /* '' */
+  .i-phone:before {
+    content: "\e83c";
+  } /* '' */
+  .i-photo:before {
+    content: "\e83d";
+  } /* '' */
+  .i-pin:before {
+    content: "\e83e";
+  } /* '' */
+  .i-pinnedchat:before {
+    content: "\e83f";
+  } /* '' */
+  .i-play:before {
+    content: "\e840";
+  } /* '' */
+  .i-radiooff:before {
+    content: "\e841";
+  } /* '' */
+  .i-radioon:before {
+    content: "\e842";
+  } /* '' */
+  .i-recent:before {
+    content: "\e843";
+  } /* '' */
+  .i-reply:before {
+    content: "\e844";
+  } /* '' */
+  .i-savedmessages:before {
+    content: "\e845";
+  } /* '' */
+  .i-search:before {
+    content: "\e846";
+  } /* '' */
+  .i-send:before {
+    content: "\e847";
+  } /* '' */
+  .i-send2:before {
+    content: "\e848";
+  } /* '' */
+  .i-sending:before {
+    content: "\e849";
+  } /* '' */
+  .i-sendingerror:before {
+    content: "\e84a";
+  } /* '' */
+  .i-settings:before {
+    content: "\e84b";
+  } /* '' */
+  .i-smallscreen:before {
+    content: "\e84c";
+  } /* '' */
+  .i-smile:before {
+    content: "\e84d";
+  } /* '' */
+  .i-sport:before {
+    content: "\e84e";
+  } /* '' */
+  .i-stop:before {
+    content: "\e84f";
+  } /* '' */
+  .i-unarchive:before {
+    content: "\e850";
+  } /* '' */
+  .i-unlock:before {
+    content: "\e851";
+  } /* '' */
+  .i-unmute:before {
+    content: "\e852";
+  } /* '' */
+  .i-unpin:before {
+    content: "\e853";
+  } /* '' */
+  .i-unread:before {
+    content: "\e854";
+  } /* '' */
+  .i-up:before {
+    content: "\e855";
+  } /* '' */
+  .i-user:before {
+    content: "\e856";
+  } /* '' */
+  .i-username:before {
+    content: "\e857";
+  } /* '' */
+  .i-1check:before {
+    content: "\e858";
+  } /* '' */
+  .i-2checks:before {
+    content: "\e859";
+  } /* '' */
+  .i-activesessions:before {
+    content: "\e85a";
+  } /* '' */
+}

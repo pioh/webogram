@@ -88,7 +88,7 @@
 }
 .tail.left {
   left: -10px;
-  bottom: -2.5px;
+  bottom: -3px;
   transform: scaleX(-1);
 }
 
@@ -171,6 +171,7 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
+  position: relative;
   margin-right: 5px;
   margin-top: auto;
 }
