@@ -649,9 +649,10 @@ export class Connection {
   }
   clearSession() {
     this.connectionInited = false;
-    this.authKey = new Uint8Array();
-    this.authKeyID = new Uint8Array();
-    this.serverSalt = new Uint8Array();
+    this.inited = false;
+    // this.authKey = new Uint8Array();
+    // this.authKeyID = new Uint8Array();
+    // this.serverSalt = new Uint8Array();
     GetRandomValues(this.session);
     localStorage.removeItem(`authKeyID${this.props.dc}`);
     localStorage.removeItem(`authKey${this.props.dc}`);

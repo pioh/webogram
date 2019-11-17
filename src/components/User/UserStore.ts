@@ -79,6 +79,7 @@ export class UserStore {
   }
   async loadUser() {
     this.userDC = this.userDC || this.props.apiInvoker.dc;
+    if (!this.user.get_id()) return;
     let conn = this.props.apiInvoker.connection(this.userDC);
     let response = await CallUsersGetUsersM(
       conn,

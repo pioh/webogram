@@ -4,6 +4,8 @@ for contest https://t.me/contest/118
 
 https://github.com/pioh/webogram
 
+Tested only in chrome desktop. Random bugs in firefox.
+
 ### Runtime dependencies:
 
 - imask - mask for input, was no time to do manually
